@@ -1,10 +1,14 @@
 .
 ├── app
 │   ├── __init__.py
-│   ├── db.py
 │   ├── dependencies.py
 │   ├── main.py
-│   ├── models.py
+│   ├── database
+│       ├── __init__.py
+│       ├── crud.py
+│       ├── db.py
+│       ├── models.py
+│       ├── schemas.py
 │   ├── internal
 │       ├── __init__.py
 │       ├── admin.py
