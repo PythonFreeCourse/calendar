@@ -5,7 +5,7 @@
 │   ├── main.py
 │   ├── database
 │       ├── __init__.py
-│       ├── db.py
+│       ├── database.py
 │       ├── models.py
 │       ├── schemas.py
 │   ├── internal
