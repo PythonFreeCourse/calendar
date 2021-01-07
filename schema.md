@@ -5,7 +5,6 @@
 │   ├── main.py
 │   ├── database
 │       ├── __init__.py
-│       ├── crud.py
 │       ├── db.py
 │       ├── models.py
 │       ├── schemas.py
