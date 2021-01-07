@@ -2,9 +2,14 @@
 ├── app
 │   ├── __init__.py
 │   ├── db.py
+│   ├── dependencies.py
 │   ├── main.py
-│   ├── models
-│   ├── __init__.py
+│   ├── models.py
+│   ├── internal
+│       ├── __init__.py
+│       ├── admin.py
+│   ├── routers
+│       ├── __init__.py
 │   ├── static
 │       ├── style.css
 │   ├── templates
