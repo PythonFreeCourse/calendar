@@ -16,6 +16,7 @@
 │   ├── static
 │       ├── style.css
 │   ├── templates
+│       ├── base.html
 │       ├── home.html
 ├── LICENSE
 ├── requirements.txt
