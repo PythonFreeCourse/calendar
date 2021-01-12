@@ -4,26 +4,47 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
+class UserEvent(Base):
+    __tablename__ = "user_event"
+
+    user_id = Column('user_id', Integer, ForeignKey('users.id'), primary_key=True)
+    event_id = Column('event_id', Integer, ForeignKey('events.id'), primary_key=True)
+
+    events = relationship("Event", back_populates="participants")
+    participants = relationship("User", back_populates="events")
+
+    def __repr__(self):
+        return f'<UserEvent ({self.participants}, {self.events})>'
+
+
 class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True)
-    email = Column(String, unique=True)
-    password = Column(String)
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
-    events = relationship(
-        "Event", cascade="all, delete", back_populates="owner")
+    events = relationship("UserEvent", back_populates="participants")
+
+    def __repr__(self):
+        return f'<User {self.id}>'
 
 
 class Event(Base):
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
+    title = Column(String, nullable=False)
+    start = Column(DateTime, nullable=False)
+    end = Column(DateTime, nullable=False)
     content = Column(String)
-    date = Column(DateTime)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    location = Column(String)
 
-    owner = relationship("User", back_populates="events")
+    owner = relationship("User")
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    participants = relationship("UserEvent", back_populates="events")
+
+    def __repr__(self):
+        return f'<Event {self.id}>'

@@ -25,3 +25,4 @@ typing-extensions==3.7.4.3
 uvicorn==0.13.3
 wsproto==1.0.0
 zipp==3.4.0
+icalendar==4.0.7
