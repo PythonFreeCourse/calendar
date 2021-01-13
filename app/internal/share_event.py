@@ -25,14 +25,13 @@ def sort_emails(emails: List[str]) -> Dict[str, List[str]]:
 def send_email_invitation(
         participants: List[str],
         event: Event
-) -> Union[bool, None]:
+):
     """Sends an email with an invitation."""
 
     ical_invitation = event_to_ical(event, participants)
     for participant in participants:
         # sends an email
         pass
-    return True
 
 
 def send_in_app_invitation(
@@ -49,7 +48,7 @@ def send_in_app_invitation(
             session.add(Invitation(recipient=recipient, event=event))
 
         else:
-            # if user tries to send himself
+            # if user tries to send to himself.
             session.rollback()
             return None
 
