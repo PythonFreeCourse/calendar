@@ -8,15 +8,15 @@
     </div>
 
     {% if invitations %}
-        <form action="\invitations" method="post">
+        <div>
         {% for i in invitations %}
-            <div>
+            <form action="\invitations" method="post">
                 <span>{{ i.event.owner.username }} - {{ i.event.title }} ({{ i.event.start }})</span>
                 <input type="hidden" value="{{ i.id }}" name="invite_id">
                 <input type="submit" value="Accept">
-            </div>
+            </form>
         {% endfor %}
-        </form>
+        </div>
     {% else %}
         <span>You don't have any invitations.</span>
     {% endif %}

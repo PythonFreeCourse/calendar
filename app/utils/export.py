@@ -49,8 +49,8 @@ def create_ical_event(user_event):
         ('summary', user_event.title),
     ]
 
-    for pram in data:
-        ievent.add(*pram)
+    for param in data:
+        ievent.add(*param)
 
     return ievent
 

@@ -11,7 +11,7 @@ def sort_emails(emails: List[str]) -> Dict[str, List[str]]:
     """Sorts emails to registered
     and unregistered users."""
 
-    emails_dict = {'registered': [], 'unregistered': []}
+    emails_dict = {'registered': [], 'unregistered': []}  # type: ignore
     for email in emails:
 
         if dose_user_exist(email=email):

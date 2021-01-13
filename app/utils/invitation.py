@@ -6,11 +6,11 @@ from app.config import session
 from app.database.models import Invitation
 
 
-def get_all_invitations(**parm) -> List[Invitation]:
-    """Returns all invitations filter by parm."""
+def get_all_invitations(**param) -> List[Invitation]:
+    """Returns all invitations filter by param."""
 
     try:
-        invitations = list(session.query(Invitation).filter_by(**parm))
+        invitations = list(session.query(Invitation).filter_by(**param))
     except SQLAlchemyError:
         return []
     else:

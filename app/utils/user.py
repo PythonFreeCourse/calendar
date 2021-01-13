@@ -17,11 +17,11 @@ def create_user(username, password, email) -> User:
     return user
 
 
-def get_users(**parm):
-    """Returns all users filter by parm."""
+def get_users(**param):
+    """Returns all users filter by param."""
 
     try:
-        users = list(session.query(User).filter_by(**parm))
+        users = list(session.query(User).filter_by(**param))
     except SQLAlchemyError:
         return []
     else:
