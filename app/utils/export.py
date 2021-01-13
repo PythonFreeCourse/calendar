@@ -3,10 +3,9 @@ from typing import List
 
 from icalendar import Calendar, Event, vCalAddress
 
-from .config import ICS_VERSION, PRODUCT_ID
-
 from app.config import DOMAIN
 from app.database.models import Event as UserEvent
+from app.utils.config import ICS_VERSION, PRODUCT_ID
 
 
 def generate_id(event: UserEvent) -> bytes:
@@ -25,7 +24,7 @@ def generate_id(event: UserEvent) -> bytes:
     ).encode()
 
 
-def create_ical():
+def create_ical_calendar():
     """Creates an ical calendar,
     and adds the required information"""
 
@@ -36,7 +35,7 @@ def create_ical():
     return cal
 
 
-def create_event(title, user_event):
+def create_ical_event(user_event):
     """Creates an ical event,
     and adds the event information"""
 
@@ -47,7 +46,7 @@ def create_event(title, user_event):
         ('dtstart', user_event.start),
         ('dtstamp', datetime.now()),
         ('dtend', user_event.end),
-        ('summary', title),
+        ('summary', user_event.title),
     ]
 
     for pram in data:
@@ -74,8 +73,8 @@ def event_to_ical(user_event: UserEvent, attendees: List[str]) -> bytes:
     given an "UserEvent" instance
     and a list of email"""
 
-    ical = create_ical()
-    ievent = create_event('Important meeting', user_event)
+    ical = create_ical_calendar()
+    ievent = create_ical_event(user_event)
     ievent = add_attendees(ievent, attendees)
     ical.add_component(ievent)
 
