@@ -25,6 +25,7 @@ def home(request: Request):
     })
 
 
+<<<<<<< HEAD
 @app.get("/invitations")
 def view_invitations(request: Request):
     return templates.TemplateResponse("requests.html", {
@@ -40,3 +41,17 @@ async def accept_invitations(invite_id: int = Form(...)):
     invitation = get_invitation_by_id(invite_id)
     accept(invitation)
     return RedirectResponse("/invitations", status_code=HTTP_302_FOUND)
+=======
+@app.get("/profile")
+def profile(request: Request):
+
+    # Get relevant data from database
+    upcouming_events = range(5)
+    current_username = "Chuck Norris"
+
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "username": current_username,
+        "events": upcouming_events
+    })
+>>>>>>> 91696f700debbd35a250ccd6604a77da16d12b30
