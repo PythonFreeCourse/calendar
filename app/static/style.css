@@ -5,7 +5,7 @@ body {
 }
 
 .profile-image {
-    width: 5em;
+    width: 7em;
 }
 
 .card-profile {
@@ -26,4 +26,9 @@ body {
 
 .feature {
     border: none;
+}
+
+.modal-dialog {
+  top: 1vh;
+  left: 1vw;
 }
