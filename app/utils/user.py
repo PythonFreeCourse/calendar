@@ -11,7 +11,7 @@ def create_user(username, password, email) -> User:
     user = User(
         username=username,
         password=password,
-        email=email
+        email=email,
     )
     save(user)
     return user
@@ -28,10 +28,9 @@ def get_users(**param):
         return users
 
 
-def dose_user_exist(user_id=None, username=None, email=None):
-    """Returns if user exists.
-    function can receive one of
-    the there parameters"""
+def does_user_exist(*_, user_id=None, username=None, email=None):
+    """Returns if user exists. function can
+    receive one of the there parameters"""
 
     if user_id:
         return len(get_users(id=user_id)) == 1

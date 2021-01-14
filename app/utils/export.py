@@ -3,18 +3,12 @@ from typing import List
 
 from icalendar import Calendar, Event, vCalAddress
 
-from app.config import DOMAIN
+from app.config import DOMAIN, ICS_VERSION, PRODUCT_ID
 from app.database.models import Event as UserEvent
-from app.utils.config import ICS_VERSION, PRODUCT_ID
 
 
 def generate_id(event: UserEvent) -> bytes:
-    """Creates an unique id from:
-    - event id
-    - event start time
-    - event end time
-    - our domain.
-    """
+    """Creates an unique id."""
 
     return (
         str(event.id)

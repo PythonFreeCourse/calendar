@@ -3,28 +3,27 @@ from typing import List, Dict, Union
 from app.config import session
 from app.database.models import Event, Invitation, UserEvent
 from app.utils.export import event_to_ical
-from app.utils.user import dose_user_exist, get_users
+from app.utils.user import does_user_exist, get_users
 from app.utils.utils import save
 
 
-def sort_emails(emails: List[str]) -> Dict[str, List[str]]:
-    """Sorts emails to registered
-    and unregistered users."""
+def sort_emails(participants: List[str]) -> Dict[str, List[str]]:
+    """Sorts emails to registered and unregistered users."""
 
-    emails_dict = {'registered': [], 'unregistered': []}  # type: ignore
-    for email in emails:
+    emails = {'registered': [], 'unregistered': []}  # type: ignore
+    for participant in participants:
 
-        if dose_user_exist(email=email):
-            emails_dict['registered'] += [email]
+        if does_user_exist(email=participant):
+            emails['registered'] += [participant]
         else:
-            emails_dict['unregistered'] += [email]
+            emails['unregistered'] += [participant]
 
-    return emails_dict
+    return emails
 
 
 def send_email_invitation(
         participants: List[str],
-        event: Event
+        event: Event,
 ):
     """Sends an email with an invitation."""
 
@@ -36,7 +35,7 @@ def send_email_invitation(
 
 def send_in_app_invitation(
         participants: List[str],
-        event: Event
+        event: Event,
 ) -> Union[bool, None]:
     """Sends an in-app invitation for registered users."""
 
