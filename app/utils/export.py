@@ -3,7 +3,7 @@ from typing import List
 
 from icalendar import Calendar, Event, vCalAddress
 
-from app.config import DOMAIN, ICS_VERSION, PRODUCT_ID
+from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
 from app.database.models import Event as UserEvent
 
 
@@ -23,7 +23,7 @@ def create_ical_calendar():
     and adds the required information"""
 
     cal = Calendar()
-    cal.add('version', ICS_VERSION)
+    cal.add('version', ICAL_VERSION)
     cal.add('prodid', PRODUCT_ID)
 
     return cal
