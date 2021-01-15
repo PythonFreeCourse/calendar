@@ -1,0 +1,29 @@
+body {
+    background: #A1FFCE;
+    background: -webkit-linear-gradient(to right, #FAFFD1, #A1FFCE);
+    background: linear-gradient(to right, #FAFFD1, #A1FFCE);
+}
+
+.profile-image {
+    width: 5em;
+}
+
+.card-profile {
+    border-radius: 10px;
+}
+
+.card-event {
+    border-radius: 10px;
+}
+
+.card-event:hover {
+    transform: scale(1.02);
+}
+
+.event-posted-time {
+    font-size: 0.7rem;
+}
+
+.feature {
+    border: none;
+}
