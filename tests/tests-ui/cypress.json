@@ -1,0 +1,6 @@
+{
+    "baseUrl": "http://localhost:8000",
+    "viewportWidth": 1000,
+    "viewportHeight": 660,
+    "level": 1
+}
