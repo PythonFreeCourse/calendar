@@ -14,14 +14,14 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './home_page/commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
 export function check_level(testLevel) {
-    if (Cypress.config('level') < testLevel){
-        cy.log(`Skipped! tests run on level ${Cypress.config('level')}.
+    if (Cypress.env('level') < testLevel){
+        cy.log(`Skipped! tests run on level ${Cypress.env('level')}.
         This test is on level ${Cypress.config('testLevel')}`)
         return true
     }

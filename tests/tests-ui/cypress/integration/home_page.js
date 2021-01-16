@@ -5,7 +5,7 @@ import {screen_sizes_dict} from '../enums/sizes'
 describe('HomePage tests', () => {
     for (const [key, sizes] of Object.entries(screen_sizes_dict)) {
         sizes.forEach(size => {
-            it(`Visit Calendar home page on ${key} size: ${size}`, { testLevel: 1 }, () => {
+            it(`Visit Calendar home page on ${key} size: ${size}`, { testLevel: 10 }, () => {
                 if (check_level(Cypress.config('testLevel'))) return
                 if (Cypress._.isArray(size)) {
                     cy.viewport(size[0], size[1])
@@ -13,6 +13,8 @@ describe('HomePage tests', () => {
                     cy.viewport(size)
                 }
                 cy.visit('/')
+                cy.log(Cypress.config())
+                cy.wait(1000)
                 cy.contains('Calendar') 
         });
     
