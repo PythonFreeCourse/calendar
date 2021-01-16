@@ -1,8 +1,9 @@
-from app.config import session
-from app.database.database import Base
+from sqlalchemy.orm import Session
+
+from app.database.models import Base
 
 
-def save(item) -> bool:
+def save(item, session: Session) -> bool:
     """Commits an instance to the db.
     source: app.database.database.Base"""
 

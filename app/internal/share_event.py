@@ -1,19 +1,23 @@
 from typing import List, Dict, Union
 
-from app.config import session
+from sqlalchemy.orm import Session
+
 from app.database.models import Event, Invitation, UserEvent
 from app.utils.export import event_to_ical
 from app.utils.user import does_user_exist, get_users
 from app.utils.utils import save
 
 
-def sort_emails(participants: List[str]) -> Dict[str, List[str]]:
+def sort_emails(
+        participants: List[str],
+        session: Session
+) -> Dict[str, List[str]]:
     """Sorts emails to registered and unregistered users."""
 
     emails = {'registered': [], 'unregistered': []}  # type: ignore
     for participant in participants:
 
-        if does_user_exist(email=participant):
+        if does_user_exist(email=participant, session=session):
             emails['registered'] += [participant]
         else:
             emails['unregistered'] += [participant]
@@ -36,18 +40,19 @@ def send_email_invitation(
 def send_in_app_invitation(
         participants: List[str],
         event: Event,
+        session: Session
 ) -> Union[bool, None]:
     """Sends an in-app invitation for registered users."""
 
     for participant in participants:
         # email is unique
-        recipient = get_users(email=participant)[0]
+        recipient = get_users(email=participant, session=session)[0]
 
         if recipient.id != event.owner.id:
             session.add(Invitation(recipient=recipient, event=event))
 
         else:
-            # if user tries to send to himself.
+            # if user tries to send to themselves.
             session.rollback()
             return None
 
@@ -55,7 +60,7 @@ def send_in_app_invitation(
     return True
 
 
-def accept(invitation: Invitation) -> None:
+def accept(invitation: Invitation, session: Session) -> None:
     """Accepts an invitation by creating an
     UserEvent association that represents
     participantship at the event."""
@@ -65,14 +70,16 @@ def accept(invitation: Invitation) -> None:
         events=invitation.event
     )
     invitation.status = 'accepted'
-    save(invitation)
-    save(association)
+    save(invitation, session=session)
+    save(association, session=session)
 
 
-def share(event: Event, participants: List[str]) -> None:
+def share(event: Event, participants: List[str], session: Session) -> None:
     """Sends invitations to all event participants."""
 
-    registered, unregistered = sort_emails(participants).values()
+    registered, unregistered = (
+        sort_emails(participants, session=session).values()
+    )
 
-    send_in_app_invitation(registered, event)
+    send_in_app_invitation(registered, event, session)
     send_email_invitation(unregistered, event)

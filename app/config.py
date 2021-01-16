@@ -1,5 +1,3 @@
-from app.database.database import SessionLocal
-
 # general
 DOMAIN = 'Our-Domain'
 
@@ -7,5 +5,3 @@ DOMAIN = 'Our-Domain'
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
 OPTIONAL = []
-
-session = SessionLocal()

@@ -1,51 +1,57 @@
 from datetime import datetime
 
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
 
-from app.config import session
-from app.database.models import Event, Invitation, User
-
-
-def create_model(model_class, **kw):
-    instance = model_class(**kw)
-    session.add(instance)
-    session.commit()
-    return instance
+from app.database.models import Event, Invitation, User, Base
 
 
-def delete_instance(instance):
-    session.delete(instance)
-    session.commit()
+@pytest.fixture(scope="session")
+def engine():
+    print("TestCase: Using sqlite database")
+    return create_engine('sqlite:///', echo=False)
+
+
+@pytest.fixture(scope="session")
+def session(engine):
+    sessionmaker_ = sessionmaker(bind=engine)
+    session = sessionmaker_()
+    Base.metadata.create_all(engine)
+
+    yield session
+
+    session.close()
 
 
 @pytest.fixture
-def user() -> User:
+def user(session: Session) -> User:
     test_user = create_model(
-        User,
+        session, User,
         username='test_username',
         password='test_password',
         email='test.email@gmail.com',
     )
     yield test_user
-    delete_instance(test_user)
+    delete_instance(session, test_user)
 
 
 @pytest.fixture
-def sender() -> User:
+def sender(session: Session) -> User:
     sender = create_model(
-        User,
+        session, User,
         username='sender_email',
         password='sender_password',
         email='sender.email@gmail.com',
     )
     yield sender
-    delete_instance(sender)
+    delete_instance(session, sender)
 
 
 @pytest.fixture
-def event(sender: User) -> Event:
+def event(sender: User, session: Session) -> Event:
     event = create_model(
-        Event,
+        session, Event,
         title='test event',
         start=datetime.now(),
         end=datetime.now(),
@@ -54,13 +60,13 @@ def event(sender: User) -> Event:
         owner_id=sender.id,
     )
     yield event
-    delete_instance(event)
+    delete_instance(session, event)
 
 
 @pytest.fixture
-def invitation(event: Event, user: User) -> Event:
+def invitation(event: Event, user: User, session: Session) -> Event:
     invitation = create_model(
-        Invitation,
+        session, Invitation,
         creation=datetime.now(),
         recipient=user,
         event=event,
@@ -68,4 +74,16 @@ def invitation(event: Event, user: User) -> Event:
         recipient_id=user.id,
     )
     yield invitation
-    delete_instance(invitation)
+    delete_instance(session, invitation)
+
+
+def create_model(session: Session, model_class, **kw):
+    instance = model_class(**kw)
+    session.add(instance)
+    session.commit()
+    return instance
+
+
+def delete_instance(session: Session, instance):
+    session.delete(instance)
+    session.commit()

@@ -15,7 +15,7 @@ class TestExport:
 
     def test_create_ical_event(self, event):
         ical_event = create_ical_event(event)
-        assert ical_event.get('organizer') == event.owner.email
+        assert event.owner.email in ical_event.get('organizer')
         assert ical_event.get('summary') == event.title
 
     def test_add_attendees(self, event, user):
