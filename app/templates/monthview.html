@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="container">
+    <nav class="t-very-lightgray bg-darkblue">
+        <div class="menu">
+            <div>
+                <ion-icon name="menu" alt="Menu bar icon"></ion-icon>
+            </div>
+            <div>
+                <ion-icon name="search" alt="Search icon"></ion-icon>
+            </div>
+            <div>
+                <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div>
+                <ion-icon name="add" alt="add event icon"></ion-icon>
+            </div>
+        </div>
+    </nav>
+
+    <header>
+        <div>
+            <div class="title"> 10 OCTOBER 2021 </div>
+            <div class="sec-title"> Milano 4 <sup>o</sup>c</div>
+        </div>
+        <div id="logo-div"><a href="/">
+                <h1 class="title"> PYLENDER </h1>
+            </a></div>
+        <div id="header-bottom">
+            <div class="search-div float-left"> Search </div>
+            <div> Month </div>
+        </div>
+        <div class="calender-days-titles">
+            {% for day in dates['days_of_the_week'] %}
+            {% if day == dates['day'][0] %}
+            <div class="day-title uline-yellow"> {{ day.upper() }} </div>
+            {% else %}
+            <div class="day-title"> {{ day.upper() }}</div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </header>
+
+    <main class="main-grid">
+        <div class="calender-grid">
+            {% for month in range(dates['date'].month, dates['date'].month + 2) %}
+            {% for day in range(dates['month_days'][0], dates['month_days'][1] + 1) %}
+            {% if day == dates['date'].day and month == dates['date'].month %}
+            <div class="day day_current">
+                <div class="day-number">{{day}}</div>
+                <div class="daily-event t-very-lightgray bg-darkblue">daily event</div>
+                <div class="t-darkblue"><b>6PM</b> Meeting with Ode</div>
+                <div class="t-darkblue"><b>9PM</b> Meeting with Michele</div>
+            </div>
+            {% elif day in (9, 10, 17, 23, 24, 30, 31) %}
+            <div class="day t-gray">
+                <div class="day-number">{{day}}</div>
+            </div>
+            {% elif day in (13, 29) %}
+            <div class="day day_first">
+                <div class="day-number">{{day}}</div>
+                <div class="daily-event t-very-lightgray bg-red">daily event</div>
+                <div><b>6PM</b> Meeting with yam</div>
+                <div><b>7PM</b> Meeting with Sagi</div>
+            </div>
+
+            {% elif day in (18, ) %}
+            <div class="day">
+                <div class="day-number">{{day}}</div>
+                <div class="daily-event t-darkblue b-dashed-darkblue ">daily event</div>
+                <div><b>6PM</b> Meeting with yam</div>
+                <div><b>7PM</b> Meeting with Sagi</div>
+            </div>
+            {% else %}
+            <div class="day">
+                <div class="day-number">{{day}}</div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </div>
+        <div id="event-menu"> event </div>
+    </main>
+</div>
+{% endblock %}
