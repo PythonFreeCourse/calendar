@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
     <title>Calendar</title>
 </head>
 <body>
-    {{message}}
+    <div>
+        {{message}}
+    </div>
 </body>
 </html>
