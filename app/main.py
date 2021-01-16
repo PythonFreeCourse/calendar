@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import Depends, FastAPI, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -35,7 +36,7 @@ def home(request: Request):
 
 @app.get("/invitations")
 def view_invitations(request: Request, db: Session = Depends(get_db)):
-    return templates.TemplateResponse("requests.html", {
+    return templates.TemplateResponse("invitations.html", {
         "request": request,
         # recipient_id should be the current user
         # but because we don't have one yet,
@@ -65,5 +66,9 @@ def profile(request: Request):
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "username": current_username,
-        "events": upcoming_events
+        "events": upcoming_events,
     })
+
+
+if __name__ == '__main__':
+    uvicorn.run(app)
