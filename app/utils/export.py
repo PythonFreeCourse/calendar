@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import List
 
-from icalendar import Calendar, Event, vCalAddress
+from icalendar import Calendar, Event, vCalAddress, vText
+import pytz
 
 from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
 from app.database.models import Event as UserEvent
@@ -29,19 +30,33 @@ def create_ical_calendar():
     return cal
 
 
+def add_optional(user_event, data):
+    """Adds an optional field if it exists."""
+
+    if user_event.location:
+        data += [('location', user_event.location)]
+
+    if user_event.content:
+        data += [('description', user_event.content)]
+
+    return data
+
+
 def create_ical_event(user_event):
     """Creates an ical event,
     and adds the event information"""
 
     ievent = Event()
     data = [
-        ('organizer', vCalAddress(user_event.owner.email)),
+        ('organizer', add_attendee(user_event.owner.email, organizer=True)),
         ('uid', generate_id(user_event)),
         ('dtstart', user_event.start),
-        ('dtstamp', datetime.now()),
+        ('dtstamp', datetime.now(tz=pytz.utc)),
         ('dtend', user_event.end),
         ('summary', user_event.title),
     ]
+
+    data = add_optional(user_event, data)
 
     for param in data:
         ievent.add(*param)
@@ -49,13 +64,27 @@ def create_ical_event(user_event):
     return ievent
 
 
+def add_attendee(email, organizer=False):
+    """Adds an attendee to the event."""
+
+    attendee = vCalAddress(f'MAILTO:{email}')
+    if organizer:
+        attendee.params['partstat'] = vText('ACCEPTED')
+        attendee.params['role'] = vText('CHAIR')
+    else:
+        attendee.params['partstat'] = vText('NEEDS-ACTION')
+        attendee.params['role'] = vText('PARTICIPANT')
+
+    return attendee
+
+
 def add_attendees(ievent, attendees: list):
     """Adds attendees for the event."""
 
-    for attendee in attendees:
+    for email in attendees:
         ievent.add(
             'attendee',
-            vCalAddress(f'MAILTO:{attendee}'),
+            add_attendee(email),
             encode=0
         )
 
@@ -63,9 +92,8 @@ def add_attendees(ievent, attendees: list):
 
 
 def event_to_ical(user_event: UserEvent, attendees: List[str]) -> bytes:
-    """Returns an ical event,
-    given an "UserEvent" instance
-    and a list of email"""
+    """Returns an ical event, given an
+    "UserEvent" instance and a list of email."""
 
     ical = create_ical_calendar()
     ievent = create_ical_event(user_event)

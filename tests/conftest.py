@@ -3,11 +3,7 @@ from datetime import datetime
 import pytest
 
 from app.config import session
-from app.database.database import engine, Base
-from app.database.models import Event, User, Invitation
-
-
-Base.metadata.create_all(bind=engine)
+from app.database.models import Event, Invitation, User
 
 
 def create_model(model_class, **kw):

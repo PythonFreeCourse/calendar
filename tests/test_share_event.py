@@ -1,5 +1,7 @@
 from app.config import session
-from app.internal.share_event import sort_emails, send_in_app_invitation, accept, share
+from app.internal.share_event import (
+    accept, send_in_app_invitation, sort_emails
+)
 from app.utils.invitation import get_all_invitations
 
 

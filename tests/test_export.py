@@ -1,7 +1,9 @@
 from icalendar import vCalAddress
 
 from app.config import ICAL_VERSION, PRODUCT_ID
-from app.utils.export import create_ical_calendar, create_ical_event, event_to_ical
+from app.utils.export import (
+    create_ical_calendar, create_ical_event, event_to_ical
+)
 
 
 class TestExport:
@@ -23,7 +25,8 @@ class TestExport:
             vCalAddress(f'MAILTO:{user.email}'),
             encode=0
         )
-        assert vCalAddress(f'MAILTO:{user.email}') == ical_event.get('attendee')
+        attendee = vCalAddress(f'MAILTO:{user.email}')
+        assert attendee == ical_event.get('attendee')
 
     def test_event_to_ical(self, user, event):
         ical_event = event_to_ical(event, [user.email])
@@ -37,4 +40,3 @@ class TestExport:
         assert does_contain(PRODUCT_ID)
         assert does_contain(event.owner.email)
         assert does_contain(event.title)
-

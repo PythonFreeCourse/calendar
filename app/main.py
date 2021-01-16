@@ -9,7 +9,6 @@ from app.database.database import Base, engine
 from app.internal.share_event import accept
 from app.utils.invitation import get_all_invitations, get_invitation_by_id
 
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")

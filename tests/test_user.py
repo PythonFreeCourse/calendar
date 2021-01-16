@@ -1,5 +1,5 @@
 from app.config import session
-from app.utils.user import get_users, does_user_exist, create_user
+from app.utils.user import create_user, does_user_exist, get_users
 
 
 class TestUser:
