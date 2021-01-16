@@ -8,3 +8,10 @@ Cypress.Commands.add("login_service", (userName = Cypress.env('user'), passWord 
 		}
 	})
 })
+
+Cypress.Commands.add("logout_service", () => {
+	cy.request({
+		method: 'POST',
+		url: `/logout`,
+	})
+})
