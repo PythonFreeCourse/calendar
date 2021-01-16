@@ -1,5 +1,7 @@
 from typing import Optional
 from datetime import datetime
+import os, sys; sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 
 
 from fastapi import FastAPI, Request, Form
@@ -9,7 +11,7 @@ from fastapi.templating import Jinja2Templates
 # from pydantic import BaseModel
 
 
-from app.database.models import Event
+
 
 app = FastAPI()
 
@@ -19,13 +21,13 @@ app = FastAPI()
 templates = Jinja2Templates(directory="../templates")
 
 
-@app.get("/Calender/EditEvent", response_class=HTMLResponse)
+@app.get("/profile/EditEvent", response_class=HTMLResponse)
 async def insert_info(request: Request):
     return templates.TemplateResponse("editevent.html",{"request": request})
 
 
-@app.post("/Calender/EditEvent")
-def create_item(event_title: str = Form(...), location: Optional[str] = Form(None), from_date: Optional[datetime] = Form(...),
+@app.post("/profile#id={user_id}/EditEvent")
+def create_item(user_id: int, event_title: str = Form(...), location: Optional[str] = Form(None), from_date: Optional[datetime] = Form(...),
                 to_date: Optional[datetime] = Form(...), link_vc: str = Form(None), content: str = Form(None), repeated_event: str = Form(None)):
     # requierd args - title, from_date, to_date, user_id
     # check validation for the return valuo 
@@ -37,7 +39,7 @@ def create_item(event_title: str = Form(...), location: Optional[str] = Form(Non
     # try:
     if check_validation(event_title, from_date, to_date):
         pass
-        x = Event.content
+        # x = Event.content
     # insert the valuo to the DB with SQLalcemy 
 
 #  except Exception as identifier:
