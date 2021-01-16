@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 
 from app.database.database import Base, SessionLocal, engine
-from app.internal.email_use import send_basic_email
+from app.internal.email import send
 
 Base.metadata.create_all(bind=engine)
 
@@ -46,18 +46,16 @@ def profile(request: Request):
     })
 
 
-# sessions = SessionLocal()  # instance of db
-
-
 @app.post("/emailbackground")
 async def send_in_background(
     db: Session = Depends(get_db),
     send_to: str = "/",
     title: str = Form(...),
-    event_used: str = Form(...), user_to_send: str = Form(...),
+    event_used: str = Form(...),
+    user_to_send: str = Form(...),
     background_tasks: BackgroundTasks = BackgroundTasks
 ) -> RedirectResponse:
-    send_basic_email(
+    send(
         title=title, event_used=event_used,
         user_to_send=user_to_send,
         background_tasks=background_tasks, sessions=db)

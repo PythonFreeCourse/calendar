@@ -1,4 +1,5 @@
 import os
+
 from app.database.models import Event, User
 from fastapi import BackgroundTasks
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
@@ -17,10 +18,9 @@ conf = ConnectionConfig(
 fm = FastMail(conf)
 
 
-def send_basic_email(
+def send(
         sessions: Session, event_used: str, user_to_send: str,
-        title: str,
-        background_tasks: BackgroundTasks = BackgroundTasks) -> bool:
+        title: str, background_tasks: BackgroundTasks = BackgroundTasks) -> bool:
     """This function is being used to send emails in the background.
     It takes an event and a user and it sends the event to the user.
 

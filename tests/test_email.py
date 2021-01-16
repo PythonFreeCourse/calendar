@@ -1,9 +1,15 @@
-from app.internal.email_use import fm
-from fastapi import BackgroundTasks
+import os
+
 import pytest
+from app.internal.email import fm
+from fastapi import BackgroundTasks
+
+NO_CONFIG = pytest.mark.skipif(
+    os.getenv("MAIL_USERNAME") is None, reason="Config is not set!"
+)
 
 
-@pytest.mark.skip(reason="Config need to be set")
+@NO_CONFIG
 def test_email_send(client, sessions):
     fm.config.SUPPRESS_SEND = 1
     with fm.record_messages() as outbox:
@@ -16,13 +22,13 @@ def test_email_send(client, sessions):
         assert response.status_code == 303
 
 
-@pytest.mark.skip(reason="Config need to be set")
+@NO_CONFIG
 def test_failed_email_send(client, sessions):
     fm.config.SUPPRESS_SEND = 1
     with fm.record_messages() as outbox:
         response = client.post(
             "/emailbackground", data={
-                "event_used": "2", "user_to_send": "1",
+                "event_used": "10", "user_to_send": "1",
                 "title": "Testing",
                 "background_tasks": BackgroundTasks})
         assert len(outbox) == 0
