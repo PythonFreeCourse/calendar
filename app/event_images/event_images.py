@@ -49,28 +49,36 @@ IMAGES_RELATED_WORDS_MAP = {
     'concert': ['concert', 'gig', 'concerts', 'gigs'],
     'cycle': ['bicycle', 'cycling', 'bike', 'bicycles', 'bikes', 'Biking'],
     'dentist': ['dentist', 'dentistry', 'dental'],
-    'food': ['dinner', 'dinners', 'restaurant', 'restaurants', 'Family meal', 'lunch', 'lunches', 'luncheon'],
+    'food': ['dinner', 'dinners', 'restaurant', 'restaurants',
+             'Family meal', 'lunch', 'lunches', 'luncheon'],
     'drank': ['cocktail', 'drinks', 'cocktails'],
     'golf': ['golf'],
     'graduate': ['graduation'],
     'gym': ['gym', 'workout', 'workouts'],
     'haircut': ['haircut', 'hair'],
-    'halloween': ['halloween', 'helloween', "hallowe'en", 'Allhalloween', "All Hallows' Eve", "All Saints' Eve"],
+    'halloween': ['halloween', 'helloween', "hallowe'en",
+                  'Allhalloween', "All Hallows' Eve", "All Saints' Eve"],
     'hike': ['hiking', 'hike', 'hikes'],
     'kayak': ['kayaking'],
-    'music': ['piano', 'singing', 'music Class', 'choir practice', 'flute', 'orchestra', 'oboe', 'clarinet', 'saxophone', 'cornett', 'trumpet', 'contrabass', 'cello', 'trombone', 'tuba', 'music ensemble', 'string quartett', 'guitar lesson', 'classical music', 'choir'],
+    'music': ['piano', 'singing', 'music Class', 'choir practice',
+              'flute', 'orchestra', 'oboe', 'clarinet', 'saxophone',
+              'cornett', 'trumpet', 'contrabass', 'cello', 'trombone',
+              'tuba', 'music ensemble', 'string quartett',
+              'guitar lesson', 'classical music', 'choir'],
     'manicure': ['manicure', 'pedicure', 'manicures', 'pedicures'],
     'massage': ['massage', 'back rub', 'backrub', 'massages'],
     'pill': ['pills', 'medicines', 'medicine', 'drug', 'drugs'],
     'pingpong': ['ping pong', 'table tennis', 'ping-pong', 'pingpong'],
-    'plan': ['plan week', 'plan quarter', 'plan day', 'plan vacation', 'week planning', 'vacation planning'],
+    'plan': ['plan week', 'plan quarter', 'plan day', 'plan vacation',
+             'week planning', 'vacation planning'],
     'pokemon': ['pokemon'],
     'read': ['reading', 'newspaper'],
     'repair': ['fridge repair', 'handyman', 'electrician', 'DIY'],
     'ran': ['jog', 'jogging', 'running', 'jogs', 'runs'],
     'sail': ['sail', 'sailing', 'boat cruise', 'sailboat'],
     'santa': ['Santa Claus', 'Father Christmas'],
-    'ski': ['skiing', 'ski', 'skis', 'Snowboarding', 'snowshoeing', 'snow shoe', 'snow boarding'],
+    'ski': ['skiing', 'ski', 'skis', 'Snowboarding', 'snowshoeing',
+            'snow shoe', 'snow boarding'],
     'soccer': ['soccer'],
     'swam': ['swim', 'swimming', 'swims'],
     'tennis': ['tennis'],
@@ -103,9 +111,11 @@ def get_key(val: str) -> Optional[str]:
     Returns:
         str: The value's key in IMAGES_RELATED_WORDS_MAP dictionary..
     """
+    shrunken = remove_non_alphabet_chars(val).lower()
     for key, values in IMAGES_RELATED_WORDS_MAP.items():
-         if remove_non_alphabet_chars(val).lower() in [remove_non_alphabet_chars(val).lower() for val in values]:
-             return key
+        shrunken_list = [remove_non_alphabet_chars(v).lower() for v in values]
+        if shrunken in shrunken_list:
+            return key
 
 
 def search_token_in_related_words(token: str) -> Optional[str]:
@@ -136,7 +146,7 @@ def attach_image_to_event(event_content: str) -> str:
         if re.match(r'\w', token):
             try:
                 base_word = lemmatize(remove_non_alphabet_chars(token).lower())
-            except:
+            except ValueError:
                 base_word = token
             link = IMAGES_LINK_MAP.get(base_word)
             if link:
