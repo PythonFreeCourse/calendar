@@ -7,7 +7,7 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from PIL import Image
 
-from .. import config
+from app import config
 from ..database.models import User
 from ..database.database import get_db
 
