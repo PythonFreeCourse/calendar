@@ -28,6 +28,6 @@
 ├── schema.md
 └── tests
     ├── __init__.py
-    └── config.py
+    └── conftest.py
     └── test_profile.py
     └── test_app.py
