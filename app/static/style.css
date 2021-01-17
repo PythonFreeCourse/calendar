@@ -45,18 +45,12 @@ nav {
     grid-row: 1/3;
     font-size: 2.8rem;
     padding-left: 0.5rem;
-    transition: width 1s;
-    position: relative;
 }
 
 .menu div:hover {
     color: #FFDE4D;
 }
 
-nav:hover {
-    width: 40rem;
-    text-align: left;
-}
 
 .menu {
     position: sticky;

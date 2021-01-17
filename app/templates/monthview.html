@@ -21,19 +21,20 @@
 
     <header>
         <div>
-            <div class="title"> 10 OCTOBER 2021 </div>
+            <div class="title"> {{calendar['date'].day}} {{ calendar['strf_date'][1].upper() }} {{calendar['date'].year
+                }}</div>
             <div class="sec-title"> Milano 4 <sup>o</sup>c</div>
         </div>
         <div id="logo-div"><a href="/">
-                <h1 class="title"> PYLENDER </h1>
+                <h1 class="title"> PYLENDAR </h1>
             </a></div>
         <div id="header-bottom">
             <div class="search-div float-left"> Search </div>
             <div> Month </div>
         </div>
         <div class="calender-days-titles">
-            {% for day in dates['days_of_the_week'] %}
-            {% if day == dates['day'][0] %}
+            {% for day in calendar['days_of_the_week'] %}
+            {% if day == calendar['strf_date'][0] %}
             <div class="day-title uline-yellow"> {{ day.upper() }} </div>
             {% else %}
             <div class="day-title"> {{ day.upper() }}</div>
@@ -44,37 +45,29 @@
 
     <main class="main-grid">
         <div class="calender-grid">
-            {% for month in range(dates['date'].month, dates['date'].month + 2) %}
-            {% for day in range(dates['month_days'][0], dates['month_days'][1] + 1) %}
-            {% if day == dates['date'].day and month == dates['date'].month %}
+            {% for week in calendar['month_block'] %}
+            {% for i in range(week|length) %}
+            {% if week[i] == calendar['date'] %}
             <div class="day day_current">
-                <div class="day-number">{{day}}</div>
+                <div class="day-number">{{week[i].day}}</div>
                 <div class="daily-event t-very-lightgray bg-darkblue">daily event</div>
                 <div class="t-darkblue"><b>6PM</b> Meeting with Ode</div>
                 <div class="t-darkblue"><b>9PM</b> Meeting with Michele</div>
             </div>
-            {% elif day in (9, 10, 17, 23, 24, 30, 31) %}
-            <div class="day t-gray">
-                <div class="day-number">{{day}}</div>
-            </div>
-            {% elif day in (13, 29) %}
+            {% elif week[i].day == 1 %}
             <div class="day day_first">
-                <div class="day-number">{{day}}</div>
+                <div class="day-number">{{week[i].strftime('%A %b %y')}}</div>
                 <div class="daily-event t-very-lightgray bg-red">daily event</div>
                 <div><b>6PM</b> Meeting with yam</div>
                 <div><b>7PM</b> Meeting with Sagi</div>
             </div>
-
-            {% elif day in (18, ) %}
-            <div class="day">
-                <div class="day-number">{{day}}</div>
-                <div class="daily-event t-darkblue b-dashed-darkblue ">daily event</div>
-                <div><b>6PM</b> Meeting with yam</div>
-                <div><b>7PM</b> Meeting with Sagi</div>
+            {% elif i in (5, 6) and not (week[i] == calendar['date']) %}
+            <div class="day t-gray">
+                <div class="day-number">{{week[i].day}}</div>
             </div>
             {% else %}
             <div class="day">
-                <div class="day-number">{{day}}</div>
+                <div class="day-number">{{week[i].day}}</div>
             </div>
             {% endif %}
             {% endfor %}

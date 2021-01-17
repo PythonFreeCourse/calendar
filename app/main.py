@@ -1,15 +1,14 @@
+import datetime
+
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from datetime import datetime
+
 import calendar_grid
 
-
 app = FastAPI()
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
 templates = Jinja2Templates(directory="templates")
 
 
@@ -23,15 +22,18 @@ def home(request: Request):
 
 @app.get("/monthview")
 async def monthview(request: Request):
-    date = datetime.now()
+    date = datetime.date.today()
     return templates.TemplateResponse("monthview.html", {
         "request": request,
-        "dates": {
+        "calendar": {
             'date': date,
-            'month_days': calendar_grid.get_month_days(date.year, date.month),
+            'strf_date': calendar_grid.get_date_as_string(date),
             'days_of_the_week': calendar_grid.DAYS_OF_THE_WEEK,
-            'day': calendar_grid.get_day_name(date),
+            'month_block': calendar_grid.get_month_block(
+                datetime.date(date.year, date.month, 1)
+            )
         }})
+
 
 if __name__ == "__main__":
     uvicorn.run(app)
