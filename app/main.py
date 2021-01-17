@@ -1,32 +1,34 @@
+import os
+from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from . import config
+from .database import models
+from .database.database import SessionLocal, engine
+from .routers import profile
+
+
+models.Base.metadata.create_all(bind=engine)
+
+MEDIA_PATH = Path(config.MEDIA_DIRECTORY).absolute()
+STATIC_PATH = Path('app/static').absolute()
 
 app = FastAPI()
+app.include_router(profile.router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
+app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-templates = Jinja2Templates(directory="templates")
+
+templates = Jinja2Templates(directory="app/templates")
 
 
 @app.get("/")
-def home(request: Request):
+async def home(request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!"
-    })
-
-
-@app.get("/profile")
-def profile(request: Request):
-
-    # Get relevant data from database
-    upcouming_events = range(5)
-    current_username = "Chuck Norris"
-
-    return templates.TemplateResponse("profile.html", {
-        "request": request,
-        "username": current_username,
-        "events": upcouming_events
     })

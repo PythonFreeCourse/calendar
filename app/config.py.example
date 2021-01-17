@@ -1,0 +1,9 @@
+# flake8: noqa
+
+import os
+
+
+# MEDIA
+MEDIA_DIRECTORY = 'app/media'
+PICTURE_EXTENSION = '.png'
+AVATAR_SIZE = (120, 120)

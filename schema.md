@@ -13,9 +13,11 @@
 │       ├── admin.py
 │   ├── routers
 │       ├── __init__.py
+│       ├── profile.py
+│   ├── media
+│       ├── example.png
+│       ├── profile.png
 │   ├── static
-│       ├── images
-│           ├── profile.png
 │       ├── style.css
 │   ├── templates
 │       ├── base.html
@@ -26,4 +28,6 @@
 ├── schema.md
 └── tests
     ├── __init__.py
+    └── config.py
+    └── test_profile.py
     └── test_app.py
