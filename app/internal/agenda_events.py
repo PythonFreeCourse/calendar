@@ -1,21 +1,25 @@
 from datetime import date, datetime, timedelta
-from typing import Optional
+from typing import List, Optional
 
 from app.database.models import Event
 from app.database.database import SessionLocal
-
+import arrow
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def get_events_per_dates(session: SessionLocal, user_id: int, start: Optional[date], end: Optional[date]) -> list:
-    """Read function from the db. Return a list of all the user events between
+def get_events_per_dates(
+    session: SessionLocal,
+    user_id: int,
+    start: Optional[date],
+    end: Optional[date]) -> List[Event]:
+    """Read from the db. Return a list of all the user events between
     the relevant dates."""
     if start > end:
         return []
     try:
         events = (
             session.query(Event).filter(Event.owner_id == user_id)
-            .filter((Event.start >= start) & (Event.start <= end + timedelta(days=1)))
+            .filter(Event.start.between(start, end + timedelta(days=1)))
             .order_by(Event.start).all()
             )
     except SQLAlchemyError:
@@ -24,31 +28,25 @@ def get_events_per_dates(session: SessionLocal, user_id: int, start: Optional[da
         return events
 
 
-def calc_dates_range_for_agenda(start: Optional[date], end: Optional[date], days: Optional[int]) -> (date, date):
-    """Create start and end dates eccording to the parameters in the page."""
-    if days is not None:
-        start = date.today()
-        end = start + timedelta(days=days)
-    elif start is None or end is None:
-        start = date.today()
-        end = date.today()
-    return start, end
-
-
-def get_time_delta_string(start_date: date, end_date: date) -> str:
-    """Rerurn time delta as string- by days, hours or minutes."""
-    total_minutes = (end_date - start_date).total_seconds() / 60
-    days = int(total_minutes / (24 * 60 ))
-    hours = int((total_minutes - (days * 24 * 60)) / 60)
-    minutes = int(total_minutes - (days * 24 * 60 + hours * 60))
-    if days > 0:
-        if hours == 0 and minutes == 0:
-            return f'{days} days'
-        if hours > 0 and minutes == 0:
-            return f'{days} days, {hours} hours'
-        return f'{days} days, {hours}:{minutes} hours'
+def build_arrow_delta_granularity(diff: timedelta) -> List[str]:
+    """Builds the granularity for the arrow module string"""
+    granularity = []
+    if diff.days > 0:
+        granularity.append("day")
+    hours, remainder = divmod(diff.seconds, 60 * 60)
     if hours > 0:
-        if minutes > 0:
-            return f'{hours}:{minutes} hours'
-        return f'{hours} hours'
-    return f'{minutes} minutes'
+        granularity.append("hour")
+    minutes, _ = divmod(remainder, 60)
+    if minutes > 0:
+        granularity.append("minute")
+    return granularity
+
+
+def get_time_delta_string(start: date, end: date) -> str:
+    """Builds a string of the event's duration- days, hours and minutes."""
+    arrow_start = arrow.get(start)
+    arrow_end = arrow.get(end)
+    diff = end - start
+    granularity = build_arrow_delta_granularity(diff)
+    duration_string = arrow_end.humanize(arrow_start, only_distance=True, granularity=granularity)
+    return duration_string

@@ -1,11 +1,7 @@
 import os
 
-from datetime import date, timedelta
-from collections import defaultdict 
-from typing import Optional
-
-from app.database.database import engine, SessionLocal
-from app.internal import agenda_events
+from app.database.database import SessionLocal
+from app.routers import agenda
 
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -20,6 +16,8 @@ templates_path = os.path.join(app_path, "templates")
 
 app.mount("/static", StaticFiles(directory=static_path), name="static")
 templates = Jinja2Templates(directory=templates_path)
+
+app.include_router(agenda.router)
 
 
 @app.get("/")
@@ -42,32 +40,3 @@ def profile(request: Request):
         "username": current_username,
         "events": upcouming_events
     })
-
-
-@app.get("/agenda")
-def agenda(
-    request: Request,
-    start_date: Optional[date]=None,
-    end_date: Optional[date]=None,
-    days: Optional[int]=None) -> Jinja2Templates:
-    """Route for the agenda page, using dates range or exact amount of days."""
-    
-    user_id = 1   # there is no user session yet, so I use user id- 1.
-    start_date, end_date = agenda_events.calc_dates_range_for_agenda(start_date, end_date, days)
-
-    db_session = SessionLocal()
-    events_objects = agenda_events.get_events_per_dates(db_session, user_id, start_date, end_date)
-    events = defaultdict(list)
-    for event_object in events_objects:
-        event_duration = agenda_events.get_time_delta_string(event_object.start, event_object.end)
-        events[event_object.start.date()].append((event_object, event_duration))
-    db_session.close()
-
-    return templates.TemplateResponse("agenda.html", {
-        "request": request,
-        "events": events, 
-        "start_date": start_date,
-        "end_date": end_date
-    })
-
-

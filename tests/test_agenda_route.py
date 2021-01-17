@@ -1,8 +1,7 @@
 from datetime import date, datetime, timedelta
 from app.database.models import User, Event
 
-
-HTTP_OK = 200
+from fastapi import status
 
 
 class TestAgenda:
@@ -62,14 +61,14 @@ class TestAgenda:
     @staticmethod
     def test_agenda_page_no_arguments_when_no_today_events(client):
         resp = client.get(TestAgenda.AGENDA)
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert TestAgenda.NO_EVENTS in resp.content
 
     @staticmethod
     def test_agenda_page_no_arguments_when_today_events_exist(client, session):
         TestAgenda.create_data_user_1(session)
         resp = client.get(TestAgenda.AGENDA)
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert b"event 1" in resp.content
         assert b"event 2" in resp.content
         assert b"event 3" not in resp.content
@@ -82,7 +81,7 @@ class TestAgenda:
         TestAgenda.create_data_user_1(session)
         resp = client.get(TestAgenda.AGENDA_7_DAYS)
         today = date.today().strftime("%d/%m/%Y")
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert bytes(today, 'utf-8') in resp.content
         assert b"event 1" in resp.content
         assert b"event 2" in resp.content
@@ -96,7 +95,7 @@ class TestAgenda:
         TestAgenda.create_data_user_1(session)
         resp = client.get(TestAgenda.AGENDA_30_DAYS)
         today = date.today().strftime("%d/%m/%Y")
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert bytes(today, 'utf-8') in resp.content
         assert b"event 1" in resp.content
         assert b"event 2" in resp.content
@@ -112,7 +111,7 @@ class TestAgenda:
         start_date = (base_date + timedelta(days=8, hours=4)).date()
         end_date = (base_date + timedelta(days=32, hours=4)).date()
         resp = client.get(f"/agenda?start_date={start_date}&end_date={end_date}")
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert b"event 1" not in resp.content
         assert b"event 2" not in resp.content
         assert b"event 3" not in resp.content
@@ -126,7 +125,7 @@ class TestAgenda:
         start_date = base_date.date()
         end_date = (base_date - timedelta(days=2)).date()
         resp = client.get(f"/agenda?start_date={start_date}&end_date={end_date}")
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert TestAgenda.INVALID_DATES in resp.content
 
     @staticmethod
@@ -134,6 +133,6 @@ class TestAgenda:
         TestAgenda.create_data_user_1(session)
         TestAgenda.create_data_user_2(session)
         resp = client.get(TestAgenda.AGENDA)
-        assert resp.status_code == HTTP_OK
+        assert resp.status_code == status.HTTP_200_OK
         assert b"event 7" not in resp.content
 
