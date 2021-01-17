@@ -14,9 +14,13 @@
 │   ├── routers
 │       ├── __init__.py
 │   ├── static
+│       ├── images
+│           ├── profile.png
 │       ├── style.css
 │   ├── templates
+│       ├── base.html
 │       ├── home.html
+│       ├── profile.html
 ├── LICENSE
 ├── requirements.txt
 ├── schema.md
