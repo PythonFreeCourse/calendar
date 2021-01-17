@@ -22,12 +22,12 @@ class Event:
     def _set_total_time(self):
         self.total_time = self.start_time.strftime("%H:%M") + ' - ' + self.end_time.strftime("%H:%M")
 
-    def __init__(self, id: int, color: str, content: str, start_date_n_time: datetime, end_date_n_time: datetime) -> None:
+    def __init__(self, id: int, color: str, content: str, start_datetime: str, end_datetime: str) -> None:
         self.id = id
         self.color = color
         self.content = content
-        self.start_time = start_date_n_time
-        self.end_time = end_date_n_time
+        self.start_time = datetime.strptime(start_datetime, "%d/%m/%Y %H:%M")
+        self.end_time = datetime.strptime(end_datetime, "%d/%m/%Y %H:%M")
         self._set_total_time()
         self._set_grid_position()
 
