@@ -5,44 +5,8 @@ from word_forms.lemmatizer import lemmatize
 import re
 
 
-IMAGES_LINK_MAP = {
-    'birthday': r'event_flairs\birthday.jpg',
-    'coffee': r'event_flairs\coffee.jpg',
-    'concert': r'event_flairs\concert.jpg',
-    'cycle': r'event_flairs\cycling.jpg',
-    'dentist': r'event_flairs\dentist.jpg',
-    'food': r'event_flairs\food.jpg',
-    'drank': r'event_flairs\drinks.png',
-    'golf': r'event_flairs\golf.jpg',
-    'graduate': r'event_flairs\graduation.jpg',
-    'gym': r'event_flairs\gym.jpg',
-    'haircut': r'event_flairs\haircut.jpg',
-    'halloween': r'event_flairs\halloween.jpg',
-    'hike': r'event_flairs\hiking.png',
-    'kayak': r'event_flairs\kayaking.jpg',
-    'music': r'event_flairs\music.jpg',
-    'manicure': r'event_flairs\manicure.jpg',
-    'massage': r'event_flairs\massage.jpg',
-    'pill': r'event_flairs\pills.jpg',
-    'pingpong': r'event_flairs\pingpong.jpg',
-    'plan': r'event_flairs\plan.jpg',
-    'pokemon': r'event_flairs\pokemon.jpg',
-    'read': r'event_flairs\read.jpg',
-    'repair': r'event_flairs\repair.png',
-    'ran': r'event_flairs\running.jpg',
-    'sail': r'event_flairs\sailing.jpg',
-    'santa': r'event_flairs\santa.png',
-    'ski': r'event_flairs\skiing.jpg',
-    'soccer': r'event_flairs\soccer.jpg',
-    'swam': r'event_flairs\swimming.png',
-    'tennis': r'event_flairs\Tennis.png',
-    'thanksgiving': r'event_flairs\thanksgiving.jpg',
-    'wed': r'event_flairs\wedding.jpg',
-    'christmas': r'event_flairs\xmas.jpg',
-    'yoga': r'event_flairs\yoga.jpg',
-}
-
-
+FLAIRS_EXTENSION = '.jpg'
+FLAIRS_REL_PATH = r'event_flairs'
 IMAGES_RELATED_WORDS_MAP = {
     'birthday': ['birthday'],
     'coffee': ['coffee', 'coffees'],
@@ -89,6 +53,18 @@ IMAGES_RELATED_WORDS_MAP = {
 }
 
 
+def generate_flare_link_from_lemmatized_word(lemmatized_word: str) -> str:
+    """Generate a link to a flair by a given lemmatized word.
+
+    Args:
+        lemmatized_word (str): The lemmatized word.
+
+    Returns:
+        str: The suitable link.
+    """
+    return f'{FLAIRS_REL_PATH}\{lemmatized_word}{FLAIRS_EXTENSION}'
+
+
 def remove_non_alphabet_chars(s: str) -> str:
     """Remove non-alphabet chars from a given string
 
@@ -129,7 +105,7 @@ def search_token_in_related_words(token: str) -> Optional[str]:
     """
     key = get_key(token)
     if key:
-        return IMAGES_LINK_MAP.get(key)
+        return generate_flare_link_from_lemmatized_word(key)
 
 
 def attach_image_to_event(event_content: str) -> str:
@@ -148,11 +124,12 @@ def attach_image_to_event(event_content: str) -> str:
                 base_word = lemmatize(remove_non_alphabet_chars(token).lower())
             except ValueError:
                 base_word = token
-            link = IMAGES_LINK_MAP.get(base_word)
-            if link:
-                return link
+            if base_word in IMAGES_RELATED_WORDS_MAP.keys():
+                return generate_flare_link_from_lemmatized_word(base_word)
             link = search_token_in_related_words(token)
             if link:
                 return link
             link = '#'
     return link
+
+print(attach_image_to_event("Don't forget backrub and medicines!!!!"))

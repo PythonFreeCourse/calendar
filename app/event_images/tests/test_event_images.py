@@ -1,6 +1,20 @@
 from event_images import attach_image_to_event, get_key,\
+    generate_flare_link_from_lemmatized_word,\
     remove_non_alphabet_chars, search_token_in_related_words
 import pytest
+
+
+lemmatized_words = [
+    ("ran",  r'event_flairs\ran.jpg'),
+    ("food", r'event_flairs\food.jpg'),
+    ("i",  r'event_flairs\i.jpg'),
+    ("drank",  r'event_flairs\drank.jpg'),
+]
+
+
+@pytest.mark.parametrize('lemmatized, link', lemmatized_words)
+def test_generate_flare_link_from_lemmatized_word(lemmatized, link):
+    assert generate_flare_link_from_lemmatized_word(lemmatized) == link
 
 
 contents = [
@@ -32,7 +46,7 @@ def test_get_key(value, key):
 
 tokens = [
     (r"backrub", r'event_flairs\massage.jpg'),
-    (r"--MedicineS", r'event_flairs\pills.jpg'),
+    (r"--MedicineS", r'event_flairs\pill.jpg'),
     (r"restaurants", r'event_flairs\food.jpg'),
     (r"pikachu", None),
     (r"Pokemon", r'event_flairs\pokemon.jpg'),
@@ -46,9 +60,9 @@ def test_search_token_in_related_words(token, link):
 
 event_contents = [
     (r"Don't forget backrub and medicines!!!!", r'event_flairs\massage.jpg'),
-    (r"Don't forget medicines and backrub!!!!", r'event_flairs\pills.jpg'),
-    (r"It's important to drink", r'event_flairs\drinks.png'),
-    (r"call Jim about tennis on friday", r'event_flairs\Tennis.png'),
+    (r"Don't forget medicines and backrub!!!!", r'event_flairs\pill.jpg'),
+    (r"It's important to drink", r'event_flairs\drank.jpg'),
+    (r"call Jim about tennis on friday", r'event_flairs\tennis.jpg'),
     (r"have to check on pikachu", r'#'),
     (r"---~ new pokemon episode at 19:00 ~~!!", r'event_flairs\pokemon.jpg'),
 ]
