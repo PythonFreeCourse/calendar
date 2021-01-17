@@ -1,0 +1,67 @@
+
+:root {
+    --theme-blue:#30465D;
+    --theme-yellow:#FFDE4D;
+    --theme-red:#EF5454;
+    --theme-grey:#E7E7E7;
+    --theme-ligth-grey:#F7F7F7;
+}
+
+html {
+    font-family: 'Assistant', sans-serif;
+    text-align: center;
+}
+
+#phoneframe {
+    width: 260px;
+    height: 480px;
+    border: 1px solid black;
+    box-shadow: 0px 0px 10px;
+    overflow: scroll;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#phoneframe::-webkit-scrollbar {
+    display: none;
+  }
+
+#toptab {
+    background-color: var(--theme-blue);
+}
+
+
+.scedual {
+    display: grid;
+    grid-template-rows: 1;
+}
+
+.times {
+    margin-top: 0.65em;
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    z-index: 40;
+}
+
+.baselines {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    z-index: 38;
+}
+
+.eventgrid {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: repeat(100, 0.375rem);
+    z-index: 39;
+}
+
+.hourbar {
+    margin-top: -1px;
+}
+
+.total-time {
+    font-size: 0.8em;
+}
