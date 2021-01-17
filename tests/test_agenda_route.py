@@ -13,7 +13,7 @@ class TestAgenda:
 
     @staticmethod
     def base_today_date():
-        return datetime.today().replace(hour=0, minute=0,second=0)
+        return datetime.today().replace(hour=0, minute=0, second=0)
 
     @staticmethod
     def create_user_1(session):
@@ -31,7 +31,8 @@ class TestAgenda:
 
     @staticmethod
     def add_event(session, title, content, start, end, owner_id):
-        event = Event(title=title, content=content, start=start, end=end, owner_id=owner_id)
+        event = Event(title=title, content=content,
+            start=start, end=end, owner_id=owner_id)
         session.add(event)
         session.commit()
 
@@ -40,17 +41,29 @@ class TestAgenda:
         user = TestAgenda.create_user_1(session)
         base_date = TestAgenda.base_today_date()
         # Today event
-        TestAgenda.add_event(session, "event 1", "...", base_date + timedelta(hours=7), base_date + timedelta(hours=9), user.id)
+        TestAgenda.add_event(session, "event 1", "...",
+            base_date + timedelta(hours=7),
+            base_date + timedelta(hours=9), user.id)
         # Today event
-        TestAgenda.add_event(session, "event 2", "...", base_date + timedelta(hours=3), base_date + timedelta(days=2, hours=3), user.id)
+        TestAgenda.add_event(session, "event 2", "...",
+            base_date + timedelta(hours=3), 
+            base_date + timedelta(days=2, hours=3), user.id)
         # Yesterday event
-        TestAgenda.add_event(session, "event 3", "..", base_date - timedelta(hours=8), base_date, user.id)
+        TestAgenda.add_event(session, "event 3", "..",
+            base_date - timedelta(hours=8),
+            base_date, user.id)
         # Event in this week
-        TestAgenda.add_event(session, "event 4", "...", base_date + timedelta(days=7, hours=2), base_date + timedelta(days=7, hours=4), user.id)
+        TestAgenda.add_event(session, "event 4", "...",
+            base_date + timedelta(days=7, hours=2),
+            base_date + timedelta(days=7, hours=4), user.id)
         # Event in this month.
-        TestAgenda.add_event(session, "event 5", "...", base_date + timedelta(days=20, hours=4), base_date + timedelta(days=20, hours=6), user.id)
+        TestAgenda.add_event(session, "event 5", "...",
+            base_date + timedelta(days=20, hours=4),
+            base_date + timedelta(days=20, hours=6), user.id)
         # Old event
-        TestAgenda.add_event(session, "event 6", "..", base_date - timedelta(days=5), base_date, user.id)
+        TestAgenda.add_event(session, "event 6", "..",
+            base_date - timedelta(days=5),
+            base_date, user.id)
 
     @staticmethod
     def create_data_user_2(session):
@@ -110,7 +123,8 @@ class TestAgenda:
         base_date = TestAgenda.base_today_date()
         start_date = (base_date + timedelta(days=8, hours=4)).date()
         end_date = (base_date + timedelta(days=32, hours=4)).date()
-        resp = client.get(f"/agenda?start_date={start_date}&end_date={end_date}")
+        resp = client.get(
+            f"/agenda?start_date={start_date}&end_date={end_date}")
         assert resp.status_code == status.HTTP_200_OK
         assert b"event 1" not in resp.content
         assert b"event 2" not in resp.content
@@ -124,7 +138,8 @@ class TestAgenda:
         base_date = TestAgenda.base_today_date()
         start_date = base_date.date()
         end_date = (base_date - timedelta(days=2)).date()
-        resp = client.get(f"/agenda?start_date={start_date}&end_date={end_date}")
+        resp = client.get(
+            f"/agenda?start_date={start_date}&end_date={end_date}")
         assert resp.status_code == status.HTTP_200_OK
         assert TestAgenda.INVALID_DATES in resp.content
 
@@ -135,4 +150,3 @@ class TestAgenda:
         resp = client.get(TestAgenda.AGENDA)
         assert resp.status_code == status.HTTP_200_OK
         assert b"event 7" not in resp.content
-

@@ -24,7 +24,7 @@ class Event(Base):
     title = Column(String)
     content = Column(String)
     start = Column(DateTime, nullable=False)
-    end = Column(DateTime, nullable=False) 
+    end = Column(DateTime, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    
+
     owner = relationship("User", back_populates="events")

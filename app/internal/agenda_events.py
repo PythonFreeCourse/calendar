@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from typing import List, Optional
 
 from app.database.models import Event
@@ -8,10 +8,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 def get_events_per_dates(
-    session: SessionLocal,
-    user_id: int,
-    start: Optional[date],
-    end: Optional[date]) -> List[Event]:
+        session: SessionLocal,
+        user_id: int,
+        start: Optional[date],
+        end: Optional[date]
+        ) -> List[Event]:
     """Read from the db. Return a list of all the user events between
     the relevant dates."""
     if start > end:
@@ -48,5 +49,7 @@ def get_time_delta_string(start: date, end: date) -> str:
     arrow_end = arrow.get(end)
     diff = end - start
     granularity = build_arrow_delta_granularity(diff)
-    duration_string = arrow_end.humanize(arrow_start, only_distance=True, granularity=granularity)
+    duration_string = arrow_end.humanize(
+        arrow_start, only_distance=True, granularity=granularity
+        )
     return duration_string
