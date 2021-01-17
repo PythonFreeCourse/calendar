@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -7,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 
 from . import config
 from .database import models
-from .database.database import SessionLocal, engine
+from .database.database import engine
 from .routers import profile
 
 
