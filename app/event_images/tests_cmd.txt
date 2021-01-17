@@ -1,0 +1,7 @@
+pytest:
+
+C:\Users\nir\Desktop\week16\project\tests>python -m pytest
+
+coverage:
+
+C:\Users\nir\Desktop\week16\project\tests>pytest --cov=event_images
