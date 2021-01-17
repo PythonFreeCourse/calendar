@@ -3,6 +3,7 @@ import datetime
 from event import Event
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
@@ -38,6 +39,19 @@ def dayview(request: Request):
         "DAY": start.day
         })
 
+
+@app.get("/profile")
+def profile(request: Request):
+
+    # Get relevant data from database
+    upcouming_events = range(5)
+    current_username = "Chuck Norris"
+
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "username": current_username,
+        "events": upcouming_events
+    })
 
 if __name__ == "__main__":
     uvicorn.run('main', host="0.0.0.0", port=8000, reload=True)
