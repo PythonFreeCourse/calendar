@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.utils.utils import save
+from app.internal.utils import save
 
 
 class TestUtils:

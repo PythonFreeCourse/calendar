@@ -1,4 +1,4 @@
-from app.utils.user import create_user, does_user_exist, get_users
+from app.internal.user import create_user, does_user_exist, get_users
 
 
 class TestUser:

@@ -1,7 +1,7 @@
-from app.internal.share_event import (
+from app.internal.share.share_event import (
     accept, send_in_app_invitation, sort_emails
 )
-from app.utils.invitation import get_all_invitations
+from app.internal.invitation import get_all_invitations
 
 
 class TestShareEvent:

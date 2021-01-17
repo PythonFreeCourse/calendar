@@ -2,7 +2,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database.models import User
-from app.utils.utils import save
+from app.internal.utils import save
 
 
 def create_user(username, password, email, session: Session) -> User:

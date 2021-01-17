@@ -10,7 +10,7 @@
     {% if invitations %}
         <div>
         {% for i in invitations %}
-            <form action="\invitations" method="post">
+            <form action="{{ url_for('invitations') }}" method="post">
                 <span>{{ i.event.owner.username }} - {{ i.event.title }} ({{ i.event.start }}) ({{ i.status }})</span>
                 <input type="hidden" value="{{ i.id }}" name="invite_id">
                 <input type="submit" value="Accept">
