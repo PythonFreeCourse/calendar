@@ -106,7 +106,7 @@ def get_key(val: str) -> Optional[str]:
     """Search the key of a given value in IMAGES_RELATED_WORDS_MAP dictionary.
 
     Args:
-        val (str): The value to search its key in IMAGES_RELATED_WORDS_MAP dictionary.
+        val (str): The value to search its key.
 
     Returns:
         str: The value's key in IMAGES_RELATED_WORDS_MAP dictionary..
