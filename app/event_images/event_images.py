@@ -62,7 +62,7 @@ def generate_flare_link_from_lemmatized_word(lemmatized_word: str) -> str:
     Returns:
         str: The suitable link.
     """
-    return f'{FLAIRS_REL_PATH}\{lemmatized_word}{FLAIRS_EXTENSION}'
+    return f'{FLAIRS_REL_PATH}\\{lemmatized_word}{FLAIRS_EXTENSION}'
 
 
 def remove_non_alphabet_chars(s: str) -> str:
@@ -131,5 +131,3 @@ def attach_image_to_event(event_content: str) -> str:
                 return link
             link = '#'
     return link
-
-print(attach_image_to_event("Don't forget backrub and medicines!!!!"))
