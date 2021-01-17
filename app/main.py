@@ -4,7 +4,7 @@ from datetime import datetime
 
 from fastapi import Depends, FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
+# from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import models
@@ -59,7 +59,7 @@ async def insert_info(request: Request):
 
 
 @app.post("/profile/{user_id}/EditEvent")
-def create_item(user_id: int, event_title: str = Form(...), location: Optional[str] = Form(None), from_date: Optional[datetime] = Form(...),
+def create_event(user_id: int, event_title: str = Form(...), location: Optional[str] = Form(None), from_date: Optional[datetime] = Form(...),
                 to_date: Optional[datetime] = Form(...), link_vc: str = Form(None), content: str = Form(None), repeated_event: str = Form(None),
                 db = Depends(get_db)):
     """ required args - title, from_date, to_date, user_id, the 'from_date' need to be early from the 'to_date'.
@@ -76,7 +76,6 @@ def create_item(user_id: int, event_title: str = Form(...), location: Optional[s
             new_event = add_event(event_value, user_id, db)
             success = True
             event_id = new_event.id
-            error_msg = ""
         else:
             error_msg = "Error, Your date is invalid"
     except Exception as e:
