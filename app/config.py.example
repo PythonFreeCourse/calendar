@@ -1,7 +1,8 @@
 # flake8: noqa
 
-import os
 
+# DATABASE
+DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
 
 # MEDIA
 MEDIA_DIRECTORY = 'app/media'
