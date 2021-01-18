@@ -1,5 +1,5 @@
-from app.routers import agenda, event
 from app.dependencies import STATIC_PATH, TEMPLATES_PATH
+from app.routers import agenda, event
 
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
