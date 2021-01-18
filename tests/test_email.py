@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from app.internal.email import fm
+from app.internal.email import mail
 from fastapi import BackgroundTasks
 
 NO_CONFIG = pytest.mark.skipif(
@@ -10,12 +10,12 @@ NO_CONFIG = pytest.mark.skipif(
 
 
 @NO_CONFIG
-def test_email_send(client, sessions):
-    fm.config.SUPPRESS_SEND = 1
-    with fm.record_messages() as outbox:
+def test_email_send(client, user, event):
+    mail.config.SUPPRESS_SEND = 1
+    with mail.record_messages() as outbox:
         response = client.post(
-            "/emailbackground", data={
-                "event_used": "1", "user_to_send": "1",
+            "/email_send/", data={
+                "event_used": event.id, "user_to_send": user.id,
                 "title": "Testing",
                 "background_tasks": BackgroundTasks})
         assert len(outbox) == 1
@@ -23,13 +23,13 @@ def test_email_send(client, sessions):
 
 
 @NO_CONFIG
-def test_failed_email_send(client, sessions):
-    fm.config.SUPPRESS_SEND = 1
-    with fm.record_messages() as outbox:
+def test_failed_email_send(client, user, event):
+    mail.config.SUPPRESS_SEND = 1
+    with mail.record_messages() as outbox:
         response = client.post(
-            "/emailbackground", data={
-                "event_used": "10", "user_to_send": "1",
+            "/email_send/", data={
+                "event_used": event.id + 1, "user_to_send": user.id,
                 "title": "Testing",
                 "background_tasks": BackgroundTasks})
         assert len(outbox) == 0
-        assert response.status_code == 303
+        assert response.status_code == 404
