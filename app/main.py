@@ -7,17 +7,13 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from routers import event
+from dependencies import STATIC_PATH, TEMPLATES_PATH
 
 app = FastAPI()
 
-app_path = os.path.dirname(os.path.realpath(__file__))
-static_path = os.path.join(app_path, "static")
-templates_path = os.path.join(app_path, "templates")
-
-app.mount("/static", StaticFiles(directory=static_path), name="static")
-templates = Jinja2Templates(directory=templates_path)
-
-app.include_router(agenda.router)
+app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
+templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 
 @app.get("/")
@@ -30,7 +26,6 @@ def home(request: Request):
 
 @app.get("/profile")
 def profile(request: Request):
-
     # Get relevant data from database
     upcouming_events = range(5)
     current_username = "Chuck Norris"
@@ -40,3 +35,7 @@ def profile(request: Request):
         "username": current_username,
         "events": upcouming_events
     })
+
+
+app.include_router(event.router)
+app.include_router(agenda.router)

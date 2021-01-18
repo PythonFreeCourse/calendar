@@ -6,6 +6,7 @@ certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
 colorama==0.4.4
+coverage==5.3.1
 fastapi==0.63.0
 h11==0.12.0
 h2==4.0.0
@@ -23,6 +24,9 @@ py==1.10.0
 pydantic==1.7.3
 pyparsing==2.4.7
 pytest==6.2.1
+pytest-cov==2.10.1
+python-dotenv==0.15.0
+PyYAML==5.3.1
 python-dateutil==2.8.1
 requests==2.25.1
 six==1.15.0
@@ -32,5 +36,7 @@ toml==0.10.2
 typing-extensions==3.7.4.3
 urllib3==1.26.2
 uvicorn==0.13.3
+watchgod==0.6
+websockets==8.1
 wsproto==1.0.0
 zipp==3.4.0
