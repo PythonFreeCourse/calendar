@@ -1,3 +1,8 @@
+import os
+
+from app.database.database import SessionLocal
+from app.routers import agenda
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -7,8 +12,8 @@ from dependencies import STATIC_PATH, TEMPLATES_PATH
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory=TEMPLATES_PATH)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
+templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 
 @app.get("/")
@@ -33,3 +38,4 @@ def profile(request: Request):
 
 
 app.include_router(event.router)
+app.include_router(agenda.router)
