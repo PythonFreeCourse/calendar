@@ -34,10 +34,10 @@ def profile(request: Request):
     })
 
 
-@app.get("/monthview")
+@app.get("/calendar")
 async def monthview(request: Request):
     date = datetime.date.today()
-    return templates.TemplateResponse("monthview.html", {
+    return templates.TemplateResponse("calendar.html", {
         "request": request,
         "calendar": {
             'date': date,

@@ -31,11 +31,12 @@ a {
     text-decoration: none;
     color: inherit;
 }
+
 /* Grids */
 /* -> Website Structure */
 .container {
     display: grid;
-    grid-template-columns: minmax(4.5rem, auto) 1fr;  /* The Header Hight */
+    grid-template-columns: minmax(4.5rem, auto) 1fr;
     grid-auto-rows: minmax(3rem, auto);
 }
 
@@ -47,10 +48,7 @@ nav {
     padding-left: 0.5rem;
 }
 
-.menu div:hover {
-    color: #FFDE4D;
-}
-
+.menu div:hover {color: #FFDE4D;}
 
 .menu {
     position: sticky;
@@ -58,9 +56,7 @@ nav {
     flex-direction: column;
 }
 
-img {
-    fill: #F7F7F7;
-}
+img {fill: #F7F7F7;}
 
 header {
     background-color: #F7F7F7;
@@ -93,13 +89,7 @@ header {
     margin-top: 1rem;
 }
 
-/* -> The calendar grid */
-.calender-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-}
-
-/* -> Main structure */
+/* -> Main Grid */
 .main-grid {
     display: grid;
     width: 100%;
@@ -108,8 +98,10 @@ header {
     padding: 0 1rem 0 1rem;
 }
 
-.week {
-    border: 3px solid black;
+/* -> The calendar grid */
+.calender-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
 }
 
 #event-menu {
@@ -117,7 +109,6 @@ header {
     grid-column: 2/3;
     grid-row: 1/3;
 }
-
 
 .calendar-grid div {
     font-weight: 900;
@@ -127,7 +118,6 @@ header {
 
 .day {
     display: flex;
-    /* flex-flow: column wrap; */
     flex-direction: column;
 
     height: 12rem;
@@ -137,7 +127,6 @@ header {
 }
 
 .day:hover {
-    /* font-size: 3rem; */
     border: 0.3rem solid #222831;
     color: #F24726;
     transition: border 0.1s;
@@ -181,40 +170,22 @@ header {
 }
 
 /* Text Colors */
-.t-yellow {
-    color: #FFDE4D;
-}
+.t-yellow {color: #FFDE4D;}
 
-.t-gray {
-    color: #adb5bd;
-}
+.t-gray {color: #adb5bd;}
 
-.t-very-lightgray {
-    color: #F7F7F7;
-}
+.t-very-lightgray {color: #F7F7F7;}
 
-.t-darkblue {
-    color: #222831;
-}
+.t-darkblue {color: #222831;}
 
 /* Borders */
-.b-dashed-darkblue {
-    border: 2px dashed  #222831;
-}
+.b-dashed-darkblue {border: 2px dashed  #222831;}
 
-.b-darkblue {
-    border: 2px solid  #222831;
-}
+.b-darkblue {border: 2px solid  #222831;}
 
-.uline-yellow {
-    border-bottom: 4px solid  #FFDE4D;
-}
+.uline-yellow {border-bottom: 4px solid  #FFDE4D;}
 
 /* Background Color */
-.bg-darkblue {
-    background-color: #222831;
-}
+.bg-darkblue {background-color: #222831;}
 
-.bg-red {
-    background-color: #F24726;
-}
+.bg-red {background-color: #F24726;}

@@ -2,11 +2,13 @@ import calendar
 import itertools
 from datetime import datetime, timedelta
 
-from typing import Any, Iterator, Generator, List, Tuple
+from typing import Any, Iterator, Generator, List
 
 DAYS_OF_THE_WEEK: List[str] = ['Monday', 'Tuesday', 'Wednesday',
                                'Thursday', 'Friday', 'Saturday', 'Sunday']
 CALENDAR = calendar.Calendar(0)
+DISPLAY_BLOCK = 100
+WEEK_DAYS = 7
 
 
 def get_date_as_string(date: datetime) -> List[str]:
@@ -39,9 +41,9 @@ def split_list_to_lists(dates: List[Any], length: int) -> List[List[Any]]:
     return [dates[i:i + length] for i in range(0, len(dates), length)]
 
 
-def get_month_block(date: datetime, n: int = 100) -> List[List]:
+def get_month_block(date: datetime, n: int = DISPLAY_BLOCK) -> List[List]:
     """Returns a 2D list represent a n days calendar from current month."""
     start = get_first_day_month_block(date)
     cal = list(get_n_days(start, n))
     cal.insert(0, start)
-    return split_list_to_lists(cal, 7)
+    return split_list_to_lists(cal, WEEK_DAYS)
