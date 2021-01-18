@@ -1,4 +1,4 @@
-from event_images import attach_image_to_event,\
+from app.event_images.event_images import attach_image_to_event,\
     generate_flare_link_from_lemmatized_word, get_image_name,\
     remove_non_alphabet_chars, search_token_in_related_words
 import pytest
