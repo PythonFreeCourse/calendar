@@ -1,3 +1,8 @@
+import os
+
+from app.database.database import SessionLocal
+from app.routers import agenda
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
@@ -5,7 +10,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from .routers import agenda, event, profile
+from app.routers import agenda, event, profile
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -25,3 +30,20 @@ async def home(request: Request):
         "request": request,
         "message": "Hello, World!"
     })
+
+  
+@app.get("/profile")
+def profile(request: Request):
+    # Get relevant data from database
+    upcouming_events = range(5)
+    current_username = "Chuck Norris"
+
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
+        "username": current_username,
+        "events": upcouming_events
+    })
+
+
+app.include_router(event.router)
+app.include_router(agenda.router)
