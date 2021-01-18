@@ -143,3 +143,6 @@ Scripts/pythonw.exe
 Scripts/uvicorn.exe
 pyvenv.cfg
 .gitignore
+Scripts/coverage3.exe
+Scripts/coverage.exe
+Scripts/coverage-3.7.exe

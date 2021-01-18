@@ -1,21 +1,21 @@
 import uvicorn
-import datetime
+import os
 
-from app.event import Event
-from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from app.routers import dayview
+
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
-try:
-    app.mount("/app/static", StaticFiles(directory="static"), name="static")
-except RuntimeError:
-    app.mount("/app/static", StaticFiles(directory="app/static"), name="static")
-    templates = Jinja2Templates(directory="app/templates")
 
+
+app_path = os.path.dirname(os.path.realpath(__file__))
+static_path = os.path.join(app_path, "static")
+templates_path = os.path.join(app_path, "templates")
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+templates = Jinja2Templates(directory=templates_path)
 
 
 
@@ -26,35 +26,6 @@ def home(request: Request):
         "message": "Hello, World!"
     })
 
-
-@app.get("/dayview")
-def dayview(request: Request):
-    event_id = 123
-    color = 'red'
-    content = 'nothing'
-    start = "03/2/2021 4:05"
-    end = "03/2/2021 4:20"
-    events = [Event(id=event_id, color=color,
-                  content=content,start_datetime=start,
-                  end_datetime=end)]
-    return templates.TemplateResponse("dayview.html", {
-        "request": request,
-        "events": events,
-        "MONTH": events[0].start_time.strftime("%B").upper(),
-        "DAY": events[0].start_time.day
-        })'''
-    
-@app.post("/dayview")
-async def dayview(request: Request):
-    form = await request.json()
-    events = [Event(**event) for event in form['events']]
-    return templates.TemplateResponse("dayview.html", {
-        "request": request,
-        "events": events,
-        "MONTH": events[0].start_time.strftime("%B").upper(),
-        "DAY": form['day']
-        })
-'''
 
 @app.get("/profile")
 def profile(request: Request):
@@ -68,6 +39,9 @@ def profile(request: Request):
         "username": current_username,
         "events": upcouming_events
     })
+
+app.include_router(dayview.router)
+
 
 if __name__ == "__main__":
     uvicorn.run('main:app', host="0.0.0.0", port=8000, reload=True)

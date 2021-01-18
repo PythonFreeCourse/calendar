@@ -62,6 +62,11 @@ html {
     margin-top: -1px;
 }
 
+.event {
+    font-size: 1rem;
+}
+
 .total-time {
-    font-size: 0.6em;
+    font-size: 0.4rem;
+    line-height: 1rem;
 }
