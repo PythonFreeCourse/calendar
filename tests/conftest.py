@@ -4,22 +4,36 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.main import app
-from app.database.database import Base
+from app.database.database import Base, SessionLocal, engine
 from app.database.models import User
 from app.routers import profile
 
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
 
-engine = create_engine(
+test_engine = create_engine(
     SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
 )
 TestingSessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=engine)
+    autocommit=False, autoflush=False, bind=test_engine)
 
 
 def get_test_db():
     return TestingSessionLocal()
+
+
+@pytest.fixture
+def client():
+    return TestClient(app)
+
+
+@pytest.fixture
+def session():
+    Base.metadata.create_all(bind=engine)
+    session = SessionLocal()
+    yield session
+    session.close()
+    Base.metadata.drop_all(bind=engine)
 
 
 def get_test_placeholder_user():
@@ -33,8 +47,8 @@ def get_test_placeholder_user():
 
 @pytest.fixture
 def profile_test_client():
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.drop_all(bind=test_engine)
+    Base.metadata.create_all(bind=test_engine)
     app.dependency_overrides[profile.get_db] = get_test_db
     app.dependency_overrides[
         profile.get_placeholder_user] = get_test_placeholder_user

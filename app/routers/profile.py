@@ -1,21 +1,18 @@
 import io
-from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile
-from fastapi.templating import Jinja2Templates
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from PIL import Image
 
 from app import config
-from ..database.models import User
-from ..database.database import get_db
+from app.database.database import get_db
+from app.database.models import User
+from app.dependencies import MEDIA_PATH, templates
 
 
-MEDIA_PATH = Path(config.MEDIA_DIRECTORY).absolute()
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
-templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(
     prefix="/profile",

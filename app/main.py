@@ -1,28 +1,22 @@
-from pathlib import Path
-
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 
-from app import config
-from .database import models
-from .database.database import engine
-from .routers import profile
+from app.database import models
+from app.database.database import engine
+from app.dependencies import (
+    MEDIA_PATH, STATIC_PATH, templates)
+from .routers import agenda, event, profile
 
 
 models.Base.metadata.create_all(bind=engine)
 
-MEDIA_PATH = Path(config.MEDIA_DIRECTORY).absolute()
-STATIC_PATH = Path('app/static').absolute()
-
 app = FastAPI()
-app.include_router(profile.router)
-
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-
-templates = Jinja2Templates(directory="app/templates")
+app.include_router(profile.router)
+app.include_router(event.router)
+app.include_router(agenda.router)
 
 
 @app.get("/")

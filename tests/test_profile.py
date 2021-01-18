@@ -1,13 +1,11 @@
-from pathlib import Path
+import os
 
 from PIL import Image
 import pytest
 
 from app import config
+from app.dependencies import MEDIA_PATH
 from app.routers.profile import get_image_crop_area, get_placeholder_user
-
-
-MEDIA_PATH = Path(config.MEDIA_DIRECTORY).absolute()
 
 
 CROP_RESULTS = [
@@ -104,8 +102,8 @@ def test_upload_user_photo(profile_test_client):
     assert profile.status_code == 302
 
     # Validate new picture saved in media directory
-    new_avatar_path = Path(f"{MEDIA_PATH}/fake_user.png").absolute()
-    assert new_avatar_path in MEDIA_PATH.iterdir()
+    assert 'fake_user.png' in os.listdir(MEDIA_PATH)
 
     # Validate new picture size
+    new_avatar_path = os.path.join(MEDIA_PATH, 'fake_user.png')
     assert Image.open(new_avatar_path).size == config.AVATAR_SIZE
