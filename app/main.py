@@ -1,17 +1,14 @@
-import os
-
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from routers import event
+from dependencies import STATIC_PATH, TEMPLATES_PATH
+
 app = FastAPI()
 
-app_path = os.path.dirname(os.path.realpath(__file__))
-static_path = os.path.join(app_path, "static")
-templates_path = os.path.join(app_path, "templates")
-
-app.mount("/static", StaticFiles(directory=static_path), name="static")
-templates = Jinja2Templates(directory=templates_path)
+templates = Jinja2Templates(directory=TEMPLATES_PATH)
+app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 
 
 @app.get("/")
@@ -35,6 +32,4 @@ def profile(request: Request):
     })
 
 
-@app.get("/eventedit")
-def eventedit(request: Request):
-    return templates.TemplateResponse("eventedit.html", {"request": request})
+app.include_router(event.router)

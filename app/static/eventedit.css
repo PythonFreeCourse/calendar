@@ -1,7 +1,10 @@
 html,
 body {
 	height: 100%;
-	min-width: 265px;
+	min-width: max-content;
+	max-width: -moz-available;
+    max-width: -webkit-fill-available;
+    max-width: fill-available;
 }
 
 body {
@@ -34,13 +37,13 @@ form {
 
 .form_row {
 	flex: 1;
-	min-height: 35px;
-	max-height: 50px;
+	min-height: 2.25em;
+	max-height: 3.25em;
 }
 
 .form_row.textarea {
 	flex: 4;
-	max-height: 300px;
+	max-height: 19em;
 }
 
 input[type="text"],
