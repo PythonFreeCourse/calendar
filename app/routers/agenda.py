@@ -1,4 +1,4 @@
-from collections import defaultdict 
+from collections import defaultdict
 from datetime import date, timedelta
 from typing import Optional, Tuple
 
@@ -38,7 +38,7 @@ def agenda(
         days: Optional[int] = None
         ) -> Jinja2Templates:
     """Route for the agenda page, using dates range or exact amount of days."""
-    
+
     user_id = 1   # there is no user session yet, so I use user id- 1.
     start_date, end_date = calc_dates_range_for_agenda(
         start_date, end_date, days

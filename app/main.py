@@ -1,14 +1,10 @@
-import os
-
-from app.database.database import SessionLocal
-from app.routers import agenda
+from app.routers import agenda, event
+from app.dependencies import STATIC_PATH, TEMPLATES_PATH
 
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from routers import event
-from dependencies import STATIC_PATH, TEMPLATES_PATH
 
 app = FastAPI()
 
