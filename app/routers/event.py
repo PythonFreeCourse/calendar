@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 
-from dependencies import TEMPLATES_PATH
+from app.dependencies import TEMPLATES_PATH
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
