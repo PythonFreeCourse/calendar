@@ -19,6 +19,7 @@
 │       ├── profile.png
 │   ├── static
 │       ├── style.css
+│       ├── popover.js
 │   ├── templates
 │       ├── base.html
 │       ├── home.html

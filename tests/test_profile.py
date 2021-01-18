@@ -4,7 +4,7 @@ from PIL import Image
 import pytest
 
 from app import config
-from app.routers.profile import get_image_crop_area, get_new_user
+from app.routers.profile import get_image_crop_area, get_placeholder_user
 
 
 MEDIA_PATH = Path(config.MEDIA_DIRECTORY).absolute()
@@ -17,8 +17,8 @@ CROP_RESULTS = [
 ]
 
 
-def test_get_new_user():
-    user = get_new_user()
+def test_get_placeholder_user():
+    user = get_placeholder_user()
     assert user.username == 'new_user'
     assert user.email == 'my@email.po'
     assert user.password == '1a2s3d4f5g6'

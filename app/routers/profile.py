@@ -24,7 +24,7 @@ router = APIRouter(
 )
 
 
-def get_new_user():
+def get_placeholder_user():
     return User(
         username='new_user',
         email='my@email.po',
@@ -37,7 +37,7 @@ def get_new_user():
 async def profile(
         request: Request,
         session=Depends(get_db),
-        new_user=Depends(get_new_user)):
+        new_user=Depends(get_placeholder_user)):
 
     # Get relevant data from database
     upcouming_events = range(5)
@@ -90,8 +90,7 @@ async def update_user_email(
     session.close()
 
     url = router.url_path_for("profile")
-    response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-    return response
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/update_user_description")
@@ -109,8 +108,7 @@ async def update_profile(
     session.close()
 
     url = router.url_path_for("profile")
-    response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-    return response
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/upload_user_photo")
@@ -121,19 +119,15 @@ async def upload_user_photo(
     pic = await file.read()
 
     try:
-        await process_image(pic, user)
-
         # Save to database
-        user.avatar = f"{user.username}{PICTURE_EXTENSION}"
-        print(user.avatar)
+        user.avatar = await process_image(pic, user)
         session.commit()
 
     finally:
         session.close()
 
         url = router.url_path_for("profile")
-        response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-        return response
+        return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 async def process_image(image, user):
@@ -142,7 +136,9 @@ async def process_image(image, user):
     crop_area = get_image_crop_area(width, height)
     cropped = img.crop(crop_area)
     cropped.thumbnail(PICTURE_SIZE)
-    cropped.save(f"{MEDIA_PATH}/{user.username}{PICTURE_EXTENSION}")
+    file_name = f"{user.username}{PICTURE_EXTENSION}"
+    cropped.save(f"{MEDIA_PATH}/{file_name}")
+    return file_name
 
 
 def get_image_crop_area(width, height):

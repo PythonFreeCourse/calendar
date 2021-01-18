@@ -22,7 +22,7 @@ def get_test_db():
     return TestingSessionLocal()
 
 
-def get_test_user():
+def get_test_placeholder_user():
     return User(
         username='fake_user',
         email='fake@mail.fake',
@@ -36,7 +36,8 @@ def profile_test_client():
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     app.dependency_overrides[profile.get_db] = get_test_db
-    app.dependency_overrides[profile.get_new_user] = get_test_user
+    app.dependency_overrides[
+        profile.get_placeholder_user] = get_test_placeholder_user
 
     with TestClient(app) as client:
         yield client
