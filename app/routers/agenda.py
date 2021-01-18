@@ -2,7 +2,7 @@ from collections import defaultdict
 from datetime import date, timedelta
 from typing import Optional, Tuple
 
-from app.dependencies import get_db
+from app.dependencies import get_db, TEMPLATES_PATH
 from app.internal import agenda_events
 
 from fastapi import APIRouter, Depends, Request
@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 
 def calc_dates_range_for_agenda(
