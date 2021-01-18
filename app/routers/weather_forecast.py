@@ -1,6 +1,6 @@
 import datetime
 from dotenv import load_dotenv
-from os import getenv
+import os
 import requests
 
 
@@ -51,7 +51,7 @@ def get_data_from_weather_api(url, input_query_string):
         (str) - error message.
     """
     load_dotenv()
-    HEADERS['x-rapidapi-key'] = getenv('WEATHER_API_KEY')
+    HEADERS['x-rapidapi-key'] = os.getenv('WEATHER_API_KEY')
     try:
         response = requests.request("GET", url, headers=HEADERS, params=input_query_string)
     except requests.exceptions.RequestException:
