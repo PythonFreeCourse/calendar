@@ -1,4 +1,4 @@
-from app.internal.invitation import get_all_invitations, get_invitation_by_id
+from app.routers.invitation import get_all_invitations, get_invitation_by_id
 
 
 class TestInvitations:

@@ -1,7 +1,7 @@
 from icalendar import vCalAddress
 
 from app.config import ICAL_VERSION, PRODUCT_ID
-from app.internal.share.export import (
+from app.routers.export import (
     create_ical_calendar, create_ical_event, event_to_ical
 )
 

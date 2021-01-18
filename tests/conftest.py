@@ -1,8 +1,7 @@
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-
-from app.database.models import Base
+from app.database.database import Base, SessionLocal, engine
+from app.main import app
+from fastapi.testclient import TestClient
 
 pytest_plugins = [
     'tests.user_fixture',
@@ -12,13 +11,13 @@ pytest_plugins = [
 
 
 @pytest.fixture(scope="session")
-def engine():
-    return create_engine('sqlite:///', echo=False)
+def client():
+    return TestClient(app)
 
 
-@pytest.fixture(scope="session")
-def session(engine):
-    session = sessionmaker(bind=engine)()
-    Base.metadata.create_all(engine)
+@pytest.fixture
+def session():
+    Base.metadata.create_all(bind=engine)
+    session = SessionLocal()
     yield session
     session.close()

@@ -1,17 +1,23 @@
-import uvicorn
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+from starlette.templating import Jinja2Templates
 
-from app.config import templates
-from app.database.database import engine
-from app.database.models import Base
-from app.routers import invitation
+from app.routers import agenda, invitation
+from app.dependencies import STATIC_PATH, TEMPLATES_PATH
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.include_router(invitation.invitation)
 
-Base.metadata.create_all(bind=engine)
+app_path = os.path.dirname(os.path.realpath(__file__))
+static_path = os.path.join(app_path, "static")
+templates_path = os.path.join(app_path, "templates")
+
+app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
+templates = Jinja2Templates(directory=TEMPLATES_PATH)
+
+app.include_router(agenda.router)
+app.include_router(invitation.router)
 
 
 @app.get("/")
@@ -34,7 +40,3 @@ def profile(request: Request):
         "username": current_username,
         "events": upcoming_events,
     })
-
-
-if __name__ == '__main__':
-    uvicorn.run(app)

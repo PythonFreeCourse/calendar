@@ -1,4 +1,4 @@
-from app.internal.user import create_user, does_user_exist, get_users
+from app.routers.user import create_user, does_user_exist, get_users
 
 
 class TestUser:
@@ -14,6 +14,7 @@ class TestUser:
         assert user.password == 'new_test_password'
         assert user.email == 'new_test.email@gmail.com'
         session.delete(user)
+        session.commit()
 
     def test_get_users_success(self, user, session):
         assert get_users(username=user.username, session=session) == [user]
