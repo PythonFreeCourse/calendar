@@ -11,6 +11,10 @@ class User(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password = Column(String)
+    full_name = Column(String)
+    description = Column(String, default="Happy new user!")
+    avatar = Column(String, default="profile.png")
+
     is_active = Column(Boolean, default=True)
 
     events = relationship(
