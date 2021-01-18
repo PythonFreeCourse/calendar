@@ -1,5 +1,5 @@
-from event_images import attach_image_to_event, get_key,\
-    generate_flare_link_from_lemmatized_word,\
+from event_images import attach_image_to_event,\
+    generate_flare_link_from_lemmatized_word, get_image_name,\
     remove_non_alphabet_chars, search_token_in_related_words
 import pytest
 
@@ -39,9 +39,9 @@ values = [
 ]
 
 
-@pytest.mark.parametrize('value, key', values)
-def test_get_key(value, key):
-    assert get_key(value) == key
+@pytest.mark.parametrize('related_word, key', values)
+def test_get_image_name(related_word, key):
+    assert get_image_name(related_word) == key
 
 
 tokens = [
