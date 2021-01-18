@@ -3,8 +3,8 @@ from typing import List, Dict, Union
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, UserEvent
-from app.internal.share.export import event_to_ical
-from app.internal.user import does_user_exist, get_users
+from app.routers.export import event_to_ical
+from app.routers.user import does_user_exist, get_users
 from app.internal.utils import save
 
 
