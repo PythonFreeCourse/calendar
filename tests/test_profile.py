@@ -4,7 +4,7 @@ from PIL import Image
 import pytest
 
 from app import config
-from app.routers.profile import crop_image, get_new_user
+from app.routers.profile import get_image_crop_area, get_new_user
 
 
 MEDIA_PATH = Path(config.MEDIA_DIRECTORY).absolute()
@@ -26,8 +26,8 @@ def test_get_new_user():
 
 
 @pytest.mark.parametrize('width, height, result', CROP_RESULTS)
-def test_crop_image(width, height, result):
-    assert crop_image(width, height) == result
+def test_get_image_crop_area(width, height, result):
+    assert get_image_crop_area(width, height) == result
 
 
 def test_profile_page(profile_test_client):

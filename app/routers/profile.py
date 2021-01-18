@@ -139,13 +139,13 @@ async def upload_user_photo(
 async def process_image(image, user):
     img = Image.open(io.BytesIO(image))
     width, height = img.size
-    crop_area = crop_image(width, height)
+    crop_area = get_image_crop_area(width, height)
     cropped = img.crop(crop_area)
     cropped.thumbnail(PICTURE_SIZE)
     cropped.save(f"{MEDIA_PATH}/{user.username}{PICTURE_EXTENSION}")
 
 
-def crop_image(width, height):
+def get_image_crop_area(width, height):
     if width > height:
         delta = (width - height) // 2
         return (delta, 0, width - delta, height)
