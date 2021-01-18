@@ -12,6 +12,7 @@ templates = Jinja2Templates(directory=TEMPLATES_PATH)
 router = APIRouter()
 
 
+#inner class of the router, for the jinja page to process the json
 class Event:
     def _minutes_position(self, minutes: int) -> int:
         min = 0
