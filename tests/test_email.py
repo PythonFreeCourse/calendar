@@ -16,6 +16,7 @@ def test_email_send(client, user, event):
 
 
 def test_failed_email_send(client, user, event):
+    mail.config.MAIL_DEBUG = 1
     mail.config.SUPPRESS_SEND = 1
     with mail.record_messages() as outbox:
         response = client.post(
