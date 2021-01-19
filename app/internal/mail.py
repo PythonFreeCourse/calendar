@@ -19,7 +19,8 @@ CALENDAR_REGISTRATION_PAGE = r"calendar.pythonic.guru/registration"
 
 def verify_email_pattern(email: str) -> bool:
     """
-    This function checks the correctness of the entered email address
+    This function checks the correctness
+    of the entered email address
     :param email: str, the entered email address
     :return: bool,
     True if the entered email address is correct,
@@ -36,7 +37,8 @@ def verify_email_pattern(email: str) -> bool:
 async def send_fast_email(msg: MessageSchema,
                           settings: config.Settings):
     """
-    This function receives message and configuration as parameters and sends the message.
+    This function receives message and
+    configuration as parameters and sends the message.
     :param msg: MessageSchema, message
     :param settings: Settings, configuration
     :return: None
@@ -44,7 +46,7 @@ async def send_fast_email(msg: MessageSchema,
     mail_conf = ConnectionConfig(
         MAIL_USERNAME=settings.smtp_username,
         MAIL_PASSWORD=settings.smtp_password,
-        MAIL_FROM=settings.smtp_from_email,
+        MAIL_FROM=EmailStr(settings.smtp_from_email),
         MAIL_PORT=settings.smtp_port,
         MAIL_SERVER=settings.smtp_server,
         MAIL_TLS=settings.smtp_use_tls,
@@ -61,13 +63,15 @@ async def send_fast_email_invitation(sender_name: str, recipient_name: str,
     """
     This function takes as parameters the sender's name,
     the recipient's name and his email address, configuration, and
-    sends the recipient an invitation to his email address in the format HTML.
+    sends the recipient an invitation to his email address in
+    the format HTML.
     :param sender_name: str, the sender's name
     :param recipient_name: str, the recipient's name
     :param recipient_mail: str, the recipient's email address
     :param settings: Settings, configuration
-    :return: bool, True if the invitation was successfully sent to the recipient,
-     and False if the entered email address is incorrect.
+    :return: bool, True if the invitation was successfully
+    sent to the recipient, and False if the entered
+    email address is incorrect.
     """
     if not verify_email_pattern(recipient_mail):
         return False
@@ -81,7 +85,7 @@ async def send_fast_email_invitation(sender_name: str, recipient_name: str,
 
     message = MessageSchema(
         subject="Invitation",
-        recipients=[recipient_mail],
+        recipients=[EmailStr(recipient_mail)],
         body=html,
         subtype="html",
     )
