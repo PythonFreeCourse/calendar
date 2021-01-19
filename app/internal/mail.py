@@ -1,10 +1,12 @@
+import os
+
 from fastapi.templating import Jinja2Templates
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from pydantic import EmailStr
 
 from config import get_settings
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
 # application name
 CALENDAR_SITE_NAME = "Calendar"
