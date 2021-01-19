@@ -1,6 +1,16 @@
 import os
 
 from fastapi_mail import ConnectionConfig
+# flake8: noqa
+
+
+# DATABASE
+DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
+
+# MEDIA
+MEDIA_DIRECTORY = 'media'
+PICTURE_EXTENSION = '.png'
+AVATAR_SIZE = (120, 120)
 
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
