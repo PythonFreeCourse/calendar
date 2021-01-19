@@ -25,6 +25,7 @@ router = APIRouter(
 def view_invitations(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("invitations.html", {
         "request": request,
+        # TODO: create current user
         # recipient_id should be the current user
         # but because we don't have one yet,
         # "get_all_invitations" returns all invitations
@@ -33,10 +34,14 @@ def view_invitations(request: Request, db: Session = Depends(get_db)):
 
 
 @router.post("/")
-async def accept_invitations(invite_id: int = Form(...), db: Session = Depends(get_db)):
+async def accept_invitations(
+        invite_id: int = Form(...),
+        db: Session = Depends(get_db)
+):
     i = get_invitation_by_id(invite_id, session=db)
     accept(i, db)
-    return RedirectResponse("/", status_code=HTTP_302_FOUND)
+    url = router.url_path_for("view_invitations")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 def get_all_invitations(session: Session, **param) -> List[Invitation]:

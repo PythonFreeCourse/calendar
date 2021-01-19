@@ -23,5 +23,5 @@ app.include_router(invitation.router)
 async def home(request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
-        "message": "Hello, World!"
+        "message": "Hello, World!",
     })

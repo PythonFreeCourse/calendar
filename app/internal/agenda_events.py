@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database.models import Event
-from app.internal.utils import get_user_events, sort_events_by_date, filter_dates
+from app.internal.utils import get_all_user_events
 
 
 def get_events_per_dates(
@@ -24,7 +24,7 @@ def get_events_per_dates(
         events = (
             filter_dates(
                 sort_events_by_date(
-                    get_user_events(session, user_id)
+                    get_all_user_events(session, user_id)
                 ),
                 start,
                 end,
@@ -60,3 +60,21 @@ def get_time_delta_string(start: date, end: date) -> str:
         arrow_start, only_distance=True, granularity=granularity
     )
     return duration_string
+
+
+def sort_events_by_date(events: List[Event]) -> List[Event]:
+    """Sorts the events by the start of the event."""
+
+    events.sort(key=lambda event: event.start)
+    return events
+
+
+def filter_dates(
+        events: List[Event], start: Optional[date],
+        end: Optional[date]) -> List[Event]:
+    """filter events by a time frame."""
+
+    return [
+        event for event in events
+        if start <= event.start.date() <= end
+    ]

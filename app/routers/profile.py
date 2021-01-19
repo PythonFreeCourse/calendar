@@ -25,7 +25,7 @@ def get_placeholder_user():
         username='new_user',
         email='my@email.po',
         password='1a2s3d4f5g6',
-        full_name='My Name'
+        full_name='My Name',
     )
 
 
@@ -36,7 +36,7 @@ async def profile(
         new_user=Depends(get_placeholder_user)):
 
     # Get relevant data from database
-    upcouming_events = range(5)
+    upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
     if not user:
         session.add(new_user)
@@ -48,7 +48,7 @@ async def profile(
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
-        "events": upcouming_events
+        "events": upcoming_events,
     })
 
 

@@ -33,7 +33,7 @@ def send_email_invitation(
 
     ical_invitation = event_to_ical(event, participants)
     for participant in participants:
-        # sends an email
+        # TODO: send email
         pass
 
 
