@@ -12,12 +12,20 @@ templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 # application name
 CALENDAR_SITE_NAME = "Calendar"
 # link to the home page of the application
-CALENDAR_HOME_PAGE = "calendar.com"
+CALENDAR_HOME_PAGE = "calendar.pythonic.guru"
 # link to the application registration page
-CALENDAR_REGISTRATION_PAGE = r"calendar\registration.com"
+CALENDAR_REGISTRATION_PAGE = r"calendar.pythonic.guru/registration"
 
 
 def verify_email_pattern(email: str) -> bool:
+    """
+    This function checks the correctness of the entered email address
+    :param email: str, the entered email address
+    :return: bool,
+    True if the entered email address is correct,
+    False if the entered email address is incorrect.
+    """
+
     try:
         EmailStr.validate(email)
         return True
@@ -27,6 +35,12 @@ def verify_email_pattern(email: str) -> bool:
 
 async def send_fast_email(msg: MessageSchema,
                           settings: config.Settings):
+    """
+    This function receives message and configuration as parameters and sends the message.
+    :param msg: MessageSchema, message
+    :param settings: Settings, configuration
+    :return: None
+    """
     mail_conf = ConnectionConfig(
         MAIL_USERNAME=settings.smtp_username,
         MAIL_PASSWORD=settings.smtp_password,
@@ -44,6 +58,17 @@ async def send_fast_email(msg: MessageSchema,
 async def send_fast_email_invitation(sender_name: str, recipient_name: str,
                                      recipient_mail: str,
                                      settings: config.Settings):
+    """
+    This function takes as parameters the sender's name,
+    the recipient's name and his email address, configuration, and
+    sends the recipient an invitation to his email address in the format HTML.
+    :param sender_name: str, the sender's name
+    :param recipient_name: str, the recipient's name
+    :param recipient_mail: str, the recipient's email address
+    :param settings: Settings, configuration
+    :return: bool, True if the invitation was successfully sent to the recipient,
+     and False if the entered email address is incorrect.
+    """
     if not verify_email_pattern(recipient_mail):
         return False
 

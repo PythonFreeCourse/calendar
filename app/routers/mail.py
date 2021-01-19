@@ -7,7 +7,7 @@ from internal.mail import send_fast_email_invitation
 
 router = APIRouter()
 
-CORRECT_EMAIL_ADDRESS_ERROR_MESSAGE = "Please enter valid email address"
+INVALID_EMAIL_ADDRESS_ERROR_MESSAGE = "Please enter valid email address"
 SUCCESSFULLY_SENT_EMAIL_MESSAGE = "Your message was sent successfully"
 
 
@@ -22,10 +22,19 @@ def send_invitation(invitation: InvitationParams,
                     background_task: BackgroundTasks,
                     settings: config.Settings =
                     Depends(config.get_settings)):
+    """
+    This function sends the recipient an invitation to his email address in the format HTML.
+    :param invitation: InvitationParams, invitation parameters
+    :param background_task: BackgroundTasks
+    :param settings: Settings, configuration
+    :return: json response message,
+    error message if the entered email address is incorrect,
+    confirmation message if the invitation was successfully sent
+    """
     try:
         EmailStr.validate(invitation.recipient_mail)
     except EmailError:
-        return {"message": f"{CORRECT_EMAIL_ADDRESS_ERROR_MESSAGE}"}
+        return {"message": f"{INVALID_EMAIL_ADDRESS_ERROR_MESSAGE}"}
 
     background_task.add_task(send_fast_email_invitation,
                              sender_name=invitation.sender_name,
