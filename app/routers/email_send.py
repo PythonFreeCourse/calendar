@@ -23,6 +23,6 @@ async def send_email(
     if not send(
             title=title, event_used=event_used,
             user_to_send=user_to_send,
-            background_tasks=background_tasks, sessions=db):
+            background_tasks=background_tasks, session=db):
         raise HTTPException(status_code=404, detail="Couldn't send the email!")
     return RedirectResponse(send_to, status_code=303)

@@ -4,18 +4,11 @@ import pytest
 from app.database.database import Base, SessionLocal, engine
 from app.database.models import Event, User
 from app.main import app
+from app.routers import profile
 from faker import Faker
 from fastapi.testclient import TestClient
-from fastapi.testclient import TestClient
-import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from app.main import app
-from app.database.database import Base, SessionLocal, engine
-from app.database.models import User
-from app.routers import profile
-
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
 
@@ -36,40 +29,36 @@ def client():
 
 
 @pytest.fixture
-def sessions():
-    Base.metadata.create_all(bind=engine)
-    sessions = SessionLocal()
-    yield sessions
-
-
-@pytest.fixture
-def user(sessions):
-    faker = Faker()
-    user1 = User(username=faker.first_name(), email=faker.email())
-    sessions.add(user1)
-    sessions.commit()
-    yield user1
-    sessions.delete(user1)
-    sessions.commit()
-
-
-@pytest.fixture
-def event(sessions, user):
-    event1 = Event(title="Test Email", content="Test TEXT",
-                   date=datetime.datetime.now(), owner_id=user.id)
-    sessions.add(event1)
-    sessions.commit()
-    yield event1
-    sessions.delete(event1)
-    sessions.commit()
-
-
 def session():
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
     yield session
     session.close()
     Base.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture
+def user(session):
+    faker = Faker()
+    user1 = User(username=faker.first_name(), email="ttxdxp@gmail.com")
+    session.add(user1)
+    session.commit()
+    yield user1
+    session.delete(user1)
+    session.commit()
+
+
+@pytest.fixture
+def event(session, user):
+    event1 = Event(
+        title="Test Email", content="Test TEXT",
+        start=datetime.datetime.now(),
+        end=datetime.datetime.now(), owner_id=user.id)
+    session.add(event1)
+    session.commit()
+    yield event1
+    session.delete(event1)
+    session.commit()
 
 
 def get_test_placeholder_user():
