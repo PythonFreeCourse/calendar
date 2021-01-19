@@ -1,4 +1,6 @@
 import os
 import sys
 
-sys.path.append(os.path.join(os.curdir, "app"))
+this_dir = os.path.dirname(__file__)
+app_dir = os.path.join(this_dir, "app")
+sys.path.append(app_dir)
