@@ -5,7 +5,11 @@ from app.internal.email import mail
 from fastapi import BackgroundTasks
 
 NO_CONFIG = pytest.mark.skipif(
-    os.getenv("MAIL_USERNAME") is None, reason="Config is not set!"
+    (
+        os.getenv("MAIL_USERNAME") is None,
+        os.getenv("MAIL_PASSWORD") is None,
+        os.getenv("MAIL_FROM") is None
+    ), reason="Config is not set!"
 )
 
 

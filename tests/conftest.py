@@ -40,7 +40,7 @@ def session():
 @pytest.fixture
 def user(session):
     faker = Faker()
-    user1 = User(username=faker.first_name(), email="ttxdxp@gmail.com")
+    user1 = User(username=faker.first_name(), email=faker.email())
     session.add(user1)
     session.commit()
     yield user1
