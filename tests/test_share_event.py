@@ -1,10 +1,16 @@
 from app.routers.share import (
-    accept, send_in_app_invitation, sort_emails
+    accept, send_in_app_invitation, sort_emails, send_email_invitation, share
 )
 from app.routers.invitation import get_all_invitations
 
 
 class TestShareEvent:
+
+    def test_share(self, user, event, session):
+        participants = [user.email]
+        share(event, participants, session)
+        invitations = get_all_invitations(session=session, recipient_id=user.id)
+        assert invitations != []
 
     def test_sort_emails(self, user, session):
         # the user is being imported
@@ -34,9 +40,10 @@ class TestShareEvent:
             recipient=event.owner, session=session)
         assert invitation == []
 
-    def test_send_email_invitation(self):
-        # missing
-        pass
+    def test_send_email_invitation(self, user, event):
+        send_email_invitation([user.email], event)
+        # TODO add email tests
+        assert True
 
     def test_accept(self, invitation, session):
         accept(invitation, session=session)

@@ -21,8 +21,9 @@ class TestUser:
         assert get_users(password=user.password, session=session) == [user]
         assert get_users(email=user.email, session=session) == [user]
 
-    def test_get_users_failure(self, session):
+    def test_get_users_failure(self, session, user):
         assert get_users(username='wrong username', session=session) == []
+        assert get_users(wrong_param=user.username, session=session) == []
 
     def test_does_user_exist_success(self, user, session):
         assert does_user_exist(username=user.username, session=session)

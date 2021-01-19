@@ -47,7 +47,7 @@ def send_in_app_invitation(
     for participant in participants:
         # email is unique
         recipient = get_users(email=participant, session=session)[0]
-        print(recipient)
+
         if recipient.id != event.owner.id:
             session.add(Invitation(recipient=recipient, event=event))
 
