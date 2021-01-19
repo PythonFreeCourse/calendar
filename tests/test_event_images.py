@@ -59,7 +59,7 @@ def test_search_token_in_related_words(token, link):
 
 
 event_contents = [
-    (r"memo:  backrub & medicines!", r'..\static\event_flairs\massage.jpg'),
+    (r"memo: backrub & medicines!", r'..\static\event_flairs\massage.jpg'),
     (r"Dont forget medicines & backrub!", r'..\static\event_flairs\pill.jpg'),
     (r"It's important to drink", r'..\static\event_flairs\drank.jpg'),
     (r"call Jim about tennis on friday", r'..\static\event_flairs\tennis.jpg'),
