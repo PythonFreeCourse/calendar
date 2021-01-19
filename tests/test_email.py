@@ -1,22 +1,13 @@
 
 
-import pytest
 from app.internal.email import mail
 from fastapi import BackgroundTasks
 
-pytest_plugins = "smtpdfix"
 
-
-@pytest.fixture
-def mail_config_test(smtpd):
+def test_email_send(client, user, event, smtpd):
     mail.config.SUPPRESS_SEND = 1
     mail.config.MAIL_SERVER = smtpd.hostname
     mail.config.MAIL_PORT = smtpd.port
-    return mail
-
-
-def test_email_send(client, user, event, mail_config_test):
-    mail = mail_config_test
     with mail.record_messages() as outbox:
         response = client.post(
             "/email_send/", data={

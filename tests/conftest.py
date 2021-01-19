@@ -9,6 +9,7 @@ from faker import Faker
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+pytest_plugins = "smtpdfix"
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
 
