@@ -13,10 +13,13 @@
 │       ├── admin.py
 │   ├── routers
 │       ├── __init__.py
+│       ├── profile.py
+│   ├── media
+│       ├── example.png
+│       ├── profile.png
 │   ├── static
-│       ├── images
-│           ├── profile.png
 │       ├── style.css
+│       ├── popover.js
 │   ├── templates
 │       ├── base.html
 │       ├── home.html
@@ -26,4 +29,6 @@
 ├── schema.md
 └── tests
     ├── __init__.py
+    └── conftest.py
+    └── test_profile.py
     └── test_app.py
