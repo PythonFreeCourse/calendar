@@ -1,9 +1,13 @@
 
+import pytest
 from app.internal.email import mail
 from fastapi import BackgroundTasks
+from smtpdfix import smtpd
+
+pytest_plugins = "smtpdfix"
 
 
-def test_email_send(client, user, event):
+def test_email_send(client, user, event, smtpd):
     mail.config.SUPPRESS_SEND = 1
     with mail.record_messages() as outbox:
         response = client.post(
@@ -15,10 +19,10 @@ def test_email_send(client, user, event):
         assert response.status_code == 303
 
 
-def test_failed_email_send(client, user, event):
-    mail.config.MAIL_DEBUG = 1
+def test_failed_email_send(client, user, event, smtpd):
     mail.config.SUPPRESS_SEND = 1
-    mail.config.USE_CREDENTIALS = False
+    mail.config.MAIL_PORT = smtpd.port
+    mail.config.MAIL_SERVER = smtpd.hostname
     with mail.record_messages() as outbox:
         response = client.post(
             "/email_send/", data={
