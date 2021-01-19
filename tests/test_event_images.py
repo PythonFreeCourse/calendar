@@ -1,14 +1,14 @@
-from app.event_images.event_images import attach_image_to_event,\
+from app.routers.event_images import attach_image_to_event,\
     generate_flare_link_from_lemmatized_word, get_image_name,\
     remove_non_alphabet_chars, search_token_in_related_words
 import pytest
 
 
 lemmatized_words = [
-    ("ran",  r'event_flairs\ran.jpg'),
-    ("food", r'event_flairs\food.jpg'),
-    ("i",  r'event_flairs\i.jpg'),
-    ("drank",  r'event_flairs\drank.jpg'),
+    ("ran",  r'..\static\event_flairs\ran.jpg'),
+    ("food", r'..\static\event_flairs\food.jpg'),
+    ("i",  r'..\static\event_flairs\i.jpg'),
+    ("drank",  r'..\static\event_flairs\drank.jpg'),
 ]
 
 
@@ -45,11 +45,11 @@ def test_get_image_name(related_word, key):
 
 
 tokens = [
-    (r"backrub", r'event_flairs\massage.jpg'),
-    (r"--MedicineS", r'event_flairs\pill.jpg'),
-    (r"restaurants", r'event_flairs\food.jpg'),
+    (r"backrub", r'..\static\event_flairs\massage.jpg'),
+    (r"--MedicineS", r'..\static\event_flairs\pill.jpg'),
+    (r"restaurants", r'..\static\event_flairs\food.jpg'),
     (r"pikachu", None),
-    (r"Pokemon", r'event_flairs\pokemon.jpg'),
+    (r"Pokemon", r'..\static\event_flairs\pokemon.jpg'),
 ]
 
 
@@ -59,12 +59,12 @@ def test_search_token_in_related_words(token, link):
 
 
 event_contents = [
-    (r"Don't forget backrub and medicines!!!!", r'event_flairs\massage.jpg'),
-    (r"Don't forget medicines and backrub!!!!", r'event_flairs\pill.jpg'),
-    (r"It's important to drink", r'event_flairs\drank.jpg'),
-    (r"call Jim about tennis on friday", r'event_flairs\tennis.jpg'),
+    (r"Don't forget backrub and medicines!!!!", r'..\static\event_flairs\massage.jpg'),
+    (r"Don't forget medicines and backrub!!!!", r'..\static\event_flairs\pill.jpg'),
+    (r"It's important to drink", r'..\static\event_flairs\drank.jpg'),
+    (r"call Jim about tennis on friday", r'..\static\event_flairs\tennis.jpg'),
     (r"have to check on pikachu", r'#'),
-    (r"---~ new pokemon episode at 19:00 ~~!!", r'event_flairs\pokemon.jpg'),
+    (r"---~ new pokemon episode at 19:00 ~~!!", r'..\static\event_flairs\pokemon.jpg'),
 ]
 
 

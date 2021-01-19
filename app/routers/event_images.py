@@ -7,7 +7,7 @@ import re
 
 
 FLAIRS_EXTENSION = '.jpg'
-FLAIRS_REL_PATH = r'event_flairs'
+FLAIRS_REL_PATH = r'..\static\event_flairs'
 IMAGES_RELATED_WORDS_MAP = {
     'birthday': 'birthday',
     'coffee': 'coffee',
