@@ -24,7 +24,7 @@ html {
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
     background-color: #F7F7F7;
-    color: #222831
+    color: #222831;
 }
 
 a {
@@ -37,7 +37,6 @@ a {
 .container {
     display: grid;
     grid-template-columns: minmax(4.5rem, auto) 1fr;
-    grid-auto-rows: minmax(3rem, auto);
 }
 
 nav {
@@ -48,27 +47,28 @@ nav {
     padding-left: 0.5rem;
 }
 
-.menu div:hover {color: #FFDE4D;}
-
 .menu {
-    position: sticky;
+    position: fixed;
     display: flex;
     flex-direction: column;
 }
 
+.menu div:hover {color: #FFDE4D;}
+
 img {fill: #F7F7F7;}
 
 header {
-    background-color: #F7F7F7;
     z-index: 1;
+    position: sticky;
+    top: 0;
     display: grid;
     grid-template-columns:80% 20%;
     margin: 0 1rem 0 1rem;
+    background-color: #F7F7F7;
 }
 
 #header-bottom {
     display: none;
-    grid-column: 1/3
 }
 
 #logo-div {
@@ -82,37 +82,45 @@ header {
     float: left;
 }
 
+/* Main Element Grid */
+main {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.calendar {
+    flex: 1;
+}
+
+#daily-event {
+    flex: 0 0 0;
+    opacity: 0;
+    transition: all 1s;
+}
+
 .calender-days-titles {
+    z-index: 1;
+    position: sticky;
+    top: 6rem;
+    align-self: flex-start;
     grid-column: 1/3;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-top: 1rem;
+    margin: 1rem 1rem 0 1rem;
+    background-color: #F7F7F7;
 }
 
-/* -> Main Grid */
-.main-grid {
-    display: grid;
-    width: 100%;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr;
-    padding: 0 1rem 0 1rem;
-}
-
-/* -> The calendar grid */
+/* The Calendar Grid */
 .calender-grid {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-}
-
-#event-menu {
-    display: none;
-    grid-column: 2/3;
-    grid-row: 1/3;
+    grid-auto-rows: minmax(12rem, auto);
+    margin: 0 1rem 0 1rem;
 }
 
 .calendar-grid div {
     font-weight: 900;
-    height: 12rem;
     font-size: 2rem;
 }
 
@@ -120,7 +128,6 @@ header {
     display: flex;
     flex-direction: column;
 
-    height: 12rem;
     padding: 0 1rem 0 1rem;
     border: 1px solid #e9ecef;
     font-size: 1.2rem;
@@ -128,8 +135,11 @@ header {
 
 .day:hover {
     border: 0.3rem solid #222831;
-    color: #F24726;
     transition: border 0.1s;
+}
+
+.day:hover .day-number{
+    color: #F24726;
 }
 
 .day-number {
@@ -146,7 +156,36 @@ header {
     background-color:  #e9ecef;
 }
 
-.daily-event {
+/* Dates Navigation */
+.dates-navigation {
+    position: fixed;
+}
+
+/* Events - Rotation*/
+.month-event {
+    position: relative;
+    perspective: 150rem;
+    -moz-perspective: 150rem;
+    height: 2.4rem;
+}
+
+.month-event div{
+    height: 2.4rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
+}
+
+.back {transform: rotateX(180deg);}
+
+.month-event:hover .front{transform: rotateX(-180deg);}
+
+.month-event:hover .back{transform: rotateX(0);}
+
+.daily {
     font-weight: 700;
     border-radius: 0.4rem;
     padding: 0 0.5rem 0 0.5rem;
@@ -189,3 +228,5 @@ header {
 .bg-darkblue {background-color: #222831;}
 
 .bg-red {background-color: #F24726;}
+
+.bg-lightgray {background-color: #e9ecef;}

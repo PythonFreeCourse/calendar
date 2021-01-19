@@ -1,11 +1,7 @@
-import datetime
-
-import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-import routers.calendar_grid
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -32,22 +28,3 @@ def profile(request: Request):
         "username": current_username,
         "events": upcouming_events
     })
-
-
-@app.get("/calendar")
-async def monthview(request: Request):
-    date = datetime.date.today()
-    return templates.TemplateResponse("calendar.html", {
-        "request": request,
-        "calendar": {
-            'date': date,
-            'strf_date': routers.calendar_grid.get_date_as_string(date),
-            'days_of_the_week': routers.calendar_grid.DAYS_OF_THE_WEEK,
-            'month_block': routers.calendar_grid.get_month_block(
-                datetime.date(date.year, date.month, 1)
-            )
-        }})
-
-
-if __name__ == "__main__":
-    uvicorn.run(app)
