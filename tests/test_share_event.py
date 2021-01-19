@@ -9,7 +9,9 @@ class TestShareEvent:
     def test_share(self, user, event, session):
         participants = [user.email]
         share(event, participants, session)
-        invitations = get_all_invitations(session=session, recipient_id=user.id)
+        invitations = get_all_invitations(
+            session=session, recipient_id=user.id
+        )
         assert invitations != []
 
     def test_sort_emails(self, user, session):
