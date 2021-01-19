@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request
 
-from app.dependencies import TEMPLATES_PATH
 from app.dependencies import templates
 
 
