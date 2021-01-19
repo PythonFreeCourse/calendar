@@ -1,8 +1,8 @@
 
+import pytest
 from app.internal.email import mail
 from fastapi import BackgroundTasks
-import pytest
-pytest_plugins = "smtpdfix"
+from smtpdfix import smtpd
 
 
 def test_email_send(client, user, event, smtpd):
