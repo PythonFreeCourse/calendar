@@ -1,5 +1,4 @@
 import os
-from typing import Union
 
 from fastapi_mail import ConnectionConfig
 # flake8: noqa
@@ -14,12 +13,12 @@ PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
 email_conf = ConnectionConfig(
-    MAIL_USERNAME: Union(str,None)= os.getenv("MAIL_USERNAME"),
-    MAIL_PASSWORD: Union(str,None)= os.getenv("MAIL_PASSWORD"),
-    MAIL_FROM: Union(str,None)= os.getenv("MAIL_FROM"),   
-    MAIL_PORT: int=587,
-    MAIL_SERVER: str="smtp.gmail.com",
-    MAIL_TLS: bool=True,
-    MAIL_SSL: bool=False,
-    USE_CREDENTIALS: bool=True,
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "a",
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "a",
+    MAIL_FROM=os.getenv("MAIL_FROM") or "a",   
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=True,
 )
