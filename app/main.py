@@ -22,11 +22,11 @@ def home(request: Request):
 def profile(request: Request):
 
     # Get relevant data from database
-    upcouming_events = range(5)
+    upcoming_events = range(5)
     current_username = "Chuck Norris"
 
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "username": current_username,
-        "events": upcouming_events
+        "events": upcoming_events
     })
