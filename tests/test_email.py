@@ -9,6 +9,7 @@ def test_email_send(client, user, event, smtpd):
     mail.config.MAIL_SERVER = smtpd.hostname
     mail.config.MAIL_PORT = smtpd.port
     mail.config.USE_CREDENTIALS = False
+    mail.config.MAIL_TLS = False
     with mail.record_messages() as outbox:
         response = client.post(
             "/email_send/", data={
