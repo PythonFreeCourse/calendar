@@ -3,6 +3,7 @@ import os
 from fastapi.templating import Jinja2Templates
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from pydantic import EmailStr
+from pydantic.errors import EmailError
 
 import config
 
@@ -17,7 +18,11 @@ CALENDAR_REGISTRATION_PAGE = r"calendar\registration.com"
 
 
 def verify_email_pattern(email: str) -> bool:
-    return EmailStr.validate(email)
+    try:
+        EmailStr.validate(email)
+        return True
+    except EmailError:
+        return False
 
 
 async def send_fast_email(msg: MessageSchema,
