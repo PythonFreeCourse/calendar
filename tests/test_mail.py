@@ -17,42 +17,66 @@ def test_read_main():
 def test_send_mail_no_body():
     response = client.post("/mail/invitation/")
     assert response.status_code == 422
-    assert response.json() == {'detail': [{'loc': ['body'], 'msg': 'field required', 'type': 'value_error.missing'}]}
+    assert response.json() == {'detail': [{
+        'loc': ['body'],
+        'msg': 'field required',
+        'type': 'value_error.missing'}]}
 
 
 @pytest.mark.parametrize("body,expected_json", [
     (
             {"sender_name": "string", "recipient_name": "string"},
-            {'detail': [{'loc': ['body', 'recipient_mail'], 'msg': 'field required', 'type': 'value_error.missing'}]},
+            {'detail': [{
+                'loc': ['body', 'recipient_mail'],
+                'msg': 'field required',
+                'type': 'value_error.missing'}]},
     ),
 
     (
             {"sender_name": "string", "recipient_mail": "test@mail.com"},
-            {'detail': [{'loc': ['body', 'recipient_name'], 'msg': 'field required', 'type': 'value_error.missing'}]},
+            {'detail': [{
+                'loc': ['body', 'recipient_name'],
+                'msg': 'field required',
+                'type': 'value_error.missing'}]},
     ),
     (
             {"recipient_name": "string", "recipient_mail": "test@mail.com"},
-            {'detail': [{'loc': ['body', 'sender_name'], 'msg': 'field required', 'type': 'value_error.missing'}]},
+            {'detail': [{
+                'loc': ['body', 'sender_name'],
+                'msg': 'field required',
+                'type': 'value_error.missing'}]},
     ),
     (
             {"sender_name": "string"},
             {'detail': [
-                {'loc': ['body', 'recipient_name'], 'msg': 'field required', 'type': 'value_error.missing'},
-                {'loc': ['body', 'recipient_mail'], 'msg': 'field required', 'type': 'value_error.missing'}
+                {'loc': ['body', 'recipient_name'],
+                 'msg': 'field required',
+                 'type': 'value_error.missing'},
+                {'loc': ['body', 'recipient_mail'],
+                 'msg': 'field required',
+                 'type': 'value_error.missing'}
             ]}
     ),
     (
             {"recipient_name": "string"},
             {'detail': [
-                {'loc': ['body', 'sender_name'], 'msg': 'field required', 'type': 'value_error.missing'},
-                {'loc': ['body', 'recipient_mail'], 'msg': 'field required', 'type': 'value_error.missing'}
+                {'loc': ['body', 'sender_name'],
+                 'msg': 'field required',
+                 'type': 'value_error.missing'},
+                {'loc': ['body', 'recipient_mail'],
+                 'msg': 'field required',
+                 'type': 'value_error.missing'}
             ]}
     ),
     (
             {"recipient_mail": "test@mail.com"},
             {'detail': [
-                {'loc': ['body', 'sender_name'], 'msg': 'field required', 'type': 'value_error.missing'},
-                {'loc': ['body', 'recipient_name'], 'msg': 'field required', 'type': 'value_error.missing'}
+                {'loc': ['body', 'sender_name'],
+                 'msg': 'field required',
+                 'type': 'value_error.missing'},
+                {'loc': ['body', 'recipient_name'],
+                 'msg': 'field required',
+                 'type': 'value_error.missing'}
             ]}
     ),
 ])
@@ -63,12 +87,6 @@ def test_send_mail_partial_body(body, expected_json):
 
 
 def test_send_mail_invalid_email():
-    # with pytest.raises(EmailError):
-    #     client.post("/mail/invitation/", json={
-    #         "sender_name": "string",
-    #         "recipient_name": "string",
-    #         "recipient_mail": "test#mail.com"
-    #     })
 
     response = client.post("/mail/invitation/", json={
         "sender_name": "string",

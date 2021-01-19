@@ -16,8 +16,9 @@ class InvitationParams(BaseModel):
     recipient_mail: str
 
 
-@router.post("/mail/invitation/")  # response_class=HTMLResponse ?
-def send_invitation(invitation: InvitationParams, background_task: BackgroundTasks):
+@router.post("/mail/invitation/")
+def send_invitation(invitation: InvitationParams,
+                    background_task: BackgroundTasks):
     try:
         EmailStr.validate(invitation.recipient_mail)
     except EmailError:
@@ -29,4 +30,5 @@ def send_invitation(invitation: InvitationParams, background_task: BackgroundTas
                              recipient_mail=invitation.recipient_mail
                              )
 
-    return {"message": f"{SUCCESSFULLY_SENT_EMAIL_MESSAGE} to {invitation.recipient_name}"}
+    return {"message": f"{SUCCESSFULLY_SENT_EMAIL_MESSAGE}"
+                       f" to {invitation.recipient_name}"}
