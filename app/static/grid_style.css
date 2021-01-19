@@ -1,0 +1,232 @@
+:root {
+    --red: #F24726
+    --yellow: #FFDE4D
+
+    --blue: #24396A;
+    --darkblue: #222831
+
+    --gray1: #F7F7F7
+    --gray2: #e9ecef
+    --gray3: #adb5bd
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Assistant", "Ariel", sans-serif;
+    font-weight: 400;
+    font-size: 62.5%;  /*16px / 10px = 62.5% -> 1rem = 10px*/
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    background-color: #F7F7F7;
+    color: #222831;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Grids */
+/* -> Website Structure */
+.container {
+    display: grid;
+    grid-template-columns: minmax(4.5rem, auto) 1fr;
+}
+
+nav {
+    z-index: 2;
+    width: 4.5rem;
+    grid-row: 1/3;
+    font-size: 2.8rem;
+    padding-left: 0.5rem;
+}
+
+.menu {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu div:hover {color: #FFDE4D;}
+
+img {fill: #F7F7F7;}
+
+header {
+    z-index: 1;
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns:80% 20%;
+    margin: 0 1rem 0 1rem;
+    background-color: #F7F7F7;
+}
+
+#header-bottom {
+    display: none;
+}
+
+#logo-div {
+    align-self: center;
+    justify-self: end;
+    padding-right: 2rem;
+}
+
+.search-div {
+    width: 90%;
+    float: left;
+}
+
+/* Main Element Grid */
+main {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.calendar {
+    flex: 1;
+}
+
+#daily-event {
+    flex: 0 0 0;
+    opacity: 0;
+    transition: all 1s;
+}
+
+.calender-days-titles {
+    z-index: 1;
+    position: sticky;
+    top: 6rem;
+    align-self: flex-start;
+    grid-column: 1/3;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin: 1rem 1rem 0 1rem;
+    background-color: #F7F7F7;
+}
+
+/* The Calendar Grid */
+.calender-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: minmax(12rem, auto);
+    margin: 0 1rem 0 1rem;
+}
+
+.calendar-grid div {
+    font-weight: 900;
+    font-size: 2rem;
+}
+
+.day {
+    display: flex;
+    flex-direction: column;
+
+    padding: 0 1rem 0 1rem;
+    border: 1px solid #e9ecef;
+    font-size: 1.2rem;
+}
+
+.day:hover {
+    border: 0.3rem solid #222831;
+    transition: border 0.1s;
+}
+
+.day:hover .day-number{
+    color: #F24726;
+}
+
+.day-number {
+    font-weight: 900;
+    font-size: 2rem;
+}
+
+.day_current {
+    background-color: #FFDE4D;
+    color: white;
+}
+
+.day_first {
+    background-color:  #e9ecef;
+}
+
+/* Dates Navigation */
+.dates-navigation {
+    position: fixed;
+}
+
+/* Events - Rotation*/
+.month-event {
+    position: relative;
+    perspective: 150rem;
+    -moz-perspective: 150rem;
+    height: 2.4rem;
+}
+
+.month-event div{
+    height: 2.4rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    backface-visibility: hidden;
+}
+
+.back {transform: rotateX(180deg);}
+
+.month-event:hover .front{transform: rotateX(-180deg);}
+
+.month-event:hover .back{transform: rotateX(0);}
+
+.daily {
+    font-weight: 700;
+    border-radius: 0.4rem;
+    padding: 0 0.5rem 0 0.5rem;
+}
+
+/* Titles */
+.day-title {
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.title {
+    font-weight: 900;
+    font-size: 2.4rem;
+    margin-bottom: -1rem;
+}
+
+.sec-title {
+    font-weight: 500;
+    font-size: 1.6rem;
+}
+
+/* Text Colors */
+.t-yellow {color: #FFDE4D;}
+
+.t-gray {color: #adb5bd;}
+
+.t-very-lightgray {color: #F7F7F7;}
+
+.t-darkblue {color: #222831;}
+
+/* Borders */
+.b-dashed-darkblue {border: 2px dashed  #222831;}
+
+.b-darkblue {border: 2px solid  #222831;}
+
+.uline-yellow {border-bottom: 4px solid  #FFDE4D;}
+
+/* Background Color */
+.bg-darkblue {background-color: #222831;}
+
+.bg-red {background-color: #F24726;}
+
+.bg-lightgray {background-color: #e9ecef;}

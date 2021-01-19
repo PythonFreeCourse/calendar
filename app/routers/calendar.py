@@ -1,9 +1,14 @@
 import datetime
 
-from app.routers import calendar_gridcg as cg
 from app.dependencies import templates
-
+from app.routers import calendar_gridcg as cg
 from fastapi import Request
+
+router = APIRouter(
+    prefix="/calendar",
+    tags=["calendar"],
+    responses={404: {"description": "Not found"}},
+)
 
 
 @router.get("/calendar")
