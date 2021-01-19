@@ -31,8 +31,8 @@ def send_email_invitation(
 ):
     """Sends an email with an invitation."""
 
-    ical_invitation = event_to_ical(event, participants)
-    for participant in participants:
+    ical_invitation = event_to_ical(event, participants)  # noqa: F841
+    for _ in participants:
         # TODO: send email
         pass
 
