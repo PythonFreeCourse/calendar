@@ -8,7 +8,9 @@ from routers import mail
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory=os.path.join("app", "static")), name="static")
+app.mount("/static",
+          StaticFiles(directory=os.path.join("app", "static")),
+          name="static")
 
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
