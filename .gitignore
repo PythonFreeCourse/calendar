@@ -127,22 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-Scripts/activate
-Scripts/activate.bat
-Scripts/Activate.ps1
-Scripts/deactivate.bat
-Scripts/easy_install-3.7.exe
-Scripts/easy_install.exe
-Scripts/pip.exe
-Scripts/pip3.7.exe
-Scripts/pip3.exe
-Scripts/py.test.exe
-Scripts/pytest.exe
-Scripts/python.exe
-Scripts/pythonw.exe
-Scripts/uvicorn.exe
+Scripts/*
 pyvenv.cfg
 .gitignore
-Scripts/coverage3.exe
-Scripts/coverage.exe
-Scripts/coverage-3.7.exe
+

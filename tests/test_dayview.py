@@ -2,15 +2,8 @@ from datetime import datetime
 
 import pytest
 
-from app.main import app
 from app.routers.dayview import Event
-from fastapi.testclient import TestClient
 
-
-@pytest.fixture
-def client():
-    client = TestClient(app)
-    return client
 
 @pytest.fixture
 def event():
