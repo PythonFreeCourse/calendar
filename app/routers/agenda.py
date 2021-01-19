@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
-
 from app.database.database import get_db
 from app.dependencies import templates
 from app.internal import agenda_events
