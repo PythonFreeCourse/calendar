@@ -1,13 +1,25 @@
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+from dependencies import STATIC_PATH, TEMPLATES_PATH, get_db
+
+from app.database import models
+from app.database.database import Base, SessionLocal, engine
+from app.routers import edit
+
+# from starlette.requests import Request
+
+
 
 app = FastAPI()
+app.include_router(edit.router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=TEMPLATES_PATH)
+
+models.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")

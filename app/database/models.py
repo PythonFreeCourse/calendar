@@ -22,8 +22,12 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
+    start_date = Column(DateTime)
+    end_date = Column(DateTime)
+    VC_link = Column(String)
     content = Column(String)
-    date = Column(DateTime)
+    location = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="events")
+        
