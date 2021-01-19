@@ -106,7 +106,8 @@ def test_send_mail_valid_email():
     }
                            )
     assert response.status_code == 200
-    assert response.json() == {'message': 'Your message was sent successfully to string'}
+    assert response.json() == {
+        'message': 'Your message was sent successfully to string'}
 
 
 # internal mail checks #
