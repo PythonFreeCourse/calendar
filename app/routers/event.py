@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 
 from app.database.models import Event, UserEvent
 from app.dependencies import templates
-from app.internal.utils import save, create_model
+from app.internal.utils import create_model
 
 router = APIRouter(
     prefix="/event",
@@ -13,7 +13,14 @@ router = APIRouter(
 
 @router.get("/edit")
 async def eventedit(request: Request):
-    return templates.TemplateResponse("eventedit.html", {"request": request})
+    return templates.TemplateResponse("event/eventedit.html",
+                                      {"request": request})
+
+
+@router.get("/view/{id}")
+async def eventview(request: Request, id: int):
+    return templates.TemplateResponse("event/eventview.html",
+                                      {"request": request, "event_id": id})
 
 
 def create_event(db, title, start, end, content, owner_id):
@@ -26,9 +33,9 @@ def create_event(db, title, start, end, content, owner_id):
         content=content,
         owner_id=owner_id,
     )
-    association = UserEvent(
+    create_model(
+        db, UserEvent,
         user_id=owner_id,
         event_id=event.id
     )
-    save(association, session=db)
     return event
