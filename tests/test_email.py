@@ -1,15 +1,15 @@
 
 from app.internal.email import mail
 from fastapi import BackgroundTasks
+from fastapi_mail.errors import ErrorConnection
 
 
-pytest_plugins = "smtpdfix"
+class ErrorConnection(Exception):
+    pass
 
 
-def test_email_send(client, user, event, smtpd):
+def test_email_send(client, user, event):
     mail.config.SUPPRESS_SEND = 1
-    mail.config.MAIL_PORT = smtpd.port
-    mail.config.MAIL_SERVER = smtpd.hostname
     with mail.record_messages() as outbox:
         response = client.post(
             "/email_send/", data={
@@ -20,10 +20,8 @@ def test_email_send(client, user, event, smtpd):
         assert response.status_code == 303
 
 
-def test_failed_email_send(client, user, event, smtpd):
+def test_failed_email_send(client, user, event):
     mail.config.SUPPRESS_SEND = 1
-    mail.config.MAIL_PORT = smtpd.port
-    mail.config.MAIL_SERVER = smtpd.hostname
     with mail.record_messages() as outbox:
         response = client.post(
             "/email_send/", data={

@@ -13,8 +13,8 @@ PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
 email_conf = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "a",
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "a",
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
     MAIL_FROM=os.getenv("MAIL_FROM") or "a@a.com",   
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
