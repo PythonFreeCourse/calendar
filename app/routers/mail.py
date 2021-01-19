@@ -1,7 +1,8 @@
-from fastapi import BackgroundTasks, APIRouter
+from fastapi import BackgroundTasks, APIRouter, Depends
 from pydantic import BaseModel, EmailStr
 from pydantic.errors import EmailError
 
+import config
 from internal.mail import send_fast_email_invitation
 
 router = APIRouter()
@@ -18,7 +19,9 @@ class InvitationParams(BaseModel):
 
 @router.post("/mail/invitation/")
 def send_invitation(invitation: InvitationParams,
-                    background_task: BackgroundTasks):
+                    background_task: BackgroundTasks,
+                    settings: config.Settings =
+                    Depends(config.get_settings)):
     try:
         EmailStr.validate(invitation.recipient_mail)
     except EmailError:
@@ -27,7 +30,8 @@ def send_invitation(invitation: InvitationParams,
     background_task.add_task(send_fast_email_invitation,
                              sender_name=invitation.sender_name,
                              recipient_name=invitation.recipient_name,
-                             recipient_mail=invitation.recipient_mail
+                             recipient_mail=invitation.recipient_mail,
+                             settings=settings,
                              )
 
     return {"message": f"{SUCCESSFULLY_SENT_EMAIL_MESSAGE}"

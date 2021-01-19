@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from pydantic import EmailStr
 
-from config import get_settings
+import config
 
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
@@ -20,8 +20,8 @@ def verify_email_pattern(email: str) -> bool:
     return EmailStr.validate(email)
 
 
-async def send_fast_email(msg: MessageSchema):
-    settings = get_settings()
+async def send_fast_email(msg: MessageSchema,
+                          settings: config.Settings):
     mail_conf = ConnectionConfig(
         MAIL_USERNAME=settings.smtp_username,
         MAIL_PASSWORD=settings.smtp_password,
@@ -37,7 +37,8 @@ async def send_fast_email(msg: MessageSchema):
 
 
 async def send_fast_email_invitation(sender_name: str, recipient_name: str,
-                                     recipient_mail: str):
+                                     recipient_mail: str,
+                                     settings: config.Settings):
     if not verify_email_pattern(recipient_mail):
         return False
 
@@ -55,5 +56,5 @@ async def send_fast_email_invitation(sender_name: str, recipient_name: str,
         subtype="html",
     )
 
-    await send_fast_email(message)
+    await send_fast_email(message, settings)
     return True
