@@ -25,7 +25,6 @@ class TestAgenda:
             today_event_2, yesterday_event, next_week_event,
             next_month_event, old_event
     ):
-
         resp = client.get(TestAgenda.AGENDA)
         assert resp.status_code == status.HTTP_200_OK
         assert b"event 1" in resp.content
@@ -41,7 +40,6 @@ class TestAgenda:
             today_event_2, yesterday_event, next_week_event,
             next_month_event, old_event
     ):
-
         resp = client.get(TestAgenda.AGENDA_7_DAYS)
         today = date.today().strftime("%d/%m/%Y")
         assert resp.status_code == status.HTTP_200_OK
@@ -59,7 +57,6 @@ class TestAgenda:
             today_event_2, yesterday_event, next_week_event,
             next_month_event, old_event
     ):
-
         resp = client.get(TestAgenda.AGENDA_30_DAYS)
         today = date.today().strftime("%d/%m/%Y")
         assert resp.status_code == status.HTTP_200_OK
@@ -76,7 +73,6 @@ class TestAgenda:
             today_event_2, yesterday_event, next_week_event,
             next_month_event, old_event
     ):
-
         start_date = (self.today_date + timedelta(days=8, hours=4)).date()
         end_date = (self.today_date + timedelta(days=32, hours=4)).date()
         resp = client.get(

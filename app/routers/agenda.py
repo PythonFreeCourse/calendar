@@ -1,19 +1,15 @@
-from collections import defaultdict 
+from collections import defaultdict
 from datetime import date, timedelta
 from typing import Optional, Tuple
 
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.orm import Session
 from starlette.templating import _TemplateResponse
 
-from app.dependencies import get_db
+from app.dependencies import templates, get_db
 from app.internal import agenda_events
 
-from fastapi import APIRouter, Depends, Request
-from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
-
-
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
 
 
 def calc_dates_range_for_agenda(
@@ -40,7 +36,7 @@ def agenda(
         days: Optional[int] = None
         ) -> _TemplateResponse:
     """Route for the agenda page, using dates range or exact amount of days."""
-    
+
     user_id = 1   # there is no user session yet, so I use user id- 1.
     start_date, end_date = calc_dates_range_for_agenda(
         start_date, end_date, days
