@@ -27,7 +27,7 @@ def test_new_event(event):
 
 def test_dayview_html(client, event):
     events = [{"id": event.id, "color": event.color,
-               "content" :event.content,
+               "content": event.content,
                "start_datetime": "3/2/2021 04:05",
                "end_datetime": "3/2/2021 04:20",
                }]

@@ -1,5 +1,3 @@
-import os
-
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
@@ -19,6 +17,7 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
+app.include_router(dayview.router)
 
 
 @app.get("/")

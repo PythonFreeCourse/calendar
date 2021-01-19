@@ -53,7 +53,7 @@ class Event:
 
         start_time_str = self.start_time.strftime("%H:%M")
         end_time_str = self.end_time.strftime("%H:%M")
-        self.total_time =  ' '.join([start_time_str, '-', end_time_str])
+        self.total_time = ' '.join([start_time_str, '-', end_time_str])
 
 
 @router.post("/dayview")
