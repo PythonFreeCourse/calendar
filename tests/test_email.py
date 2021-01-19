@@ -1,7 +1,7 @@
 
 from app.internal.email import mail
 from fastapi import BackgroundTasks
-
+import pytest
 pytest_plugins = "smtpdfix"
 
 
