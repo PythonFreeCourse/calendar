@@ -9,8 +9,10 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
     email = Column(String, unique=True)
-    password = Column(String)
+    password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
 
     events = relationship(

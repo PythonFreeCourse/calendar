@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+    <form method="post">
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username"/><br>
+        <label for="first_name">First Name</label>
+        <input type="text" name="first_name" id="first_name"/><br>
+        <label for="last_name">Last Name</label>
+        <input type="text" name="last_name" id="last_name"/><br>
+        <label for="password">Password</label>
+        <input type="text" name="password" id="password"/><br>
+        <label for="confirm_password">Confirm Password</label>
+        <input type="text" name="confirm_password" id="confirm_password"/><br>
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email"/><br>
+        <input type="submit">
+    </form>
+
+    {% if messages %}
+    {% for message in messages %}
+    <p>{{message}}</p>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
