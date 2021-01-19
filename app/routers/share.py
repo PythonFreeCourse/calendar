@@ -47,7 +47,7 @@ def send_in_app_invitation(
     for participant in participants:
         # email is unique
         recipient = get_users(email=participant, session=session)[0]
-
+        print(recipient)
         if recipient.id != event.owner.id:
             session.add(Invitation(recipient=recipient, event=event))
 
@@ -66,8 +66,8 @@ def accept(invitation: Invitation, session: Session) -> None:
     participantship at the event."""
 
     association = UserEvent(
-        participants=invitation.recipient,
-        events=invitation.event
+        user_id=invitation.recipient.id,
+        event_id=invitation.event.id
     )
     invitation.status = 'accepted'
     save(invitation, session=session)

@@ -6,8 +6,9 @@ from starlette.status import HTTP_302_FOUND
 from PIL import Image
 
 from app import config
+from app.database.database import get_db
 from app.database.models import User
-from app.dependencies import MEDIA_PATH, templates, get_db
+from app.dependencies import MEDIA_PATH, templates
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE

@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from starlette.templating import _TemplateResponse
 
-from app.dependencies import templates, get_db
+from app.database.database import get_db
+from app.dependencies import templates
 from app.internal import agenda_events
 
 router = APIRouter()
@@ -17,7 +18,7 @@ def calc_dates_range_for_agenda(
         end: Optional[date],
         days: Optional[int]
         ) -> Tuple[date, date]:
-    """Create start and end dates eccording to the parameters in the page."""
+    """Create start and end dates according to the parameters in the page."""
     if days is not None:
         start = date.today()
         end = start + timedelta(days=days)

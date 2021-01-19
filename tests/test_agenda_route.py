@@ -5,7 +5,7 @@ from fastapi import status
 
 class TestAgenda:
     """In the test we are receiving event fixtures
-    so they will load into the database"""
+    as parameters so they will load into the database"""
 
     AGENDA = "/agenda"
     AGENDA_7_DAYS = "/agenda?days=7"
@@ -99,7 +99,7 @@ class TestAgenda:
             today_event_2, yesterday_event, next_week_event,
             next_month_event, old_event
     ):
-        # sender is just a different user
+        # "user" is just a different event creator
         resp = client.get(TestAgenda.AGENDA)
         assert resp.status_code == status.HTTP_200_OK
         assert b"event 7" not in resp.content
