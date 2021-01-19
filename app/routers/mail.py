@@ -23,7 +23,8 @@ def send_invitation(invitation: InvitationParams,
                     settings: config.Settings =
                     Depends(config.get_settings)):
     """
-    This function sends the recipient an invitation to his email address in the format HTML.
+    This function sends the recipient an invitation
+    to his email address in the format HTML.
     :param invitation: InvitationParams, invitation parameters
     :param background_task: BackgroundTasks
     :param settings: Settings, configuration

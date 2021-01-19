@@ -29,11 +29,12 @@ def configured_smtpd(smtpd):
     app.dependency_overrides.pop(config.get_settings)
 
 
-def assert_validation_error_missing_body_fields(validation_msg, missing_fields):
+def assert_validation_error_missing_body_fields(validation_msg,
+                                                missing_fields):
     """
     helper function for asserting with open api validation errors
     look at https://fastapi.tiangolo.com/tutorial/path-params/#data-validation
-    :param validation_msg: the response message
+    :param validation_msg: the response message after json
     :param missing_fields: a list of fields that are asserted missing
     """
     assert isinstance(validation_msg, dict)
@@ -102,7 +103,8 @@ def test_send_mail_partial_body(body, missing_fields,
                                 configured_smtpd):
     response = client.post("/mail/invitation/", json=body)
     assert response.status_code == 422
-    assert_validation_error_missing_body_fields(response.json(), missing_fields)
+    assert_validation_error_missing_body_fields(response.json(),
+                                                missing_fields)
     assert len(configured_smtpd.messages) == 0
 
 
