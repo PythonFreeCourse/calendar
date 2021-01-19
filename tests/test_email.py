@@ -8,7 +8,7 @@ pytest_plugins = "smtpdfix"
 
 
 @pytest.fixture
-def mail_config_test(mail, smtpd):
+def mail_config_test(smtpd):
     mail.config.SUPPRESS_SEND = 1
     mail.config.MAIL_SERVER = smtpd.hostname
     mail.config.MAIL_PORT = smtpd.port
