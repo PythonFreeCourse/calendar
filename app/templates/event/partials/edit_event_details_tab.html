@@ -1,0 +1,48 @@
+<div class="form_row">
+    <input type="text" name="title" placeholder="Event Title" required>
+</div>
+
+<div class="form_row">
+    <input type="date" name="start_date" placeholder="Start Date" required>
+    <input type="time" name="start_time" placeholder="Start Time" required>
+</div>
+
+<div class="form_row">
+    <input type="date" name="end_date" placeholder="End Date" required>
+    <input type="time" name="end_time" placeholder="End Time" required>
+</div>
+
+<div class="form_row">
+    <select name="location_type" required>
+        <option value="" disabled selected>Type</option>
+        <option value="vc_url">VC URL</option>
+        <option value="address">Address</option>
+    </select>
+    <input type="text" name="location" placeholder="VC URL/Location">
+</div>
+
+<div class="form_row textarea">
+    <textarea name="description" placeholder="Description"></textarea>
+</div>
+
+<div class="form_row">
+    <div class="form_row_start">
+        <select name="color">
+            <option value="red">Red</option>
+            <option value="green">Green</option>
+            <option value="blue">Blue</option>
+        </select>
+    </div>
+
+
+    <div class="form_row_end">
+        <select name="availability">
+            <option value="free">Free</option>
+            <option value="busy" selected>Busy</option>
+        </select>
+        <select name="privacy">
+            <option value="private">Private</option>
+            <option value="public" selected>Public</option>
+        </select>
+    </div>
+</div>
