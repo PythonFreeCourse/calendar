@@ -12,12 +12,12 @@ def test_email_send(client, user, event, smtpd):
     mail.config.MAIL_TLS = False
     with mail.record_messages() as outbox:
         response = client.post(
-            "/email_send/", data={
+            "/email/send", data={
                 "event_used": event.id, "user_to_send": user.id,
                 "title": "Testing",
                 "background_tasks": BackgroundTasks})
         assert len(outbox) == 1
-        assert response.status_code == 303
+        assert response.ok
 
 
 def test_failed_email_send(client, user, event, smtpd):
@@ -26,9 +26,9 @@ def test_failed_email_send(client, user, event, smtpd):
     mail.config.MAIL_PORT = smtpd.port
     with mail.record_messages() as outbox:
         response = client.post(
-            "/email_send/", data={
+            "/email/send", data={
                 "event_used": event.id + 1, "user_to_send": user.id,
                 "title": "Testing",
                 "background_tasks": BackgroundTasks})
         assert len(outbox) == 0
-        assert response.status_code == 404
+        assert not response.ok
