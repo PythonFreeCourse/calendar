@@ -131,7 +131,7 @@ def test_send_mail_valid_email(configured_smtpd):
     assert response.ok
     assert response.json() == {
         'message': 'Your message was sent successfully to string'}
-    assert len(configured_smtpd.messages) == 1
+    assert configured_smtpd.messages
 
 
 # internal mail checks
@@ -146,7 +146,7 @@ async def test_internal_send_fast_email(smtpd):
 
     await send_fast_email(message, config.Settings(
         smtp_server=smtpd.hostname, smtp_port=smtpd.port))
-    assert len(smtpd.messages) == 1
+    assert smtpd.messages
 
 
 @pytest.mark.asyncio
