@@ -1,5 +1,5 @@
-import {check_level} from '../support/index'
-import {screen_sizes_dict} from '../enums/sizes'
+import {check_level} from '../../support/index'
+import {screen_sizes_dict} from '../../enums/sizes'
 
 describe('Profile page tests', () => {
     beforeEach(() => {

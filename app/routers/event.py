@@ -1,9 +1,7 @@
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 
-from app.dependencies import TEMPLATES_PATH
+from app.dependencies import templates
 
-templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 router = APIRouter(
     prefix="/event",
