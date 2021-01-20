@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
 from app.main import app
-from app.database.database import Base, SessionLocal, engine
+from app.database.database import Base, engine
 from app.database.models import User, Event
 from app.routers import profile
 

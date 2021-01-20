@@ -25,9 +25,11 @@ async def eventview(request: Request, id: int):
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event_id": id})
 
+
 def get_event_by_id(db: Session, event_id: int) -> Event:
     """Select event by id"""
     return db.query(Event).filter(Event.id == event_id).first()
+
 
 # copy from michael ben david
 def check_validation(start_time: datetime, end_time: datetime) -> bool:
@@ -44,7 +46,7 @@ def get_column_names_event(db: Session) -> Set:
 
 
 def check_date_valitation(old_event: Event, event_update: Event):
-    """ Checks if the time change is possible, otherwise returns False"""
+    """ Checks if the time change is possible"""
     try:
         if not check_validation(event_update.start, event_update.end):
             return False
@@ -60,7 +62,8 @@ def check_date_valitation(old_event: Event, event_update: Event):
     return True
 
 
-def update_event(event_id: int, event_items: Dict, db: Session) -> Optional[Event]:
+def update_event(event_id: int, event_items: Dict, db: Session
+                 ) -> Optional[Event]:
     # To do: Check if the user is the owner of the event.
     if not bool(event_items):
         return None

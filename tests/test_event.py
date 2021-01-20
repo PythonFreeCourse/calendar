@@ -5,8 +5,8 @@ from app.database.models import Event
 from app.main import app
 from app.routers.event import update_event
 
-# this is fallback for those who's not getting the client in the function - 
-# FYI YAM
+# this is fallback for those who's not getting
+# the client in the function - FYI YAM.
 from fastapi.testclient import TestClient
 client = TestClient(app)
 
@@ -37,7 +37,7 @@ def test_eventview_without_id(client):
 
 @pytest.mark.parametrize("data", DATA_UPDATE_OPTIONS)
 def test_invalid_update(data, event, session):
-    assert update_event(1, data, session) == None
+    assert update_event(1, data, session) is None
 
 
 def test_successful_update(event, session):
@@ -54,11 +54,11 @@ def test_update_db_close(event):
     data = {
         "title": "Problem connecting to db",
     }
-    assert update_event(1, data, db=None) == None
+    assert update_event(1, data, db=None) is None
 
 
 def test_update_event_does_not_exist(event, session):
     data = {
         "content": "An update test for an event does not exist"
     }
-    assert update_event(5, data, db=session) == None
+    assert update_event(5, data, db=session) is None
