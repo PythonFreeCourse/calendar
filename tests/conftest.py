@@ -58,6 +58,7 @@ def profile_test_client():
         yield client
     app.dependency_overrides = {}
 
+
 @pytest.fixture
 def event(session) -> Event:
     user = get_test_placeholder_user()
