@@ -1,7 +1,7 @@
 html,
 body {
 	height: 100%;
-	min-width: max-content;
+	min-width: min-content;
 	max-width: -moz-available;
     max-width: -webkit-fill-available;
     max-width: fill-available;
@@ -13,7 +13,6 @@ body {
 }
 
 #event_edit_tabs {
-	height: 100%;
 	flex: 1;
 }
 
@@ -33,6 +32,15 @@ form {
 .form_row_start,
 .form_row_end {
 	display: flex
+}
+
+.form_row_start,
+.form_row_end {
+	flex: 1;
+}
+
+.form_row_end {
+    justify-content: flex-end;
 }
 
 .form_row {
