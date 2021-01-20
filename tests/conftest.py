@@ -2,10 +2,11 @@ from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 
 from app.main import app
 from app.database.database import Base, SessionLocal, engine
-from app.database.models import User
+from app.database.models import User, Event
 from app.routers import profile
 
 
@@ -30,7 +31,7 @@ def client():
 @pytest.fixture
 def session():
     Base.metadata.create_all(bind=engine)
-    session = SessionLocal()
+    session = TestingSessionLocal()
     yield session
     session.close()
     Base.metadata.drop_all(bind=engine)
@@ -56,3 +57,22 @@ def profile_test_client():
     with TestClient(app) as client:
         yield client
     app.dependency_overrides = {}
+
+@pytest.fixture
+def event(session) -> Event:
+    user = get_test_placeholder_user()
+    session.add(user)
+    session.commit()
+    event = Event(
+        title='test event',
+        start=datetime.now(),
+        end=datetime.now(),
+        content='test event',
+        owner_id=user.id,
+    )
+    session.add(event)
+    session.commit()
+    yield event
+    session.delete(user)
+    session.delete(event)
+    session.commit()
