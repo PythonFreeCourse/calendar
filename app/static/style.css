@@ -1,0 +1,63 @@
+body {
+    background: #A1FFCE;
+    background: -webkit-linear-gradient(to right, #FAFFD1, #A1FFCE);
+    background: linear-gradient(to right, #FAFFD1, #A1FFCE);
+}
+
+.profile-image {
+    width: 7em;
+}
+
+.card-profile {
+    border-radius: 10px;
+}
+
+.card-event {
+    border-radius: 10px;
+}
+
+.card-event:hover {
+    transform: scale(1.02);
+}
+
+.event-posted-time {
+    font-size: 0.7rem;
+}
+
+.no-border {
+    border: none;
+}
+
+.profile-modal-fadeIn {
+    -webkit-animation-name: profile-modal-fadeIn;
+    animation-name: profile-modal-fadeIn;
+    
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+  
+  @keyframes profile-modal-fadeIn {
+    from {
+      opacity: 0;
+      -webkit-transform: translate3d(-100%, 0, 0);
+      transform: translate3d(-100%, 0, 0);
+    }
+  
+    to {
+      opacity: 1;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+.profile-modal-dialog {
+    margin: 0;
+}
+
+.profile-modal-header {
+    border: none;
+    background-color:whitesmoke;
+}
+  
