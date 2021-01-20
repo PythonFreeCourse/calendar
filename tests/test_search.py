@@ -1,10 +1,13 @@
 from app.database.models import User, Event
+from datetime import datetime
 
 from fastapi import status
 import pytest
 
 
 class TestSearch:
+    '''Search feature test. Works with PostgreSQL'''
+
     SEARCH = '/search'
     GOOD_KEYWORDS = [
         ({'keywords': 'lov'}, b'test'),
@@ -30,7 +33,14 @@ class TestSearch:
     
     @staticmethod
     def add_event(session, title, content, owner_id):
-        event = Event(title=title, content=content, owner_id=owner_id)
+        event = Event(
+            title=title,
+            content=content,
+            start=datetime.today(),
+            end=datetime.today(),
+            owner_id=owner_id
+        )
+
         session.add(event)
         session.commit()
     
