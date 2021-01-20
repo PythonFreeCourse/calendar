@@ -20,6 +20,7 @@ class User(Base):
     events = relationship(
         "Event", cascade="all, delete", back_populates="owner")
 
+    token = relationship("Token", uselist=False, cascade="all, delete", back_populates="owner")
 
 class Event(Base):
     __tablename__ = "events"
@@ -32,3 +33,11 @@ class Event(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="events")
+
+
+class Token(Base):
+    __tablename__ = "tokens"
+
+    id = Column(String, primary_key=True, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+    owner = relationship("User", back_populates="token")

@@ -7,7 +7,7 @@ from PIL import Image
 
 from app import config
 from app.database.database import get_db
-from app.database.models import User
+from app.database.models import User, Token
 from app.dependencies import MEDIA_PATH, templates
 
 
