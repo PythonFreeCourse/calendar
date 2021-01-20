@@ -10,4 +10,3 @@ def association(event: Event, session: Session) -> UserEvent:
         session.query(UserEvent)
         .filter(UserEvent.event_id == event.id)
     ).first()
-
