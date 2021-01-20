@@ -1,0 +1,76 @@
+from app.database.models import User, Event
+
+from fastapi import status
+import pytest
+
+
+class TestSearch:
+    SEARCH = '/search'
+    GOOD_KEYWORDS = [
+        ({'keywords': 'lov'}, b'test'),
+        ({'keywords': 'very    emotional'}, b'second event'),
+        ({'keywords': 'event'}, b'My second event'),
+        ({'keywords': 'event'}, b'My first event'),
+        ({'keywords': 'jam'}, b'is fun'),
+        ({'keywords': '    jam    '}, b'is fun')
+    ]
+    BAD_KEYWORDS = [
+        ({'keywords': ''}, b'Invalid'),
+        ({'keywords': 'ev!@&'}, b'No matching'),
+        ({'keywords': '[]'}, b'No matching'),
+        ({'keywords': 'firsttttt'}, b'No matching')
+    ]
+
+    @staticmethod
+    def create_user(session):
+        user = User(username='testuser', email='test@abc.com', password='1234')
+        session.add(user)
+        session.commit()
+        return user
+    
+    @staticmethod
+    def add_event(session, title, content, owner_id):
+        event = Event(title=title, content=content, owner_id=owner_id)
+        session.add(event)
+        session.commit()
+    
+    @staticmethod
+    def create_data(session):
+        user = TestSearch.create_user(session)
+        events = [
+            {'title': "My first event", 'content': 'I am so excited', 'owner_id': 1},
+            {'title': "My second event", 'content': 'I am very emotional', 'owner_id': 1},
+            {'title': "Pick up my nephews", 'content': 'Very important', 'owner_id': 1},
+            {'title': "Solve this ticket", 'content': 'I can do this', 'owner_id': 1},
+            {'title': "Jam with my friends", 'content': "Jamming is fun", 'owner_id': 1},
+            {'title': 'test', 'content': 'love string', 'owner_id': 1}
+        ]
+        
+        for event in events:
+            TestSearch.add_event(session, 
+                                title=event['title'],
+                                content=event['content'],
+                                owner_id=event['owner_id']
+            )
+    
+    @staticmethod
+    def test_search_page_exists(client):
+        resp = client.get(TestSearch.SEARCH)
+        assert resp.status_code == status.HTTP_200_OK
+        assert b'Search event by keyword' in resp.content
+
+
+@pytest.mark.parametrize('data, string', TestSearch.GOOD_KEYWORDS)
+def test_search_good_keywords(data, string, client, session):
+    ts = TestSearch()
+    ts.create_data(session)
+    resp = client.post(ts.SEARCH, data=data)
+    assert string in resp.content
+
+
+@pytest.mark.parametrize('data, string', TestSearch.BAD_KEYWORDS)
+def test_search_bad_keywords(data, string, client, session):
+    ts = TestSearch()
+    ts.create_data(session)
+    resp = client.post(ts.SEARCH, data=data)
+    assert string in resp.content

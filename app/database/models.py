@@ -1,7 +1,11 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+import datetime
 
-from .database import Base
+from app.database.database import Base
+from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
+                        Integer, String, event)
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.dialects.postgresql import TSVECTOR
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -23,7 +27,25 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     content = Column(String)
-    date = Column(DateTime)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
     owner_id = Column(Integer, ForeignKey("users.id"))
+    
+    # PostgreSQL
+    events_tsv = Column(TSVECTOR)
 
     owner = relationship("User", back_populates="events")
+
+    # PostgreSQL
+    __table_args__ = (Index('events_tsv_idx', 'events_tsv', postgresql_using = 'gin'),)
+
+
+# PostgreSQL
+trigger_snippet = DDL("""
+CREATE TRIGGER ix_events_tsv_update BEFORE INSERT OR UPDATE
+ON events
+FOR EACH ROW EXECUTE PROCEDURE
+tsvector_update_trigger(events_tsv,'pg_catalog.english', 'title', 'content')
+""")
+
+# PostgreSQL
+event.listen(Event.__table__, 'after_create', trigger_snippet.execute_if(dialect = 'postgresql'))
