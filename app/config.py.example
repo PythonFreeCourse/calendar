@@ -1,3 +1,6 @@
+import os
+
+
 # flake8: noqa
 
 
@@ -10,4 +13,4 @@ PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
 # API-KEYS
-WEATHER_API_KEY=os.getenv('WEATHER_API_KEY')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')

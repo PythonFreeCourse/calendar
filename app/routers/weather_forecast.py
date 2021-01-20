@@ -1,4 +1,6 @@
 import datetime
+import os
+
 import frozendict
 import functools
 import requests
@@ -268,3 +270,6 @@ def get_weather_data(requested_date, location):
         output["Status"] = ERROR_STATUS
         output["ErrorDescription"] = error_text
     return output
+
+
+print(os.getenv())
