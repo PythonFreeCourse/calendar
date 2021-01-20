@@ -44,7 +44,7 @@ class Event(Base):
     owner = relationship("User", back_populates="events")
 
     # PostgreSQL
-    __table_args__ = (Index('events_tsv_idx', 'events_tsv', postgresql_using = 'gin'),)
+    __table_args__ = (Index('events_tsv_idx', 'events_tsv', postgresql_using='gin'),)
 
 
 # PostgreSQL
@@ -56,4 +56,4 @@ tsvector_update_trigger(events_tsv,'pg_catalog.english', 'title', 'content')
 """)
 
 # PostgreSQL
-event.listen(Event.__table__, 'after_create', trigger_snippet.execute_if(dialect = 'postgresql'))
+event.listen(Event.__table__, 'after_create', trigger_snippet.execute_if(dialect='postgresql'))
