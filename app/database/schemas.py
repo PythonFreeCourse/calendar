@@ -1,8 +1,6 @@
 from datetime import date
 from pydantic import BaseModel
 
-
-class Record(BaseModel):
    
 class User(BaseModel):
    
@@ -20,7 +18,7 @@ class Event(Base):
     title: str
     start_date: date
     end_date: date
-    VC_link: str
+    vc_link: str
     content: str
     location: str
     owner_id: int

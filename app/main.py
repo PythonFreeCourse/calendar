@@ -53,27 +53,27 @@ def profile(request: Request):
 
 
 @app.get("/profile/{user_id}/EditEvent", response_class=HTMLResponse)
-async def insert_info(request: Request):
+async def insert_info(request: Request) -> HTMLResponse:
     """Get request and return an html File"""
     return templates.TemplateResponse("editevent.html",{"request": request})
 
 
 @app.post("/profile/{user_id}/EditEvent") # this func is soupose to change with the PR of Ode and Efrat and it will be change
-def create_event(user_id: int, event_title: str = Form(...), location: Optional[str] = Form(None), from_date: Optional[datetime] = Form(...),
+def create_event(user_id: int, event_title: str = Form(None), location: Optional[str] = Form(None), from_date: Optional[datetime] = Form(...),
                 to_date: Optional[datetime] = Form(...), link_vc: str = Form(None), content: str = Form(None),
-                 db = Depends(get_db)):
+                 db = Depends(get_db)) -> dict:
     """ required args - title, from_date, to_date, user_id, the 'from_date' need to be early from the 'to_date'.
     check validation for the value, insert the new data to DB 
     if the prosess success return True arg the event item, otherwith return False and the error msg """
     success = False
     error_msg = ""
     new_event = ""
-    event_value = {'title': event_title, "location": location, "start_date": from_date, "end_date": to_date, "VC_link":link_vc, "content": content, 
-                    "owner_id": user_id}
     if event_title is None:
         event_title = "No Title"
     try:
         if check_validation(from_date, to_date):
+            event_value = {'title': event_title, "location": location, "start_date": from_date, "end_date": to_date, "vc_link":link_vc, "content": content, 
+                "owner_id": user_id}
             new_event = add_event(event_value, db)
             success = True
         else:
@@ -81,33 +81,29 @@ def create_event(user_id: int, event_title: str = Form(...), location: Optional[
     except Exception as e:
         error_msg = e
     finally:
-        return {success, new_event, error_msg}
+        return {"success": success, "new_event": new_event, "error_msg": error_msg}
 
 
-def check_validation(start_time, end_time):
+def check_validation(start_time, end_time) -> bool:
     """Check if the start_date is smaller then the end_time"""
-    if start_time < end_time:
-        return True
-    return False
+    try:
+        return start_time < end_time
+    except TypeError:
+        return False
 
 
-def add_event(values: dict, db):
+
+def add_event(values: dict, db) -> Event:
     """Get User values and the DB Session insert the values to the DB and refresh it
     exception in case that the keys in the dict is not match to the fields in the DB
     return the Event Class item"""
     try:
-        new_event = Event(title = values['title'],
-                    start_date = values['start_date'],
-                    end_date = values['end_date'],
-                    VC_link = values['VC_link'],
-                    content = values['content'],
-                    location = values['location'],
-                    owner_id = values['owner_id']
-                    )
+        new_event = Event(**values)
         db.add(new_event)   
         db.commit()
         db.refresh(new_event)
         return new_event
-    except Exception as e:
+    except (AssertionError, AttributeError) as e:
         # Need to write into log
-        return e
+        print(e)
+        return None

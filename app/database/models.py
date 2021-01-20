@@ -24,7 +24,7 @@ class Event(Base):
     title = Column(String)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
-    VC_link = Column(String)
+    vc_link = Column(String)
     content = Column(String)
     location = Column(String)
     owner_id = Column(Integer, ForeignKey("users.id"))

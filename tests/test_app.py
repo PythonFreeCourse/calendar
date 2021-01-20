@@ -13,7 +13,7 @@ event_test_data = [(
     "location": "Fake City",
     "start_date": date_test_data[0][0],
     "end_date": date_test_data[0][1],
-    "VC_link": "https://fakevclink.com",
+    "vc_link": "https://fakevclink.com",
     "content": "Any Words",
     "owner_id": 123},
     get_db

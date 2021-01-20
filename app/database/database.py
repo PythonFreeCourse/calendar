@@ -5,7 +5,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./calendar_app.db"
+from .config import db_url
+
+
+SQLALCHEMY_DATABASE_URL = db_url
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}

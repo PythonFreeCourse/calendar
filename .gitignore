@@ -128,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+calendar_app.db
+calender-venv/
+.vscode/settings.json
