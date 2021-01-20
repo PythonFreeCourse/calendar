@@ -90,6 +90,21 @@ async def update_user_email(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
+async def get_current_user():
+    user = get_placeholder_user()
+    return user
+
+
+@router.post("/delete_user")
+async def delete_user(
+        request: Request, session=Depends(get_db), current_user: User = Depends(get_current_user)):
+    session.query(User).filter_by(username=current_user.username).delete()
+    session.commit()
+    session.close()
+    url = '/'
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
 @router.post("/update_user_description")
 async def update_profile(
         request: Request, session=Depends(get_db)):

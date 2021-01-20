@@ -107,3 +107,13 @@ def test_upload_user_photo(profile_test_client):
     # Validate new picture size
     new_avatar_path = os.path.join(MEDIA_PATH, 'fake_user.png')
     assert Image.open(new_avatar_path).size == config.AVATAR_SIZE
+
+
+def test_delete_user_(profile_test_client):
+    # Get profile page and initialize database
+    profile = profile_test_client.get('/profile')
+
+    # Post delete user
+    response = profile_test_client.post(
+        '/profile/delete_user')
+    assert response.status_code == 302
