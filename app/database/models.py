@@ -75,7 +75,6 @@ class Category(Base):
 
     @staticmethod
     def create(db_session: Session, name: str, color: str, user_id: int):
-        print(Base.metadata.tables.keys())
         try:
             category = Category(name=name, color=color, user_id=user_id)
             db_session.add(category)
