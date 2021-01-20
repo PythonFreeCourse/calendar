@@ -5,7 +5,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, event, profile, email, invitation
+from app.routers import agenda, email, event, invitation, profile
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -13,11 +13,15 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-app.include_router(profile.router)
-app.include_router(event.router)
-app.include_router(agenda.router)
-app.include_router(email.router)
-app.include_router(invitation.router)
+routers_to_include = [
+    agenda.router,
+    email.router,
+    event.router,
+    invitation.router,
+    profile.router,
+]
+for router in routers_to_include:
+    app.include_router(router)
 
 
 @app.get("/")
