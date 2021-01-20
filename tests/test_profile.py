@@ -107,3 +107,4 @@ def test_upload_user_photo(profile_test_client):
     # Validate new picture size
     new_avatar_path = os.path.join(MEDIA_PATH, 'fake_user.png')
     assert Image.open(new_avatar_path).size == config.AVATAR_SIZE
+    os.remove(new_avatar_path)
