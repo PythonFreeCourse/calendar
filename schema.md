@@ -13,6 +13,8 @@
 │       ├── admin.py
 │   ├── routers
 │       ├── __init__.py
+│       ├── agenda.py
+│       ├── categories.py
 │       ├── profile.py
 │   ├── media
 │       ├── example.png
