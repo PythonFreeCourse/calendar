@@ -5,7 +5,7 @@ from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from pydantic import EmailStr
 from pydantic.errors import EmailError
 
-import config
+from app import config
 
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 

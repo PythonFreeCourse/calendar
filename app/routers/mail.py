@@ -2,8 +2,8 @@ from fastapi import BackgroundTasks, APIRouter, Depends
 from pydantic import BaseModel, EmailStr
 from pydantic.errors import EmailError
 
-import config
-from internal.mail import send_fast_email_invitation
+from app import config
+from app.internal.mail import send_fast_email_invitation
 
 router = APIRouter()
 

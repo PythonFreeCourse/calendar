@@ -4,9 +4,9 @@ from fastapi.testclient import TestClient
 from fastapi_mail import MessageSchema
 from pydantic import ValidationError, EmailStr
 
-import config
+from app import config
+from app.internal.mail import send_fast_email
 from app.main import app
-from internal.mail import send_fast_email
 
 pytest_plugins = "smtpdfix"
 
