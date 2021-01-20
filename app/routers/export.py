@@ -34,10 +34,10 @@ def add_optional(user_event, data):
     """Adds an optional field if it exists."""
 
     if user_event.location:
-        data += [('location', user_event.location)]
+        data.append(('location', user_event.location))
 
     if user_event.content:
-        data += [('description', user_event.content)]
+        data.append(('description', user_event.content))
 
     return data
 

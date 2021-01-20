@@ -1,7 +1,9 @@
+from typing import List
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.database.models import User
+from app.database.models import User, UserEvent, Event
 from app.internal.utils import save
 
 
@@ -30,7 +32,7 @@ def get_users(session: Session, **param):
 
 def does_user_exist(
         session: Session,
-        *_, user_id=None,
+        *, user_id=None,
         username=None, email=None
 ):
     """Returns True if user exists, False otherwise.
@@ -43,3 +45,14 @@ def does_user_exist(
     if email:
         return len(get_users(session=session, email=email)) == 1
     return False
+
+
+def get_all_user_events(session: Session, user_id: int) -> List[Event]:
+    """Returns all events that the user participants in."""
+
+    associations = (
+        session.query(UserEvent)
+        .filter(UserEvent.user_id == user_id)
+        .all()
+    )
+    return [association.events for association in associations]

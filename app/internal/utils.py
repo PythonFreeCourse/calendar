@@ -1,8 +1,6 @@
-from typing import List
-
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, Event, UserEvent
+from app.database.models import Base
 
 
 def save(item, session: Session) -> bool:
@@ -14,17 +12,6 @@ def save(item, session: Session) -> bool:
         session.commit()
         return True
     return False
-
-
-def get_all_user_events(session: Session, user_id: int) -> List[Event]:
-    """Returns all events that the user participants in."""
-
-    associations = (
-        session.query(UserEvent)
-        .filter(UserEvent.user_id == user_id)
-        .all()
-    )
-    return [association.events for association in associations]
 
 
 def create_model(session: Session, model_class, **kw):
