@@ -1,4 +1,5 @@
 import pytest
+from fastapi import status
 from fastapi.testclient import TestClient
 from fastapi_mail import MessageSchema
 from pydantic import ValidationError, EmailStr
@@ -59,17 +60,17 @@ def assert_validation_error_missing_body_fields(validation_msg,
 
 def test_read_main():
     response = client.get("/")
-    assert response.status_code == 200
+    assert response.ok
 
 
 def test_send_mail_no_body(configured_smtpd):
     response = client.post("/mail/invitation/")
-    assert response.status_code == 422
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert response.json() == {'detail': [{
         'loc': ['body'],
         'msg': 'field required',
         'type': 'value_error.missing'}]}
-    assert len(configured_smtpd.messages) == 0
+    assert not configured_smtpd.messages
 
 
 @pytest.mark.parametrize("body, missing_fields", [
@@ -102,10 +103,10 @@ def test_send_mail_no_body(configured_smtpd):
 def test_send_mail_partial_body(body, missing_fields,
                                 configured_smtpd):
     response = client.post("/mail/invitation/", json=body)
-    assert response.status_code == 422
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
     assert_validation_error_missing_body_fields(response.json(),
                                                 missing_fields)
-    assert len(configured_smtpd.messages) == 0
+    assert not configured_smtpd.messages
 
 
 def test_send_mail_invalid_email(configured_smtpd):
@@ -115,9 +116,9 @@ def test_send_mail_invalid_email(configured_smtpd):
         "recipient_mail": "test#mail.com"
     })
 
-    assert response.status_code == 200
+    assert response.ok
     assert response.json() == {'message': "Please enter valid email address"}
-    assert len(configured_smtpd.messages) == 0
+    assert not configured_smtpd.messages
 
 
 def test_send_mail_valid_email(configured_smtpd):
@@ -127,7 +128,7 @@ def test_send_mail_valid_email(configured_smtpd):
         "recipient_mail": "test@mail.com"
     }
                            )
-    assert response.status_code == 200
+    assert response.ok
     assert response.json() == {
         'message': 'Your message was sent successfully to string'}
     assert len(configured_smtpd.messages) == 1
@@ -160,4 +161,4 @@ async def test_internal_send_fast_email_invalid_email(smtpd):
 
         await send_fast_email(message, config.Settings(
             smtp_server=smtpd.hostname, smtp_port=smtpd.port))
-    assert len(smtpd.messages) == 0
+    assert not smtpd.messages
