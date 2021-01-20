@@ -12,7 +12,8 @@ from app.routers import profile
 pytest_plugins = [
     'tests.user_fixture',
     'tests.event_fixture',
-    'tests.invitation_fixture'
+    'tests.invitation_fixture',
+    'tests.association_fixture',
 ]
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
