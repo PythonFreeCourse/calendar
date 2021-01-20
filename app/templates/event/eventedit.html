@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Edit Event</title>
-        <link href="{{ url_for('static', path='/eventedit.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', path='event/eventedit.css') }}" rel="stylesheet">
     </head>
     <body>
         <form name="eventeditform" method="POST">
@@ -25,7 +25,7 @@
             </ul>
             <div class="tab-content" id="event_edit_tabs">
                 <div class="tab-pane fade show active" id="eventdetails" role="tabpanel" aria-labelledby="eventdetails-tab">
-                    {% include "event_details_form_tab.html" %}
+                    {% include "event/partials/edit_event_details_tab.html" %}
                 </div>
                 <!--    Copy commented section to add another tab-->
                 <!--    <div class="tab-pane fade" id="(CHANGE_ME)" role="tabpanel" aria-labelledby="(CHANGE_ME)-tab">-->
