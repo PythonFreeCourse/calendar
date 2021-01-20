@@ -1,8 +1,8 @@
 import datetime
 
 from app.dependencies import templates
-from app.routers import calendar_gridcg as cg
-from fastapi import Request
+from app.routers import calendar_grid as cg
+from fastapi import APIRouter, Request
 
 router = APIRouter(
     prefix="/calendar",
@@ -11,19 +11,18 @@ router = APIRouter(
 )
 
 
-@router.get("/calendar")
+@router.get("/")
 async def calendar(request: Request):
-    date = datetime.date.today()
+    today = cg.Day(datetime.date.today())
     return templates.TemplateResponse(
         "calendar.html",
         {
             "request": request,
             "calendar": {
-                'date': date,
-                'strf_date': cg.get_date_as_string(date),
-                'days_of_the_week': cg.DAYS_OF_THE_WEEK,
+                'day': today,
+                'week_days': cg.Week.DAYS_OF_THE_WEEK,
                 'month_block': cg.get_month_block(
-                    datetime.date(date.year, date.month, 1)
+                    datetime.date(today.date.year, today.date.month, 1)
                 )
             }
         }

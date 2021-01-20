@@ -22,12 +22,12 @@ def get_test_db():
     return TestingSessionLocal()
 
 
-@ pytest.fixture
+@pytest.fixture
 def client():
     return TestClient(app)
 
 
-@ pytest.fixture
+@pytest.fixture
 def session():
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
@@ -45,7 +45,7 @@ def get_test_placeholder_user():
     )
 
 
-@ pytest.fixture
+@pytest.fixture
 def profile_test_client():
     Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
@@ -58,6 +58,6 @@ def profile_test_client():
     app.dependency_overrides = {}
 
 
-@ pytest.fixture
+@pytest.fixture
 def Calendar():
     return calendar.Calendar(0)

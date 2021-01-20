@@ -44,7 +44,7 @@ nav {
     width: 4.5rem;
     grid-row: 1/3;
     font-size: 2.8rem;
-    padding-left: 0.5rem;
+    padding-left: 0.8rem;
 }
 
 .menu {
@@ -92,7 +92,7 @@ main {
     flex: 1;
 }
 
-#daily-event {
+#day-display {
     flex: 0 0 0;
     opacity: 0;
     transition: all 1s;
@@ -113,29 +113,44 @@ main {
 /* The Calendar Grid */
 .calender-grid {
     flex: 1;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: minmax(12rem, auto);
+    display: flex;
+    flex-direction: column;
     margin: 0 1rem 0 1rem;
 }
 
-.calendar-grid div {
+.week {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 12rem;
     font-weight: 900;
     font-size: 2rem;
+}
+
+.week:hover {
+    box-shadow: -5px 0px 0px 0px #FFDE4D;
 }
 
 .day {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 
+    font-size: 1.2rem;
     padding: 0 1rem 0 1rem;
     border: 1px solid #e9ecef;
-    font-size: 1.2rem;
+
+    overflow-y: auto;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
+.day::-webkit-scrollbar {display: none;}
+
+.event { font-weight: 400; }
+
 .day:hover {
-    border: 0.3rem solid #222831;
-    transition: border 0.1s;
+    border: 0.2rem solid #222831;
 }
 
 .day:hover .day-number{
@@ -150,10 +165,6 @@ main {
 .day_current {
     background-color: #FFDE4D;
     color: white;
-}
-
-.day_first {
-    background-color:  #e9ecef;
 }
 
 /* Dates Navigation */
@@ -213,7 +224,7 @@ main {
 
 .t-gray {color: #adb5bd;}
 
-.t-very-lightgray {color: #F7F7F7;}
+.t-lightgray {color: #F7F7F7;}
 
 .t-darkblue {color: #222831;}
 
@@ -230,3 +241,5 @@ main {
 .bg-red {background-color: #F24726;}
 
 .bg-lightgray {background-color: #e9ecef;}
+
+.bg-yellow {background-color: #FFDE4D;}
