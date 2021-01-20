@@ -1,5 +1,6 @@
-import {check_level} from '../support/index'
-import {screen_sizes_dict} from '../enums/sizes'
+import {check_level} from '../../support/index'
+import {screen_sizes_dict} from '../../support/enums/sizes'
+import { pages } from '../../support/enums/enums';
 
 
 describe('HomePage tests', () => {
@@ -15,7 +16,7 @@ describe('HomePage tests', () => {
                 } else {
                     cy.viewport(size)
                 }
-                cy.visit('/')
+                cy.visit(pages.HOME)
                 cy.contains('Calendar') 
             });
     

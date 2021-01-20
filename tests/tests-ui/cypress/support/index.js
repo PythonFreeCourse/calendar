@@ -15,9 +15,16 @@
 
 // Import commands.js using ES2015 syntax:
 import './home_page/commands'
+import './profile_page/commands_profilePage'
+import '../support/commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false
+})
 
 export function check_level(testLevel) {
     if (Cypress.env('level') < testLevel){

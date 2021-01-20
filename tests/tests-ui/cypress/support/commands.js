@@ -1,3 +1,7 @@
+Cypress.Commands.add("randomStr", (start='') => {
+    return randomStr(start)
+})
+
 export function randomStr(name) {
 	if (name == null) {
 		name = "";
@@ -17,4 +21,8 @@ Cypress.Commands.add('commonBeforeEach', () => {
 Cypress.Commands.add('commonAfter', () => {
     cy.log('After');
     cy.logout_service();
+})
+
+Cypress.Commands.add('click_button', (form_name, btn_type) => {
+    cy.get(`form[action='${form_name}'] .btn[type='${btn_type}']`).click();
 })
