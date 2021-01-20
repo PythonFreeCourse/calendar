@@ -52,8 +52,8 @@ def freezeargs(func):
     def wrapped(*args, **kwargs):
         args = tuple([frozendict.frozendict(arg)
                       if isinstance(arg, dict) else arg for arg in args])
-        kwargs = {k: frozendict.frozendict(v) if isinstance(v, dict)
-                        else v for k, v in kwargs.items()}
+        kwargs = {k: frozendict.frozendict(v) if isinstance(v, dict) else v
+                  for k, v in kwargs.items()}
         return func(*args, **kwargs)
     return wrapped
 
@@ -134,7 +134,8 @@ def get_forecast_weather(input_date, location):
             weather_data = {
                 'MinTempCel': api_json[location_found]['values'][i]['mint'],
                 'MaxTempCel': api_json[location_found]['values'][i]['maxt'],
-                'Conditions': api_json[location_found]['values'][i]['conditions'],
+                'Conditions':
+                    api_json[location_found]['values'][i]['conditions'],
                 'Address': location_found}
             return weather_data, None
 
