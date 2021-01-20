@@ -1,7 +1,9 @@
 import datetime
-from dotenv import load_dotenv
-import os
+import frozendict
+import functools
 import requests
+
+from app import config
 
 
 # This feature requires an API KEY - get yours free @ visual-crossing-weather.p.rapidapi.com
@@ -37,10 +39,23 @@ def validate_date_input(requested_date):
             return True, None
         else:
             return False, INVALID_YEAR
-    else:
-        return False, INVALID_DATE_INPUT
+    return False, INVALID_DATE_INPUT
 
 
+def freezeargs(func):
+    """Transform mutable dictionary into immutable
+    Credit to 'fast_cen' from 'stackoverflow'
+    """
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        args = tuple([frozendict.frozendict(arg) if isinstance(arg, dict) else arg for arg in args])
+        kwargs = {k: frozendict.frozendict(v) if isinstance(v, dict) else v for k, v in kwargs.items()}
+        return func(*args, **kwargs)
+    return wrapped
+
+
+@freezeargs
+@functools.lru_cache(maxsize=128, typed=False)
 def get_data_from_weather_api(url, input_query_string):
     """ get the relevant weather data by calling the "Visual Crossing Weather" API.
     Args:
@@ -50,13 +65,12 @@ def get_data_from_weather_api(url, input_query_string):
         (json) - JSON data returned by the API.
         (str) - error message.
     """
-    load_dotenv()
-    HEADERS['x-rapidapi-key'] = os.getenv('WEATHER_API_KEY')
+    HEADERS['x-rapidapi-key'] = config.WEATHER_API_KEY
     try:
         response = requests.request("GET", url, headers=HEADERS, params=input_query_string)
     except requests.exceptions.RequestException:
         return None, NO_API_RESPONSE
-    if response:
+    if response.ok:
         try:
             return response.json()["locations"], None
         except KeyError:
@@ -86,8 +100,7 @@ def get_historical_weather(input_date, location):
                         'Conditions': api_json[location_found]['values'][0]['conditions'],
                         'Address': location_found}
         return weather_data, None
-    else:
-        return None, error_text
+    return None, error_text
 
 
 def get_forecast_weather(input_date, location):
@@ -103,17 +116,16 @@ def get_forecast_weather(input_date, location):
     input_query_string["location"] = location
     api_json, error_text = get_data_from_weather_api(FORECAST_URL, input_query_string)
     location_found = list(api_json.keys())[0]
-    if api_json:
-        for i in range(len(api_json[location_found]['values'])):
-            # find relevant date from API output
-            if str(input_date) == api_json[location_found]['values'][i]['datetimeStr'][:10]:
-                weather_data = {'MinTempCel': api_json[location_found]['values'][i]['mint'],
-                                'MaxTempCel': api_json[location_found]['values'][i]['maxt'],
-                                'Conditions': api_json[location_found]['values'][i]['conditions'],
-                                'Address': location_found}
-                return weather_data, None
-    else:
+    if not api_json:
         return None, error_text
+    for i in range(len(api_json[location_found]['values'])):
+        # find relevant date from API output
+        if str(input_date) == api_json[location_found]['values'][i]['datetimeStr'][:10]:
+            weather_data = {'MinTempCel': api_json[location_found]['values'][i]['mint'],
+                            'MaxTempCel': api_json[location_found]['values'][i]['maxt'],
+                            'Conditions': api_json[location_found]['values'][i]['conditions'],
+                            'Address': location_found}
+            return weather_data, None
 
 
 def get_history_relevant_year(day, month):
@@ -179,6 +191,7 @@ def get_forecast(requested_date, location):
         location (str) - location name.
     Returns:
         weather_json (json) - output weather data.
+        error_text (str) - error message.
     """
     forecast_type = get_forecast_type(requested_date)
     if forecast_type == HISTORY_TYPE:
