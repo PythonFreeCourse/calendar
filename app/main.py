@@ -5,7 +5,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, dayview, event, profile, email, invitation
+from app.routers import agenda, event, profile, categories
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -15,6 +15,7 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 routers_to_include = [
     agenda.router,
+    categories.router,
     event.router,
     profile.router,
 ]
