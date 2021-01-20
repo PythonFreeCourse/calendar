@@ -5,7 +5,7 @@ body {
 }
 
 .profile-image {
-    width: 5em;
+    width: 7em;
 }
 
 .card-profile {
@@ -24,6 +24,40 @@ body {
     font-size: 0.7rem;
 }
 
-.feature {
+.no-border {
     border: none;
 }
+
+.profile-modal-fadeIn {
+    -webkit-animation-name: profile-modal-fadeIn;
+    animation-name: profile-modal-fadeIn;
+    
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+  
+  @keyframes profile-modal-fadeIn {
+    from {
+      opacity: 0;
+      -webkit-transform: translate3d(-100%, 0, 0);
+      transform: translate3d(-100%, 0, 0);
+    }
+  
+    to {
+      opacity: 1;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+.profile-modal-dialog {
+    margin: 0;
+}
+
+.profile-modal-header {
+    border: none;
+    background-color:whitesmoke;
+}
+  
