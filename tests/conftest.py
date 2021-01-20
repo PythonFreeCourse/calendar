@@ -61,7 +61,6 @@ def profile_test_client():
 @pytest.fixture
 def event(session) -> Event:
     user = get_test_placeholder_user()
-    print(user.email)
     session.add(user)
     session.commit()
     event = Event(

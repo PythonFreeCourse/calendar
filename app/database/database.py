@@ -5,8 +5,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./calendar.db"
-# (os.getenv("DATABASE_CONNECTION_STRING"))
+from app import config
+
+
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "DATABASE_CONNECTION_STRING", config.DEVELOPMENT_DATABASE_STRING)
 
 
 engine = create_engine(
@@ -17,6 +20,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 # Dependency
+
+
 def get_db():
     db = SessionLocal()
     try:

@@ -1,11 +1,12 @@
 from datetime import datetime
 from typing import Dict, Optional, Set
 
-from app.database.models import Event
+from app.database.models import Event, User
 from app.dependencies import templates
 from fastapi import APIRouter, Request
 from sqlalchemy import exc
 from sqlalchemy.orm import Session
+
 
 router = APIRouter(
     prefix="/event",
@@ -25,7 +26,7 @@ def get_event_by_id(db: Session, event_id: int) -> Event:
 
 
 def check_validation(start_time: datetime, end_time: datetime) -> bool:
-    """Check if the start date is smaller then the end time"""
+    """Check if the start time is earlier than the end time, otherwise a false refund"""
     if start_time < end_time:
         return True
     return False
