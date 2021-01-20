@@ -131,3 +131,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+pyvenv.cfg
+bin
+client_secrets.json
+.vscode
