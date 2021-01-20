@@ -3,11 +3,17 @@ from app.routers.invitation import get_all_invitations, get_invitation_by_id
 
 class TestInvitations:
     NO_INVITATIONS = b"You don't have any invitations."
+    URL = "/invitations"
 
-    def test_view_no_invitations(self, client):
-        resp = client.get("/invitations")
+    def test_view_no_invitations(self, invitation_test_client):
+        resp = invitation_test_client.get(self.URL)
         assert resp.status_code == 200
         assert self.NO_INVITATIONS in resp.content
+
+    def test_accept_invitations(self, invitation, invitation_test_client):
+        resp = invitation_test_client.post(
+            self.URL, data={"invite_id ": invitation.id})
+        assert resp.status_code == 307
 
     def test_get_all_invitations_success(
             self, invitation, event, user, session

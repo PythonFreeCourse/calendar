@@ -16,7 +16,7 @@ router = APIRouter()
 def calc_dates_range_for_agenda(
         start: Optional[date],
         end: Optional[date],
-        days: Optional[int]
+        days: Optional[int],
         ) -> Tuple[date, date]:
     """Create start and end dates according to the parameters in the page."""
     if days is not None:
@@ -34,7 +34,7 @@ def agenda(
         db: Session = Depends(get_db),
         start_date: Optional[date] = None,
         end_date: Optional[date] = None,
-        days: Optional[int] = None
+        days: Optional[int] = None,
         ) -> _TemplateResponse:
     """Route for the agenda page, using dates range or exact amount of days."""
 
@@ -57,5 +57,5 @@ def agenda(
         "request": request,
         "events": events,
         "start_date": start_date,
-        "end_date": end_date
+        "end_date": end_date,
     })

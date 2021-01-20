@@ -30,7 +30,7 @@ class User(Base):
     full_name = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
-    is_active = Column(Boolean, default=True)
+    is_active = Column(Boolean, default=False)
 
     events = relationship("UserEvent", back_populates="participants")
 

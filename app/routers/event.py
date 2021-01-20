@@ -24,6 +24,7 @@ async def eventview(request: Request, id: int):
 
 
 def create_event(db, title, start, end, content, owner_id):
+    """Creates an event and an association."""
 
     event = create_model(
         db, Event,

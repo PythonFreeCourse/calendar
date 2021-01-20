@@ -10,7 +10,7 @@ from app.internal.utils import save
 
 def sort_emails(
         participants: List[str],
-        session: Session
+        session: Session,
 ) -> Dict[str, List[str]]:
     """Sorts emails to registered and unregistered users."""
 
@@ -18,9 +18,9 @@ def sort_emails(
     for participant in participants:
 
         if does_user_exist(email=participant, session=session):
-            emails['registered'] += [participant]
+            emails['registered'].append(participant)
         else:
-            emails['unregistered'] += [participant]
+            emails['unregistered'].append(participant)
 
     return emails
 

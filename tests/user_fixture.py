@@ -21,7 +21,7 @@ def user(session: Session) -> User:
 def sender(session: Session) -> User:
     sender = create_model(
         session, User,
-        username='sender_email',
+        username='sender_username',
         password='sender_password',
         email='sender.email@gmail.com',
     )

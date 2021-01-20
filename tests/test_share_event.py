@@ -37,7 +37,6 @@ class TestShareEvent:
         session.delete(invitation)
 
     def test_send_in_app_invitation_failure(self, event, session):
-        send_in_app_invitation([event.owner.email], event, session=session)
         invitation = get_all_invitations(
             recipient=event.owner, session=session)
         assert invitation == []

@@ -18,6 +18,5 @@ def create_model(session: Session, model_class, **kw):
     """Creates and saves a db model."""
 
     instance = model_class(**kw)
-    session.add(instance)
-    session.commit()
+    save(instance, session)
     return instance
