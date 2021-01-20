@@ -27,9 +27,10 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     content = Column(String)
-    date = Column(DateTime, default=datetime.datetime.utcnow)
+    start = Column(DateTime, nullable=False)
+    end = Column(DateTime, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    
+
     # PostgreSQL
     events_tsv = Column(TSVECTOR)
 
