@@ -14,5 +14,4 @@ def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
              send the message via whatsapp.
     """
     message = message.replace(" ", "%20")
-    whats_msg = f'https://api.whatsapp.com/send?phone={phone_number}&text={message}'
-    return whats_msg
+    return f'https://api.whatsapp.com/send?phone={phone_number}&text={message}'
