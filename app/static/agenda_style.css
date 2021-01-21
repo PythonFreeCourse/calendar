@@ -1,0 +1,30 @@
+.agenda_filters {
+    display: flex;
+    padding: 1em;
+}
+
+.filter {
+    margin-right: 1em;
+}
+
+.shown_dates {
+    padding: 1em;
+}
+
+.event_line {
+    margin-left: 3em;
+    margin-right: 3em;
+    margin-bottom: 1em;
+    border: 1px solid black;
+    display: block;
+    padding: 0.2em;
+}
+
+.exact_date {
+    display: flex;
+}
+
+.agenda_button {
+    border: 1px solid black;
+    margin: 1em;
+}
