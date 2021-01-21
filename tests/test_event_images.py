@@ -64,7 +64,7 @@ event_contents = [
     (r"It's important to drink", r'..\static\event_flairs\drank.jpg'),
     (r"call Jim about tennis on friday", r'..\static\event_flairs\tennis.jpg'),
     (r"have to check on pikachu", r'#'),
-    (r"-~                   new pokemon episode 19:00 ~!", r'..\static\event_flairs\pokemon.jpg'),
+    (r"-~new pokemon episode 19:00 ~!", r'..\static\event_flairs\pokemon.jpg'),
 ]
 
 

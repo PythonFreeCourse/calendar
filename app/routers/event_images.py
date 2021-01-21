@@ -150,17 +150,17 @@ def generate_flare_link_from_lemmatized_word(lemmatized_word: str) -> str:
     return f'{FLAIRS_REL_PATH}\\{lemmatized_word}{FLAIRS_EXTENSION}'
 
 
-def remove_non_alphabet_chars(s: str) -> str:
+def remove_non_alphabet_chars(text: str) -> str:
     """Remove non-alphabet chars from a given string
 
     Args:
-        s (str): The string to remove the non-alphabet chars from.
+        text (str): The string to remove the non-alphabet chars from.
 
     Returns:
         str: The string after the removal.
     """
     regex = re.compile('[^a-zA-Z]')
-    return regex.sub('', s)
+    return regex.sub('', text)
 
 
 def get_image_name(related_word: str) -> Optional[str]:
