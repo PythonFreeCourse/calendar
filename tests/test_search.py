@@ -1,8 +1,9 @@
-from app.database.models import User, Event
 from datetime import datetime
 
-from fastapi import status
 import pytest
+from app.database.models import Event, User
+from app.internal.search import get_stripped_keywords
+from fastapi import status
 
 
 class TestSearch:
@@ -84,3 +85,16 @@ def test_search_bad_keywords(data, string, client, session):
     ts.create_data(session)
     resp = client.post(ts.SEARCH, data=data)
     assert string in resp.content
+
+
+STRIPPED_KEYWORDS = [
+    ("      love string      ", "love:* & string:*"),
+    ("test   ", "test:*"),
+    ("i am awesome", "i:* & am:* & awesome:*"),
+    ("a     lot    of       spaces", "a:* & lot:* & of:* & spaces:*")
+]
+
+
+@pytest.mark.parametrize('input_string, output_string', STRIPPED_KEYWORDS)
+def test_search_stripped_keywords(input_string, output_string):
+    assert get_stripped_keywords(input_string) == output_string

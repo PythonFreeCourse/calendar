@@ -1,9 +1,18 @@
 from app.database.database import SessionLocal
 from app.database.models import Event
 from sqlalchemy.exc import SQLAlchemyError
+from typing import List
 
 
-def get_results_by_keywords(session: SessionLocal, keywords: str, owner_id: int):
+def get_stripped_keywords(keywords: str) -> str:
+    '''Gets a string of keywords to search for from the user form and returns a stripped ready-to-db-search keywords string'''
+
+    keywords = " ".join(keywords.split())
+    keywords = keywords.replace(" ", ":* & ") + ":*"
+    return keywords
+
+
+def get_results_by_keywords(session: SessionLocal, keywords: str, owner_id: int) -> List[Event]:
     """Returns possible results for a search in the 'events' database table.
 
     Args:
@@ -11,12 +20,11 @@ def get_results_by_keywords(session: SessionLocal, keywords: str, owner_id: int)
         owner_id (int): current user id
 
     Returns:
-        list: a list of data from the database.
+        list: a list of events from the database matching the inserted keywords.
 
     Uses PostgreSQL's built in 'Full-text search' feature (doesn't work with SQLite)"""
 
-    keywords = " ".join(keywords.split())
-    keywords = keywords.replace(" ", ":* & ") + ":*"
+    keywords = get_stripped_keywords(keywords)
     
     try: 
         return session.query(Event).filter(

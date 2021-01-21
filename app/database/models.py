@@ -1,5 +1,6 @@
 import datetime
 
+from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
                         Integer, String, event)
@@ -34,26 +35,25 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    
-    # PostgreSQL
-    events_tsv = Column(TSVECTOR)
+    owner = relationship("User", back_populates="events") 
 
     # PostgreSQL
-    events_tsv = Column(TSVECTOR)
+    if PSQL_ENVIRONMENT:
+        events_tsv = Column(TSVECTOR)
+        __table_args__ = (Index('events_tsv_idx', 'events_tsv', postgresql_using='gin'),)
 
-    owner = relationship("User", back_populates="events")
 
-    # PostgreSQL
-    __table_args__ = (Index('events_tsv_idx', 'events_tsv', postgresql_using='gin'),)
+class PSQLEnvironmentError(Exception):
+    pass
 
 
 # PostgreSQL
-trigger_snippet = DDL("""
-CREATE TRIGGER ix_events_tsv_update BEFORE INSERT OR UPDATE
-ON events
-FOR EACH ROW EXECUTE PROCEDURE
-tsvector_update_trigger(events_tsv,'pg_catalog.english', 'title', 'content')
-""")
+if PSQL_ENVIRONMENT:
+    trigger_snippet = DDL("""
+    CREATE TRIGGER ix_events_tsv_update BEFORE INSERT OR UPDATE
+    ON events
+    FOR EACH ROW EXECUTE PROCEDURE
+    tsvector_update_trigger(events_tsv,'pg_catalog.english', 'title', 'content')
+    """)
 
-# PostgreSQL
-event.listen(Event.__table__, 'after_create', trigger_snippet.execute_if(dialect='postgresql'))
+    event.listen(Event.__table__, 'after_create', trigger_snippet.execute_if(dialect='postgresql'))
