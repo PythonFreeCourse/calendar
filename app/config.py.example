@@ -1,4 +1,7 @@
 # flake8: noqa
+import os
+
+from fastapi_mail import ConnectionConfig
 
 
 # DATABASE
@@ -12,3 +15,15 @@ AVATAR_SIZE = (120, 120)
 # TELEGRAM
 BOT_API = "paste bot-api"
 WEBHOOK_URL = "use real webhook url or generate webhook for your local host with Ngrok"
+
+# Email
+email_conf = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
+    MAIL_FROM=os.getenv("MAIL_FROM") or "a@a.com",   
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=True,
+)

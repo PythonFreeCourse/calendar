@@ -9,6 +9,9 @@ click==7.1.2
 colorama==0.4.4
 coverage==5.3.1
 fastapi==0.63.0
+fastapi_mail==0.3.3.1
+faker==5.6.2
+smtpdfix==0.2.6
 h11==0.12.0
 h2==4.0.0
 hpack==4.0.0
