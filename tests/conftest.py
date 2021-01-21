@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database.database import Base
+from app.database.database import engine
 
 pytest_plugins = [
     'tests.user_fixture',
@@ -11,6 +12,7 @@ pytest_plugins = [
     'tests.association_fixture',
     'tests.client_fixture',
     'smtpdfix',
+    'tests.db_entities',
 ]
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
@@ -39,4 +41,4 @@ def session():
     yield session
     session.rollback()
     session.close()
-    Base.metadata.drop_all(bind=test_engine)
+    Base.metadata.drop_all(bind=engine)
