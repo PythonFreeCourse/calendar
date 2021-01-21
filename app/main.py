@@ -9,7 +9,7 @@ from app.routers import agenda, categories, email, event, profile
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(debug=True)
+app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
