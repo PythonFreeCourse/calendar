@@ -26,10 +26,17 @@ def get_test_db():
     return TestingSessionLocal()
 
 
+pytest_plugins = [
+    'tests.db_entities',
+    'smtpdfix'
+]
+
+
 @pytest.fixture
 def session():
     Base.metadata.create_all(bind=test_engine)
     session = get_test_db()
     yield session
+    session.rollback()
     session.close()
     Base.metadata.drop_all(bind=test_engine)
