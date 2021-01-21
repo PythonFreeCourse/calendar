@@ -6,9 +6,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, event, profile
-from app.routers.google_connect import get_credentials_for_calendar
-from app.routers import agenda, event, profile, email
+from app.routers import agenda, event, profile, email, google_connect
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -21,6 +19,7 @@ app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
 app.include_router(email.router)
+app.include_router(google_connect.router)
 
 
 @app.get("/")
@@ -28,18 +27,8 @@ async def home(request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!"
-
     })
 
 
-@app.get("/google-connect")
-async def home(request: Request):
-    data = await get_credentials_for_calendar().to_json()
-
-    return templates.TemplateResponse("after.html", {
-        "request": request,
-        "message": "Hello, World!",
-        "data": data
-    })
 if __name__ == "__main__":
     uvicorn.run(app)

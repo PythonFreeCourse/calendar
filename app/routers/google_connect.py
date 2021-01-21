@@ -1,53 +1,46 @@
-import os
-import pickle
-import datetime
-from googleapiclient.discovery import build
-from google.auth.transport.requests import Request
+from google.auth.transport.requests import Request as google_request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 
+from fastapi import Depends, APIRouter, Request
+from starlette.responses import RedirectResponse
 
-def get_credentials_for_calendar():
+from app.database.models import User, OAuthCredentials
+from app.database.database import get_db
+from app.routers.profile import router as profile_router
+
+
+SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+
+router = APIRouter(
+    prefix="/google",
+    tags=["sync"],
+    responses={404: {"description": "Not found"}},
+)
+
+@router.get("/sync")
+async def google_sync(request: Request, session = Depends(get_db)):
+    # Get relevant data from database
+    user = session.query(User).filter_by(id=1).first()
+
     credentials = None
-    scopes = ['https://www.googleapis.com/auth/calendar']
+    if user.oauth_credentials is not None:
+        print("Loading credentials from DB...")
+        db_credentials = user.oauth_credentials
+        credentials = Credentials(token=db_credentials.token, refresh_token=db_credentials.refresh_token, token_uri=db_credentials.token_uri, client_id=db_credentials.client_id, client_secret=db_credentials.client_secret)
+        credentials.refresh(google_request())
+
+    else:
+        print("Fetching new Tokens")
+        flow = InstalledAppFlow.from_client_secrets_file("client_secrets.json", scopes=SCOPES)
+        flow.run_local_server( prompt='consent', authorization_prompt_message="")
+        credentials = flow.credentials
     
-    if os.path.exists("token.pickle"):
-        print("Loading credentials from file..")
-        with open('token.pickle', 'rb') as token:
-            credentials = pickle.load(token)
+    oauth_credentials = OAuthCredentials(owner=user, token=credentials.token, refresh_token=credentials.refresh_token, token_uri=credentials.token_uri, client_id=credentials.client_id, client_secret=credentials.client_secret)
+    session.add(oauth_credentials)
+    session.commit()
+    session.close()
 
-
-    if not credentials or not credentials.valid:
-        if credentials and credentials.expired and credentials.refresh_token:
-            print("Refreshing Access Token")
-            credentials.refresh(Request())
-        else:
-            print("Fetching new Tokens")
-            flow = InstalledAppFlow.from_client_secrets_file("client_secrets.json", scopes=scopes)
-            flow.run_local_server(prompt='consent', authorization_prompt_message="")
-            credentials = flow.credentials
-            with open('token.pickle', 'wb') as f:
-                pickle.dump(credentials, f)
-
-    return credentials
-
-c = get_credentials_for_calendar()
-
-cred = Credentials(token=c.token, refresh_token=c.refresh_token, token_uri=c.token_uri, client_id=c.client_id, client_secret=c.client_secret)
-
-cred.refresh(Request())
-
-pass
-# service = build('calendar', 'v3', credentials=credentials)
-
-# now = datetime.datetime.utcnow().isoformat() + 'Z'
-# print('Getting the upcoming 10 events')
-# events_result = service.events().list(calendarId='primary', timeMin=now, singleEvents=True, orderBy='startTime').execute()
-# events = events_result.get('items', [])
-
-# if not events:
-#     print('No upcoming events found.')
-
-# for event in events:
-#     start = event['start'].get('dateTime', event['start'].get('date'))
-#     print(start, event['summary'])
+    url = profile_router.url_path_for("profile")
+    return RedirectResponse(url='/profile')

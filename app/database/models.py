@@ -1,3 +1,4 @@
+from google.oauth2 import credentials
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -17,8 +18,9 @@ class User(Base):
 
     is_active = Column(Boolean, default=True)
 
-    events = relationship(
-        "Event", cascade="all, delete", back_populates="owner")
+    events = relationship("Event", cascade="all, delete", back_populates="owner")
+    
+    oauth_credentials = relationship("OAuthCredentials", cascade="all, delete", back_populates="owner", uselist=False)
 
 
 class Event(Base):
@@ -32,3 +34,17 @@ class Event(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="events")
+
+
+class OAuthCredentials(Base):
+    __tablename__ = "oauth_credentials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String)
+    refresh_token = Column(String)
+    token_uri = Column(String)
+    client_id = Column(String)
+    client_secret = Column(String)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates=__tablename__, uselist=False)
