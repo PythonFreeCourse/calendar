@@ -1,4 +1,5 @@
 from typing import Optional
+from urllib.parse import urlencode
 
 
 def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
@@ -13,5 +14,7 @@ def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
         str: Returns a string which contains a link to whatsapp api so we can
              send the message via whatsapp.
     """
-    message = message.replace(" ", "%20")
-    return f'https://api.whatsapp.com/send?phone={phone_number}&text={message}'
+    link = 'https://api.whatsapp.com/send?phone'
+    mydict = {f'{link}': f'{phone_number}', 'text': f'{message}'}
+    msglink = urlencode(mydict)
+    return msglink
