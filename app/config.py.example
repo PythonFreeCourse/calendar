@@ -8,3 +8,7 @@ DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
 MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
+
+# TELEGRAM
+BOT_API = "paste bot-api"
+WEBHOOK_URL = "use real webhook url or generate webhook for your local host with Ngrok"

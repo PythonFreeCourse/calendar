@@ -88,6 +88,23 @@ def test_update_user_description(profile_test_client):
     assert b"FastAPI Developer" in data
 
 
+def test_update_telegram_id(profile_test_client):
+    new_telegram_id = {
+        'telegram_id': "12345"
+    }
+    # Get profile page and initialize database
+    profile = profile_test_client.get('/profile')
+
+    # Post new data
+    profile = profile_test_client.post(
+        '/profile/update_telegram_id', data=new_telegram_id)
+    assert profile.status_code == 302
+
+    # Get updated data
+    data = profile_test_client.get('/profile').content
+    assert b"12345" in data
+
+
 def test_upload_user_photo(profile_test_client):
     example_new_photo = f"{MEDIA_PATH}/example.png"
 
