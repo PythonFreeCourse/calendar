@@ -1,15 +1,12 @@
-import datetime
-
 import pytest
-from app.database.database import Base, SessionLocal, engine
-from app.database.models import Event, User
-from app.main import app
-from app.routers import profile
-from faker import Faker
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-pytest_plugins = "smtpdfix"
+
+from app.database.database import Base, engine, SessionLocal
+from app.database.models import User
+from app.main import app
+from app.routers import profile
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
 
@@ -24,9 +21,16 @@ def get_test_db():
     return TestingSessionLocal()
 
 
+pytest_plugins = [
+    'tests.db_entities',
+    'smtpdfix'
+]
+
+
 @pytest.fixture
-def client():
-    return TestClient(app)
+def client() -> TestClient:
+    with TestClient(app) as c:
+        yield c
 
 
 @pytest.fixture
@@ -34,32 +38,9 @@ def session():
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
     yield session
+    session.rollback()
     session.close()
     Base.metadata.drop_all(bind=engine)
-
-
-@pytest.fixture
-def user(session):
-    faker = Faker()
-    user1 = User(username=faker.first_name(), email=faker.email())
-    session.add(user1)
-    session.commit()
-    yield user1
-    session.delete(user1)
-    session.commit()
-
-
-@pytest.fixture
-def event(session, user):
-    event1 = Event(
-        title="Test Email", content="Test TEXT",
-        start=datetime.datetime.now(),
-        end=datetime.datetime.now(), owner_id=user.id)
-    session.add(event1)
-    session.commit()
-    yield event1
-    session.delete(event1)
-    session.commit()
 
 
 def get_test_placeholder_user():

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
+from starlette.datastructures import ImmutableMultiDict
 
 from app.database.database import get_db
 from app.database.models import Category
@@ -21,17 +22,17 @@ class CategoryModel(BaseModel):
     user_id: int
 
 
-# TODO(issue#29): get user_id from session
+# TODO(issue#29): get current user_id from session
 @router.get("/")
 def get_categories(request: Request, db_session: Session = Depends(get_db)) -> List[Category]:
-    if validate_request_params(request):
+    if validate_request_params(request.query_params):
         return get_user_categories(db_session, **request.query_params)
     else:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Request {request.query_params} contains unhallowed params.")
+                            detail=f"Request {request.query_params} contains unallowed params.")
 
 
-# TODO(issue#29): get user_id from session
+# TODO(issue#29): get current user_id from session
 @router.post("/")
 async def set_category(category: CategoryModel, db_session: Session = Depends(get_db)) -> Dict:
     try:
@@ -44,17 +45,17 @@ async def set_category(category: CategoryModel, db_session: Session = Depends(ge
         return {"category": cat.to_dict()}
 
 
-def validate_request_params(request: Request) -> bool:
+def validate_request_params(query_params: ImmutableMultiDict) -> bool:
     """
-    request contains not more than user_id, name, color and not less than user_id:
+    request.query_params contains not more than user_id, name, color and not less than user_id:
     Intersection must contain at least user_id.
     Union must not contain fields other than user_id, name, color.
-
     """
     all_fields = set(CategoryModel.schema()["required"])
-    union_set = set(request.keys()).union(all_fields)
-    intersection_set = set(request.keys()).intersection(all_fields)
-    return union_set == all_fields and {"user_id"} in intersection_set
+    request_params = set(query_params)
+    union_set = request_params.union(all_fields)
+    intersection_set = request_params.intersection(all_fields)
+    return union_set == all_fields and "user_id" in intersection_set
 
 
 def get_user_categories(db_session: Session, user_id: int, **params) -> List[Category]:
