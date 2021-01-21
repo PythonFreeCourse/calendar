@@ -39,7 +39,7 @@ def test_chat_model():
 def test_bot_model():
     bot = Bot("fake bot id", "https://google.com")
     assert bot.base == 'https://api.telegram.org/botfake bot id/'
-    assert bot.webhook_setter_url == f'https://api.telegram.org/botfake \
+    assert bot.webhook_setter_url == 'https://api.telegram.org/botfake \
 bot id/setWebhook?url=https://google.com/telegram/'
 
     assert bot.base == bot._set_base_url("fake bot id")
