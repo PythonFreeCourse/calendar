@@ -31,7 +31,7 @@ async def show_results(request: Request, keywords: str = Form(None), db: Session
         results = None
     else:
         results = get_results_by_keywords(db, keywords, owner_id=current_user)
-        if len(results) == 0:
+        if results:
             message = f"No matching results for '{keywords}'."
     
     return templates.TemplateResponse("search.html", {
