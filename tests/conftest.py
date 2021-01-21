@@ -1,4 +1,7 @@
+import logging
 from fastapi.testclient import TestClient
+from loguru import logger
+from _pytest.logging import caplog as _caplog
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,6 +10,7 @@ from app.main import app
 from app.database.database import Base, SessionLocal, engine
 from app.database.models import User
 from app.routers import profile
+
 
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
@@ -56,3 +60,14 @@ def profile_test_client():
     with TestClient(app) as client:
         yield client
     app.dependency_overrides = {}
+
+
+@pytest.fixture
+def caplog(_caplog):
+    class PropagateHandler(logging.Handler):
+        def emit(self, record):
+            logging.getLogger(record.name).handle(record)
+
+    handler_id = logger.add(PropagateHandler(), format="{message} {extra}")
+    yield _caplog
+    logger.remove(handler_id)
