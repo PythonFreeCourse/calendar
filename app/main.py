@@ -5,8 +5,8 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, event, profile, mail
 
+from app.routers import agenda, event, profile, mail
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -20,9 +20,11 @@ app.include_router(agenda.router)
 app.include_router(mail.router)
 
 
+
 @app.get("/")
 async def home(request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!"
+
     })
