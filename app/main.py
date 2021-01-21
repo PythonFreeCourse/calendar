@@ -2,7 +2,7 @@ import os
 
 from fastapi import FastAPI, Form, Request
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy.exc import SQLAlchemyError
+
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine

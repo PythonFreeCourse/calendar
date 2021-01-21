@@ -1,7 +1,8 @@
+from typing import List
+
 from app.database.database import SessionLocal
 from app.database.models import Event
 from sqlalchemy.exc import SQLAlchemyError
-from typing import List
 
 
 def get_stripped_keywords(keywords: str) -> str:
