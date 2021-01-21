@@ -1,6 +1,4 @@
 from fastapi import FastAPI, Request
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
 from fastapi.staticfiles import StaticFiles
 
 from app.database import models

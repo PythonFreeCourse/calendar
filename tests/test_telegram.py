@@ -1,7 +1,5 @@
-import asyncio
 import pytest
 
-from app import config
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.models import Bot, Chat
 

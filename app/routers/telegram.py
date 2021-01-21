@@ -1,8 +1,4 @@
 from fastapi import APIRouter, Depends, Request
-import json
-import requests
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
 
 from app.database.database import get_db
 from app.database.models import User
