@@ -10,6 +10,7 @@ pytest_plugins = [
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',
+    'smtpdfix',
 ]
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"

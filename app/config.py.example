@@ -1,6 +1,10 @@
+import os
+
+from fastapi_mail import ConnectionConfig
+# flake8: noqa
+
 # general
 DOMAIN = 'Our-Domain'
-
 
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
@@ -13,3 +17,15 @@ AVATAR_SIZE = (120, 120)
 # export
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
+
+# email
+email_conf = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
+    MAIL_FROM=os.getenv("MAIL_FROM") or "a@a.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=True,
+)
