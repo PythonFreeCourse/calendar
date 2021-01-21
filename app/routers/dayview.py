@@ -107,6 +107,6 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_divAttr,
-        "MONTH": day.strftime("%B").upper(),
-        "DAY": day.day
+        "month": day.strftime("%B").upper(),
+        "day": day.day
         })
