@@ -32,7 +32,8 @@ def event(session, user):
 
 @pytest.fixture
 def category(session, user):
-    category = Category.create(session, name="Guitar Lesson", color="121212", user_id=user.id)
+    category = Category.create(session, name="Guitar Lesson",
+                               color="121212", user_id=user.id)
     yield category
     session.delete(category)
     session.commit()

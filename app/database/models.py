@@ -1,8 +1,9 @@
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, \
+    UniqueConstraint
+from sqlalchemy.orm import Session
 from sqlalchemy.orm import relationship
 
 from app.database.database import Base
-from sqlalchemy.orm import Session
 
 
 class User(Base):
