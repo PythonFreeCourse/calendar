@@ -14,7 +14,7 @@ def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
         str: Returns a string which contains a link to whatsapp api so we can
              send the message via whatsapp.
     """
-    link = 'https://api.whatsapp.com/send?phone'
-    mydict = {f'{link}': f'{phone_number}', 'text': f'{message}'}
-    msglink = urlencode(mydict)
+    link = 'https://api.whatsapp.com/send?'
+    mydict = {'phone': f'{phone_number}', 'text': f'{message}'}
+    msglink = link + urlencode(mydict)
     return msglink
