@@ -2,7 +2,6 @@ from datetime import date, timedelta
 from typing import List, Optional
 
 import arrow
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database.models import Event
@@ -21,20 +20,16 @@ def get_events_per_dates(
 
     if start > end:
         return []
-    try:
-        events = (
-            filter_dates(
-                sort_by_date(
-                    get_all_user_events(session, user_id)
-                ),
-                start,
-                end,
-            )
+
+    return (
+        filter_dates(
+            sort_by_date(
+                get_all_user_events(session, user_id)
+            ),
+            start,
+            end,
         )
-    except SQLAlchemyError:
-        return []
-    else:
-        return events
+    )
 
 
 def build_arrow_delta_granularity(diff: timedelta) -> List[str]:

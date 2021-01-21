@@ -32,6 +32,7 @@ class TestUser:
 
     def test_does_user_exist_failure(self, session):
         assert not does_user_exist(username='wrong username', session=session)
+        assert not does_user_exist(session=session)
 
     def test_repr(self, user):
         assert user.__repr__() == f'<User {user.id}>'

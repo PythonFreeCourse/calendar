@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -35,11 +35,15 @@ def view_invitations(request: Request, db: Session = Depends(get_db)):
 
 @router.post("/")
 async def accept_invitations(
-        invite_id: int = Form(...),
-        db: Session = Depends(get_db)
+    request: Request,
+    db: Session = Depends(get_db)
 ):
-    i = get_invitation_by_id(invite_id, session=db)
-    accept(i, db)
+    data = await request.form()
+    invite_id = list(data.values())[0]
+
+    invitation = get_invitation_by_id(invite_id, session=db)
+    accept(invitation, db)
+
     url = router.url_path_for("view_invitations")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 

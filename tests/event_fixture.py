@@ -14,11 +14,12 @@ today_date = datetime.today().replace(hour=0, minute=0, second=0)
 def event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title='today_event',
+        title='event',
         start=today_date,
         end=today_date,
         content='test event',
         owner_id=sender.id,
+        location="Some random location",
     )
 
 
@@ -91,18 +92,4 @@ def old_event(sender: User, session: Session) -> Event:
         end=today_date,
         content='test event',
         owner_id=sender.id,
-    )
-
-
-@pytest.fixture
-def user_event(user: User, session: Session) -> Event:
-    """Only this event is created by "user" and not "sender"."""
-
-    return create_event(
-        db=session,
-        title='event 7',
-        start=today_date - timedelta(days=5),
-        end=today_date,
-        content='test event',
-        owner_id=user.id,
     )
