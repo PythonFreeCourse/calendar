@@ -82,8 +82,8 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_is_weekend():
-        assert cg.Day.is_weekend(DATE) == False
-        assert cg.Day.is_weekend(WEEKEND.date) == True
+        assert not cg.Day.is_weekend(DATE)
+        assert cg.Day.is_weekend(WEEKEND.date)
 
     @staticmethod
     def test_display_day():

@@ -2,7 +2,7 @@ import calendar
 import itertools
 import locale
 from datetime import date, datetime, timedelta
-from typing import Any, Generator, Iterator, List, Union
+from typing import Any, Generator, Iterator, List
 
 CALENDAR = calendar.Calendar(0)
 DISPLAY_BLOCK = 100
@@ -101,7 +101,10 @@ def create_day(day: datetime) -> Day:
 
 def get_next_date(date: datetime) -> Generator[Day, None, None]:
     """Generate date objects from a starting given date."""
-    yield from (create_day(date + timedelta(days=i)) for i in itertools.count(start=1))
+    yield from (
+        create_day(date + timedelta(days=i))
+        for i in itertools.count(start=1)
+    )
 
 
 def get_date_before_n_days(date: datetime, n: int) -> datetime:
