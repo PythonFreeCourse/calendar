@@ -24,29 +24,37 @@
                 {% endfor %}
             </div>
             <div class="eventgrid">
-                {% for event in events %}
+                {% for event, attr in events %}
                     {% set totaltime = 'visible'%}
-                    {% if event.length < 60 %}
+                    {% if attr.length < 60 %}
                             {% set size = '0.6em' %}
                             {% set totaltime = 'invisible'%}
-                        {% if event.length < 45 %}
+                        {% if attr.length < 45 %}
                                 {% set size = '0.4em' %}
-                            {% if event.length < 30 %}
+                            {% if attr.length < 30 %}
                                     {% set size = '0.1em; line-height: 4em' %}
                             {% endif %}
                         {% endif %}
                     {% endif %}
-                    <div id="event{{event.id}}" class="text-truncate px-5 d-flex flex-column justify-content-evenly event" style="background-color: {{event.color}}; grid-row: {{event.grid_position}}; max-hight:1.5rem;">
-                        <p class="text-truncate my-0" style="font-size: {{size}};">{{event.content}}</p>
+                    <div id="event{{event.id}}" class="text-truncate px-5 d-flex flex-column justify-content-evenly event" style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
+                        <p class="text-truncate my-0" style="font-size: {{ size }};">{{ event.title }}</p>
                         {% if totaltime == 'visible' %}
-                            <p class="total-time text-truncate fw-light my-0">{{event.total_time}}</p>
+                            <p class="total-time text-truncate fw-light my-0">{{attr.total_time}}</p>
                         {% endif %}
                     </div>
                 {% endfor %}
             </div>
             <div class="container baselines bg-transparent">
                 {% for i in range(25)%}
-                    <div class="hourbar {{i}} row text-white border-bottom">000</div>
+                    <div class="hourbar {{i}} row text-white border-bottom">---</div>
+                {% endfor %}
+            </div>
+            <div class="actiongrid">
+                {% for event, attr in events %}
+                    <div class="d-flex flex-row justify-content-around align-items-end action-continer" style="grid-row: {{attr.grid_position}};">
+                        <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
+                        <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}" width="15em" height="15em"></a>
+                    </div>
                 {% endfor %}
             </div>
         </div>

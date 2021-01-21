@@ -12,21 +12,6 @@ html {
     text-align: center;
 }
 
-#phoneframe {
-    width: 260px;
-    height: 480px;
-    border: 1px solid black;
-    box-shadow: 0px 0px 10px;
-    overflow: scroll;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;
-}
-
-/* Hide scrollbar for Chrome, Safari and Opera */
-#phoneframe::-webkit-scrollbar {
-    display: none;
-  }
-
 #toptab {
     background-color: var(--theme-blue);
 }
@@ -69,4 +54,26 @@ html {
 .total-time {
     font-size: 0.4rem;
     line-height: 1rem;
+}
+
+.actiongrid {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: repeat(100, 0.375rem);
+    z-index: 42;
+}
+
+.action-icon {
+    visibility: hidden;
+}
+
+.action-continer:hover {
+    border-top: 1px dashed var(--theme-grey);
+    border-bottom: 1px dashed var(--theme-grey);
+    transition: 0.3;
+}
+
+.action-continer:hover .action-icon {
+    visibility: visible;
 }

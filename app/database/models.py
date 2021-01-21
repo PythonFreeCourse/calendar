@@ -30,5 +30,6 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
+    color = Column(String, nullable=True)
 
     owner = relationship("User", back_populates="events")
