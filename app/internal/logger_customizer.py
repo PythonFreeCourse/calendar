@@ -13,11 +13,11 @@ class LoggerConfigError(Exception):
 class LoggerCustomizer:
 
     @classmethod
-    def make_logger(cls, config: Union[Path, dict], logger_name: str) -> Logger:        
+    def make_logger(cls, config_file_or_dict: Union[Path, dict], logger_name: str) -> Logger:
         """Creates a loguru logger from given configuration path or dict.
 
         Args:
-            config (Union[Path, dict]): Path to logger configuration file or dictionary of configuration
+            config_file_or_dict (Union[Path, dict]): Path to logger configuration file or dictionary of configuration
             logger_name (str): Logger instance created from configuration
 
         Raises:
@@ -26,10 +26,7 @@ class LoggerCustomizer:
         Returns:
             Logger: Loguru logger instance
         """
-        if isinstance(config, Path):
-            config = cls.load_logging_config(config_path)
-        else:
-            config = config
+        config = cls.load_logging_config(config_file_or_dict)
 
         try:
             logging_config = config.get(logger_name)
@@ -89,16 +86,19 @@ class LoggerCustomizer:
         return logger
 
     @classmethod
-    def load_logging_config(cls, config_path: Union[Path, dict]) -> dict:
+    def load_logging_config(cls, config: Union[Path, dict]) -> dict:
         """Loads logging configuration from file or dict
 
         Args:
-            config_path (Union[Path, dict]): Path to logging configuration file
+            config (Union[Path, dict]): Path to logging configuration file
 
         Returns:
             dict: Configuration parsed as dictionary
         """
-        # config = None
-        with open(config_path) as config_file:
-            config = json.load(config_file)
-        return config
+        if isinstance(config, Path):
+            with open(config) as config_file:
+                used_config = json.load(config_file)
+        else:
+            used_config = config
+            
+        return used_config
