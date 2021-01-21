@@ -2,12 +2,11 @@ from datetime import datetime, time, timedelta
 from typing import Iterator, Tuple
 
 from app.database.models import Event, SalarySettings
-from app.routers.salary.config import (DEFAULT_DATETIME, HOURS_SECONDS_RATIO,
-                                       NIGHT_END, NIGHT_START, NUMERIC)
+from app.routers.salary import config
 
 
 def get_shift_len(start: datetime, end: datetime) -> float:
-    return (end - start).seconds / HOURS_SECONDS_RATIO
+    return (end - start).seconds / config.HOURS_SECONDS_RATIO
 
 
 def get_night_times(date: datetime, prev_day: bool = False
@@ -16,19 +15,19 @@ def get_night_times(date: datetime, prev_day: bool = False
         sub = timedelta(1)
     else:
         sub = timedelta(0)
-    return (datetime.combine(date - sub, time(NIGHT_START)),
+    return (datetime.combine(date - sub, time(config.NIGHT_START)),
             datetime.combine(date + timedelta(1) - sub,
-                                      time(NIGHT_END)))
+                                      time(config.NIGHT_END)))
 
 
 def is_night_shift(start: datetime, end: datetime,
                    wage: SalarySettings) -> bool:
-    if not ((end - start).seconds / HOURS_SECONDS_RATIO
+    if not ((end - start).seconds / config.HOURS_SECONDS_RATIO
             >= wage.first_overtime_amount):
         return False
     for boolean in (False, True):
-        night_start, night_end = get_night_times(start, boolean)
-        if (get_total_synchronous_hours(start, end, night_start, night_end)
+        config.night_start, night_end = get_night_times(start, boolean)
+        if (get_total_synchronous_hours(start, end, config.night_start, night_end)
             >= wage.first_overtime_amount):
             return True
     return False
@@ -58,7 +57,7 @@ def get_relevant_holiday_times(
                 datetime.combine(date + timedelta(1),
                                           time(0)))
     except NameError:
-        return DEFAULT_DATETIME, DEFAULT_DATETIME
+        return config.DEFAULT_DATETIME, config.DEFAULT_DATETIME
 
 
 def get_total_synchronous_hours(
@@ -190,7 +189,7 @@ def get_monthly_overtime(shifts: Tuple[Event, ...], weeks: Tuple[Event, ...],
 
 
 def calc_salary(year: int, month: int, wage: SalarySettings,
-                      deduction: NUMERIC = 0, bonus: NUMERIC = 0) -> float:
+                      deduction: config.NUMERIC = 0, bonus: config.NUMERIC = 0) -> float:
     month_start = datetime(year, month, 1)
     try:
         month_end = datetime(year, month + 1, 1)
@@ -234,3 +233,20 @@ def calc_transport(shifts: Tuple[Event, ...], daily_transport: float) -> float:
 
 def calc_taxes(salary, tax_points: float, pension: float) -> float:
     return 0.0
+
+
+def create_default_settings():
+    return SalarySettings(
+        wage = config.MINIMUM_WAGE,
+        off_day = config.SATURDAY,
+        holiday_category_id = config.ISRAELI_JEWISH,
+        regular_hour_basis = config.REGULAR_HOUR_BASIS,
+        night_hour_basis = config.NIGHT_HOUR_BASIS,
+        first_overtime_amount = config.FIRST_OVERTIME_AMOUNT,
+        first_overtime_pay = config.FIRST_OVERTIME_PAY,
+        second_overtime_pay = config.SECOND_OVERTIME_PAY,
+        week_working_hours = config.WEEK_WORKING_HOURS,
+        daily_transport = config.STANDARD_TRANSPORT,
+        pension = config.PENSION,
+        tax_points = config.TAX_POINTS,
+    )

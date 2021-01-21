@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import CheckConstraint
 
+
 import app.routers.salary.config as SalaryConfig
 
 
@@ -17,6 +18,10 @@ class User(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password = Column(String)
+    full_name = Column(String)
+    description = Column(String, default="Happy new user!")
+    avatar = Column(String, default="profile.png")
+
     is_active = Column(Boolean, default=True)
 
     events = relationship(
@@ -31,7 +36,8 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     content = Column(String)
-    date = Column(DateTime)
+    start = Column(DateTime, nullable=False)
+    end = Column(DateTime, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="events")
@@ -46,19 +52,26 @@ class SalarySettings(Base):
     user_id = Column(
         Integer, ForeignKey("users.id"), primary_key=True,
     )
+    # category_id = Column(
+    #     Integer, ForeignKey("categories.id"), primary_key=True,
+    # )
     category_id = Column(
-        Integer, ForeignKey("categories.id"), primary_key=True,
+        Integer, primary_key=True,
     )
     wage = Column(
-        Float, CheckConstraint(f"wage>{SalaryConfig.MINIMUM_WAGE}"),
+        Float, CheckConstraint(f"wage>={SalaryConfig.MINIMUM_WAGE}"),
         nullable=False, default=SalaryConfig.MINIMUM_WAGE,
     )
     off_day = Column(
-        Integer, nullable=False, default=SalaryConfig.SATURDAY,
-        CheckConstraint="0<=off_day<=6",
+        Integer, CheckConstraint("0<=off_day<=6"), nullable=False,
+        default=SalaryConfig.SATURDAY,
     )
+    # holiday_category_id = Column(
+    #     Integer, ForeignKey("holiday_categories.id"), nullable=False,
+    #     default=SalaryConfig.ISRAELI_JEWISH,
+    # )
     holiday_category_id = Column(
-        Integer, ForeignKey("holidays.id"), nullable=False,
+        Integer, nullable=False,
         default=SalaryConfig.ISRAELI_JEWISH,
     )
     regular_hour_basis = Column(
@@ -93,6 +106,6 @@ class SalarySettings(Base):
     )
 
     user = relationship("User", back_populates="salary_settings")
-    category = relationship("Category", back_populates="salary_settings")
-    holiday_category =relationship("HolidayCategory",
-                                   back_populates="salary_settings")
+    # category = relationship("Category", back_populates="salary_settings")
+    # holiday_category =relationship("HolidayCategory",
+    #                                back_populates="salary_settings")

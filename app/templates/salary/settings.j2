@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container col col-sm-7 col-md-5 col-lg-4 col-xl-3 mt-3">
+    <header class="text-center">
+      <h1>New Salary Settings</h1>
+    </header>
+    
+    <form method="post">
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="category-select">Category:</label>
+        <select class="form-control" name="category_id" id="category-select" required>
+          <option value="">--Please choose a category--</option>
+          {% for id, category in categories %}
+            <option value="{{ id }}">{{ category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <p class="text-muted">Want a new category? <a href="#">Create one here</a></p>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="wage">Hourly Wage:</label>
+        <input class="form-control" type="number" name="wage" id="wage" value="{{ wage.wage }}"> 
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="off-day">Off Day:</label>
+        <select class="form-control" name="off_day" id-="off-day">
+          <option value="4">Friday</option>
+          <option value="5" selected>Saturday</option>
+          <option value="6">Sunday</option>
+        </select>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="holiday-category-select">Holiday Category:</label>
+        <select class="form-control" name="holiday_category_id" id="holiday-category-select" required>
+          {% for id, category in holidays %}
+            <option value="{{ id }}">{{ category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="regular-hour-basis">Regular Hour Basis</label>
+        <input class="form-control" type="number" name="regular_hour_basis" id="regular-hour-basis" value="{{ wage.regular_hour_basis }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="night-hour-basis">Night Hour Basis</label>
+        <input class="form-control" type="number" name="night_hour_basis" id="night-hour-basis" value="{{ wage.night_hour_basis }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="first-overtime-amount">First Overtime Amount</label>
+        <input class="form-control" type="number" name="first_overtime_amount" id="first-overtime-amount" value="{{ wage.first_overtime_amount }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="first-overtime-pay">First Overtime Pay</label>
+        <input class="form-control" type="number" name="first_overtime_pay" id="first-overtime-pay" value="{{ wage.first_overtime_pay }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="second-overtime-pay">Second Overtime Pay</label>
+        <input class="form-control" type="number" name="second_overtime_pay" id="second-overtime-pay" value="{{ wage.second_overtime_pay }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="week-working-hours">Week Working Hour</label>
+        <input class="form-control" type="number" name="week_working_hours" id="week-working-hours" value="{{ wage.week_working_hours }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="daily-transport">Daily Transport</label>
+        <input class="form-control" type="number" name="daily_transport" id="daily-transport" value="{{ wage.daily_transport }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="pension">Pension Percentage</label>
+        <input class="form-control" type="number" name="pension" id="pension" value="{{ wage.pension }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="tax-points">Tax Points</label>
+        <input class="form-control" type="number" name="tax_points" id="tax-points" value="{{ wage.tax_points }}">
+      </div>
+
+      <button type="submit" class="btn btn-sm btn-primary">Create salary settings</button>
+    </form>
+{% endblock content %}
