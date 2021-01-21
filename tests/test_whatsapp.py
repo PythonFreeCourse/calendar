@@ -20,7 +20,7 @@ def test_wrong_phone_number():
 
 
 def test_no_message():
-    # Redirects to whatsapp window of the specified number. Write your own message.
+    # Redirects to whatsapp of the specified number. Write your own message.
     phone_number = "972536106106"
     message = ''
     assert whatslink.make_link(phone_number, message) == 'https://'\
