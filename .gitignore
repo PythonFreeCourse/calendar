@@ -131,8 +131,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
+.vscode
+client_secrets.json
 pyvenv.cfg
 bin
-client_secrets.json
-.vscode

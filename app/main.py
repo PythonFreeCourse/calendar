@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
@@ -37,3 +38,5 @@ async def home(request: Request):
         "message": "Hello, World!",
         "data": data
     })
+if __name__ == "__main__":
+    uvicorn.run(app)
