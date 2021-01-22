@@ -2,19 +2,13 @@ from datetime import datetime
 
 import pytest
 from app.database.models import Event
-from app.main import app
 from app.routers.event import update_event
 
-# this is fallback for those who's not getting
-# the client in the function - FYI YAM.
-from fastapi.testclient import TestClient
-client = TestClient(app)
 
-DATA_UPDATE_OPTIONS = [
+INVALID_UPDATE_OPTIONS = [
     {}, {"test": "test"}, {"start": "20.01.2020"},
     {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
     {"start": datetime(2030, 2, 2)}, {"end": datetime(1990, 1, 1)},
-    {"start": "2020-02-02", "end": "2021-12-21"},
 ]
 
 
@@ -35,7 +29,7 @@ def test_eventview_without_id(client):
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize("data", DATA_UPDATE_OPTIONS)
+@pytest.mark.parametrize("data", INVALID_UPDATE_OPTIONS)
 def test_invalid_update(data, event, session):
     assert update_event(1, data, session) is None
 
@@ -61,4 +55,4 @@ def test_update_event_does_not_exist(event, session):
     data = {
         "content": "An update test for an event does not exist"
     }
-    assert update_event(5, data, db=session) is None
+    assert update_event(500, data, db=session) is None

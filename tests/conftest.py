@@ -32,10 +32,13 @@ def client():
 @pytest.fixture
 def session():
     Base.metadata.create_all(bind=engine)
-    session = TestingSessionLocal()
-    yield session
-    session.close()
-    Base.metadata.drop_all(bind=engine)
+    try:
+        session = get_test_db()
+        yield session
+    finally:
+        session.rollback()
+        session.close()
+        Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture
