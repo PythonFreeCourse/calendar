@@ -65,7 +65,6 @@ async def profile(
         session.add(new_event)
         session.commit()
         user_events = session.query(Event).filter_by(owner_id=user.id).first()
-    print(user_events)
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
@@ -132,22 +131,30 @@ async def get_current_user():
     user = get_placeholder_user()
     return user
 
+
 @router.post("/delete_user")
 async def delete_user(
         request: Request, session=Depends(get_db), current_user: User = Depends(get_current_user)):
     
-    # Delete all the events of the user
-    session.query(Event).filter_by(owner_id=current_user.id).delete()
-    session.commit()
-    session.close()
-    
-    # Delete the user
-    session.query(User).filter_by(username=current_user.username).delete()
-    session.commit()
-    session.close()
+    data = await request.form()
+    username_confirmation = data['username_confirmation']
 
-    url = '/'
-    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+    if username_confirmation == current_user.username:
+        # Delete all the events of the user
+        session.query(Event).filter_by(owner_id=current_user.id).delete()
+        session.commit()
+        session.close()
+        
+        # Delete the user
+        session.query(User).filter_by(username=current_user.username).delete()
+        session.commit()
+        session.close()
+
+        url = '/'
+        return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+    else:
+        url = router.url_path_for("profile")
+        return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/upload_user_photo")
