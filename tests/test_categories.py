@@ -1,4 +1,6 @@
 import pytest
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.testing import mock
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
 
@@ -96,3 +98,11 @@ class TestCategories:
     ])
     def test_validate_request_params(params, expected_result):
         assert validate_request_params(params) == expected_result
+
+    @staticmethod
+    def test_get_categories_failed(session):
+        def raise_error(param):
+            raise SQLAlchemyError()
+
+        session.query = mock.Mock(side_effect=raise_error)
+        assert get_user_categories(session, 1) == []
