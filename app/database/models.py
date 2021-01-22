@@ -1,4 +1,3 @@
-from google.oauth2 import credentials
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -45,6 +44,7 @@ class OAuthCredentials(Base):
     token_uri = Column(String)
     client_id = Column(String)
     client_secret = Column(String)
+    expiry = Column(DateTime)
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates=__tablename__, uselist=False)
