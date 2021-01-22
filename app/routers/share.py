@@ -86,4 +86,3 @@ def share(event: Event, participants: List[str], session: Session) -> bool:
         if send_in_app_invitation(registered, event, session):
             return True
     return False
-
