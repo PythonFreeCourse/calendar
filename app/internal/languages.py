@@ -11,12 +11,14 @@ translations_dict = {}
 
 
 def get_translations_dict() -> Dict[str, Union[str, Dict[str, str]]]:
-    """Gets and returns the translations_dict, which is a dictionary of the translated words
-     in either the user's language setting, or the default app setting.
+    """Gets and returns the translations_dict, which is a dictionary of
+     the translated words in either the user's language setting,
+      or the default app setting.
 
     Returns:
-        dict[str, Union[str, Dict[str, str]]]: a dictionary of string keys and their translation as their values.
-        The value can either be a string, or a nested dictionary for plural translations.
+        dict[str, Union[str, Dict[str, str]]]: a dictionary of string keys and
+         their translation as their values. The value can either be a string,
+          or a nested dictionary for plural translations.
     """
     if translations_dict:
         return translations_dict
@@ -40,11 +42,13 @@ def get_translations_dict() -> Dict[str, Union[str, Dict[str, str]]]:
 
 def update_translations_dict(display_language: str) -> None:
     """Updates the translations_dict to the requested language.
-    If the language code is not supported by the applications, the dictionary defaults to the APP_LANGUAGE setting.
+    If the language code is not supported by the applications, the dictionary
+     defaults to the APP_LANGUAGE setting.
 
     Args:
         display_language (str): a valid code that follows RFC 1766.
-        See also the Language Code Identifier (LCID) Reference for a list of valid codes.
+        See also the Language Code Identifier (LCID) Reference for a list of
+        valid codes.
 
     .. _RFC 1766:
         https://tools.ietf.org/html/rfc1766.html
@@ -60,17 +64,21 @@ def update_translations_dict(display_language: str) -> None:
         translations_dict = translations_dicts[APP_LANGUAGE]
 
 
-def get_translations_dicts() -> Dict[str, Dict[str, Union[str, Dict[str, str]]]]:
-    """Gets and returns a dictionary of nested language dictionaries from the language translation files.
+def get_translations_dicts() ->\
+        Dict[str, Dict[str, Union[str, Dict[str, str]]]]:
+    """Gets and returns a dictionary of nested language dictionaries from
+     the language translation files.
 
     Returns:
-        dict[str, Dict[str, Union[str, Dict[str, str]]]]: a dictionary of language codes as string keys,
-        and nested dictionaries of translations as their values.
+        dict[str, Dict[str, Union[str, Dict[str, str]]]]: a dictionary of
+        language codes as string keys, and nested dictionaries of translations
+        as their values.
     """
     supported_languages = {}
     language_list = glob.glob(LANGUAGE_FILES_PATH)
     if not language_list:
-        language_list = glob.glob(LANGUAGE_FILES_PATH_TEST)  # Running from tests.
+        language_list = glob.glob(
+            LANGUAGE_FILES_PATH_TEST)  # Running from tests.
     for lang in language_list:
         filename = lang.split('\\')
         lang_code = filename[1].split('.')[0]
