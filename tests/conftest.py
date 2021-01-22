@@ -1,23 +1,23 @@
-import logging
-from fastapi.testclient import TestClient
-from loguru import logger
-from _pytest.logging import caplog as _caplog
-import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import datetime
+import logging
 
+from pathlib import Path
 import pytest
+from _pytest.logging import caplog as _caplog
+from loguru import logger
+from faker import Faker
+
 from app.database.database import Base, SessionLocal, engine
 from app.database.models import Event, User
+from app.internal.logger_customizer import LoggerCustomizer
 from app.main import app
 from app.routers import profile
-from faker import Faker
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-pytest_plugins = "smtpdfix"
 
+
+pytest_plugins = "smtpdfix"
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
 
@@ -35,6 +35,17 @@ def get_test_db():
 @pytest.fixture
 def client():
     return TestClient(app)
+
+
+@pytest.fixture(scope='module')
+def client_with_logger():
+    config_path = Path(__file__).parent.parent / 'app' / 'internal'
+    config_path = config_path / "logging_config.json"
+    logger = LoggerCustomizer.make_logger(config_path, 'logger')
+
+    client = TestClient(app)
+    client.logger = logger
+    return client
 
 
 @pytest.fixture

@@ -100,5 +100,5 @@ class LoggerCustomizer:
                 used_config = json.load(config_file)
         else:
             used_config = config
-            
+
         return used_config
