@@ -1,6 +1,10 @@
+from operator import attrgetter
+from typing import List
+
 from fastapi import APIRouter, Request
 
-from app.database.models import Event, UserEvent
+from app.database.models import Event
+from app.database.models import UserEvent
 from app.dependencies import templates
 from app.internal.utils import create_model
 
@@ -41,3 +45,11 @@ def create_event(db, title, start, end, owner_id, content=None, location=None):
         event_id=event.id
     )
     return event
+
+
+def sort_by_date(events: List[Event]) -> List[Event]:
+    """Sorts the events by the start of the event."""
+
+    temp = events.copy()
+    temp.sort(key=attrgetter('start'))
+    return temp

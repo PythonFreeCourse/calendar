@@ -1,11 +1,11 @@
 from datetime import date, timedelta
-from typing import List, Optional
+from typing import List, Optional, Union, Iterator
 
 import arrow
 from sqlalchemy.orm import Session
 
 from app.database.models import Event
-from app.internal.events import sort_by_date
+from app.routers.event import sort_by_date
 from app.routers.user import get_all_user_events
 
 
@@ -14,7 +14,7 @@ def get_events_per_dates(
         user_id: int,
         start: Optional[date],
         end: Optional[date]
-) -> List[Event]:
+) -> Union[Iterator[Event], list]:
     """Read from the db. Return a list of all
     the user events between the relevant dates."""
 
@@ -60,7 +60,7 @@ def get_time_delta_string(start: date, end: date) -> str:
 
 def filter_dates(
         events: List[Event], start: Optional[date],
-        end: Optional[date]) -> List[Event]:
+        end: Optional[date]) -> Iterator[Event]:
     """filter events by a time frame."""
 
     yield from (
