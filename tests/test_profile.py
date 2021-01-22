@@ -112,8 +112,10 @@ def test_upload_user_photo(profile_test_client):
 def test_delete_user_(profile_test_client):
     # Get profile page and initialize database
     profile = profile_test_client.get('/profile')
-
+    data = {
+        "username_confirmation": "fake_user"
+    }
     # Post delete user
     response = profile_test_client.post(
-        '/profile/delete_user')
+        '/profile/delete_user', data=data)
     assert response.status_code == 302
