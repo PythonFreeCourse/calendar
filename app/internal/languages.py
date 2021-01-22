@@ -76,10 +76,8 @@ def get_translations_dicts() -> \
         as their values.
     """
     language_translations = {}
-    language_files = glob.glob(LANGUAGE_FILES_PATH)
-    if not language_files:
-        # App is running from tests.
-        language_files = glob.glob(LANGUAGE_FILES_PATH_TEST)
+    language_files = (glob.glob(LANGUAGE_FILES_PATH)
+                      or glob.glob(LANGUAGE_FILES_PATH_TEST))
     for language_file in language_files:
         language_code = pathlib.PureWindowsPath(language_file).stem
         with open(language_file, 'r', encoding='utf8') as file:
