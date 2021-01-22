@@ -14,8 +14,8 @@ class User(Base):
     full_name = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
-    language = Column(Integer, ForeignKey("languages.id"))
     is_active = Column(Boolean, default=True)
+    language_id = Column(Integer, ForeignKey("languages.id"))
 
     events = relationship(
         "Event", cascade="all, delete", back_populates="owner")

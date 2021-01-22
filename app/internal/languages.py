@@ -1,8 +1,9 @@
 import glob
 import json
+import pathlib
 from typing import Dict, Union
 
-APP_LANGUAGE = "en"
+from app import config
 
 LANGUAGE_FILES_PATH = "app/languages/*.json"
 LANGUAGE_FILES_PATH_TEST = "../app/languages/*.json"
@@ -12,20 +13,20 @@ translations_dict = {}
 
 def get_translations_dict() -> Dict[str, Union[str, Dict[str, str]]]:
     """Gets and returns the translations_dict, which is a dictionary of
-     the translated words in either the user's language setting,
-      or the default app setting.
+    the translated words in either the user's language setting,
+    or the default app setting.
 
     Returns:
         dict[str, Union[str, Dict[str, str]]]: a dictionary of string keys and
-         their translation as their values. The value can either be a string,
-          or a nested dictionary for plural translations.
+        their translation as their values. The value can either be a string,
+        or a nested dictionary for plural translations.
     """
     if translations_dict:
         return translations_dict
     # TODO: Waiting for user registration. Restore when done.
     # display_language = get_display_language(user_id)
     # update_translations_dict(display_language)
-    update_translations_dict(APP_LANGUAGE)
+    update_translations_dict(config.WEBSITE_LANGUAGE)
     return translations_dict
 
 
@@ -43,7 +44,7 @@ def get_translations_dict() -> Dict[str, Union[str, Dict[str, str]]]:
 def update_translations_dict(display_language: str) -> None:
     """Updates the translations_dict to the requested language.
     If the language code is not supported by the applications, the dictionary
-     defaults to the APP_LANGUAGE setting.
+    defaults to the APP_LANGUAGE setting.
 
     Args:
         display_language (str): a valid code that follows RFC 1766.
@@ -61,10 +62,10 @@ def update_translations_dict(display_language: str) -> None:
     if display_language in translations_dicts:
         translations_dict = translations_dicts[display_language]
     else:
-        translations_dict = translations_dicts[APP_LANGUAGE]
+        translations_dict = translations_dicts[config.WEBSITE_LANGUAGE]
 
 
-def get_translations_dicts() ->\
+def get_translations_dicts() -> \
         Dict[str, Dict[str, Union[str, Dict[str, str]]]]:
     """Gets and returns a dictionary of nested language dictionaries from
      the language translation files.
@@ -74,15 +75,13 @@ def get_translations_dicts() ->\
         language codes as string keys, and nested dictionaries of translations
         as their values.
     """
-    supported_languages = {}
-    language_list = glob.glob(LANGUAGE_FILES_PATH)
-    if not language_list:
-        language_list = glob.glob(
-            LANGUAGE_FILES_PATH_TEST)  # Running from tests.
-    for lang in language_list:
-        filename = lang.split('\\')
-        lang_code = filename[1].split('.')[0]
-
-        with open(lang, 'r', encoding='utf8') as file:
-            supported_languages[lang_code] = json.load(file)
-    return supported_languages
+    language_translations = {}
+    language_files = glob.glob(LANGUAGE_FILES_PATH)
+    if not language_files:
+        # App is running from tests.
+        language_files = glob.glob(LANGUAGE_FILES_PATH_TEST)
+    for language_file in language_files:
+        language_code = pathlib.PureWindowsPath(language_file).stem
+        with open(language_file, 'r', encoding='utf8') as file:
+            language_translations[language_code] = json.load(file)
+    return language_translations

@@ -1,5 +1,6 @@
 import pytest
 
+from app import config
 import app.internal.languages as languages
 
 
@@ -42,7 +43,9 @@ class TestLanguage:
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              LANGUAGE_TESTS)
     def test_update_translations_dict(language_code, translation, is_valid):
-        languages.update_translations_dict("en")  # Reset test to English.
+        # Reset test to default language.
+        languages.update_translations_dict(config.WEBSITE_LANGUAGE)
+
         languages.update_translations_dict(language_code)
         assert languages.get_translations_dict()["test_word"] == translation
 
