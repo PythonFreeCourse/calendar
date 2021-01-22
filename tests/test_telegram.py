@@ -1,3 +1,4 @@
+from fastapi import status
 import pytest
 
 from app.telegram.handlers import MessageHandler, reply_unknown_user
@@ -118,7 +119,7 @@ https://calendar.pythonic.guru/profile/
 def test_telegram_router(profile_test_client):
     page = profile_test_client.get('/telegram')
     data = page.content
-    assert page.status_code == 200
+    assert page.ok is True
     assert b"Start using PyLander telegram bot!" in data
 
 
@@ -126,4 +127,4 @@ def test_bot_client(profile_test_client):
 
     page = profile_test_client.post(
         '/telegram', data=gen_message('/start'))
-    assert page.status_code == 307
+    assert page.status_code == status.HTTP_307_TEMPORARY_REDIRECT
