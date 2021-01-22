@@ -68,10 +68,10 @@ class Category(Base):
     color = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    @staticmethod
-    def create(db_session: Session, name: str, color: str, user_id: int):
+    @classmethod
+    def create(cls, db_session: Session, name: str, color: str, user_id: int):
         try:
-            category = Category(name=name, color=color, user_id=user_id)
+            category = cls(name=name, color=color, user_id=user_id)
             db_session.add(category)
             db_session.flush()
             db_session.commit()
