@@ -147,6 +147,3 @@ def user_click_import(file: str, user_id: int, session: SessionLocal = SessionLo
                 move_events_to_db(import_file, user_id, session)
                 return "Import success"
     return "Import failed"
-
-
-print(user_click_import(r"D:\קורס פייתון\week16\sample.ics", 1))
