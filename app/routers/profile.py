@@ -128,8 +128,7 @@ async def update_profile(
 
 
 async def get_current_user():
-    user = get_placeholder_user()
-    return user
+    return get_placeholder_user()
 
 
 @router.post("/delete_user")
@@ -143,13 +142,13 @@ async def delete_user(
         # Delete all the events of the user
         session.query(Event).filter_by(owner_id=current_user.id).delete()
         session.commit()
-        session.close()
         
         # Delete the user
         session.query(User).filter_by(username=current_user.username).delete()
         session.commit()
         session.close()
 
+        # Redirect to the home page after the deletion
         url = '/'
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
     else:
