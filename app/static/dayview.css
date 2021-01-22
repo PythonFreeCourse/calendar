@@ -4,7 +4,7 @@
     --theme-yellow:#FFDE4D;
     --theme-red:#EF5454;
     --theme-grey:#E7E7E7;
-    --theme-ligth-grey:#F7F7F7;
+    --theme-light-grey:#F7F7F7;
 }
 
 html {
@@ -17,7 +17,7 @@ html {
 }
 
 
-.scedual {
+.schedule {
     display: grid;
     grid-template-rows: 1;
 }
@@ -54,6 +54,19 @@ html {
 .total-time {
     font-size: 0.4rem;
     line-height: 1rem;
+}
+
+.title_size_small {
+    font-size: 0.6em;
+}
+
+.title_size_Xsmall {
+    font-size: 0.4em;
+}
+
+.title_size_tiny {
+    font-size: 0.1em;
+    line-height: 4em;
 }
 
 .actiongrid {

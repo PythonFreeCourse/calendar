@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Union, Tuple
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
@@ -25,20 +25,20 @@ class DivAttributes:
     FIRST_GRID_BAR = 1
     LAST_GRID_BAR = 101
 
-    def __init__(self, event: Event, day: Optional[datetime] = False) -> None:
+    def __init__(self, event: Event,
+                 day: Union[bool, datetime] = False) -> None:
         self.start_time = event.start
         self.end_time = event.end
         self.day = day
-        self._check_if_multiday_event()
+        self.start_multiday, self.end_multiday = self._check_multiday_event()
         self.color = self._check_color(event.color)
-        self._set_total_time()
-        self._set_grid_position()
+        self.total_time = self._set_total_time()
+        self.grid_position = self._set_grid_position()
 
     def _check_color(self, color: str) -> str:
         if color is None:
             return 'grey'
-        else:
-            return color
+        return color
 
     def _minutes_position(self, minutes: int) -> int:
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
@@ -54,7 +54,7 @@ class DivAttributes:
             grid_minutes_modifier = 0
         return grid_hour_position + grid_minutes_modifier + self.BASE_GRID_BAR
 
-    def _set_grid_position(self) -> None:
+    def _set_grid_position(self) -> str:
         if self.start_multiday:
             start = self.FIRST_GRID_BAR
         else:
@@ -63,9 +63,9 @@ class DivAttributes:
             end = self.LAST_GRID_BAR
         else:
             end = self._get_position(self.end_time)
-        self.grid_position = f'{start} / {end}'
+        return f'{start} / {end}'
 
-    def _get_time_format(self):
+    def _get_time_format(self) -> str:
         format = "%H:%M"
         multiday_format = "%d/%m %H:%M"
         for multiday in [self.start_multiday, self.end_multiday]:
@@ -80,29 +80,33 @@ class DivAttributes:
         format_gen = self._get_time_format()
         start_time_str = self.start_time.strftime(next(format_gen))
         end_time_str = self.end_time.strftime(next(format_gen))
-        self.total_time = ' '.join([start_time_str, '-', end_time_str])
+        return ' '.join([start_time_str, '-', end_time_str])
 
-    def _check_if_multiday_event(self) -> None:
-        self.start_multiday, self.end_multiday = False, False
+    def _check_multiday_event(self) -> Tuple[bool]:
+        start_multiday, end_multiday = False, False
         if self.day:
             if self.start_time < self.day:
-                self.start_multiday = True
+                start_multiday = True
             self.day += timedelta(hours=24)
             if self.day <= self.end_time:
-                self.end_multiday = True
+                end_multiday = True
+        return (start_multiday, end_multiday)
 
 
 @router.get('/day/{date}')
 async def dayview(request: Request, date: str, db_session=Depends(get_db)):
-
     # temporary fake user until there will be login session
-    user = db_session.query(User).filter_by(username='test1').first()
+    #user = db_session.query(User).filter_by(username='test1').first()
     day = datetime.strptime(date, '%d-%m-%Y')
-    events = db_session.query(Event).filter(
+    '''events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
             or_(Event.start >= day,
                 Event.end < day,
-                and_(Event.start < day, day < Event.end)))
+                and_(Event.start < day, day < Event.end)))'''
+    start = datetime(year=2021, month=2, day=1, hour=13, minute=13)
+    end = datetime(year=2021, month=2, day=1, hour=14, minute=20)
+    events = [Event(title='test2', content='test',
+                 start=start, end=end, owner_id=1, color='pink')]
     events_n_divAttr = [(event, DivAttributes(event, day)) for event in events]
     return templates.TemplateResponse("dayview.html", {
         "request": request,
