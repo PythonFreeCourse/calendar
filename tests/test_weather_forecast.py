@@ -1,7 +1,5 @@
 import datetime
 import pytest
-import requests
-import responses
 
 from app.routers.weather_forecast import get_weather_data
 
@@ -10,7 +8,7 @@ HISTORY_URL = "https://visual-crossing-weather.p.rapidapi.com/history"
 FORECAST_URL = "https://visual-crossing-weather.p.rapidapi.com/forecast"
 RESPONSE_FROM_MOCK = {"locations": {"Tel Aviv": {"values": [
     {"mint": 6, "maxt": 17.2, "conditions": "Partially cloudy"}]}}}
-ERROR_RESPONSE_FROM_MOCK = {"message": "Error Text"}
+LOCATION_NOT_FOUND = {"message": "location not found"}
 DATA_GET_WEATHER = [
     pytest.param(2020, "tel aviv", 0, marks=pytest.mark.xfail,
                  id="invalid input type"),
@@ -35,6 +33,14 @@ def test_get_weather_data(requested_date, location, expected, requests_mock):
     assert output['Status'] == expected
 
 
+@pytest.mark.xfail
+def test_location_not_found(requests_mock):
+    requested_date = datetime.datetime(day=15, month=1, year=2020)
+    requests_mock.get(HISTORY_URL, json=LOCATION_NOT_FOUND)
+    output = get_weather_data(requested_date, "neo")
+    assert output['Status'] == 0
+
+
 def test_get_forecast_weather_data(requests_mock):
     temp_date = datetime.datetime.now() + datetime.timedelta(days=2)
     response_from_mock = RESPONSE_FROM_MOCK
@@ -43,29 +49,3 @@ def test_get_forecast_weather_data(requests_mock):
     requests_mock.get(FORECAST_URL, json=response_from_mock)
     output = get_weather_data(temp_date, "tel aviv")
     assert output['Status'] == 0
-
-
-def test_location_not_found(requests_mock):
-    requested_date = datetime.datetime(day=15, month=1, year=2020)
-    requests_mock.get(HISTORY_URL, json=ERROR_RESPONSE_FROM_MOCK)
-    output = get_weather_data(requested_date, "neo")
-    assert output['Status'] == -1
-
-
-@responses.activate
-def test_historical_no_response_from_api():
-    requested_date = datetime.datetime(day=15, month=1, year=2020)
-    responses.add(responses.GET, HISTORY_URL,
-                  json=ERROR_RESPONSE_FROM_MOCK, status=404)
-    requests.get(HISTORY_URL)
-    output = get_weather_data(requested_date, "neo")
-    assert output['Status'] == -1
-
-
-@responses.activate
-def test_historical_exception_from_api():
-    requested_date = datetime.datetime(day=15, month=1, year=2020)
-    with pytest.raises(requests.exceptions.ConnectionError):
-        requests.get(HISTORY_URL)
-    output = get_weather_data(requested_date, "neo")
-    assert output['Status'] == -1
