@@ -22,3 +22,17 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
+
+# LOGGER
+LOGGER = {
+    "logger": {
+        "path": "./var/log",
+        "filename": "calendar.log",
+        "level": "error",
+        "rotation": "20 days",
+        "retention": "1 month",
+        "format": ("<level>{level: <8}</level> <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
+                   " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
+                   " - <level>{message}</level>")
+    }
+}

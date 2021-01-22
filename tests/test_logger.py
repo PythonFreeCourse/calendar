@@ -6,7 +6,6 @@ from app.internal.logger_customizer import LoggerCustomizer, LoggerConfigError
 
 
 class TestLogger:
-
     @staticmethod
     def test_log_debug(caplog, client_with_logger):
         with caplog.at_level(logging.DEBUG):

@@ -28,6 +28,7 @@ class LoggerCustomizer:
         Returns:
             Logger: Loguru logger instance
         """
+
         config = cls.load_logging_config(config_file_or_dict)
 
         try:
@@ -44,7 +45,7 @@ class LoggerCustomizer:
             )
         except (TypeError, ValueError) as err:
             raise LoggerConfigError(
-                f"You have an issue in the logger configuration: {err!r}, "
+                f"You have an issue with the logger configuration: {err!r}, "
                 "fix it please")
 
         return logger

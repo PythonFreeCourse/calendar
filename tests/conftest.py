@@ -1,9 +1,8 @@
 import datetime
 import logging
 
-from pathlib import Path
 import pytest
-from _pytest.logging import caplog as _caplog
+from _pytest.logging import caplog as _caplog  # noqa: F401
 from loguru import logger
 from faker import Faker
 
@@ -12,6 +11,8 @@ from app.database.models import Event, User
 from app.internal.logger_customizer import LoggerCustomizer
 from app.main import app
 from app.routers import profile
+from app import config
+
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -39,9 +40,7 @@ def client():
 
 @pytest.fixture(scope='module')
 def client_with_logger():
-    config_path = Path(__file__).parent.parent / 'app' / 'internal'
-    config_path = config_path / "logging_config.json"
-    logger = LoggerCustomizer.make_logger(config_path, 'logger')
+    logger = LoggerCustomizer.make_logger(config.LOGGER, "logger")
 
     client = TestClient(app)
     client.logger = logger
@@ -104,7 +103,7 @@ def profile_test_client():
 
 
 @pytest.fixture
-def caplog(_caplog):
+def caplog(_caplog):  # noqa: F811
     class PropagateHandler(logging.Handler):
         def emit(self, record):
             logging.getLogger(record.name).handle(record)
