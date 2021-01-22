@@ -1,1 +1,8 @@
 uvicorn main:app --reload
+
+uvicorn app.main:app --reload
+
+
+# @router.get("/delete")
+# def delete_user(db: Session = Depends(get_db)):
+#     crud.delete_user_by_mail(db=db, email="kobyfogel@mail.com")

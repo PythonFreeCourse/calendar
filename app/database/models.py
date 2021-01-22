@@ -8,11 +8,15 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True)
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
-    email = Column(String, unique=True)
+    username = Column(String, unique=True, nullable=False)
+    # first_name = Column(String, nullable=False)
+    # last_name = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
+    full_name = Column(String, nullable=False)
+    description = Column(String, default="Happy new user!")
+    avatar = Column(String, default="profile.png")
+    
     is_active = Column(Boolean, default=True)
 
     events = relationship(
@@ -25,7 +29,8 @@ class Event(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
     content = Column(String)
-    date = Column(DateTime)
+    start = Column(DateTime, nullable=False)
+    end = Column(DateTime, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="events")

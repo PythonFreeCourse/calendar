@@ -1,57 +1,95 @@
 import re
-from typing import List
+from typing import List, Optional, Union
 from fastapi import Depends, Form, Query
-from pydantic import BaseModel, validator, EmailStr, EmailError
+from pydantic import BaseModel, validator, EmailStr, EmailError, root_validator
 
 
-def form_body(cls):
-    cls.__signature__ = cls.__signature__.replace(
-        parameters=[
-            arg.replace(default=Form(...))
-            for arg in cls.__signature__.parameters.values()
-        ]
-    )
-    return cls
+EMPTY_FIELD_STRING = 'field is required'
 
-@form_body
+
+def fields_not_empty(field: Optional[str]) -> Union[ValueError, str]:
+    '''
+    Global function to validate fields are not empty.
+    '''
+    if field == "":
+        raise ValueError(EMPTY_FIELD_STRING)
+    return field
+
+
 class UserBase(BaseModel):
+    '''
+    Validating fields types
+    Returns a User object without sensitive information
+    '''
     username: str
-    email: str 
-    first_name: str
-    last_name: str
-        
-@form_body
+    email: str
+    full_name: str
+    description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
 class UserCreate(UserBase):
+    '''
+    Validating fields types
+    '''
     password: str
     confirm_password: str
 
+
+    '''
+    Calling to field_not_empty validaion function for each required field.
+    '''
+    _fields_not_empty_username = validator('username', allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_full_name = validator('full_name', allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_password = validator('password', allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_confirm_password = validator('confirm_password', allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_email = validator('email', allow_reuse=True)(fields_not_empty)
+
+
     @validator('confirm_password')
-    def passwords_match(cls, confirm_password, values, **kwargs):
+    def passwords_match(cls, confirm_password: str, values: UserBase) -> Union[ValueError, str]:
+        '''
+        Validating passwords fields identical.
+        '''
         if 'password' in values and confirm_password != values['password']:
-            return {"message": "Passwords don't match"}
+            raise ValueError("doesn't match to password")
         return confirm_password
-  
+
     @validator('username')
-    def username_length(cls, username):
-        if username == "":
-            return {"message": "Username field can not be empty"}
-        if len(username) < 3:
-            return {"message": "Username must contain minimum of 3 characters"}
+    def username_length(cls, username: str) -> Union[ValueError, str]:
+        '''
+        Validating username length is legal
+        '''
+        if len(username) < 3 or len(username)  > 20:
+            raise ValueError("must contain between 3 to 20 charactars")
         return username
     
+    @validator('password')
+    def password_length(cls, password: str) -> Union[ValueError, str]:
+        '''
+        Validating username length is legal
+        '''
+        if len(password) < 3 or len(password)  > 20:
+            raise ValueError("must contain between 3 to 20 charactars")
+        return password
+    
     @validator('email')
-    def confirm_mail(cls, email):
+    def confirm_mail(cls, email: str) -> Union[ValueError, str]:
+        '''
+        Validating email is valid mail address.
+        '''
         try:
             EmailStr.validate(email)
             return email
         except EmailError:
-            return {"message": "Email address is not valid"}
+            raise ValueError("address is not valid")
 
 
 class User(UserBase):
+    '''
+    Validating fields types
+    Returns a User object without sensitive information
+    '''
     id: int
     is_active: bool
-    events: List[int] = []
-
-    class Config:
-        orm_mode = True

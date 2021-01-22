@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Left side -->
+            <div class="col-3">
+                <!-- Profile card -->
+                <div class="card card-profile mb-3">
+
+                    <!-- Profile update menu -->
+                    <div class="d-flex flex-row-reverse">
+                        <div class="dropdown">
+                            <span class="text-secondary p-1 mx-2" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="fa fa-edit"></i>
+                            </span>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li class="list-group-item no-border">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#updateNameModal">
+                                        My name
+                                    </button>
+                                </li>
+                                <li class="list-group-item no-border">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#updateEmailModal">
+                                        My email
+                                    </button>
+                                </li>
+                                <li class="list-group-item no-border">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#updatePhotoModal">
+                                        My photo
+                                    </button>
+                                </li>
+                                <li class="list-group-item no-border">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#updateDescriptionModal">
+                                        About me
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Name Modal -->
+                        <div class="modal modal-sm" id="updateNameModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="updateNameModalLabel" aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h5 class="modal-title">Update Full Name</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="update_user_fullname" method="post">
+                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="fullname" placeholder="Full Name" value="{{ user.full_name }}">
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email modal -->
+                        <div class="modal modal-sm" id="updateEmailModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="updateEmailModalLabel" aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h5 class="modal-title">Update email</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="update_user_email" method="post">
+                                            <input type="email" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="email"
+                                                placeholder="E-mail" value="{{ user.email }}">
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                            </div>
+                                        </form>                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description modal -->
+                        <div class="modal" id="updateDescriptionModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="updateDescriptionModalLabel" aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h5 class="modal-title">About me</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="update_user_description" method="post">
+                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+                                                name="description" placeholder="About me" value="{{ user.description }}">
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload photo -->
+                        <div class="modal modal-sm" id="updatePhotoModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="updatePhotoModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h5 class="modal-title">Upload photo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="upload_user_photo" method="post" enctype="multipart/form-data">
+                                            <div class="input-group">
+                                                <input type="file"class="form-control-sm" accept="image/png, image/jpeg" name="file">
+                                            </div>
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>               
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End profile update menu -->
+
+                    <img class="card-img-top profile-image rounded-circle mx-auto d-block"
+                     src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
+                    <div class="card-body">
+                        <h6 class="card-title text-center mb-1">{{ user.full_name }}</h6>
+                        <p class="card-text text-center mt-0">
+                            <a class="nav-link text-secondary" href="#">
+                                <i class="fa fa-spin fa-cog" aria-hidden="true"></i>
+                                Settings
+                            </a>
+                        </p>
+                        <hr>
+                        <p class="card-text text-center">
+                            <small>
+                                {{ user.description }}
+                            </small>
+                        </p>
+                    </div>
+                </div>
+                <!-- End Profile card -->
+
+                <!-- Features card -->
+                <div class="card card-profile">
+                    <div class="card-body">
+                        <p class="card-title">
+                            Features
+                        </p>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Features card -->
+                
+            </div>
+            
+            <!-- Center -->
+            <div class="col-5">
+
+                <!-- Upcoming events -->
+                <div class="mb-3">
+
+                    {% for event in events %}
+
+                    <!-- Events card -->
+                    <div class="card card-event mb-2 pb-0">
+                        <div class="card-header d-flex justify-content-between">
+                            <small>
+                                <i>Upcoming Event On December 01, 2021</i>
+                            </small>
+                            <span>
+                                <!-- Event settings -->
+                                <a class="text-dark" href="#">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </a>
+                            </span>
+                        </div>
+                        <div class="card-body pb-1">
+                            <p class="card-text">
+                                The Event {{ event }} - description ...
+                            </p>
+                            <hr class="mb-0">
+                            <small class="event-posted-time text-muted">Last updated 3 mins ago</small>
+                        </div>
+                    </div>
+                    <!-- End Events card -->
+
+                    {% endfor %}
+                </div>
+                               
+            </div>
+            
+            <!-- Right side -->
+            <div class="col-4">
+
+                <!-- Meetups -->
+                <div class="card card-profile mb-3" style="height: 18em;">
+                    <div class="card-body">
+                        <p class="card-title">
+                            Explore MeetUps near you
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card -->
+                <div class="card card-profile mb-3" style="height: 18em;">
+                    <div class="card-body">
+                        <p class="card-title">
+                            Your Card
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card -->
+                <div class="card card-profile mb-3" style="height: 18em;">
+                    <div class="card-body">
+                        <p class="card-title">
+                            Your Card
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
