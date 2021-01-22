@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional, Set
+from typing import Dict, Optional
 
 from app.database.models import Event
 from app.dependencies import templates
