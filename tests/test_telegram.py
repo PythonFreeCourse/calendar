@@ -48,7 +48,7 @@ bot id/setWebhook?url=https://google.com/telegram/'
         "https://google.com")
 
     set_request = bot.set_webhook()
-    assert set_request.status_code == 404
+    assert set_request.status_code == status.HTTP_404_NOT_FOUND
     assert set_request.json() == {
         'ok': False,
         'error_code': 404,
