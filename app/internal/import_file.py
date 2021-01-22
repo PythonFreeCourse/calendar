@@ -110,7 +110,7 @@ def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
             return list()
         for component in calendar_read.walk():
             if component.name == "VEVENT":
-                if str(component.get('summary')) is None or not check_date_in_range(component.get('dtstart').dt):
+                if str(component.get('summary')) is None or component.get('dtstart') is None or not check_date_in_range(component.get('dtstart').dt):
                     return list()
                 else:
                     calendar_content.append({
@@ -147,3 +147,6 @@ def user_click_import(file: str, user_id: int, session: SessionLocal = SessionLo
                 move_events_to_db(import_file, user_id, session)
                 return "Import success"
     return "Import failed"
+
+
+print(user_click_import(r"D:\קורס פייתון\week16\sample.ics", 1))
