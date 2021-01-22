@@ -11,21 +11,6 @@ from app.internal.import_file import (
     is_file_exist, user_click_import)
 
 
-SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
-
-test_engine = create_engine(SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
-
-
-@pytest.fixture
-def session():
-    Base.metadata.create_all(bind=test_engine)
-    session = TestingSessionLocal()
-    yield session
-    session.close()
-    Base.metadata.drop_all(bind=test_engine)
-
-
 file_size_tests = [
     (r"tests/files_for_import_file_tests/sample_above_5mb.txt", False),  # File size above the constraint we set in the global variable (5 MB) will fail
     (r"tests/files_for_import_file_tests/sample_below_1mb.txt", True),  # File size below the constraint we set in the global variable (5 MB) will pass
@@ -157,5 +142,5 @@ def test_before_import_checking(file1):
 
 
 @pytest.mark.parametrize("file1", user_click_import_tests)
-def test_user_click_import(file1, session):
-    assert user_click_import(file1[0], file1[1], session) == file1[2]
+def test_user_click_import(file1, test_session):
+    assert user_click_import(file1[0], file1[1], test_session) == file1[2]

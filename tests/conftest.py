@@ -39,6 +39,15 @@ def session():
 
 
 @pytest.fixture
+def test_session():
+    Base.metadata.create_all(bind=test_engine)
+    test_session = TestingSessionLocal()
+    yield test_session
+    test_session.close()
+    Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture
 def user(session):
     faker = Faker()
     user1 = User(username=faker.first_name(), email=faker.email())
