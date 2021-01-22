@@ -5,11 +5,14 @@ from app import config
 import pytest
 
 
+static = config.STATIC_ABS_PATH
+
+
 lemmatized_words = [
-    ("ran",  f'{config.STATIC_ABS_PATH}\event_flairs\ran.jpg'),
-    ("food", f'{config.STATIC_ABS_PATH}\event_flairs\food.jpg'),
-    ("i",  f'{config.STATIC_ABS_PATH}\event_flairs\i.jpg'),
-    ("drank", f'{config.STATIC_ABS_PATH}\event_flairs\drank.jpg'),
+    ("ran",  f'{static}\\event_flairs\\ran.jpg'),
+    ("food", f'{static}\\event_flairs\\food.jpg'),
+    ("i",  f'{static}\\event_flairs\\i.jpg'),
+    ("drank", f'{static}\\event_flairs\\drank.jpg'),
 ]
 
 
@@ -46,11 +49,11 @@ def test_get_image_name(related_word, key):
 
 
 tokens = [
-    (r"backrub", f'{config.STATIC_ABS_PATH}\event_flairs\massage.jpg'),
-    (r"--MedicineS", f'{config.STATIC_ABS_PATH}\event_flairs\pill.jpg'),
-    (r"restaurants", f'{config.STATIC_ABS_PATH}\event_flairs\food.jpg'),
+    (r"backrub", f'{static}\\event_flairs\\massage.jpg'),
+    (r"--MedicineS", f'{static}\\event_flairs\\pill.jpg'),
+    (r"restaurants", f'{static}\\event_flairs\\food.jpg'),
     (r"pikachu", None),
-    (r"Pokemon", f'{config.STATIC_ABS_PATH}\event_flairs\pokemon.jpg'),
+    (r"Pokemon", f'{static}\\event_flairs\\pokemon.jpg'),
 ]
 
 
@@ -60,12 +63,12 @@ def test_search_token_in_related_words(token, link):
 
 
 event_contents = [
-    (r"memo backrub and medicines!!!!", f'{config.STATIC_ABS_PATH}\event_flairs\massage.jpg'),
-    (r"Dont forget medicines & backrub!!", f'{config.STATIC_ABS_PATH}\event_flairs\pill.jpg'),
-    (r"It's important to drink", f'{config.STATIC_ABS_PATH}\event_flairs\drank.jpg'),
-    (r"call Jim about tennis on friday", f'{config.STATIC_ABS_PATH}\event_flairs\tennis.jpg'),
+    (r"memo backrub and medicines!!", f'{static}\\event_flairs\\massage.jpg'),
+    (r"Dont forget medicines & backrub!", f'{static}\\event_flairs\\pill.jpg'),
+    (r"Its important to drink", f'{static}\\event_flairs\\drank.jpg'),
+    (r"call Jim about tennis friday", f'{static}\\event_flairs\\tennis.jpg'),
     (r"have to check on pikachu", r'#'),
-    (r"-~new pokemon episode 19:00 ~!", f'{config.STATIC_ABS_PATH}\event_flairs\pokemon.jpg'),
+    (r"-~new pokemon episode 19:00~!", f'{static}\\event_flairs\\pokemon.jpg'),
 ]
 
 
