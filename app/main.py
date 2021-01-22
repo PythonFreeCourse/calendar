@@ -8,7 +8,6 @@ from app.dependencies import (
 from app.telegram.pylander import pylander
 from app.routers import agenda, email, event, profile, telegram
 
-
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()

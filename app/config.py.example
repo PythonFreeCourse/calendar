@@ -1,7 +1,16 @@
-# flake8: noqa
 import os
 
 from fastapi_mail import ConnectionConfig
+from pydantic import BaseSettings
+
+
+class Settings(BaseSettings):
+    app_name: str = "PyLander"
+    bot_api: str = "BOT_API"
+    webhook_url: str = "WEBHOOK_URL"
+
+    class Config:
+        env_file = ".env"
 
 
 # DATABASE
@@ -11,10 +20,6 @@ DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
 MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
-
-# TELEGRAM
-BOT_API = "paste bot-api"
-WEBHOOK_URL = "use real webhook url or generate webhook for your local host with Ngrok"
 
 # Email
 email_conf = ConnectionConfig(
