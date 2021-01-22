@@ -1,15 +1,15 @@
 import io
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile
+from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-from PIL import Image
 
 from app import config
 from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
-
+from app.internal import languages
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -35,9 +35,8 @@ async def profile(
         request: Request,
         session=Depends(get_db),
         new_user=Depends(get_placeholder_user)):
-
     # Get relevant data from database
-    upcouming_events = range(5)
+    upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
     if not user:
         session.add(new_user)
@@ -46,17 +45,20 @@ async def profile(
 
     session.close()
 
-    return templates.TemplateResponse("profile.html", {
+    result = {
         "request": request,
         "user": user,
-        "events": upcouming_events
-    })
+        "events": upcoming_events,
+    }
+
+    result.update(languages.get_translations_dict())
+
+    return templates.TemplateResponse("profile.html", result)
 
 
 @router.post("/update_user_fullname")
 async def update_user_fullname(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_fullname = data['fullname']
@@ -75,7 +77,6 @@ async def update_user_fullname(
 @router.post("/update_user_email")
 async def update_user_email(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_email = data['email']
@@ -93,7 +94,6 @@ async def update_user_email(
 @router.post("/update_user_description")
 async def update_profile(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_description = data['description']
@@ -111,7 +111,6 @@ async def update_profile(
 @router.post("/upload_user_photo")
 async def upload_user_photo(
         file: UploadFile = File(...), session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     pic = await file.read()
 

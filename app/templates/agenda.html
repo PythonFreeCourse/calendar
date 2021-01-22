@@ -8,22 +8,22 @@
 {% block content %}
 <form method="GET" action="/agenda">
     <div class="mb-3 agenda_filters"> 
-        <label for="start_date">From</label><br>
+        <label for="start_date">{{ from_button }}</label><br>
         <input class="filter" type="date" id="start_date" name="start_date" value={{ start_date }}><br>
-        <label for="end_date">To</label><br>
+        <label for="end_date">{{ to_button }}</label><br>
         <input class="filter" type="date" id="end_date" name="end_date" value={{ end_date }}><br>
-        <input class="filter" type="submit" value="Get Agenda">
+        <input class="filter" type="submit" value="{{ get_agenda_button }}">
     </div>
 </form>
 <div class="exact_date">
     <div>
-        <a class="btn agenda_button" href="/agenda?days=0">Today</a>
+        <a class="btn agenda_button" href="/agenda?days=0">{{ agenda_today }}</a>
     </div>
     <div>
-        <a class="btn agenda_button" href="/agenda?days=7">Next Week</a>
+        <a class="btn agenda_button" href="/agenda?days=7">{{ agenda_next_week }}</a>
     </div>
     <div>
-        <a class="btn agenda_button" href="/agenda?days=30">Next Month</a>
+        <a class="btn agenda_button" href="/agenda?days=30">{{ agenda_next_month }}</a>
     </div>
 </div>
 
@@ -32,7 +32,7 @@
     {% if start_date > end_date %}
         <p>Start date is greater than end date</p>
     {% elif events | length == 0 %}
-        <p>No events found...</p>
+        <p>{{ no_events_found }}</p>
     {% elif start_date == end_date %}
         <h1>{{ start_date.strftime("%d/%m/%Y") }}</h1>
     {% else %}
