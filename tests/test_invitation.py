@@ -1,3 +1,4 @@
+from starlette.status import HTTP_302_FOUND
 from app.routers.invitation import get_all_invitations, get_invitation_by_id
 
 
@@ -7,7 +8,7 @@ class TestInvitations:
 
     def test_view_no_invitations(self, invitation_test_client):
         resp = invitation_test_client.get(self.URL)
-        assert resp.status_code == 200
+        assert resp.ok
         assert self.NO_INVITATIONS in resp.content
 
     def test_accept_invitations(
@@ -16,7 +17,7 @@ class TestInvitations:
         invitation = {"invite_id ": invitation.id}
         resp = invitation_test_client.post(
             self.URL, data=invitation)
-        assert resp.status_code == 302
+        assert resp.status_code == HTTP_302_FOUND
 
     def test_get_all_invitations_success(
             self, invitation, event, user, session

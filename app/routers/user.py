@@ -50,9 +50,7 @@ def does_user_exist(
 def get_all_user_events(session: Session, user_id: int) -> List[Event]:
     """Returns all events that the user participants in."""
 
-    associations = (
-        session.query(UserEvent)
-        .filter(UserEvent.user_id == user_id)
-        .all()
+    return (
+        session.query(Event).join(UserEvent)
+        .filter(UserEvent.user_id == user_id).all()
     )
-    return [association.events for association in associations]

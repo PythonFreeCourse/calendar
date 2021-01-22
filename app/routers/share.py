@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Dict
 
 from sqlalchemy.orm import Session
 
@@ -18,9 +18,11 @@ def sort_emails(
     for participant in participants:
 
         if does_user_exist(email=participant, session=session):
-            emails['registered'].append(participant)
+            temp: list = emails['registered']
         else:
-            emails['unregistered'].append(participant)
+            temp: list = emails['unregistered']
+
+        temp.append(participant)
 
     return emails
 
@@ -28,20 +30,21 @@ def sort_emails(
 def send_email_invitation(
         participants: List[str],
         event: Event,
-):
+) -> bool:
     """Sends an email with an invitation."""
 
     ical_invitation = event_to_ical(event, participants)  # noqa: F841
     for _ in participants:
         # TODO: send email
         pass
+    return True
 
 
 def send_in_app_invitation(
         participants: List[str],
         event: Event,
         session: Session
-) -> Union[bool, None]:
+) -> bool:
     """Sends an in-app invitation for registered users."""
 
     for participant in participants:
@@ -53,8 +56,7 @@ def send_in_app_invitation(
 
         else:
             # if user tries to send to themselves.
-            session.rollback()
-            return None
+            return False
 
     session.commit()
     return True
@@ -74,12 +76,14 @@ def accept(invitation: Invitation, session: Session) -> None:
     save(association, session=session)
 
 
-def share(event: Event, participants: List[str], session: Session) -> None:
+def share(event: Event, participants: List[str], session: Session) -> bool:
     """Sends invitations to all event participants."""
 
     registered, unregistered = (
         sort_emails(participants, session=session).values()
     )
+    if send_email_invitation(unregistered, event):
+        if send_in_app_invitation(registered, event, session):
+            return True
+    return False
 
-    send_in_app_invitation(registered, event, session)
-    send_email_invitation(unregistered, event)
