@@ -46,7 +46,7 @@ def test_get_forecast_weather_data(requests_mock):
 
 
 def test_location_not_found(requests_mock):
-    requested_date = datetime.datetime(day=15, month=1, year=2020)
+    requested_date = datetime.datetime(day=10, month=1, year=2020)
     requests_mock.get(HISTORY_URL, json=ERROR_RESPONSE_FROM_MOCK)
     output = get_weather_data(requested_date, "neo")
     assert output['Status'] == -1
@@ -54,9 +54,8 @@ def test_location_not_found(requests_mock):
 
 @responses.activate
 def test_historical_no_response_from_api():
-    requested_date = datetime.datetime(day=15, month=1, year=2020)
-    responses.add(responses.GET, HISTORY_URL,
-                  json=ERROR_RESPONSE_FROM_MOCK, status=404)
+    requested_date = datetime.datetime(day=11, month=1, year=2020)
+    responses.add(responses.GET, HISTORY_URL, status=500)
     requests.get(HISTORY_URL)
     output = get_weather_data(requested_date, "neo")
     assert output['Status'] == -1
@@ -64,7 +63,7 @@ def test_historical_no_response_from_api():
 
 @responses.activate
 def test_historical_exception_from_api():
-    requested_date = datetime.datetime(day=15, month=1, year=2020)
+    requested_date = datetime.datetime(day=12, month=1, year=2020)
     with pytest.raises(requests.exceptions.ConnectionError):
         requests.get(HISTORY_URL)
     output = get_weather_data(requested_date, "neo")
