@@ -41,7 +41,6 @@ def validate_date_input(requested_date):
             return True, None
         else:
             return False, INVALID_YEAR
-    return False, INVALID_DATE_INPUT
 
 
 def freezeargs(func):
@@ -100,8 +99,8 @@ def get_historical_weather(input_date, location):
     input_query_string["location"] = location
     api_json, error_text =\
         get_data_from_weather_api(HISTORY_URL, input_query_string)
-    location_found = list(api_json.keys())[0]
     if api_json:
+        location_found = list(api_json.keys())[0]
         weather_data = {
             'MinTempCel': api_json[location_found]['values'][0]['mint'],
             'MaxTempCel': api_json[location_found]['values'][0]['maxt'],
@@ -180,7 +179,7 @@ def get_forecast_by_historical_data(day, month, location):
         input_date = datetime.datetime(year=relevant_year, month=month,
                                        day=day)
     except ValueError:
-        # only if day & month are 29.02 and there is no such date
+        # if date = 29.02 and there is no such date
         # on the relevant year
         input_date = datetime.datetime(year=relevant_year, month=month,
                                        day=day - 1)
