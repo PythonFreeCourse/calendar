@@ -1,6 +1,10 @@
 import os
 
+<<<<<<< HEAD
 
+=======
+from fastapi_mail import ConnectionConfig
+>>>>>>> 2055db7a5598794df6ec487fd7e82c0639b56bb9
 # flake8: noqa
 
 
@@ -12,5 +16,18 @@ MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
+<<<<<<< HEAD
 # API-KEYS
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+=======
+email_conf = ConnectionConfig(
+    MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
+    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
+    MAIL_FROM=os.getenv("MAIL_FROM") or "a@a.com",   
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
+    MAIL_TLS=True,
+    MAIL_SSL=False,
+    USE_CREDENTIALS=True,
+)
+>>>>>>> 2055db7a5598794df6ec487fd7e82c0639b56bb9
