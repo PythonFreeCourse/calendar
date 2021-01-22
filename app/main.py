@@ -19,7 +19,7 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 # Configure logger
-config_path=Path(__file__).parent / 'internal'
+config_path = Path(__file__).parent / 'internal'
 config_path = config_path.absolute() / "logging_config.json"
 logger = LoggerCustomizer.make_logger(config_path, 'logger')
 app.logger = logger

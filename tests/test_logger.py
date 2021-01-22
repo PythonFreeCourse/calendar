@@ -40,8 +40,10 @@ class TestLogger:
                 "level": "eror",
                 "rotation": "20 days",
                 "retention": "1 month",
-                "format": ("<level>{level: <8}</level> <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
-                           "- <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>")
+                "format": ("<level>{level: <8}</level> "
+                           "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
+                           "- <cyan>{name}</cyan>:<cyan>{function}</cyan>"
+                           " - <level>{message}</level>")
             }
         }
         with pytest.raises(LoggerConfigError):

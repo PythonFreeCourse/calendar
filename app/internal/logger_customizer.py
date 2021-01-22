@@ -13,12 +13,13 @@ class LoggerConfigError(Exception):
 class LoggerCustomizer:
 
     @classmethod
-    def make_logger(cls, config_file_or_dict: Union[Path, dict], logger_name: str) -> Logger:
+    def make_logger(cls, config_file_or_dict: Union[Path, dict],
+                    logger_name: str) -> Logger:
         """Creates a loguru logger from given configuration path or dict.
 
         Args:
-            config_file_or_dict (Union[Path, dict]): Path to logger configuration 
-                file or dictionary of configuration
+            config_file_or_dict (Union[Path, dict]): Path to logger
+            configuration file or dictionary of configuration
             logger_name (str): Logger instance created from configuration
 
         Raises:
@@ -43,7 +44,8 @@ class LoggerCustomizer:
             )
         except (TypeError, ValueError) as err:
             raise LoggerConfigError(
-                f"You have an issue in the logger configuration: {err!r}, fix it please")
+                f"You have an issue in the logger configuration: {err!r}, "
+                "fix it please")
 
         return logger
 
@@ -60,8 +62,10 @@ class LoggerCustomizer:
         Args:
             file_path (Path): Path where the log file is located
             level (str): The level wanted to start logging from
-            rotation (str): Every how long the logs would be rotated(creation of new file)         
-            retention (str): Amount of time in words defining long a log is kept
+            rotation (str): Every how long the logs would be
+                rotated(creation of new file)
+            retention (str): Amount of time in words defining how
+                long a log is kept
             format (str): The logging format
 
         Returns:
