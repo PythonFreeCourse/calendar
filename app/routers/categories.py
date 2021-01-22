@@ -46,14 +46,16 @@ async def set_category(category: CategoryModel,
     except IntegrityError:
         db_session.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"category is already exists for {category.user_id} user.")
+                            detail=f"category is already exists for "
+                                   f"{category.user_id} user.")
     else:
         return {"category": cat.to_dict()}
 
 
 def validate_request_params(query_params: ImmutableMultiDict) -> bool:
     """
-    request.query_params contains not more than user_id, name, color and not less than user_id:
+    request.query_params contains not more than user_id, name, color
+    and not less than user_id:
     Intersection must contain at least user_id.
     Union must not contain fields other than user_id, name, color.
     """
@@ -70,8 +72,8 @@ def get_user_categories(db_session: Session,
     Returns user's categories, filtered by params.
     """
     try:
-        categories = db_session.query(Category).filter_by(user_id=user_id). \
-            filter_by(**params).all()
+        categories = db_session.query(Category).filter_by(
+            user_id=user_id).filter_by(**params).all()
     except SQLAlchemyError:
         return []
     else:

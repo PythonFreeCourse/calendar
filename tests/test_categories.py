@@ -12,8 +12,9 @@ class TestCategories:
 
     @staticmethod
     def test_creating_new_category(client, user):
-        response = client.post("/categories/", json={"user_id": user.id,
-                                                     "name": "Foo", "color": "eecc11"})
+        response = client.post("/categories/",
+                               json={"user_id": user.id, "name": "Foo",
+                                     "color": "eecc11"})
         assert response.status_code == status.HTTP_200_OK
         assert {"user_id": user.id, "name": "Foo", "color": "eecc11"}.items() \
                <= response.json()['category'].items()
@@ -21,7 +22,8 @@ class TestCategories:
     @staticmethod
     def test_creating_not_unique_category_failed(client, user, category):
         response = client.post("/categories/", json={"user_id": user.id,
-                                                     "name": "Guitar Lesson", "color": "121212"})
+                                                     "name": "Guitar Lesson",
+                                                     "color": "121212"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in \
                response.json()["detail"]
@@ -62,7 +64,7 @@ class TestCategories:
 
     @staticmethod
     def test_get_category_bad_request(client):
-        response = client.get(f"/categories/")
+        response = client.get("/categories/")
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert TestCategories.UNALLOWED_PARAMS in response.json()["detail"]
 
