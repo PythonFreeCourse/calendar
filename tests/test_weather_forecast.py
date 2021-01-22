@@ -68,3 +68,12 @@ def test_historical_exception_from_api():
         requests.get(HISTORY_URL)
     output = get_weather_data(requested_date, "neo")
     assert output['Status'] == -1
+
+
+@responses.activate
+def test_forecast_exception_from_api():
+    requested_date = datetime.datetime.now() + datetime.timedelta(days=3)
+    with pytest.raises(requests.exceptions.ConnectionError):
+        requests.get(FORECAST_URL)
+    output = get_weather_data(requested_date, "neo")
+    assert output['Status'] == -1
