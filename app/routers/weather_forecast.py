@@ -123,9 +123,9 @@ def get_forecast_weather(input_date, location):
     input_query_string["location"] = location
     api_json, error_text = get_data_from_weather_api(FORECAST_URL,
                                                      input_query_string)
-    location_found = list(api_json.keys())[0]
     if not api_json:
         return None, error_text
+    location_found = list(api_json.keys())[0]
     for i in range(len(api_json[location_found]['values'])):
         # find relevant date from API output
         if str(input_date) ==\
