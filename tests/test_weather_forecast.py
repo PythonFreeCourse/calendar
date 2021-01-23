@@ -3,7 +3,7 @@ import pytest
 import requests
 import responses
 
-from app.routers.weather_forecast import get_weather_data
+from app.internal.weather_forecast import get_weather_data
 
 
 HISTORY_URL = "https://visual-crossing-weather.p.rapidapi.com/history"

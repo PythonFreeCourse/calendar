@@ -46,6 +46,8 @@ def validate_date_input(requested_date):
 def freezeargs(func):
     """Transform mutable dictionary into immutable
     Credit to 'fast_cen' from 'stackoverflow'
+    https://stackoverflow.com/questions/6358481/
+    using-functools-lru-cache-with-dictionary-arguments
     """
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
