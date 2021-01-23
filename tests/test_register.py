@@ -74,7 +74,7 @@ Test register a user fails due to unique database fields already in use
 
 
 @pytest.mark.parametrize(
-    "username, full_name, password, confirm_password"
+    "username, full_name, password, confirm_password,"
     + "email, description, expected_response", UNIQUE_FIELDS_ARE_TAKEN)
 def test_unique_fields_are_taken(
     session, client, username, full_name, password, confirm_password,
