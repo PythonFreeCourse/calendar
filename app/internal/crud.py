@@ -53,4 +53,3 @@ def delete_user_by_mail(db: Session, email: str) -> None:
     db_user = get_user_by_email(db=db, email=email)
     db.delete(db_user)
     db.commit()
-    

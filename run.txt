@@ -2,6 +2,8 @@ uvicorn main:app --reload
 
 uvicorn app.main:app --reload
 
+flake8 .\app
+
 
 # @router.get("/delete")
 # def delete_user(db: Session = Depends(get_db)):
