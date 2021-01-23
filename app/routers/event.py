@@ -1,8 +1,10 @@
 from datetime import datetime
-from typing import Dict, Optional
+from operator import attrgetter
+from typing import Dict, List, Optional
 
-from app.database.models import Event
+from app.database.models import Event, UserEvent
 from app.dependencies import templates
+from app.internal.utils import create_model
 from fastapi import APIRouter, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -42,7 +44,7 @@ def update_event(event_id: int, event_dict: Dict, db: Session
 
     # Extract only that keys to update
     event_to_update = {i: event_dict[i] for i in (
-        'title', 'start', 'end', 'content') if i in event_dict}
+        'title', 'start', 'end', 'content', 'location') if i in event_dict}
     if not bool(event_to_update):  # Event items is empty
         return None
     try:
@@ -59,3 +61,30 @@ def update_event(event_id: int, event_dict: Dict, db: Session
     except (AttributeError, SQLAlchemyError, TypeError):
         return None
     return get_event_by_id(db=db, event_id=event_id)
+
+
+def create_event(db, title, start, end, owner_id, content=None, location=None):
+    """Creates an event and an association."""
+
+    event = create_model(
+        db, Event,
+        title=title,
+        start=start,
+        end=end,
+        content=content,
+        owner_id=owner_id,
+        location=location,
+    )
+    create_model(
+        db, UserEvent,
+        user_id=owner_id,
+        event_id=event.id
+    )
+    return event
+
+
+def sort_by_date(events: List[Event]) -> List[Event]:
+    """Sorts the events by the start of the event."""
+
+    temp = events.copy()
+    return sorted(temp, key=attrgetter('start'))
