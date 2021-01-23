@@ -16,7 +16,6 @@ html {
     background-color: var(--primary);
 }
 
-
 .schedule {
     display: grid;
     grid-template-rows: 1;

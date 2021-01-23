@@ -24,6 +24,9 @@ class DivAttributes:
     BASE_GRID_BAR = 5
     FIRST_GRID_BAR = 1
     LAST_GRID_BAR = 101
+    DEFAULT_COLOR = 'grey'
+    DEFAULT_TIME_FORMAT = "%H:%M"
+    MULTIDAT_TIME_FORMAT = "%d/%m %H:%M"
 
     def __init__(self, event: Event,
                  day: Union[bool, datetime] = False) -> None:
@@ -37,7 +40,7 @@ class DivAttributes:
 
     def _check_color(self, color: str) -> str:
         if color is None:
-            return 'grey'
+            return self.DEFAULT_COLOR
         return color
 
     def _minutes_position(self, minutes: int) -> int:
@@ -66,13 +69,11 @@ class DivAttributes:
         return f'{start} / {end}'
 
     def _get_time_format(self) -> str:
-        format = "%H:%M"
-        multiday_format = "%d/%m %H:%M"
         for multiday in [self.start_multiday, self.end_multiday]:
             if multiday:
-                yield multiday_format
+                yield self.MULTIDAT_TIME_FORMAT
             else:
-                yield format
+                yield self.DEFAULT_TIME_FORMAT
 
     def _set_total_time(self) -> None:
         length = self.end_time - self.start_time
@@ -95,7 +96,7 @@ class DivAttributes:
 
 @router.get('/day/{date}')
 async def dayview(request: Request, date: str, db_session=Depends(get_db)):
-    # temporary fake user until there will be login session
+    # TODO: add a login session
     user = db_session.query(User).filter_by(username='test1').first()
     day = datetime.strptime(date, '%Y-%m-%d')
     day_end = day + timedelta(hours=24)
