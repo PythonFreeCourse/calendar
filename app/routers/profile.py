@@ -1,15 +1,14 @@
 import io
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
-from PIL import Image
-
 from app import config
 from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
-
+from app.internal.on_this_day_events import get_on_this_day_events
+from fastapi import APIRouter, Depends, File, Request, UploadFile
+from PIL import Image
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -46,10 +45,14 @@ async def profile(
 
     session.close()
 
+    # Get on this day data from wiki
+    on_this_day_data = get_on_this_day_events()
+
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
-        "events": upcouming_events
+        "events": upcouming_events,
+        "on_this_day_data": on_this_day_data
     })
 
 
