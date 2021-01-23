@@ -7,7 +7,6 @@ from typing import Any, Generator, Iterator, List
 CALENDAR = calendar.Calendar(0)
 DISPLAY_BLOCK = 100
 MONTH_BLOCK = 5
-LAST_SHOWED_DAY = None
 
 locale.setlocale(locale.LC_TIME, ("en", "UTF-8"))
 
@@ -15,6 +14,13 @@ locale.setlocale(locale.LC_TIME, ("en", "UTF-8"))
 class Week:
     WEEK_DAYS = 7
     DAYS_OF_THE_WEEK = calendar.day_name
+
+    def __init__(self, days):
+        self.days = days
+
+    def display_week(self):
+        for day in self.days:
+            print(day.display())
 
 
 class Day:
@@ -50,6 +56,10 @@ class Day:
     def display(self) -> str:
         """Returns day date inf the format of 00 MONTH 00"""
         return self.date.strftime("%d %B %y").upper()
+
+    @classmethod
+    def convert_str_to_date(cls, date_string: str) -> datetime:
+        return datetime.strptime(date_string, '%d %B %y')
 
     @classmethod
     def is_weekend(cls, date: datetime) -> bool:
@@ -179,5 +189,4 @@ def get_month_block(day: Day, n: int = MONTH_BLOCK * 2) -> List[List[Day]]:
         week = list(get_n_days(current, Week.WEEK_DAYS))
         block.append(week)
         current = week[-1].date
-    LAST_SHOWED_DAY = block[-1][-1].date
     return block

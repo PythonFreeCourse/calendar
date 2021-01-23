@@ -13,12 +13,8 @@
             <div>
                 <ion-icon name="calendar-outline"></ion-icon>
             </div>
-            <div class="add-event">
-                <form>
-                    <button target="/nextweek" action="POST">
-                        <ion-icon name="add" alt="add event icon"></ion-icon>
-                    </button>
-                </form>
+            <div>
+                <ion-icon name="add" alt="add event icon"></ion-icon>
             </div>
         </div>
     </nav>
@@ -51,7 +47,7 @@
                     {% for week in calendar['month_block'] %}
                     <div class="week">
                         {% for day in week %}
-                        <div class="{{day.css['div']}}">
+                        <div class="{{day.css['div']}}" id="{{day.display()}}">
                             <div class="month-day-header">
                                 <div class="{{day.css['date']}}">{{day}}</div>
                                 <div class="align-right"><a href="#" class="add-small">+</a></div>
@@ -69,9 +65,6 @@
                         {% endfor %}
                     </div>
                     {% endfor %}
-
-                    {% block next_week %}
-                    {% endblock %}
                 </div>
             </div>
             <div id="day-display"></div>

@@ -28,14 +28,14 @@ async def calendar(request: Request):
     )
 
 
-@router.post("/nextweek")
-async def calendar_next(request: Request):
-    last_day = cg.LAST_SHOWED_DAY
-    next_week = cg.get_n_days(last_day, cg.Week.WEEK_DAYS)
-    cg.LAST_SHOWED_DAY = next_week[-1].date
+@router.post("/{date}")
+async def update_calendar(request: Request, date: str):
+    last_day = cg.Day.convert_str_to_date(date)
+    next_week = cg.Week(cg.get_n_days(last_day, 7))
+    next_week.display_week()
 
     return templates.TemplateResponse(
-        "add_week.html",
+        "calendar.html",
         {
             "request": request,
             "next_week": next_week
