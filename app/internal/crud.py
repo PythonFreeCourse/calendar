@@ -14,7 +14,8 @@ def get_user_by_username(db: Session, username: str) -> models.User:
     '''
     query database for a user by unique username
     '''
-    return db.query(models.User).filter(models.User.username == username).first()
+    return db.query(models.User).filter(
+        models.User.username == username).first()
 
 
 def get_user_by_email(db: Session, email: str) -> models.User:
@@ -52,3 +53,4 @@ def delete_user_by_mail(db: Session, email: str) -> None:
     db_user = get_user_by_email(db=db, email=email)
     db.delete(db_user)
     db.commit()
+    

@@ -26,7 +26,8 @@ async def register_user_form(request: Request) -> templates:
 
 
 @router.post("/register")
-async def register(request:Request, db: Session = Depends(get_db)) -> templates:
+async def register(request: Request,
+    db: Session = Depends(get_db)) -> templates:
     '''
     rendering register route post method.
     '''
@@ -39,11 +40,12 @@ async def register(request:Request, db: Session = Depends(get_db)) -> templates:
     except ValidationError as e:
         # if pydantic validations fails, rendering errors to register.html
 
-        errors = {error['loc'][0]: " ".join((error['loc'][0].capitalize(), error['msg'])) for error in e.errors()}
+        errors = {error['loc'][0]: " ".join((error['loc'][0].capitalize(),
+            error['msg'])) for error in e.errors()}
         return templates.TemplateResponse("register.html", {
-        "request": request,
-        "errors": errors,
-        "form_values": form_dict})
+            "request": request,
+            "errors": errors,
+            "form_values": form_dict})
     try:
         # attempt creating User Model object, and saving to database
 
@@ -57,18 +59,19 @@ async def register(request:Request, db: Session = Depends(get_db)) -> templates:
         db.rollback()
         errors = {}
         db_user_email = crud.get_user_by_email(db, email=user.email)
-        db_user_username = crud.get_user_by_username(db, username=user.username)
+        db_user_username = crud.get_user_by_username(db,
+            username=user.username)
         if db_user_username:
             errors['username'] = "That username is already taken"
         if db_user_email:
-             errors['email'] = "Email already registered"
+            errors['email'] = "Email already registered"
         return templates.TemplateResponse("register.html", {
-        "request": request,
-        "errors": errors,
-        "form_values": form_dict}) 
+            "request": request,
+            "errors": errors,
+            "form_values": form_dict})
     
     return templates.TemplateResponse("home.html", {
-    "request": request,
-    "message": "User created",
-    "status_code": 201
-})
+        "request": request,
+        "message": "User created",
+        "status_code": 201})
+        

@@ -1,7 +1,5 @@
-import re
-from typing import List, Optional, Union
-from fastapi import Depends, Form, Query
-from pydantic import BaseModel, validator, EmailStr, EmailError, root_validator
+from typing import Optional, Union
+from pydantic import BaseModel, validator, EmailStr, EmailError
 
 
 EMPTY_FIELD_STRING = 'field is required'
@@ -29,6 +27,7 @@ class UserBase(BaseModel):
     class Config:
         orm_mode = True
 
+
 class UserCreate(UserBase):
     '''
     Validating fields types
@@ -36,19 +35,23 @@ class UserCreate(UserBase):
     password: str
     confirm_password: str
 
-
     '''
     Calling to field_not_empty validaion function for each required field.
     '''
-    _fields_not_empty_username = validator('username', allow_reuse=True)(fields_not_empty)
-    _fields_not_empty_full_name = validator('full_name', allow_reuse=True)(fields_not_empty)
-    _fields_not_empty_password = validator('password', allow_reuse=True)(fields_not_empty)
-    _fields_not_empty_confirm_password = validator('confirm_password', allow_reuse=True)(fields_not_empty)
-    _fields_not_empty_email = validator('email', allow_reuse=True)(fields_not_empty)
-
+    _fields_not_empty_username = validator('username',
+        allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_full_name = validator('full_name',
+        allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_password = validator('password',
+        allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_confirm_password = validator('confirm_password',
+        allow_reuse=True)(fields_not_empty)
+    _fields_not_empty_email = validator('email',
+        allow_reuse=True)(fields_not_empty)
 
     @validator('confirm_password')
-    def passwords_match(cls, confirm_password: str, values: UserBase) -> Union[ValueError, str]:
+    def passwords_match(cls, confirm_password: str,
+        values: UserBase) -> Union[ValueError, str]:
         '''
         Validating passwords fields identical.
         '''
@@ -61,19 +64,19 @@ class UserCreate(UserBase):
         '''
         Validating username length is legal
         '''
-        if len(username) < 3 or len(username)  > 20:
+        if len(username) < 3 or len(username) > 20:
             raise ValueError("must contain between 3 to 20 charactars")
         return username
-    
+
     @validator('password')
     def password_length(cls, password: str) -> Union[ValueError, str]:
         '''
         Validating username length is legal
         '''
-        if len(password) < 3 or len(password)  > 20:
+        if len(password) < 3 or len(password) > 20:
             raise ValueError("must contain between 3 to 20 charactars")
         return password
-    
+
     @validator('email')
     def confirm_mail(cls, email: str) -> Union[ValueError, str]:
         '''

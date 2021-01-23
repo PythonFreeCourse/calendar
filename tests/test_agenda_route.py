@@ -3,7 +3,6 @@ from datetime import date, datetime, timedelta
 from fastapi import status
 
 from app.database.models import User, Event
-import pytest
 
 
 class TestAgenda:
