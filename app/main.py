@@ -26,5 +26,4 @@ async def home(request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!"
-
     })

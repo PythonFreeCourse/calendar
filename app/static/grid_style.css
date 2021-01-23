@@ -1,13 +1,12 @@
 :root {
-    --red: #F24726
-    --yellow: #FFDE4D
+    --bold_primary: #FFDE4D
+    --bold_secondary: #F24726
 
-    --blue: #24396A;
-    --darkblue: #222831
+    --primary: #F7F7F7
+    --secondary: #222831
 
-    --gray1: #F7F7F7
-    --gray2: #e9ecef
-    --gray3: #adb5bd
+    --surface: #e9ecef
+    --up_surface: #adb5bd
 }
 
 * {
@@ -40,11 +39,11 @@ a {
 }
 
 nav {
-    z-index: 2;
+    z-index: 5;
     width: 4.5rem;
     grid-row: 1/3;
     font-size: 2.8rem;
-    padding-left: 0.8rem;
+    padding-left: 0.5rem;
 }
 
 .menu {
@@ -58,7 +57,7 @@ nav {
 img {fill: #F7F7F7;}
 
 header {
-    z-index: 1;
+    z-index: 5;
     position: sticky;
     top: 0;
     display: grid;
@@ -99,7 +98,7 @@ main {
 }
 
 .calender-days-titles {
-    z-index: 1;
+    z-index: 4;
     position: sticky;
     top: 6rem;
     align-self: flex-start;
@@ -132,6 +131,7 @@ main {
 }
 
 .day {
+    z-index: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -157,6 +157,10 @@ main {
     color: #F24726;
 }
 
+.day:hover .add-small{
+    display: block;
+}
+
 .day-number {
     font-weight: 900;
     font-size: 2rem;
@@ -165,6 +169,22 @@ main {
 .day_current {
     background-color: #FFDE4D;
     color: white;
+}
+
+.month-day-header {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.month-day-header div {
+    flex-grow: 2;
+}
+
+.add-small {
+    display: none;
+    font-weight: 900;
+    font-size: 2rem;
+    padding-right: 0.5rem;
 }
 
 /* Dates Navigation */
@@ -219,27 +239,36 @@ main {
     font-size: 1.6rem;
 }
 
+/* Alignments */
+.align-right {
+    text-align: right;
+}
+
+.align-left {
+    text-left: right;
+}
+
 /* Text Colors */
-.t-yellow {color: #FFDE4D;}
+.text-yellow {color: #FFDE4D;}
 
-.t-gray {color: #adb5bd;}
+.text-gray {color: #adb5bd;}
 
-.t-lightgray {color: #F7F7F7;}
+.text-lightgray {color: #F7F7F7;}
 
-.t-darkblue {color: #222831;}
+.text-darkblue {color: #222831;}
 
 /* Borders */
-.b-dashed-darkblue {border: 2px dashed  #222831;}
+.border-dash-darkblue {border: 2px dashed  #222831;}
 
-.b-darkblue {border: 2px solid  #222831;}
+.border-darkblue {border: 2px solid  #222831;}
 
-.uline-yellow {border-bottom: 4px solid  #FFDE4D;}
+.underline-yellow {border-bottom: 4px solid  #FFDE4D;}
 
 /* Background Color */
-.bg-darkblue {background-color: #222831;}
+.background-darkblue {background-color: #222831;}
 
-.bg-red {background-color: #F24726;}
+.background-red {background-color: #F24726;}
 
-.bg-lightgray {background-color: #e9ecef;}
+.background-lightgray {background-color: #e9ecef;}
 
-.bg-yellow {background-color: #FFDE4D;}
+.background-yellow {background-color: #FFDE4D;}

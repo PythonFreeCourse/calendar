@@ -6,6 +6,8 @@ from typing import Any, Generator, Iterator, List
 
 CALENDAR = calendar.Calendar(0)
 DISPLAY_BLOCK = 100
+MONTH_BLOCK = 5
+LAST_SHOWED_DAY = None
 
 locale.setlocale(locale.LC_TIME, ("en", "UTF-8"))
 
@@ -21,15 +23,24 @@ class Day:
         self.sday = self.date.strftime("%A")
         self.dailyevents = [("Daily Event", "More Information")]
         self.events = [
-            ("6PM", "Meeting with Ode"),
-            ("7PM", "Meeting with Sagi")
+            ("00AM", "event 01"),
+            ("00PM", "event 02")
         ]
         self.css = {
             'div': 'day',
             'date': 'day-number',
             'daily_event': 'month-event',
-            'daily_event_front': 'daily front bg-warmyellow',
-            'daily_event_back': 'daily back t-darkblue bg-lightgray',
+            'daily_event_front': ' '.join([
+                'daily',
+                'front',
+                'background-warmyellow'
+            ]),
+            'daily_event_back': ' '.join([
+                'daily',
+                'back',
+                'text-darkblue',
+                'background-lightgray'
+            ]),
             'event': 'event',
         }
 
@@ -51,10 +62,19 @@ class DayWeekend(Day):
         super().__init__(date)
         self.css = {
             'div': 'day ',
-            'date': 'day-number t-gray',
+            'date': ' '.join(['day-number',  'text-gray']),
             'daily_event': 'month-event',
-            'daily_event_front': 'daily front bg-warmyellow',
-            'daily_event_back': 'daily back t-darkblue bg-lightgray',
+            'daily_event_front': ' '.join([
+                'daily',
+                'front',
+                'background-warmyellow'
+            ]),
+            'daily_event_back': ' '.join([
+                'daily',
+                'back',
+                'text-darkblue',
+                'background-lightgray'
+            ]),
             'event': 'event',
         }
 
@@ -63,11 +83,21 @@ class Today(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'div': 'day t-darkblue bg-yellow',
+            'div':  ' '.join(['day', 'text-darkblue', 'background-yellow']),
             'date': 'day-number',
             'daily_event': 'month-event',
-            'daily_event_front': 'daily front t-lightgray bg-darkblue',
-            'daily_event_back': 'daily back t-darkblue bg-lightgray',
+            'daily_event_front': ' '.join([
+                'daily',
+                'front',
+                'text-lightgray',
+                'background-darkblue'
+            ]),
+            'daily_event_back': ' '.join([
+                'daily',
+                'back',
+                'text-darkblue',
+                'background-lightgray'
+            ]),
             'event': 'event',
         }
 
@@ -76,11 +106,24 @@ class FirstDayMonth(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'div': 'day t-darkblue bg-lightgray',
+            'div': ' '.join([
+                'day',
+                'text-darkblue',
+                'background-lightgray'
+            ]),
             'date': 'day-number',
             'daily_event': 'month-event',
-            'daily_event_front': 'daily front t-lightgray bg-red',
-            'daily_event_back': 'daily back t-darkblue bg-lightgray',
+            'daily_event_front':  ' '.join([
+                'daily front',
+                'text-lightgray',
+                'background-red'
+            ]),
+            'daily_event_back': ' '.join([
+                'daily',
+                'back',
+                'text-darkblue',
+                'background-lightgray'
+            ]),
             'event': 'event',
         }
 
@@ -90,10 +133,10 @@ class FirstDayMonth(Day):
 
 def create_day(day: datetime) -> Day:
     """Return the currect day object according to given date."""
-    if Day.is_weekend(day):
-        return DayWeekend(day)
     if day == date.today():
         return Today(day)
+    if Day.is_weekend(day):
+        return DayWeekend(day)
     if int(day.day) == 1:
         return FirstDayMonth(day)
     return Day(day)
@@ -128,9 +171,13 @@ def split_list_to_lists(dates: List[Any], length: int) -> List[List[Any]]:
     return [dates[i:i + length] for i in range(0, len(dates), length)]
 
 
-def get_month_block(date: datetime, n: int = DISPLAY_BLOCK) -> List[List[Day]]:
+def get_month_block(day: Day, n: int = MONTH_BLOCK * 2) -> List[List[Day]]:
     """Returns a 2D list represent a n days calendar from current month."""
-    start = create_day(get_first_day_month_block(date))
-    cal = list(get_n_days(start.date, n))
-    cal.insert(0, start)
-    return split_list_to_lists(cal, Week.WEEK_DAYS)
+    current = get_first_day_month_block(day.date) - timedelta(days=1)
+    block = []
+    for i in range(n):
+        week = list(get_n_days(current, Week.WEEK_DAYS))
+        block.append(week)
+        current = week[-1].date
+    LAST_SHOWED_DAY = block[-1][-1].date
+    return block

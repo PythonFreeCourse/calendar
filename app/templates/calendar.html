@@ -2,7 +2,7 @@
 
 {% block body %}
 <div class="container">
-    <nav class="t-lightgray bg-darkblue">
+    <nav class="text-lightgray background-darkblue">
         <div class="menu">
             <div>
                 <ion-icon name="menu" alt="Menu bar icon"></ion-icon>
@@ -14,7 +14,11 @@
                 <ion-icon name="calendar-outline"></ion-icon>
             </div>
             <div class="add-event">
-                <ion-icon name="add" alt="add event icon"></ion-icon>
+                <form>
+                    <button target="/nextweek" action="POST">
+                        <ion-icon name="add" alt="add event icon"></ion-icon>
+                    </button>
+                </form>
             </div>
         </div>
     </nav>
@@ -37,7 +41,7 @@
                 <div class="calender-days-titles">
                     {% for day in calendar['week_days'] %}
                     {% if day == calendar['day'].sday %}
-                    <div class="day-title uline-yellow"> {{ day.upper() }} </div>
+                    <div class="day-title underline-yellow"><b> {{ day.upper() }} </b></div>
                     {% else %}
                     <div class="day-title"> {{ day.upper() }}</div>
                     {% endif %}
@@ -46,10 +50,12 @@
                 <div class="calender-grid">
                     {% for week in calendar['month_block'] %}
                     <div class="week">
-
                         {% for day in week %}
                         <div class="{{day.css['div']}}">
-                            <div class="{{day.css['date']}}">{{day}}</div>
+                            <div class="month-day-header">
+                                <div class="{{day.css['date']}}">{{day}}</div>
+                                <div class="align-right"><a href="#" class="add-small">+</a></div>
+                            </div>
                             {% for devent in day.dailyevents %}
                             <div class="{{day.css['daily_event']}}">
                                 <div class="{{day.css['daily_event_front']}}">{{devent[0]}}</div>
@@ -61,9 +67,11 @@
                             {% endfor %}
                         </div>
                         {% endfor %}
-
                     </div>
                     {% endfor %}
+
+                    {% block next_week %}
+                    {% endblock %}
                 </div>
             </div>
             <div id="day-display"></div>
