@@ -8,6 +8,10 @@ click==7.1.2
 colorama==0.4.4
 coverage==5.3.1
 fastapi==0.63.0
+fastapi_mail==0.3.3.1
+faker==5.6.2
+frozendict==1.2
+smtpdfix==0.2.6
 h11==0.12.0
 h2==4.0.0
 hpack==4.0.0
@@ -34,6 +38,8 @@ python-multipart==0.0.5
 pytz==2020.5
 PyYAML==5.3.1
 requests==2.25.1
+requests-mock==1.8.0
+responses==0.12.1
 six==1.15.0
 SQLAlchemy==1.3.22
 starlette==0.13.6
@@ -45,6 +51,3 @@ watchgod==0.6
 websockets==8.1
 wsproto==1.0.0
 zipp==3.4.0
-fastapi_mail==0.3.3.1
-faker==5.6.2
-smtpdfix==0.2.6
