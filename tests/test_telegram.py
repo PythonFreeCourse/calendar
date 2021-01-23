@@ -1,6 +1,8 @@
 from fastapi import status
+from httpx import AsyncClient
 import pytest
 
+from app.main import app
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.models import Bot, Chat
 
@@ -118,13 +120,14 @@ https://calendar.pythonic.guru/profile/
 
 def test_telegram_router(profile_test_client):
     page = profile_test_client.get('/telegram')
-    data = page.content
-    assert page.ok is True
-    assert b"Start using PyLander telegram bot!" in data
+    assert page.ok
+    assert b"Start using PyLander telegram bot!" in page.content
 
 
-def test_bot_client(profile_test_client):
-
-    page = profile_test_client.post(
-        '/telegram', data=gen_message('/start'))
-    assert page.status_code == status.HTTP_307_TEMPORARY_REDIRECT
+@pytest.mark.asyncio
+async def test_bot_client(profile_test_client):
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        req = await ac.post('/telegram/', json=gen_message('/start'))
+        assert req.status_code == status.HTTP_200_OK
+        assert b'Hello, Moshe!' in req.content
+        assert b'To use PyLander Bot you have to register' in req.content
