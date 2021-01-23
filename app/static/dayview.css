@@ -1,10 +1,10 @@
 
 :root {
-    --theme-blue:#30465D;
-    --theme-yellow:#FFDE4D;
-    --theme-red:#EF5454;
-    --theme-grey:#E7E7E7;
-    --theme-light-grey:#F7F7F7;
+    --primary:#30465D;
+    --primary-variant:#FFDE4D;
+    --secondary:#EF5454;
+    --borders:#E7E7E7;
+    --borders-variant:#F7F7F7;
 }
 
 html {
@@ -13,7 +13,7 @@ html {
 }
 
 #toptab {
-    background-color: var(--theme-blue);
+    background-color: var(--primary);
 }
 
 
@@ -82,8 +82,8 @@ html {
 }
 
 .action-continer:hover {
-    border-top: 1px dashed var(--theme-grey);
-    border-bottom: 1px dashed var(--theme-grey);
+    border-top: 1px dashed var(--borders);
+    border-bottom: 1px dashed var(--borders);
     transition: 0.3;
 }
 

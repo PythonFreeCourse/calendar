@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Union, Tuple
+from typing import Tuple, Union
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
@@ -97,16 +97,17 @@ class DivAttributes:
 async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     # temporary fake user until there will be login session
     user = db_session.query(User).filter_by(username='test1').first()
-    day = datetime.strptime(date, '%d-%m-%Y')
+    day = datetime.strptime(date, '%Y-%m-%d')
+    day_end = day + timedelta(hours=24)
     events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
-            or_(Event.start >= day,
-                Event.end < day,
-                and_(Event.start < day, day < Event.end)))
-    events_n_divAttr = [(event, DivAttributes(event, day)) for event in events]
+            or_(and_(Event.start >= day, Event.start < day_end),
+                and_(Event.end >= day, Event.end < day_end),
+                and_(Event.start < day_end, day_end < Event.end)))
+    events_n_Attrs = [(event, DivAttributes(event, day)) for event in events]
     return templates.TemplateResponse("dayview.html", {
         "request": request,
-        "events": events_n_divAttr,
+        "events": events_n_Attrs,
         "month": day.strftime("%B").upper(),
         "day": day.day
         })

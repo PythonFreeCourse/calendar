@@ -28,6 +28,14 @@ def event2():
     return Event(title='test2', content='test',
                  start=start, end=end, owner_id=1, color='blue')
 
+@pytest.fixture
+def event3():
+    start = datetime(year=2021, month=2, day=3, hour=7, minute=5)
+    end = datetime(year=2021, month=2, day=3, hour=9, minute=15)
+    return Event(title='test1', content='test',
+                 start=start, end=end, owner_id=1)
+
+
 
 @pytest.fixture
 def multiday_event():
@@ -59,19 +67,20 @@ def test_div_attributes_with_costume_color(event2):
     assert div_attr.color == 'blue'
 
 
-def test_dayview_html(event1, event2, session, user, client):
-    session.add_all([user, event1, event2])
+def test_dayview_html(event1, event2, event3, session, user, client):
+    session.add_all([user, event1, event2, event3])
     session.commit()
-    response = client.get("/day/1-2-2021")
+    response = client.get("/day/2021-2-1")
     soup = BeautifulSoup(response.content, 'html.parser')
     assert 'FEBRUARY' in str(soup.find("div", {"id": "toptab"}))
     assert 'event1' in str(soup.find("div", {"id": "event1"}))
     assert 'event2' in str(soup.find("div", {"id": "event2"}))
+    assert soup.find("div", {"id": "event3"}) is None
 
 
-@pytest.mark.parametrize("day,grid_position", [("1-2-2021", '57 / 101'),
-                                               ("2-2-2021", '1 / 101'),
-                                               ("3-2-2021", '1 / 57')])
+@pytest.mark.parametrize("day,grid_position", [("2021-2-1", '57 / 101'),
+                                               ("2021-2-2", '1 / 101'),
+                                               ("2021-2-3", '1 / 57')])
 def test_dayview_html_with_multiday_event(multiday_event, session,
                                           user, client, day, grid_position):
     session.add_all([user, multiday_event])
