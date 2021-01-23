@@ -1,10 +1,7 @@
 import datetime
 
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from app.database.database import Base
 from app.internal.import_file import (
     before_import_checking, check_date_in_range, check_file_extension,
     check_file_size, check_validity_of_txt, import_ics_file, import_txt_file,
@@ -12,15 +9,21 @@ from app.internal.import_file import (
 
 
 file_size_tests = [
-    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", False),  # File size above the constraint we set in the global variable (5 MB) will fail
-    (r"tests/files_for_import_file_tests/sample_below_1mb.txt", True),  # File size below the constraint we set in the global variable (5 MB) will pass
-    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", 10, True),  # File size below the constraint we set to the function
-    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", 2, False)  # File size above the constraint we set to the function
+    # File size above the constraint we set in the global variable (5 MB)
+    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", False),
+    # File size below the constraint we set in the global variable (5 MB)
+    (r"tests/files_for_import_file_tests/sample_below_1mb.txt", True),
+    # File size below the constraint we set to the function
+    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", 10, True),
+    # File size above the constraint we set to the function
+    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", 2, False)
 ]
 
 file_exist_tests = [
-    (r"tests/files_for_import_file_tests/sample_below_1mb.txt", True),  # File exist
-    (r"tests/files_for_import_file_tests/not_exist.txt", False)  # File not exist
+    # File exist
+    (r"tests/files_for_import_file_tests/sample_below_1mb.txt", True),
+    # File not exist
+    (r"tests/files_for_import_file_tests/not_exist.txt", False)
 ]
 
 file_extension_tests = [
@@ -36,47 +39,68 @@ date_in_range_tests = [
     ("01-32-2022", False),
     ("20-02-2022", False),
     ("1-20-2011", True),
-    ("01-01-2050", False),  # date above the constraint we set (20 years after today date)
-    ("01-01-2000", False),  # date below the constraint we set (20 years before today date)
-    ("01-01-2019", 5, True),  # date in the range we set in the function
-    ("01-01-2017", 2, False)  # date below the range we set in the function
+    # date above the constraint we set (20 years after today date)
+    ("01-01-2050", False),
+    # date below the constraint we set (20 years before today date)
+    ("01-01-2000", False),
+    # date in the range we set in the function
+    ("01-01-2019", 5, True),
+    # date below the range we set in the function
+    ("01-01-2017", 2, False)
 ]
 
 check_validity_of_text_tests = [
     (r"Head1, Content1, 05-21-2019", True),
     (r"Head1Content1, 05-21-2019", False),
-    (r"  , Content1, 05-21-2019", False),  # title can't be empty
-    (r"Head1, , 05-21-2019", True),  # content may be empty
-    (r"Head1, Content1, ", False),  # date can't be empty
-    (r"Head1, Content1, 05-21-2019, Head2, Content2, 05-21-2019", False)  # row cant have multiple events
+    # title can't be empty
+    (r"  , Content1, 05-21-2019", False),
+    # content may be empty
+    (r"Head1, , 05-21-2019", True),
+    # date can't be empty
+    (r"Head1, Content1, ", False),
+    # row cant have multiple events
+    (r"Head1, Content1, 05-21-2019, Head2, Content2, 05-21-2019", False)
 ]
 
 import_txt_file_tests = [
-    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.txt",  # txt file
+    # txt file
+    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.txt",
         [
-            {'Head': 'Head1', 'Content': 'Content1', 'Date': datetime.datetime(2019, 5, 21, 0, 0)},
-            {'Head': 'Head2', 'Content': 'Content2', 'Date': datetime.datetime(2010, 1, 11, 0, 0)},
-            {'Head': 'Head3', 'Content': 'Content3', 'Date': datetime.datetime(2022, 2, 2, 0, 0)}
+            {'Head': 'Head1', 'Content': 'Content1',
+             'Date': datetime.datetime(2019, 5, 21, 0, 0)},
+            {'Head': 'Head2', 'Content': 'Content2',
+             'Date': datetime.datetime(2010, 1, 11, 0, 0)},
+            {'Head': 'Head3', 'Content': 'Content3',
+             'Date': datetime.datetime(2022, 2, 2, 0, 0)}
         ]),
-    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.csv",  # csv file
+    # csv file
+    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.csv",
         [
-            {'Head': 'Head1', 'Content': 'Content1', 'Date': datetime.datetime(2019, 5, 21, 0, 0)},
-            {'Head': 'Head2', 'Content': 'Content2', 'Date': datetime.datetime(2010, 1, 11, 0, 0)},
-            {'Head': 'Head3', 'Content': 'Content3', 'Date': datetime.datetime(2022, 2, 2, 0, 0)}
+            {'Head': 'Head1', 'Content': 'Content1',
+             'Date': datetime.datetime(2019, 5, 21, 0, 0)},
+            {'Head': 'Head2', 'Content': 'Content2',
+             'Date': datetime.datetime(2010, 1, 11, 0, 0)},
+            {'Head': 'Head3', 'Content': 'Content3',
+             'Date': datetime.datetime(2022, 2, 2, 0, 0)}
         ])
 ]
 
 import_ics_tests = [
-    (r"tests/files_for_import_file_tests/sample.ics",  # ics file
+    # ics file
+    (r"tests/files_for_import_file_tests/sample.ics",
         [
-            {'Head': 'HeadA', 'Content': 'Content1', 'Date': datetime.datetime(2019, 8, 2, 10, 34)},
-            {'Head': 'HeadB', 'Content': 'Content2', 'Date': datetime.datetime(2019, 8, 2, 20, 0)}
+            {'Head': 'HeadA', 'Content': 'Content1',
+             'Date': datetime.datetime(2019, 8, 2, 10, 34)},
+            {'Head': 'HeadB', 'Content': 'Content2',
+             'Date': datetime.datetime(2019, 8, 2, 20, 0)}
         ]),
-    (r"tests/files_for_import_file_tests/sample2.ics", [])  # ics file
+    # ics file
+    (r"tests/files_for_import_file_tests/sample2.ics", [])
 ]
 
 before_import_checking_tests = [
-    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.txt", True),
+    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.txt",
+     True),
     (r"tests/files_for_import_file_tests/sample_above_5mb.txt", False),
     (r"tests/files_for_import_file_tests/sample.blabla", False),
     (r"tests/files_for_import_file_tests/sample2.blabla", False)
@@ -84,11 +108,16 @@ before_import_checking_tests = [
 
 
 user_click_import_tests = [
-    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.txt", 1, "Import success"),
-    (r"tests/files_for_import_file_tests/sample.ics", 1, "Import success"),
-    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", 1, "Import failed"),
-    (r"tests/files_for_import_file_tests/sample.blabla", 1, "Import failed"),
-    (r"tests/files_for_import_file_tests/sample_same_date_many_times.txt", 1, "Import failed")
+    (r"tests/files_for_import_file_tests/sample_calendar_data_to_import_1.txt",
+     1, "Import success"),
+    (r"tests/files_for_import_file_tests/sample.ics", 1,
+     "Import success"),
+    (r"tests/files_for_import_file_tests/sample_above_5mb.txt", 1,
+     "Import failed"),
+    (r"tests/files_for_import_file_tests/sample.blabla", 1,
+     "Import failed"),
+    (r"tests/files_for_import_file_tests/sample_same_date_many_times.txt", 1,
+     "Import failed")
 ]
 
 
@@ -118,7 +147,8 @@ def test_check_date_in_range(date_n_stat):
     if len(date_n_stat) == 2:
         assert check_date_in_range(date_n_stat[0]) == date_n_stat[1]
     else:
-        assert check_date_in_range(date_n_stat[0], date_n_stat[1]) == date_n_stat[2]
+        assert check_date_in_range(date_n_stat[0],
+                                   date_n_stat[1]) == date_n_stat[2]
 
 
 @pytest.mark.parametrize("row", check_validity_of_text_tests)
