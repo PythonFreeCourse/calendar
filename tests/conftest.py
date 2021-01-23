@@ -6,12 +6,12 @@ from _pytest.logging import caplog as _caplog  # noqa: F401
 from loguru import logger
 from faker import Faker
 
+from app import config
 from app.database.database import Base, SessionLocal, engine
 from app.database.models import Event, User
 from app.internal.logger_customizer import LoggerCustomizer
 from app.main import app
 from app.routers import profile
-from app import config
 
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -39,12 +39,20 @@ def client():
 
 
 @pytest.fixture(scope='module')
-def client_with_logger():
-    logger = LoggerCustomizer.make_logger(config.LOGGER, "logger")
+def logger_instance():
+    _logger = LoggerCustomizer.make_logger(config.LOGGER, "logger")
 
-    client = TestClient(app)
-    client.logger = logger
-    return client
+    return _logger
+
+
+@pytest.fixture(scope='module')
+def logger_external_configuration():
+    from pathlib import Path
+    config_path = Path(__file__).parent
+    config_path = config_path.absolute() / 'logging_config.json'
+    _logger = LoggerCustomizer.make_logger(config_path, "logger1")
+
+    return _logger
 
 
 @pytest.fixture

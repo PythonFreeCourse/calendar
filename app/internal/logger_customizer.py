@@ -1,6 +1,6 @@
 import json
 import sys
-from typing import Union
+from typing import Union, Dict
 
 from pathlib import Path
 from loguru import logger, _Logger as Logger
@@ -13,12 +13,12 @@ class LoggerConfigError(Exception):
 class LoggerCustomizer:
 
     @classmethod
-    def make_logger(cls, config_file_or_dict: Union[Path, dict],
+    def make_logger(cls, config_file_or_dict: Union[Path, Dict],
                     logger_name: str) -> Logger:
         """Creates a loguru logger from given configuration path or dict.
 
         Args:
-            config_file_or_dict (Union[Path, dict]): Path to logger
+            config_file_or_dict (Union[Path, Dict]): Path to logger
             configuration file or dictionary of configuration
             logger_name (str): Logger instance created from configuration
 
@@ -30,7 +30,6 @@ class LoggerCustomizer:
         """
 
         config = cls.load_logging_config(config_file_or_dict)
-
         try:
             logging_config = config.get(logger_name)
             logs_path = logging_config.get('path')
@@ -93,14 +92,14 @@ class LoggerCustomizer:
         return logger
 
     @classmethod
-    def load_logging_config(cls, config: Union[Path, dict]) -> dict:
+    def load_logging_config(cls, config: Union[Path, Dict]) -> Dict:
         """Loads logging configuration from file or dict
 
         Args:
-            config (Union[Path, dict]): Path to logging configuration file
+            config (Union[Path, Dict]): Path to logging configuration file
 
         Returns:
-            dict: Configuration parsed as dictionary
+            Dict: Configuration parsed as dictionary
         """
         if isinstance(config, Path):
             with open(config) as config_file:
