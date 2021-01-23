@@ -27,7 +27,7 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
-        language_id="1"
+        language_id=1
     )
 
 
