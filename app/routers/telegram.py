@@ -24,14 +24,12 @@ async def telegram(request: Request, session=Depends(get_db)):
 async def bot_client(request: Request, session=Depends(get_db)):
     req = await request.json()
     chat = Chat(req)
-    message = MessageHandler(chat)
 
-    # Check if current chatter in DB
+    # Check if current chatter is registered to use the bot
     user = session.query(User).filter_by(telegram_id=chat.user_id).first()
-
     if user is None:
         return await reply_unknown_user(chat)
-    else:
-        # Process reply
-        message.process_callback()
-        return user
+
+    message = MessageHandler(chat, user)
+    # Process reply
+    return message.process_callback()

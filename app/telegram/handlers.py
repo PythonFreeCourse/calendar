@@ -1,29 +1,34 @@
+import datetime
+
+from .keyboards import (
+    DATE_FORMAT, gen_inline_keyboard, get_this_week_buttons, show_events_kb)
 from .models import Chat
 from .pylander import pylander
+from app.database.models import User
 
 
 class MessageHandler:
-    COMMANDS = ['/start', '/logout', '/show_events', '/new_event']
-
-    def __init__(self, chat: Chat):
+    def __init__(self, chat: Chat, user: User):
         self.chat = chat
+        self.user = user
         self.handlers = {}
-        for method in dir(self):
-            if method.endswith('_handler'):
-                method_name = method[:-len('_handler')]
-                self.handlers[method_name] = getattr(MessageHandler, method)
+        self.handlers['/start'] = self.start_handler
+        self.handlers['/show_events'] = self.show_events_handler
+        self.handlers['Today'] = self.today_handler
+        self.handlers['This week'] = self.this_week_handler
+
+        # Add next 6 days to handlers dict
+        for row in get_this_week_buttons():
+            for button in row:
+                self.handlers[button['text']] = self.chosen_day_handler
 
     def process_callback(self):
-        if self.chat.message in self.COMMANDS:
-            return self.handlers[self.chat.message[1:]](self)
-        elif (self.chat.message in self.handlers
-                and f'/{self.chat.message}' not in self.COMMANDS):
-            return self.handlers[self.chat.message](self)
-        else:
-            return self.default_handler()
+        if self.chat.message in self.handlers:
+            return self.handlers[self.chat.message]()
+        return self.default_handler()
 
     def default_handler(self):
-        answer = "Unknown command"
+        answer = "Unknown command."
         pylander.send_message(chat_id=self.chat.user_id, text=answer)
         return answer
 
@@ -34,7 +39,58 @@ Welcome to Pylander telegram client!'''
         return answer
 
     def show_events_handler(self):
-        answer = 'Choose events day'
+        answer = 'Choose events day.'
+        pylander.send_message(
+            chat_id=self.chat.user_id,
+            text=answer,
+            reply_markup=show_events_kb)
+        return answer
+
+    def today_handler(self):
+        today = datetime.date.today()
+        events = [
+            event for event in self.user.events
+            if event.start <= today <= event.end]
+
+        answer = f"{today.strftime('%B %d')}, {today.strftime('%A')} Events:\n"
+
+        if not len(events):
+            answer = "There're no events today."
+
+        for event in events:
+            answer += f'\n\n{event.title}: from {event.start} to {event.ends}.'
+
+        pylander.send_message(chat_id=self.chat.user_id, text=answer)
+        return answer
+
+    def this_week_handler(self):
+        answer = 'Choose a day.'
+        this_week_kb = gen_inline_keyboard(get_this_week_buttons())
+
+        pylander.send_message(
+            chat_id=self.chat.user_id,
+            text=answer,
+            reply_markup=this_week_kb)
+        return answer
+
+    def chosen_day_handler(self):
+        # Convert chosen day (string) to datetime format
+        chosen_date = datetime.datetime.strptime(
+            self.chat.message, DATE_FORMAT)
+
+        events = [
+            event for event in self.user.events
+            if event.start <= chosen_date <= event.end]
+
+        answer = f"{chosen_date.strftime('%B %d')}, \
+{chosen_date.strftime('%A')} Events:\n"
+
+        if not len(events):
+            answer = f"There're no events on {chosen_date.strftime('%B %d')}."
+
+        for event in events:
+            answer += f'\n\n{event.title}: from {event.start} to {event.ends}.'
+
         pylander.send_message(chat_id=self.chat.user_id, text=answer)
         return answer
 
