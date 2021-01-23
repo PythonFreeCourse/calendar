@@ -26,7 +26,6 @@ async def eventedit(request: Request):
 @router.post("/edit")
 async def create_event(request: Request, session=Depends(get_db)):
     data = await request.form()
-    print(data)
     title = data['title']
     content = data['description']
     start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
