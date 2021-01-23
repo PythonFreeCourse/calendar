@@ -28,13 +28,13 @@ def event2():
     return Event(title='test2', content='test',
                  start=start, end=end, owner_id=1, color='blue')
 
+
 @pytest.fixture
 def event3():
     start = datetime(year=2021, month=2, day=3, hour=7, minute=5)
     end = datetime(year=2021, month=2, day=3, hour=9, minute=15)
     return Event(title='test1', content='test',
                  start=start, end=end, owner_id=1)
-
 
 
 @pytest.fixture
