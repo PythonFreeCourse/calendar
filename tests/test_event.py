@@ -30,8 +30,8 @@ def test_eventview_without_id(client):
 
 
 @pytest.mark.parametrize("data", INVALID_UPDATE_OPTIONS)
-def test_invalid_update(data, event, session):
-    assert update_event(1, data, session) is None
+def test_invalid_update(event, data, session):
+    assert update_event(event_id=1, event_dict=data, db=session) is None
 
 
 def test_successful_update(event, session):
@@ -41,18 +41,19 @@ def test_successful_update(event, session):
         "end": datetime(2021, 1, 21),
     }
     assert type(update_event(1, data, session)) == Event
-    assert "successful" in update_event(1, data, session).title
+    assert "successful" in update_event(
+        event_id=1, event_dict=data, db=session).title
 
 
 def test_update_db_close(event):
     data = {
         "title": "Problem connecting to db",
     }
-    assert update_event(1, data, db=None) is None
+    assert update_event(event_id=1, event_dict=data, db=None) is None
 
 
 def test_update_event_does_not_exist(event, session):
     data = {
         "content": "An update test for an event does not exist"
     }
-    assert update_event(500, data, db=session) is None
+    assert update_event(event_id=500, event_dict=data, db=session) is None
