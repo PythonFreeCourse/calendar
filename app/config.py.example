@@ -4,7 +4,7 @@ from fastapi_mail import ConnectionConfig
 
 # flake8: noqa
 
-# general
+# GENERAL
 DOMAIN = 'Our-Domain'
 
 # DATABASE
@@ -18,7 +18,7 @@ AVATAR_SIZE = (120, 120)
 # API-KEYS
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
-# export
+# EXPORT
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
 
