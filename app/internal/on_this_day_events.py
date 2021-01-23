@@ -10,7 +10,7 @@ def get_on_this_day_events():
     month = now.month
 
     res = requests.get(
-        f'https://byabbe.se/on-this-day/{day}/{month}/events.json')
+        f'https://byabbe.se/on-this-day/{month}/{day}/events.json')
     events = json.loads(res.text)
 
     return events
