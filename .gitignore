@@ -88,6 +88,9 @@ ipython_config.py
 # pyenv
 .python-version
 
+# pycharm
+.idea/
+
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
 #   However, in case of collaboration, if having platform-specific dependencies or dependencies
@@ -133,5 +136,5 @@ dmypy.json
 .pyre/
 
 
-# regiister stuff
+# register stuff
 run.txt

@@ -1,9 +1,12 @@
 import pytest
 
 
+RESPONSE_OK = 200
+
+
 def test_register_route_ok(client):
     response = client.get("/register")
-    assert response.status_code == 200
+    assert response.status_code == RESPONSE_OK
 
 
 REGISTER_FORM_VALIDATORS = [
@@ -85,5 +88,4 @@ def test_unique_fields_are_taken(
         'email': 'example@email.com', 'description': ""}
     client.post('/register', data=user_data)
     data = client.post('/register', data=user_data).content
-    print(data)
     assert expected_response in data
