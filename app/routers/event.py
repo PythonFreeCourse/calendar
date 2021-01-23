@@ -39,8 +39,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
                       '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
-    if not user:
-        user = create_user("username", "password", "email@email.com", session)
+    user = user if user else create_user("u", "p", "e@mail.com", session)
     owner_id = user.id
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
@@ -49,7 +48,8 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     if is_zoom:
         validate_zoom_link(location)
 
-    event = create_event(session, title, start, end, owner_id, content, location)
+    event = create_event(session, title, start, end, owner_id, content,
+                         location)
     return RedirectResponse(f'/event/view/{event.id}',
                             status_code=HTTP_303_SEE_OTHER)
 
