@@ -1,10 +1,12 @@
+import glob
 import json
 import pathlib
 from typing import Dict, Union
 
 from app import config
 
-LANGUAGE_DIR_PATH = "../app/languages"
+LANGUAGE_FILES_PATH = "app/languages/*.json"
+LANGUAGE_FILES_PATH_TEST = "../app/languages/*.json"
 
 translations_dict = {}
 
@@ -74,8 +76,10 @@ def get_translations_dicts() -> \
         as their values.
     """
     language_translations = {}
-    for language_file in pathlib.Path(LANGUAGE_DIR_PATH).glob("*.json"):
-        language_code = language_file.stem
+    language_files = (glob.glob(LANGUAGE_FILES_PATH)
+                      or glob.glob(LANGUAGE_FILES_PATH_TEST))
+    for language_file in language_files:
+        language_code = pathlib.PureWindowsPath(language_file).stem
         with open(language_file, 'r', encoding='utf8') as file:
             language_translations[language_code] = json.load(file)
     return language_translations
