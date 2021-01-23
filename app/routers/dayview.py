@@ -94,20 +94,23 @@ class DivAttributes:
 
 
 @router.get('/day/{date}')
-async def dayview(request: Request, date: str, db_session=Depends(get_db)):
+async def dayview(request: Request, date: str,
+                  db_session=Depends(get_db), view='day'):
     # temporary fake user until there will be login session
     user = db_session.query(User).filter_by(username='test1').first()
     day = datetime.strptime(date, '%Y-%m-%d')
     day_end = day + timedelta(hours=24)
-    events = db_session.query(Event).filter(
+    '''events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
             or_(and_(Event.start >= day, Event.start < day_end),
                 and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))
+                and_(Event.start < day_end, day_end < Event.end)))'''
+    events = []
     events_n_Attrs = [(event, DivAttributes(event, day)) for event in events]
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_Attrs,
         "month": day.strftime("%B").upper(),
-        "day": day.day
+        "day": day.day,
+        "view": view
         })

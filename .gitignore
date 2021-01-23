@@ -114,7 +114,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-Scripts/*
+Scripts
 pyvenv.cfg
 
 # Spyder project settings
@@ -134,5 +134,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
-app/routers/stam

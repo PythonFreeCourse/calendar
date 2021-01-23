@@ -1,0 +1,31 @@
+:root {
+    --primary:#30465D;
+    --primary-variant:#FFDE4D;
+    --secondary:#EF5454;
+    --borders:#E7E7E7;
+    --borders-variant:#F7F7F7;
+}
+
+.day {
+    border-left: 1px solid var(--borders);
+}
+
+#week-view {
+    display: grid;
+    grid-template-rows: 1;
+}
+
+
+#week-schedule {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    z-index: 10;
+}
+
+#hoursgrid {
+    grid-row: 1 / -1;
+    grid-column: 1 / -1;
+    margin-top: 3.7em;
+    margin-left: -0.1em;
+    z-index: 30;
+}

@@ -10,18 +10,24 @@
     </head>
     <body>
         <div id="toptab" class="d-flex justify-content-around sticky-top">
-            <a href="/closethedayview" title="close day view"><img class="pb-1" src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}" width="15em" height="15em"></a>
-            <span class="month fw-bold text-white">{{month}}</span>
-            <span class="day fw-bold text-white">{{day}}</span>
+            {% if view == 'day' %}
+                <a href="/closethedayview" title="close day view"><img class="pb-1" src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}" width="15em" height="15em"></a>
+                <span id="month" class="fw-bold text-white">{{month}}</span>
+                <span id="day" class="fw-bold text-white">{{day}}</span>
+            {% else %}
+                <span class="fw-bold text-white">{{day.day}} / {{day.month}}</span>
+            {% endif %}
         </div>
         <div class="schedule">
             <div class="container times bg-primeary position">
-                {% for i in range(24)%}
-                    <div class="row bg-transparent hourmark">
-                    {% set i = i|string() %}
-                    {{i.zfill(2)}}:00
-                    </div>
-                {% endfor %}
+                {% if view == 'day'%}
+                    {% for i in range(24)%}
+                        <div class="row bg-transparent hourmark">
+                        {% set i = i|string() %}
+                        {{i.zfill(2)}}:00
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="eventgrid">
                 {% for event, attr in events %}
