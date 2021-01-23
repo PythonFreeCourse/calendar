@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from starlette.status import HTTP_303_SEE_OTHER
+from starlette.status import HTTP_303_SEE_OTHER, HTTP_404_NOT_FOUND
 
 from app.main import app
 
@@ -31,32 +31,30 @@ WRONG_EVENT_FORM_DATA = {
     'privacy': 'public'
 }
 
-client = TestClient(app)
 
+class TestEvent:
+    def test_eventedit(self, client):
+        response = client.get("/event/edit")
+        assert response.ok
+        assert b"Edit Event" in response.content
 
-def test_eventedit():
-    response = client.get("/event/edit")
-    assert response.status_code == 200
-    assert b"Edit Event" in response.content
+    def test_eventview_with_id(self, client):
+        response = client.get("/event/view/1")
+        assert response.ok
+        assert b"View Event" in response.content
 
+    def test_eventview_without_id(self, client):
+        response = client.get("/event/view")
+        assert response.status_code == HTTP_404_NOT_FOUND
 
-def test_eventedit_post_correct(user):
-    response = client.post("/event/edit", data=CORRECT_EVENT_FORM_DATA)
-    assert response.status_code == HTTP_303_SEE_OTHER
-    assert '/event/view/' in response.headers['location']
+    def test_eventedit_post_correct(self, event_test_client, user):
+        response = event_test_client.post("/event/edit", data=CORRECT_EVENT_FORM_DATA)
+        assert response.status_code == HTTP_303_SEE_OTHER
+        assert '/event/view/' in response.headers['location']
 
+    def test_eventedit_post_wrong(self, event_test_client, user):
+        response = event_test_client.post("/event/edit", data=WRONG_EVENT_FORM_DATA)
+        assert response.json()['detail'] == 'VC type with no valid zoom link'
 
-def test_eventedit_post_wrong(user):
-    response = client.post("/event/edit", data=WRONG_EVENT_FORM_DATA)
-    assert response.json()['detail'] == 'VC type with no valid zoom link'
-
-
-def test_eventview_with_id():
-    response = client.get("/event/view/1")
-    assert response.status_code == 200
-    assert b"View Event" in response.content
-
-
-def test_eventview_without_id():
-    response = client.get("/event/view")
-    assert response.status_code == 404
+    def test_repr(self, event):
+        assert event.__repr__() == f'<Event {event.id}>'
