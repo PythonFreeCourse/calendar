@@ -8,8 +8,6 @@ from sqlalchemy.orm import sessionmaker
 from app import config
 
 
-# load_dotenv()
-
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_CONNECTION_STRING", config.DEVELOPMENT_DATABASE_STRING)
 
