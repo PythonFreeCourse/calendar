@@ -1,5 +1,6 @@
 import os
 
+from fastapi import File, UploadFile
 from fastapi.templating import Jinja2Templates
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
 from pydantic import EmailStr
@@ -88,6 +89,23 @@ async def send_fast_email_invitation(sender_name: str, recipient_name: str,
         recipients=[EmailStr(recipient_mail)],
         body=html,
         subtype="html",
+    )
+
+    await send_fast_email(message, settings)
+    return True
+
+
+async def send_fast_email_file(file: str,
+                               recipient_mail: str,
+                               settings: config.Settings):
+    if not verify_email_pattern(recipient_mail):
+        return False
+
+    message = MessageSchema(
+        subject="File",
+        recipients=[EmailStr(recipient_mail)],
+        body="file",
+        attachments=[UploadFile(File(file))],
     )
 
     await send_fast_email(message, settings)

@@ -1,12 +1,11 @@
 import os
 
-from PIL import Image
 import pytest
+from PIL import Image
 
 from app import config
 from app.dependencies import MEDIA_PATH
 from app.routers.profile import get_image_crop_area, get_placeholder_user
-
 
 CROP_RESULTS = [
     (20, 10, (5, 0, 15, 10)),
@@ -106,4 +105,5 @@ def test_upload_user_photo(profile_test_client):
 
     # Validate new picture size
     new_avatar_path = os.path.join(MEDIA_PATH, 'fake_user.png')
-    assert Image.open(new_avatar_path).size == config.AVATAR_SIZE
+    settings = config.get_settings()
+    assert Image.open(new_avatar_path).size == settings.media_avatar_size

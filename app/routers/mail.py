@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr
 from pydantic.errors import EmailError
 
 from app import config
-from app.internal.mail import send_fast_email_invitation
+from app.internal.mail import send_fast_email_invitation, send_fast_email_file
 
 router = APIRouter()
 
@@ -46,3 +46,27 @@ def send_invitation(invitation: InvitationParams,
 
     return {"message": f"{SUCCESSFULLY_SENT_EMAIL_MESSAGE}"
                        f" to {invitation.recipient_name}"}
+
+
+class SendFileParams(BaseModel):
+    file: str
+    recipient_mail: str
+
+
+@router.post("/file")
+async def send_file(params: SendFileParams,
+                    background_task: BackgroundTasks,
+                    settings: config.Settings = Depends(config.get_settings)
+                    ):
+    try:
+        EmailStr.validate(params.recipient_mail)
+    except EmailError:
+        return {"message": f"{INVALID_EMAIL_ADDRESS_ERROR_MESSAGE}"}
+
+    background_task.add_task(send_fast_email_file,
+                             file=params.file,
+                             recipient_mail=params.recipient_mail,
+                             settings=settings)
+
+    return {"message": f"{SUCCESSFULLY_SENT_EMAIL_MESSAGE}"
+                       f" to {params.recipient_mail}"}
