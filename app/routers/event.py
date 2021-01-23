@@ -9,6 +9,7 @@ from app.database.models import Event, User
 from app.dependencies import templates
 
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\t\n]+')
+VALID_MAIL_REGEX = re.compile(r'^\S+@\S+\.\S+$')
 
 router = APIRouter(
     prefix="/event",
@@ -33,6 +34,12 @@ async def create_event(request: Request, session=Depends(get_db)):
     end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
                       '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
+    if not user:
+        user = User(
+            username='new_user',
+            email='my@email.po',
+            password='1a2s3d4f5g6',
+        )
     owner_id = user.id
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
@@ -41,15 +48,34 @@ async def create_event(request: Request, session=Depends(get_db)):
     if is_zoom and not ZOOM_REGEX.findall(location):
         raise HTTPException(status_code=400,
                             detail="VC type with no valid zoom link")
+
+    invitees = []
+    for invited_mail in data['invited'].split(','):
+        invited_mail = invited_mail.strip()
+        if VALID_MAIL_REGEX.fullmatch(invited_mail):
+            invitees.append(invited_mail)
+
     event = Event(title=title, content=content, start=start, end=end,
-                  owner_id=owner_id)
+                  owner_id=owner_id, invitees=','.join(invitees))
+
+    regular_invitees = set()
+    for record in session.query(Event).with_entities(Event.invitees).filter(Event.owner_id == owner_id,
+                                                                            Event.title == title).all():
+        for email in record[0].split(','):
+            regular_invitees.add(email)
+
+    uninvited_contacts = regular_invitees.difference(set(invitees))
+
     session.add(event)
     session.commit()
-    return RedirectResponse(f'/event/view/{event.id}',
+
+    message = f'Forgot to invite {", ".join(uninvited_contacts)} maybe?'
+    return RedirectResponse(f'/event/view/{event.id}?message={message}',
                             status_code=HTTP_303_SEE_OTHER)
 
 
 @router.get("/view/{id}")
 async def eventview(request: Request, id: int):
+    message = request.query_params.get('message', '')
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event_id": id})
+                                      {"request": request, "event_id": id, "message": message})

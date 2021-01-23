@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from fastapi.testclient import TestClient
 from starlette.status import HTTP_303_SEE_OTHER
 
@@ -14,7 +16,8 @@ CORRECT_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -28,7 +31,8 @@ WRONG_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 client = TestClient(app)
@@ -49,6 +53,18 @@ def test_eventedit_post_correct(user):
 def test_eventedit_post_wrong(user):
     response = client.post("/event/edit", data=WRONG_EVENT_FORM_DATA)
     assert response.json()['detail'] == 'VC type with no valid zoom link'
+
+
+def test_eventedit_missing_old_invites(user):
+    response = client.post("/event/edit", data=CORRECT_EVENT_FORM_DATA)
+    assert response.status_code == HTTP_303_SEE_OTHER
+
+    same_event_with_different_invitees = CORRECT_EVENT_FORM_DATA.copy()
+    same_event_with_different_invitees['invited'] = 'c@c.com,d@d.com'
+    response = client.post("/event/edit", data=same_event_with_different_invitees)
+    assert response.status_code == HTTP_303_SEE_OTHER
+    assert f'Forgot to invite {", ".join(CORRECT_EVENT_FORM_DATA["invited"].split(","))} maybe?' in \
+           response.headers['location'].replace('+', ' ')
 
 
 def test_eventview_with_id():
