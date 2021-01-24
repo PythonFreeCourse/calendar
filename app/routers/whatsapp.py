@@ -1,7 +1,12 @@
+from fastapi import APIRouter
 from typing import Optional
 from urllib.parse import urlencode
 
 
+router = APIRouter()
+
+
+@router.get("/whatsapp")
 def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
     """This function is being used to send whatsapp messages.
     It takes a string message and a cell phone number and it returns a link so
@@ -15,6 +20,6 @@ def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
              send the message via whatsapp.
     """
     link = 'https://api.whatsapp.com/send?'
-    mydict = {'phone': f'{phone_number}', 'text': f'{message}'}
+    mydict = {'phone': phone_number, 'text': message}
     msglink = link + urlencode(mydict)
-    return msglink
+    return {"link": msglink}
