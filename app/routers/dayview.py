@@ -44,11 +44,13 @@ class DivAttributes:
         return color
 
     def _minutes_position(self, minutes: int) -> int:
+        min_minutes = self.MIN_MINUTES
+        max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
-            if self.MIN_MINUTES < minutes <= self.MAX_MINUTES:
+            if min_minutes < minutes <= max_minutes:
                 return i
-            self.MIN_MINUTES = self.MAX_MINUTES
-            self.MAX_MINUTES += 15
+            min_minutes = max_minutes
+            max_minutes += 15
 
     def _get_position(self, time: datetime) -> int:
         grid_hour_position = time.hour * self.FULL_GRID_BAR
