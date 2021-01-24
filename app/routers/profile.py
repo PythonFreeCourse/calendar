@@ -52,7 +52,7 @@ async def profile(
         "events": upcoming_events,
     }
 
-    result.update(languages.get_translations_dict())
+    result.update(languages.get_translation_words())
 
     return templates.TemplateResponse("profile.html", result)
 

@@ -60,5 +60,5 @@ def agenda(
         "end_date": end_date,
     }
 
-    result.update(languages.get_translations_dict())
+    result.update(languages.get_translation_words())
     return templates.TemplateResponse("agenda.html", result)

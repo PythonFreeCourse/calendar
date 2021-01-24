@@ -22,5 +22,5 @@ app.include_router(email.router)
 @app.get("/")
 async def home(request: Request):
     result = {"request": request}
-    result.update(languages.get_translations_dict())
+    result.update(languages.get_translation_words())
     return templates.TemplateResponse("home.html", result)
