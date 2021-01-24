@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from app.config import PSQL_ENVIRONMENT
 from app.database.models import Event, User
-from app.internal.search import get_stripped_keywords
+from app.internal.search import get_results_by_keywords, get_stripped_keywords
 from fastapi import status
 
 
@@ -32,6 +32,13 @@ class TestSearch:
         ({'keywords': 'jam'}, b'No matching'),
         ({'keywords': '    jam    '}, b'No matching'),
         ({'keywords': ''}, b'Invalid')
+    ]
+    KEYWORDS_FOR_FUNC = [
+        'lov',
+        'very    emotional',
+        'event',
+        'jam',
+        '    jam    '
     ]
 
     @staticmethod
@@ -130,6 +137,14 @@ def test_search_not_psql_env_keywords(data, string, client, session):
     ts.create_data(session)
     resp = client.post(ts.SEARCH, data=data)
     assert string in resp.content
+
+
+@pytest.mark.skipif(PSQL_ENVIRONMENT, reason="Not PSQL environment")
+@pytest.mark.parametrize('input_string', TestSearch.KEYWORDS_FOR_FUNC)
+def test_get_results_by_keywords_func(input_string, client, session):
+    ts = TestSearch()
+    ts.create_data(session)
+    assert not get_results_by_keywords(session, input_string, 1)
 
 
 STRIPPED_KEYWORDS = [
