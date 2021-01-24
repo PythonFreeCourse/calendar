@@ -34,7 +34,6 @@ iniconfig==1.1.1
 Jinja2==2.11.2
 lazy-object-proxy==1.5.2
 MarkupSafe==1.1.1
-mypy-extensions==0.4.3
 packaging==20.8
 Pillow==8.1.0
 pluggy==0.13.1
