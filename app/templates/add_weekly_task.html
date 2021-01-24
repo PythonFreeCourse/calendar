@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container mt-4">
+        <h1>Add Weekly Tasks</h1>
+    </div>
+
+    <form class="container mt-5">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" class="form-control" id="title" aria-describedby="emailHelp">
+        </div>
+
+        <label for="days" class="form-label">Repeat Days:</label>
+        <div id="days">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Sun" aria-label="..." checked>
+                    Sunday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Mon" aria-label="...">
+                    Monday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Tue" aria-label="...">
+                    Tuesday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Wed" aria-label="...">
+                    Wednesday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Thu" aria-label="...">
+                    Thursday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Fri" aria-label="...">
+                    Friday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="Sat" aria-label="...">
+                    Saturday
+                </li>
+            </ul>
+        </div>
+
+        <div class="mb-3">
+            <label for="the_time" class="form-label">Time Of The Day:</label>
+            <input type="time" class="form-control" id="the_time">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text">Description:</span>
+            <textarea class="form-control" aria-label="content" id="content"></textarea>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_important">
+            <label class="form-check-label" for="is_important">Important</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>Weekly Tasks</h1>
+</div>
+
+<!-- weekly tasks -->
+<div class="container mt-4">
+
+    {% for weekly_task in weekly_tasks %}
+        <div class="card card-event mb-2 pb-0">
+            <div class="card-header d-flex justify-content-between">
+                <small>
+                    <i>Every: {{ weekly_task.days }}</i>
+                    <i>at: {{ weekly_task.the_time }} </i>
+                </small>
+                <span>
+                    
+                    <!-- Task settings -->
+                    <div class="fa-ellipsis-h dropdown">
+                        <a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            options
+                        </a>
+                      
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                          <li><a class="dropdown-item" href="#">edit</a></li>
+                          <li><a class="dropdown-item" href="#">remove</a></li>
+                        </ul>
+                    </div>
+                    <!-- Task settings End -->
+
+                </span>
+            </div>
+            <div class="card-body pb-1">
+                <p class="card-text">
+                    {{ weekly_task.title }}: <br> {{ weekly_task.content }}
+                </p>
+                <hr class="mb-0">
+                <small class="text-muted">important: {{ weekly_task.is_important }}</small>
+            </div>
+        </div>
+    {% endfor %}
+
+</div>
+<!-- weekly tasks End -->
+
+
+<!-- add weekly task  -->
+<div class="container mt-4">
+    <a class="btn btn-success" href="#" role="button">Add Weekly Task</a>
+</div>
+
+{% endblock %}
