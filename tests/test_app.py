@@ -40,7 +40,7 @@ def end_time():
 
 def test_read_main():
     response = client.get("/")
-    assert response.status_code == 200
+    assert response.ok
 
 
 def test_session_db():
@@ -49,7 +49,7 @@ def test_session_db():
 
 def test_get_profile():
     response = client.get("/profile/123/EditEvent")
-    assert response.status_code == 200
+    assert response.ok
 
 def test_check_validation():
     assert check_validation(1, 2)
@@ -63,7 +63,7 @@ def test_add_event(values: dict, db):
 
 def test_get_editevent_page():
     response = client.get("/profile/122/EditEvent")
-    assert response.status_code == 200
+    assert response.ok
     assert b'Time range' in response.content
 
 
@@ -76,6 +76,6 @@ def test_post_editevent():
             "from_date": date_test_data[0],
             "to_date": date_test_data[1]}
     )
-    assert response.status_code == 200
+    assert response.ok
 
 
