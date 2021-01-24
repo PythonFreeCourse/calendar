@@ -8,20 +8,35 @@ from app.main import app
 from app.routers.event import add_event, check_validation
 from app.database.database import get_db
 
-for i in get_db():
-    my_db = i
 client = TestClient(app)
-date_test_data = [(datetime.today() - timedelta(1), datetime.today())]
+
+def db():
+    for i in get_db():
+        my_db = i
+    return my_db
+
+date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+
 event_test_data = [(
-    {'title': "Test Title",
-    "location": "Fake City",
-    "start_date": date_test_data[0][0],
-    "end_date": date_test_data[0][1],
-    "vc_link": "https://fakevclink.com",
-    "content": "Any Words",
-    "owner_id": 123},
-    my_db
-)]
+        {'title': "Test Title",
+        "location": "Fake City",
+        "start_date": date_test_data[0],
+        "end_date": date_test_data[1],
+        "vc_link": "https://fakevclink.com",
+        "content": "Any Words",
+        "owner_id": 123},
+        db()
+    )]
+
+
+
+@pytest.fixture
+def start_time():
+    return date_test_data[0]
+            
+@pytest.fixture
+def end_time():
+    return date_test_data[1]
 
 def test_read_main():
     response = client.get("/")
@@ -36,17 +51,15 @@ def test_get_profile():
     response = client.get("/profile/123/EditEvent")
     assert response.status_code == 200
 
-
-@pytest.mark.parametrize('start_time,end_time', date_test_data)
-def test_check_validation(start_time, end_time):
-    assert check_validation(start_time, end_time)
+def test_check_validation():
+    assert check_validation(1, 2)
 
 
 @pytest.mark.parametrize('values,db', event_test_data)
 def test_add_event(values: dict, db):
-    assert len(values) == len(event_test_data[0][0])
+    # assert len(values) == len(event_test_data)
     assert db is not None
-    assert add_event(event_test_data[0][0], db) is not None
+    assert add_event(values, db) is not None
 
 
 def test_get_editevent_page():
@@ -61,8 +74,8 @@ def test_post_editevent():
         headers={"X-Token": "coneofsilence"},
         data={"user_id": 123,
             'event_title': "Title",
-            "from_date": date_test_data[0][1],
-            "to_date": date_test_data[0][1]}
+            "from_date": date_test_data[0],
+            "to_date": date_test_data[1]}
     )
     assert response.status_code == 200
 
