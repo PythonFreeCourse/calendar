@@ -6,7 +6,9 @@ from sqlalchemy.orm import sessionmaker
 
 from app import config
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:h1h2h3h4@localhost/postgres"
+
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "DATABASE_CONNECTION_STRING", config.DEVELOPMENT_DATABASE_STRING)
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL

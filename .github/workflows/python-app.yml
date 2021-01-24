@@ -39,3 +39,6 @@ jobs:
       uses: codecov/codecov-action@v1.0.13
       with:
         file: coverage.xml
+    - name: Cleanup
+      run: |
+        rm app/config.py
