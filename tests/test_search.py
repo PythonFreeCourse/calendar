@@ -25,6 +25,14 @@ class TestSearch:
         ({'keywords': '[]'}, b'No matching'),
         ({'keywords': 'firsttttt'}, b'No matching')
     ]
+    NOT_PSQL_ENV_KEYWORDS = [
+        ({'keywords': 'lov'}, b'No matching'),
+        ({'keywords': 'very    emotional'}, b'No matching'),
+        ({'keywords': 'event'}, b'No matching'),
+        ({'keywords': 'jam'}, b'No matching'),
+        ({'keywords': '    jam    '}, b'No matching'),
+        ({'keywords': ''}, b'Invalid')
+    ]
 
     @staticmethod
     def create_user(session):
@@ -109,6 +117,15 @@ def test_search_good_keywords(data, string, client, session):
 @pytest.mark.skipif(not PSQL_ENVIRONMENT, reason="Not PSQL environment")
 @pytest.mark.parametrize('data, string', TestSearch.BAD_KEYWORDS)
 def test_search_bad_keywords(data, string, client, session):
+    ts = TestSearch()
+    ts.create_data(session)
+    resp = client.post(ts.SEARCH, data=data)
+    assert string in resp.content
+
+
+@pytest.mark.skipif(PSQL_ENVIRONMENT, reason="PSQL environment")
+@pytest.mark.parametrize('data, string', TestSearch.NOT_PSQL_ENV_KEYWORDS)
+def test_search_not_psql_env_keywords(data, string, client, session):
     ts = TestSearch()
     ts.create_data(session)
     resp = client.post(ts.SEARCH, data=data)
