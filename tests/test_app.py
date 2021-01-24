@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import pytest
 
-from app.main import add_event, app, check_validation
+from app.main import app
+from app.routers.event import add_event, check_validation
 from app.database.database import get_db
 
 for i in get_db():
@@ -37,7 +38,6 @@ def test_get_profile():
 
 
 @pytest.mark.parametrize('start_time,end_time', date_test_data)
-@staticmethod
 def test_check_validation(start_time, end_time):
     assert check_validation(start_time, end_time)
 
