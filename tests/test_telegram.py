@@ -1,9 +1,6 @@
 from fastapi import status
-from httpx import AsyncClient
-import pytest
 
-from .conftest import get_test_placeholder_user
-from app.main import app
+from .client_fixture import get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.models import Bot, Chat
 
@@ -113,7 +110,7 @@ bot id/setWebhook?url=https://google.com/telegram/'
     }
 
     drop_request = bot.drop_webhook()
-    assert drop_request.status_code == 404
+    assert drop_request.status_code == status.HTTP_404_NOT_FOUND
     assert drop_request.json() == {
         'ok': False,
         'error_code': 404,
@@ -121,7 +118,7 @@ bot id/setWebhook?url=https://google.com/telegram/'
     }
 
     send_request = bot.send_message("654654645", "hello")
-    assert send_request.status_code == 404
+    assert send_request.status_code == status.HTTP_404_NOT_FOUND
     assert send_request.json() == {
         'ok': False,
         'error_code': 404,
@@ -175,10 +172,9 @@ Welcome to Pylander telegram client!'''
             message.process_callback() == "There're no events on February 10.")
 
 
-@pytest.mark.asyncio
-async def test_reply_unknown_user():
+def test_reply_unknown_user():
     chat = Chat(gen_message('/show_events'))
-    answer = await reply_unknown_user(chat)
+    answer = reply_unknown_user(chat)
     assert answer == '''
 Hello, Moshe!
 
@@ -193,15 +189,13 @@ https://calendar.pythonic.guru/profile/
 
 
 def test_telegram_router(profile_test_client):
-    page = profile_test_client.get('/telegram')
-    assert page.ok
-    assert b"Start using PyLander telegram bot!" in page.content
+    req = profile_test_client.get('/telegram')
+    assert req.ok
+    assert b"Start using PyLander telegram bot!" in req.content
 
 
-@pytest.mark.asyncio
-async def test_bot_client(profile_test_client):
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        req = await ac.post('/telegram/', json=gen_message('/start'))
-        assert req.status_code == status.HTTP_200_OK
-        assert b'Hello, Moshe!' in req.content
-        assert b'To use PyLander Bot you have to register' in req.content
+def test_bot_client(telegram_client):
+    req = telegram_client.post('/telegram/', json=gen_message('/start'))
+    assert req.ok
+    assert b'Hello, Moshe!' in req.content
+    assert b'To use PyLander Bot you have to register' in req.content

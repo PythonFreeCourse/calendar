@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+# flake8: noqa
+
+# general
+DOMAIN = 'Our-Domain'
 
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
@@ -21,7 +25,14 @@ MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
-# Email
+# API-KEYS
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+
+# export
+ICAL_VERSION = '2.0'
+PRODUCT_ID = '-//Our product id//'
+
+# email
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",

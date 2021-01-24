@@ -95,7 +95,7 @@ Welcome to Pylander telegram client!'''
         return answer
 
 
-async def reply_unknown_user(chat):
+def reply_unknown_user(chat):
     answer = f'''
 Hello, {chat.first_name}!
 

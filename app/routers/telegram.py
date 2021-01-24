@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Body, Depends, Request
 
 from app.database.database import get_db
 from app.database.models import User
@@ -21,15 +21,13 @@ async def telegram(request: Request, session=Depends(get_db)):
 
 
 @router.post("/")
-async def bot_client(request: Request, session=Depends(get_db)):
-    req = await request.json()
+def bot_client(req: dict = Body(...), session=Depends(get_db)):
     chat = Chat(req)
 
     # Check if current chatter is registered to use the bot
     user = session.query(User).filter_by(telegram_id=chat.user_id).first()
     if user is None:
-        return await reply_unknown_user(chat)
+        return reply_unknown_user(chat)
 
     message = MessageHandler(chat, user)
-    # Process reply
     return message.process_callback()
