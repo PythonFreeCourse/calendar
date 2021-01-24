@@ -1,5 +1,4 @@
 import datetime
-import calendar
 from http import HTTPStatus
 
 import app.routers.calendar_grid as cg
