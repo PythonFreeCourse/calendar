@@ -8,16 +8,18 @@ from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
 from app.routers import agenda, email, event, invitation, profile, search
 
 
-if 'sqlite' in str(engine.url) and PSQL_ENVIRONMENT:
-    raise models.PSQLEnvironmentError(
-        "You're trying to use PSQL features on SQLite env.\n"
-        "Please set app.config.PSQL_ENVIRONMENT to False "
-        "and run the app again."
-    )
-else:
-    models.Base.metadata.create_all(bind=engine)
+def create_tables(engine, psql_environment):
+    if 'sqlite' in str(engine.url) and psql_environment:
+        raise models.PSQLEnvironmentError(
+            "You're trying to use PSQL features on SQLite env.\n"
+            "Please set app.config.PSQL_ENVIRONMENT to False "
+            "and run the app again."
+        )
+    else:
+        models.Base.metadata.create_all(bind=engine)
 
 
+create_tables(engine, PSQL_ENVIRONMENT)
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")

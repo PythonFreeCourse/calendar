@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 from app.config import PSQL_ENVIRONMENT
-from app.database.models import Event, User
+from app.database.models import Base, Event, User
 from app.internal.search import get_results_by_keywords, get_stripped_keywords
 from fastapi import status
 
