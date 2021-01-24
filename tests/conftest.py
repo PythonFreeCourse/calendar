@@ -11,8 +11,8 @@ pytest_plugins = [
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',
+    'tests.category_fixture',
     'smtpdfix',
-    'tests.db_entities',
 ]
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
