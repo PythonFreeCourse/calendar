@@ -26,7 +26,6 @@ def bot_client(req: dict = Body(...), session=Depends(get_db)):
 
     # Check if current chatter is registered to use the bot
     user = session.query(User).filter_by(telegram_id=chat.user_id).first()
-    print(user)
     if user is None:
         return reply_unknown_user(chat)
 
