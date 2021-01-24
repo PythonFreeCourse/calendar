@@ -40,18 +40,6 @@ class User(Base):
         return f'<User {self.id}>'
 
 
-def create_events_tsv(psql_environment):
-    if psql_environment:
-        events_tsv = Column(TSVECTOR)
-        __table_args__ = (Index(
-            'events_tsv_idx',
-            'events_tsv',
-            postgresql_using='gin'),
-            )
-        return True
-    return False
-
-
 class Event(Base):
     __tablename__ = "events"
 
@@ -79,8 +67,12 @@ class Event(Base):
         return f'<Event {self.id}>'
 
 
+class PSQLEnvironmentError(Exception):
+    pass
+
+
 # PostgreSQL
-def create_event_listen(psql_environment):
+if PSQL_ENVIRONMENT:
     trigger_snippet = DDL("""
     CREATE TRIGGER ix_events_tsv_update BEFORE INSERT OR UPDATE
     ON events
@@ -88,23 +80,11 @@ def create_event_listen(psql_environment):
     tsvector_update_trigger(events_tsv,'pg_catalog.english','title','content')
     """)
 
-    if psql_environment:
-        event.listen(
-            Event.__table__,
-            'after_create',
-            trigger_snippet.execute_if(dialect='postgresql')
-            )
-        return True
-    return False
-
-
-# PostgreSQL
-create_event_listen(PSQL_ENVIRONMENT)
-
-
-# PostgreSQL
-class PSQLEnvironmentError(Exception):
-    pass
+    event.listen(
+        Event.__table__,
+        'after_create',
+        trigger_snippet.execute_if(dialect='postgresql')
+        )
 
 
 class Invitation(Base):
