@@ -188,14 +188,25 @@ https://calendar.pythonic.guru/profile/
 '''
 
 
-def test_telegram_router(profile_test_client):
-    req = profile_test_client.get('/telegram')
-    assert req.ok
-    assert b"Start using PyLander telegram bot!" in req.content
+class TestBotClient:
 
+    @staticmethod
+    def test_telegram_router(profile_test_client):
+        req = profile_test_client.get('/telegram')
+        assert req.ok
+        assert b"Start using PyLander telegram bot!" in req.content
 
-def test_bot_client(telegram_client):
-    req = telegram_client.post('/telegram/', json=gen_message('/start'))
-    assert req.ok
-    assert b'Hello, Moshe!' in req.content
-    assert b'To use PyLander Bot you have to register' in req.content
+    @staticmethod
+    def test_user_not_registered(telegram_client):
+        req = telegram_client.post('/telegram/', json=gen_message('/start'))
+        assert req.ok
+        assert b'Hello, Moshe!' in req.content
+        assert b'To use PyLander Bot you have to register' in req.content
+
+    @staticmethod
+    def test_user_registered(telegram_client, session):
+        session.add(get_test_placeholder_user())
+        session.commit()
+        req = telegram_client.post('/telegram/', json=gen_message('/start'))
+        assert req.ok
+        assert b'Welcome to Pylander telegram client!' in req.content
