@@ -18,7 +18,10 @@ email-validator==1.1.2
 Faker==5.6.2
 fakeredis==1.4.5
 fastapi==0.63.0
-fastapi-mail==0.3.3.1
+fastapi_mail==0.3.3.1
+faker==5.6.2
+frozendict==1.2
+smtpdfix==0.2.6
 h11==0.12.0
 h2==4.0.0
 hiredis==1.1.0
@@ -51,7 +54,8 @@ pytz==2020.5
 PyYAML==5.3.1
 redis==3.5.3
 requests==2.25.1
-rfc3986==1.4.0
+requests-mock==1.8.0
+responses==0.12.1
 six==1.15.0
 smtpdfix==0.2.6
 sniffio==1.2.0
