@@ -57,7 +57,6 @@ def test_check_validation():
 
 @pytest.mark.parametrize('values,db', event_test_data)
 def test_add_event(values: dict, db):
-    # assert len(values) == len(event_test_data)
     assert db is not None
     assert add_event(values, db) is not None
 
