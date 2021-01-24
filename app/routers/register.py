@@ -7,6 +7,8 @@ from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.internal import user
+
 
 router = APIRouter(
     prefix="",
@@ -76,3 +78,8 @@ async def register(
         "request": request,
         "message": "User created",
         "status_code": 201})
+
+### NOT for production
+@router.get("/delete")
+def delete_user(db: Session = Depends(get_db)):
+    user.delete_by_mail(db=db, email="")

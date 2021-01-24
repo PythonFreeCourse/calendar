@@ -1,6 +1,9 @@
-import bcrypt
 from app.database import models, schemas
+from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+from app.internal.security.ouath2 import pwd_context
+
+# pwd_context = CryptContext(schemes=["bcrypt"])
 
 
 def get_by_id(db: Session, user_id: int) -> models.User:
@@ -23,9 +26,8 @@ def create(db: Session, user: schemas.UserCreate) -> models.User:
     '''
     creating a new User object in the database, with hashed password
     '''
-    salt = bcrypt.gensalt(prefix=b'2b', rounds=10)
     unhashed_password = user.password.encode('utf-8')
-    hashed_password = bcrypt.hashpw(unhashed_password, salt)
+    hashed_password = pwd_context.hash(unhashed_password)
     user_details = {
         'username': user.username,
         'full_name': user.full_name,

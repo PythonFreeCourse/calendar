@@ -2,7 +2,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, event, profile, email, invitation, register
+from app.routers import agenda, event, profile, email, invitation, register, login
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
@@ -18,7 +18,7 @@ app.include_router(agenda.router)
 app.include_router(register.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
-
+app.include_router(login.router)
 
 @app.get("/")
 async def home(request: Request):
