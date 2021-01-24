@@ -1,5 +1,7 @@
+from sqlalchemy.sql.elements import and_
+from app.dependencies import get_db
 from datetime import datetime, time, timedelta
-from typing import Iterator, Tuple
+from typing import Dict, Iterator, Tuple
 
 from app.database.models import Event, SalarySettings
 from app.routers.salary import config
@@ -142,7 +144,7 @@ def calc_weekly_overtime(shifts: Tuple[Event, ...],
         return 0.0
 
 
-def get_event_by_category(*args):
+def get_event_by_category(*args, **kwargs):
     # Dummy function
     # Code revision required after categories feature is added
     day_1 = {'start': datetime(2021, 1, 10, 9),
@@ -181,15 +183,14 @@ def get_monthly_overtime(shifts: Tuple[Event, ...], weeks: Tuple[Event, ...],
         except AttributeError:
             weekly_shifts = tuple(shift for shift in shifts
                               if week_start <= shift['start'] <= week_end)
-        weekly_overtime = calc_weekly_overtime(weekly_shifts, wage)
-        monthly_overtime.append({'week_start': week_start,
-                                 'week_end': week_end,
-                                 'weekly_overtime': weekly_overtime})
-    return monthly_overtime
+        monthly_overtime.append(calc_weekly_overtime(weekly_shifts, wage))
+    return sum(monthly_overtime)
 
 
-def calc_salary(year: int, month: int, wage: SalarySettings,
-                      deduction: config.NUMERIC = 0, bonus: config.NUMERIC = 0) -> float:
+def calc_salary(
+    year: int, month: int, wage: SalarySettings, overtime: bool,
+    deduction: config.NUMERIC = 0, bonus: config.NUMERIC = 0,
+    ) -> Dict[str, config.NUMERIC]:
     month_start = datetime(year, month, 1)
     try:
         month_end = datetime(year, month + 1, 1)
@@ -200,27 +201,33 @@ def calc_salary(year: int, month: int, wage: SalarySettings,
                                    wage.category_id)
     weeks = get_relevant_weeks(month_start, month_end)
     base_salary = sum(calc_shift_salary(wage=wage, **shift) for shift in shifts)
-    month_weekly_overtime = get_monthly_overtime(shifts, weeks, wage)
-    salary = round(base_salary
-                   + bonus
-                   + sum(week['weekly_overtime']
-                         for week in month_weekly_overtime),
-                   2)
+    if overtime:
+        month_weekly_overtime = get_monthly_overtime(shifts, weeks, wage)
+    else:
+        month_weekly_overtime = 0
+    salary = round(base_salary + bonus + month_weekly_overtime, 2)
     pension = calc_pension(salary, wage.pension)
     transport = calc_transport(shifts, wage.daily_transport)
     salary += transport
     taxes = calc_taxes(salary, wage.tax_points, pension)
-    net_salary = salary - sum((pension, taxes, deduction))
-    return {'year': year,
-            'month': month,
-            'num_of_shifts': len(shifts),
-            'base_salary': base_salary,
-            'month_weekly_overtime': month_weekly_overtime,
-            'transport': transport,
-            'salary': salary,
-            'taxes': taxes,
-            'pension': pension,
-            'net_salary': net_salary}
+    net_salary = salary - sum((pension, taxes))
+    if deduction > net_salary:
+        deduction = net_salary
+    net_salary -= deduction
+    return {
+        'year': year,
+        'month': month,
+        'num_of_shifts': len(shifts),
+        'base_salary': base_salary,
+        'month_weekly_overtime': month_weekly_overtime,
+        'transport': transport,
+        'bonus': bonus,
+        'salary': round(salary, 2),
+        'deduction': deduction,
+        'taxes': taxes,
+        'pension': pension,
+        'net_salary': round(net_salary, 2),
+        }
 
 
 def calc_pension(salary: float, pension_precentage: float) -> float:
@@ -231,11 +238,19 @@ def calc_transport(shifts: Tuple[Event, ...], daily_transport: float) -> float:
     return round(daily_transport * len(shifts), 2)
 
 
+def get_tax_precentage(salary: config.NUMERIC) -> int:
+    for step, percentage in config.TAX_STEPS.items():
+        if salary <= step:
+            return percentage
+    return config.TAX_EXTRA_STEP
+
+
 def calc_taxes(salary, tax_points: float, pension: float) -> float:
-    return 0.0
+    percentage = get_tax_precentage(salary)
+    return 0
 
 
-def create_default_settings():
+def create_default_settings() -> SalarySettings:
     return SalarySettings(
         wage = config.MINIMUM_WAGE,
         off_day = config.SATURDAY,
@@ -250,3 +265,12 @@ def create_default_settings():
         pension = config.PENSION,
         tax_points = config.TAX_POINTS,
     )
+
+
+def get_settings(user_id: int, category_id: int) -> SalarySettings:
+    db = get_db()
+    session = next(db)
+    return session.query(SalarySettings).filter(and_(
+            SalarySettings.user_id == user_id,
+            SalarySettings.category_id == category_id,
+                )).first()

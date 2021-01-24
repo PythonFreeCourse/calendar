@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container col col-sm-7 col-md-5 col-lg-4 col-xl-3 mt-3">
+    <header class="text-center">
+      <h1>Monthly Salary</h1>
+    </header>
+
+    <form method="post">
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="month-select">Pick Month:</label>
+        <input class="form-control" type="month" name="month" id="month-select" value="{{ end }}" min="{{ start }}" max="{{ end }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="bonus">Bonus:</label>
+        <input class="form-control" type="number" name="bonus" id="bonus" min="0" value="0">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="deduction">Deduction:</label>
+        <input class="form-control" type="number" name="deduction" id="deduction" min="0" value="0">
+      </div>
+
+      <div class="mb-2">
+        <input type="checkbox" name="overtime" id="weekly-overtime">
+        <label class="font-weight-bold" for="weekly-overtime">Include Weekly Overtime</label>
+      </div>
+
+      <button type="submit" class="btn btn-sm btn-primary">Calculate Salary</button>
+    </form>
+  </div>
+{% endblock content %}

@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from app.database import models
 from app.database import engine
 from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
-from app.routers import agenda, event, profile
+from app.routers import agenda, event, profile, email
 from app.routers.salary import routes as salary
 
 
@@ -18,6 +18,7 @@ app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
 app.include_router(salary.router)
+app.include_router(email.router)
 
 
 @app.get("/")

@@ -59,8 +59,7 @@ class SalarySettings(Base):
         Integer, primary_key=True,
     )
     wage = Column(
-        Float, CheckConstraint(f"wage>={SalaryConfig.MINIMUM_WAGE}"),
-        nullable=False, default=SalaryConfig.MINIMUM_WAGE,
+        Float, nullable=False, default=SalaryConfig.MINIMUM_WAGE,
     )
     off_day = Column(
         Integer, CheckConstraint("0<=off_day<=6"), nullable=False,
