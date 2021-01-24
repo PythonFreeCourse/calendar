@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+from app.config import PSQL_ENVIRONMENT
 from app.database.models import Event, User
 from app.internal.search import get_stripped_keywords
 from fastapi import status
@@ -96,6 +97,7 @@ class TestSearch:
         assert b'Search event by keyword' in resp.content
 
 
+@pytest.mark.skipif(not PSQL_ENVIRONMENT, reason="Not PSQL environment")
 @pytest.mark.parametrize('data, string', TestSearch.GOOD_KEYWORDS)
 def test_search_good_keywords(data, string, client, session):
     ts = TestSearch()
@@ -104,6 +106,7 @@ def test_search_good_keywords(data, string, client, session):
     assert string in resp.content
 
 
+@pytest.mark.skipif(not PSQL_ENVIRONMENT, reason="Not PSQL environment")
 @pytest.mark.parametrize('data, string', TestSearch.BAD_KEYWORDS)
 def test_search_bad_keywords(data, string, client, session):
     ts = TestSearch()
