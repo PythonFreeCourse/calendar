@@ -14,7 +14,7 @@ def test_main_create_tables_error(sqlite_engine):
 
 
 def test_database_create_engine():
-    sqlalchemy_database_url = "postgresql://postgres:h1h2h3h4@localhost/postgres"
+    sqlalchemy_database_url = "postgresql://postgres:1234@localhost/postgres"
     engine = create_env_engine(True, sqlalchemy_database_url)
     assert 'postgres' in str(engine.url)
     sqlalchemy_database_url = "sqlite:///./test1.db"
