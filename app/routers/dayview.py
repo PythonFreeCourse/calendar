@@ -72,8 +72,8 @@ class DivAttributes:
 
     def _get_time_format(self) -> str:
         for multiday in [self.start_multiday, self.end_multiday]:
-            yield self.MULTIDAY_FORMAT if multiday else self.DEFAULT_FORMAT 
-                
+            yield self.MULTIDAY_FORMAT if multiday else self.DEFAULT_FORMAT
+
     def _set_total_time(self) -> None:
         length = self.end_time - self.start_time
         self.length = length.seconds / 60
