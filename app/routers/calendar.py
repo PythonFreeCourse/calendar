@@ -3,7 +3,7 @@ import datetime
 from app.dependencies import templates
 from app.routers import calendar_grid as cg
 from fastapi import APIRouter, Request
-
+from fastapi.responses import HTMLResponse
 
 router = APIRouter(
     prefix="/calendar",
@@ -16,7 +16,7 @@ router = APIRouter(
 async def calendar(request: Request):
     day = cg.create_day(datetime.date.today())
     return templates.TemplateResponse(
-        "calendar.html",
+        "calendar/calendar.html",
         {
             "request": request,
             "calendar": {
@@ -28,16 +28,10 @@ async def calendar(request: Request):
     )
 
 
-@router.post("/{date}")
+@ router.get("/{date}")
 async def update_calendar(request: Request, date: str):
     last_day = cg.Day.convert_str_to_date(date)
     next_week = cg.Week(cg.get_n_days(last_day, 7))
-    next_week.display_week()
-
-    return templates.TemplateResponse(
-        "calendar.html",
-        {
-            "request": request,
-            "next_week": next_week
-        }
-    )
+    template = templates.get_template('calendar/add_week.html')
+    content = template.render(week=next_week.days)
+    return HTMLResponse(content=content, status_code=200)

@@ -48,7 +48,7 @@ class TestCalendarGrid:
     def test_get_first_day_month_block(Calendar):
         assert (
             cg.get_first_day_month_block(DATE)
-            == list(Calendar.itermonthdates(DATE.year, DATE.month))[0]
+            == next(Calendar.itermonthdates(DATE.year, DATE.month))
         )
 
     @staticmethod
@@ -75,7 +75,9 @@ class TestCalendarGrid:
     def test_get_month_block(Calendar):
         month_days = cg.split_list_to_lists(
             list(Calendar.itermonthdates(1988, 5)), 7)
-        get_block = cg.get_month_block(DATE, n=41)
+        get_block = cg.get_month_block(cg.Day(DATE), n=42)
+        print(get_block[0][0].date)
+        print(get_block[-1][-1].date)
         for i in range(len(get_block)):
             for j in range(7):
                 assert get_block[i][j].date == month_days[i][j]

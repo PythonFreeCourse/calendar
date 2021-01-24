@@ -1,14 +1,3 @@
-:root {
-    --bold_primary: #FFDE4D
-    --bold_secondary: #F24726
-
-    --primary: #F7F7F7
-    --secondary: #222831
-
-    --surface: #e9ecef
-    --up_surface: #adb5bd
-}
-
 * {
     margin: 0;
     padding: 0;
