@@ -24,7 +24,7 @@ app.include_router(email.router)
 app.include_router(invitation.router)
 
 
-# I add the quote day to the home page
+# TODO: I add the quote day to the home page
 # until the relavent calendar view will be developed.
 @app.get("/")
 async def home(request: Request, db: Session = Depends(get_db)):
