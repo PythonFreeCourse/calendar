@@ -6,8 +6,8 @@ from typing import Any, Dict, List, Tuple, Union
 
 from icalendar import Calendar
 
-from app.database.models import Event
-from app.database.database import SessionLocal
+from database.models import Event
+from database.database import SessionLocal
 
 
 NUM_OF_VALUES = 4  # Event contains head, content, start_date and end_date.
