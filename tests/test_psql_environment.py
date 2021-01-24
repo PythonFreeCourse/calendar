@@ -14,9 +14,9 @@ def test_main_create_tables_error(sqlite_engine):
 
 
 def test_database_create_engine():
-    if PSQL_ENVIRONMENT:
-        engine = create_env_engine(True)
-        assert 'postgres' in str(engine.url)
-    else:
-        engine = create_env_engine(False)
-        assert 'sqlite' in str(engine.url)
+    sqlalchemy_database_url = "postgresql://postgres:h1h2h3h4@localhost/postgres"
+    engine = create_env_engine(True, sqlalchemy_database_url)
+    assert 'postgres' in str(engine.url)
+    sqlalchemy_database_url = "sqlite:///./test1.db"
+    engine = create_env_engine(False, sqlalchemy_database_url)
+    assert 'sqlite' in str(engine.url)
