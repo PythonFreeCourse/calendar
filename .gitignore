@@ -130,4 +130,4 @@ dmypy.json
 .pyre/
 calendar_app.db
 calender-venv/
-.vscode/settings.json
+vscode/settings.json

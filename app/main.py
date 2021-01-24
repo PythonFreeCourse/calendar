@@ -4,28 +4,21 @@ from datetime import datetime
 
 from fastapi import Depends, FastAPI, Request, Form
 from fastapi.responses import HTMLResponse
-# from fastapi.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import models
 from app.database.models import Event
-from app.database.database import SessionLocal, engine
+from app.database.database import SessionLocal, engine, get_db
+from app.routers.event import add_event, check_validation
 
 models.Base.metadata.create_all(bind=engine)
 
 
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
 app = FastAPI()
 
-# app.mount("static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+# its dosent found "static" folder
 
 templates = Jinja2Templates(directory="app/templates")
 
@@ -83,27 +76,3 @@ def create_event(user_id: int, event_title: str = Form(None), location: Optional
     finally:
         return {"success": success, "new_event": new_event, "error_msg": error_msg}
 
-
-def check_validation(start_time, end_time) -> bool:
-    """Check if the start_date is smaller then the end_time"""
-    try:
-        return start_time < end_time
-    except TypeError:
-        return False
-
-
-
-def add_event(values: dict, db) -> Event:
-    """Get User values and the DB Session insert the values to the DB and refresh it
-    exception in case that the keys in the dict is not match to the fields in the DB
-    return the Event Class item"""
-    try:
-        new_event = Event(**values)
-        db.add(new_event)   
-        db.commit()
-        db.refresh(new_event)
-        return new_event
-    except (AssertionError, AttributeError) as e:
-        # Need to write into log
-        print(e)
-        return None
