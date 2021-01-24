@@ -16,7 +16,7 @@ class Day:
         date    (datetime): A single datetime date.
     Arguments:
         date    (datetime): A single datetime date.
-        sday         (str): String format 00 of the day number.
+        sday         (str): The day name.
         dailyevents (List): List of tuples represent daily event information.
         events      (List): List of tuples represent time event name.
                             EX: [("09AP", "Meeting with yam")]

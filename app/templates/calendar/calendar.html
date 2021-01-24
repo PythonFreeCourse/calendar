@@ -35,11 +35,11 @@
         <main>
             <div class="calendar">
                 <div class="calender-days-titles">
-                    {% for day in week_days %}
-                    {% if day == day.sday %}
-                    <div class="day-title underline-yellow"><b> {{ day.upper() }} </b></div>
+                    {% for d in week_days %}
+                    {% if d == day.sday %}
+                    <div class="day-title underline-yellow"><b>{{ d.upper() }}</b></div>
                     {% else %}
-                    <div class="day-title"> {{ day.upper() }}</div>
+                    <div class="day-title"> {{ d.upper() }}</div>
                     {% endif %}
                     {% endfor %}
                 </div>
