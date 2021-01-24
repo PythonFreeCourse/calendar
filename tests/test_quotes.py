@@ -17,15 +17,6 @@ def insert_quotes(session):
 
 
 # Tests for loading the quotes in the db:
-def test_is_quotes_table_empty_when_quotes_not_exist(session):
-    assert load_quotes.is_quotes_table_empty(session)
-
-
-def test_is_quotes_table_empty_when_quotes_exist(session):
-    insert_quotes(session)
-    assert not load_quotes.is_quotes_table_empty(session)
-
-
 def test_load_daily_quotes(session):
     load_quotes.load_daily_quotes(session)
     assert session.query(Quote).count() > 0
