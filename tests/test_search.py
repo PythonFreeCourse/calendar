@@ -158,3 +158,19 @@ STRIPPED_KEYWORDS = [
 @pytest.mark.parametrize('input_string, output_string', STRIPPED_KEYWORDS)
 def test_search_stripped_keywords(input_string, output_string):
     assert get_stripped_keywords(input_string) == output_string
+
+
+def test_events_tsv_column_exists():
+    column_created = True
+
+    try:
+        Event.events_tsv
+    except AttributeError:
+        column_created = False
+
+    if PSQL_ENVIRONMENT:
+        assert column_created
+    else:
+        assert not column_created
+
+        
