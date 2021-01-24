@@ -134,7 +134,7 @@ class TestHandlers:
         message = MessageHandler(chat, self.TEST_USER)
 
         assert '/start' in message.handlers
-        assert message.process_callback() == f'''Hello, Moshe!
+        assert message.process_callback() == '''Hello, Moshe!
 Welcome to Pylander telegram client!'''
 
     def test_default_handlers(self):

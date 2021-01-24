@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
-# flake8: noqa
 
 # general
 DOMAIN = 'Our-Domain'
