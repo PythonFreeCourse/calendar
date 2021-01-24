@@ -1,8 +1,9 @@
+import calendar
+
 import pytest
+from app.database.database import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from app.database.database import Base
 
 pytest_plugins = [
     'tests.user_fixture',
@@ -33,3 +34,8 @@ def session():
     yield session
     session.close()
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture
+def Calendar():
+    return calendar.Calendar(0)
