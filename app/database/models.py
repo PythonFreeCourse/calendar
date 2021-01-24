@@ -52,6 +52,8 @@ class Event(Base):
     location = Column(String)
 
     owner = relationship("User")
+    participants = relationship("UserEvent", back_populates="events")
+
     owner_id = Column(Integer, ForeignKey("users.id"))
     category_id = Column(Integer, ForeignKey("categories.id"))
     color = Column(String, nullable=True)
