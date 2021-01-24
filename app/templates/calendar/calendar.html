@@ -21,7 +21,7 @@
     <div>
         <header>
             <div>
-                <div class="title"> {{calendar['day'].display()}}</div>
+                <div class="title"> {{day.display()}}</div>
                 <div class="sec-title"> Location 0<sup>o</sup>c 00:00</div>
             </div>
             <div id="logo-div"><a href="/calendar">
@@ -35,8 +35,8 @@
         <main>
             <div class="calendar">
                 <div class="calender-days-titles">
-                    {% for day in calendar['week_days'] %}
-                    {% if day == calendar['day'].sday %}
+                    {% for day in week_days %}
+                    {% if day == day.sday %}
                     <div class="day-title underline-yellow"><b> {{ day.upper() }} </b></div>
                     {% else %}
                     <div class="day-title"> {{ day.upper() }}</div>
@@ -44,9 +44,7 @@
                     {% endfor %}
                 </div>
                 <div class="calender-grid">
-                    {% for week in calendar['month_block'] %}
                     {% include 'calendar/add_week.html' %}
-                    {% endfor %}
                 </div>
             </div>
             <div id="day-display"></div>

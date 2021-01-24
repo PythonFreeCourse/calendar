@@ -19,11 +19,9 @@ async def calendar(request: Request):
         "calendar/calendar.html",
         {
             "request": request,
-            "calendar": {
-                'day': day,
-                'week_days': cg.Week.DAYS_OF_THE_WEEK,
-                'month_block': cg.get_month_block(day)
-            }
+            "day": day,
+            "week_days": cg.Week.DAYS_OF_THE_WEEK,
+            "weeks_block": cg.get_month_block(day)
         }
     )
 
@@ -31,7 +29,7 @@ async def calendar(request: Request):
 @ router.get("/{date}")
 async def update_calendar(request: Request, date: str):
     last_day = cg.Day.convert_str_to_date(date)
-    next_week = cg.Week(cg.get_n_days(last_day, 7))
+    next_weeks = cg.split_list_to_lists(list(cg.get_n_days(last_day, 14)), 7)
     template = templates.get_template('calendar/add_week.html')
-    content = template.render(week=next_week.days)
+    content = template.render(weeks_block=next_weeks)
     return HTMLResponse(content=content, status_code=200)
