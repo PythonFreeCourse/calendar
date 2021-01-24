@@ -28,7 +28,7 @@ async def eventview(request: Request, id: int):
                                       {"request": request, "event_id": id})
 
 
-def get_event_by_id(db: Session, event_id: int) -> Event:
+def by_id(db: Session, event_id: int) -> Event:
     """Select event by id"""
     return db.query(Event).filter(Event.id == event_id).first()
 
@@ -38,17 +38,17 @@ def validate_dates(start_date: datetime, end_date: datetime) -> bool:
     return start_date < end_date
 
 
-def update_event(event_id: int, event_dict: Dict, db: Session
+def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
     # TODO Check if the user is the owner of the event.
 
     # Extract only that keys to update
-    event_to_update = {i: event_dict[i] for i in (
-        'title', 'start', 'end', 'content', 'location') if i in event_dict}
+    event_to_update = {i: event[i] for i in (
+        'title', 'start', 'end', 'content', 'location') if i in event}
     if not bool(event_to_update):  # Event items is empty
         return None
     try:
-        old_event = get_event_by_id(db=db, event_id=event_id)
+        old_event = by_id(db=db, event_id=event_id)
         if old_event is None or not validate_dates(
                 event_to_update.get('start', old_event.start),
                 event_to_update.get('end', old_event.end)):
@@ -60,7 +60,7 @@ def update_event(event_id: int, event_dict: Dict, db: Session
         # TODO: Send emails to recipients.
     except (AttributeError, SQLAlchemyError, TypeError):
         return None
-    return get_event_by_id(db=db, event_id=event_id)
+    return by_id(db=db, event_id=event_id)
 
 
 def create_event(db, title, start, end, owner_id, content=None, location=None):

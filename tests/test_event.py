@@ -32,7 +32,7 @@ class TestEvent:
     @pytest.mark.parametrize("data", INVALID_UPDATE_OPTIONS)
     def test_invalid_update(event, data, session):
         assert update_event(event_id=event.id,
-                            event_dict=data, db=session) is None
+                            event=data, db=session) is None
 
     @staticmethod
     def test_successful_update(event, session):
@@ -41,15 +41,15 @@ class TestEvent:
             "start": datetime(2021, 1, 20),
             "end": datetime(2021, 1, 21),
         }
-        assert type(update_event(1, data, session)) == Event
+        assert isinstance(update_event(1, data, session), Event)
         assert "successful" in update_event(
-            event_id=event.id, event_dict=data, db=session).title
+            event_id=event.id, event=data, db=session).title
 
     @staticmethod
     def test_update_db_close(event):
         data = {"title": "Problem connecting to db", }
         assert update_event(event_id=event.id,
-                            event_dict=data, db=None) is None
+                            event=data, db=None) is None
 
     @staticmethod
     def test_update_event_does_not_exist(event, session):
@@ -57,7 +57,7 @@ class TestEvent:
             "content": "An update test for an event does not exist"
         }
         assert update_event(
-            event_id=500, event_dict=data, db=session) is None
+            event_id=500, event=data, db=session) is None
 
     def test_repr(self, event):
         assert event.__repr__() == f'<Event {event.id}>'
