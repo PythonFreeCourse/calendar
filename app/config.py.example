@@ -1,6 +1,7 @@
 import os
 
 from fastapi_mail import ConnectionConfig
+
 # flake8: noqa
 
 # general
@@ -13,6 +14,9 @@ DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
 MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
+
+# API-KEYS
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
 # export
 ICAL_VERSION = '2.0'
