@@ -1,10 +1,10 @@
 {% for week in weeks_block %}
 <div class="week">
-    {% for day in week %}
+    {% for day in week.days %}
     <div class="{{day.css['div']}}" id="{{day.display()}}">
         <div class="month-day-header">
             <div class="{{day.css['date']}}">{{day}}</div>
-            <div class="align-right"><a href="#" class="add-small">+</a></div>
+            <div><a href="#" class="add-small">+</a></div>
         </div>
         {% for devent in day.dailyevents %}
         <div class="{{day.css['daily_event']}}">

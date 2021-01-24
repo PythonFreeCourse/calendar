@@ -1,9 +1,11 @@
 import datetime
+from http import HTTPStatus
 
 from app.dependencies import templates
 from app.routers import calendar_grid as cg
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
+from starlette.responses import Response
 
 router = APIRouter(
     prefix="/calendar",
@@ -11,11 +13,11 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-ADD_DAYS_ON_SCROLL = 14
+ADD_DAYS_ON_SCROLL: int = 42
 
 
 @router.get("/")
-async def calendar(request: Request):
+async def calendar(request: Request) -> Response:
     day = cg.create_day(datetime.date.today())
     return templates.TemplateResponse(
         "calendar/calendar.html",
@@ -29,12 +31,9 @@ async def calendar(request: Request):
 
 
 @ router.get("/{date}")
-async def update_calendar(request: Request, date: str):
+async def update_calendar(request: Request, date: str) -> HTMLResponse:
     last_day = cg.Day.convert_str_to_date(date)
-    next_weeks = cg.split_list_to_lists(
-        list(cg.get_n_days(last_day, ADD_DAYS_ON_SCROLL)),
-        cg.Week.WEEK_DAYS
-    )
+    next_weeks = cg.create_weeks(cg.get_n_days(last_day, ADD_DAYS_ON_SCROLL))
     template = templates.get_template('calendar/add_week.html')
     content = template.render(weeks_block=next_weeks)
-    return HTMLResponse(content=content, status_code=200)
+    return HTMLResponse(content=content, status_code=HTTPStatus.OK)

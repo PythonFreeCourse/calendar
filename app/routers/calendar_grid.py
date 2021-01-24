@@ -2,10 +2,9 @@ import calendar
 import itertools
 import locale
 from datetime import date, datetime, timedelta
-from typing import Any, Iterator, List
+from typing import Any, Dict, Iterator, List, Optional
 
-DISPLAY_BLOCK = 100
-MONTH_BLOCK = 6
+MONTH_BLOCK: int = 6
 
 locale.setlocale(locale.LC_TIME, ("en", "UTF-8"))
 
@@ -25,11 +24,11 @@ class Day:
     """
 
     def __init__(self, date: datetime):
-        self.date = date
-        self.sday = self.date.strftime("%A")
-        self.dailyevents = []
-        self.events = []
-        self.css = {
+        self.date: datetime = date
+        self.sday: str = self.date.strftime("%A")
+        self.dailyevents: List[Tuple] = []
+        self.events:  List[Tuple] = []
+        self.css: Dict[str, str] = {
             'div': 'day',
             'date': 'day-number',
             'daily_event': 'month-event',
@@ -54,22 +53,22 @@ class Day:
         """Returns day date inf the format of 00 MONTH 00"""
         return self.date.strftime("%d %B %y").upper()
 
-    @classmethod
+    @ classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:
         return datetime.strptime(date_string, '%d %B %y')
 
-    @classmethod
-    def is_weekend(cls, date: datetime) -> bool:
+    @ classmethod
+    def is_weekend(cls, date: date) -> bool:
         """Returns true if this day is represent a weekend."""
         return date.strftime("%A") in Week.DAYS_OF_THE_WEEK[-2:]
 
 
 class Week:
-    WEEK_DAYS = 7
-    DAYS_OF_THE_WEEK = calendar.day_name
+    WEEK_DAYS: int = 7
+    DAYS_OF_THE_WEEK: List[str] = calendar.day_name
 
     def __init__(self, days: List[Day]):
-        self.days = days
+        self.days: List[Day] = days
 
 
 class DayWeekend(Day):
@@ -150,10 +149,10 @@ def create_day(day: datetime) -> Day:
     """Return the currect day object according to given date."""
     if day == date.today():
         return Today(day)
-    if Day.is_weekend(day):
-        return DayWeekend(day)
     if int(day.day) == 1:
         return FirstDayMonth(day)
+    if Day.is_weekend(day):
+        return DayWeekend(day)
     return Day(day)
 
 
@@ -170,7 +169,7 @@ def get_date_before_n_days(date: datetime, n: int) -> datetime:
     return date - timedelta(days=n)
 
 
-def get_first_day_month_block(date: datetime) -> datetime.date:
+def get_first_day_month_block(date: datetime) -> datetime:
     """Returns the first date in a month block of given date."""
     return list(calendar.Calendar().itermonthdates(date.year, date.month))[0]
 
@@ -181,17 +180,18 @@ def get_n_days(date: datetime, n: int) -> Iterator[Day]:
     yield from itertools.islice(next_date_gen, n)
 
 
-def split_list_to_lists(dates: List[Any], length: int) -> List[List[Any]]:
-    """Return a 2D list with inner lists length of given size."""
-    return [dates[i:i + length] for i in range(0, len(dates), length)]
+def create_weeks(
+    days: Iterator[Day],
+    length: int = Week.WEEK_DAYS
+) -> List[Week]:
+    """Return lists of Weeks objects."""
+    ndays: List[Day] = list(days)
+    num_days: int = len(ndays)
+    return [Week(ndays[i:i + length]) for i in range(0, num_days, length)]
 
 
-def get_month_block(day: Day, n: int = MONTH_BLOCK) -> List[List[Day]]:
+def get_month_block(day: Day, n: int = MONTH_BLOCK) -> List[Week]:
     """Returns a 2D list represent a n days calendar from current month."""
     current = get_first_day_month_block(day.date) - timedelta(days=1)
-    block = []
-    for i in range(n):
-        week = list(get_n_days(current, Week.WEEK_DAYS))
-        block.append(week)
-        current = week[-1].date
-    return block
+    num_of_days = Week.WEEK_DAYS * n
+    return create_weeks(get_n_days(current, num_of_days))

@@ -4,14 +4,16 @@ const last = null
 
 function load_week(last_day) {
     if (last_day != last) {
-        req = $.ajax({
-            url: '/calendar/' + last_day,
-            type: 'GET'
-        })
+        var url = '/calendar/' + last_day
         const last = last_day
-        req.done(function (data) {
-            $(".calender-grid").append(data);
-        });
+
+        fetch(url).then(function (response) {
+            return response.text();
+        }).then(function (html) {
+            var div = document.createElement('html');
+            div.innerHTML = html
+            document.getElementById("calender-grid").append(div);
+        })
     }
 }
 
@@ -25,4 +27,3 @@ window.addEventListener(
         }
     }
 )
-

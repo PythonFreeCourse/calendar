@@ -1,4 +1,5 @@
 import datetime
+import calendar
 from http import HTTPStatus
 
 import app.routers.calendar_grid as cg
@@ -69,30 +70,23 @@ class TestCalendarGrid:
             assert next(next_n_dates).date == NEXT_N_DAYS[i].date
 
     @staticmethod
-    def test_split_list_to_lists():
-        s_length = 7
-        t_length = 20
-        list_before_split = list(range(t_length))
-        list_after_split = [
-            list_before_split[i: i + s_length]
-            for i in range(0, len(list_before_split), s_length)
-        ]
-        assert (
-            cg.split_list_to_lists(list_before_split, s_length)
-            == list_after_split
-        )
+    def test_create_weeks():
+        week = cg.create_weeks(NEXT_N_DAYS, cg.Week.WEEK_DAYS)
+        assert week
+        assert isinstance(week[0], cg.Week)
+        assert isinstance(week[0].days[0], cg.Day)
+        assert len(week) == 1 and len(week[0].days) == 3
 
     @staticmethod
     def test_get_month_block(Calendar):
-        month_days = cg.split_list_to_lists(
-            list(Calendar.itermonthdates(1988, 5)), WEEK_DAYS)
-        get_block = cg.get_month_block(
-            cg.Day(DATE), n=len(month_days) * WEEK_DAYS)
-        print(get_block[0][0].date)
-        print(get_block[-1][-1].date)
-        for i in range(len(month_days)):
-            for j in range(7):
-                assert get_block[i][j].date == month_days[i][j]
+        month_weeks = cg.create_weeks(
+            Calendar.itermonthdates(1988, 5), WEEK_DAYS)
+        month_days_length = calendar.monthrange(1988, 5)[1]
+        get_block = cg.get_month_block(cg.Day(DATE), n=len(month_weeks))
+
+        for i in range(len(month_weeks)):
+            for j in range(cg.Week.WEEK_DAYS):
+                assert get_block[i].days[j].date == month_weeks[i].days[j]
 
     @staticmethod
     def test_is_weekend():
@@ -106,3 +100,7 @@ class TestCalendarGrid:
     @staticmethod
     def test_display_str():
         assert str(DAY) == '03'
+
+    @staticmethod
+    def test_create_week_object():
+        assert cg.Week(NEXT_N_DAYS)

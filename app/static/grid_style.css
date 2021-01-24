@@ -76,9 +76,9 @@ main {
 
 .calendar {flex: 1;}
 
-#day-display {
-    flex: 0 0 0;
-    opacity: 0;
+.day-view-visible {
+    flex: 0 1 30%;
+    opacity: 1;
     transition: all 1s;
 }
 
@@ -95,7 +95,7 @@ main {
 }
 
 /* The Calendar Grid */
-.calender-grid {
+#calender-grid {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -132,7 +132,7 @@ main {
 
 .day::-webkit-scrollbar {display: none;}
 
-.event { font-weight: 400; }
+.event {font-weight: 400;}
 
 .day:hover {border: 0.2rem solid #222831;}
 
@@ -143,6 +143,7 @@ main {
 .day-number {
     font-weight: 900;
     font-size: 2rem;
+    text-align: left;
 }
 
 .day_current {
@@ -156,6 +157,8 @@ main {
 }
 
 .month-day-header div {flex-grow: 2;}
+
+.month-day-header:last-child{text-align: right;}
 
 .add-small {
     display: none;
@@ -214,10 +217,6 @@ main {
     font-size: 1.6rem;
 }
 
-/* Alignments */
-.align-right {text-align: right;}
-
-.align-left {text-align: left;}
 
 /* Text Colors */
 .text-yellow {color: #FFDE4D;}
