@@ -81,7 +81,6 @@ class TestCalendarGrid:
     def test_get_month_block(Calendar):
         month_weeks = cg.create_weeks(
             Calendar.itermonthdates(1988, 5), WEEK_DAYS)
-        month_days_length = calendar.monthrange(1988, 5)[1]
         get_block = cg.get_month_block(cg.Day(DATE), n=len(month_weeks))
 
         for i in range(len(month_weeks)):

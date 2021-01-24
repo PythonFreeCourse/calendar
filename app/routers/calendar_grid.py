@@ -2,7 +2,7 @@ import calendar
 import itertools
 import locale
 from datetime import date, datetime, timedelta
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Dict, Iterator, List, Tuple
 
 MONTH_BLOCK: int = 6
 
