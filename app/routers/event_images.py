@@ -1,4 +1,4 @@
-from .. import config
+from app import config
 from functools import lru_cache
 from nltk.tokenize import word_tokenize
 from typing import Optional
