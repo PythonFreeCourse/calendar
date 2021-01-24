@@ -2,10 +2,12 @@ import re
 
 from fastapi import HTTPException
 
-ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\t\n]+')
+from starlette.status import HTTP_400_BAD_REQUEST
+
+ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
 
 
 def validate_zoom_link(location):
-    if not ZOOM_REGEX.findall(location):
-        raise HTTPException(status_code=400,
+    if ZOOM_REGEX.search(location) is None:
+        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="VC type with no valid zoom link")
