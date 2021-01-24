@@ -29,3 +29,6 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
+
+# register
+DATABASE_CONNECTION_STRING = "sqlite:///calendar.db"

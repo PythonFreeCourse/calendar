@@ -3,29 +3,23 @@ from app.database import models, schemas
 from sqlalchemy.orm import Session
 
 
-def get_user_by_id(db: Session, user_id: int) -> models.User:
-    '''
-    query database for a user by unique id
-    '''
+def get_by_id(db: Session, user_id: int) -> models.User:
+    '''query database for a user by unique id'''
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
-def get_user_by_username(db: Session, username: str) -> models.User:
-    '''
-    query database for a user by unique username
-    '''
+def get_by_username(db: Session, username: str) -> models.User:
+    '''query database for a user by unique username'''
     return db.query(models.User).filter(
         models.User.username == username).first()
 
 
-def get_user_by_email(db: Session, email: str) -> models.User:
-    '''
-    query database for a user by unique email
-    '''
+def get_by_mail(db: Session, email: str) -> models.User:
+    '''query database for a user by unique email'''
     return db.query(models.User).filter(models.User.email == email).first()
 
 
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+def create(db: Session, user: schemas.UserCreate) -> models.User:
     '''
     creating a new User object in the database, with hashed password
     '''
@@ -46,10 +40,8 @@ def create_user(db: Session, user: schemas.UserCreate) -> models.User:
     return db_user
 
 
-def delete_user_by_mail(db: Session, email: str) -> None:
-    '''
-    deletes a user from database by unique email
-    '''
-    db_user = get_user_by_email(db=db, email=email)
+def delete_by_mail(db: Session, email: str) -> None:
+    '''deletes a user from database by unique email'''
+    db_user = get_by_mail(db=db, email=email)
     db.delete(db_user)
     db.commit()

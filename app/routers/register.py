@@ -1,4 +1,4 @@
-from app.internal import crud
+from app.internal import user
 from app.database import schemas
 from app.database.database import get_db
 from app.dependencies import templates
@@ -37,7 +37,7 @@ async def register(
     try:
         # creating pydantic schema object out of form data
 
-        user = schemas.UserCreate(**form_dict)
+        new_user = schemas.UserCreate(**form_dict)
     except ValidationError as e:
         # if pydantic validations fails, rendering errors to register.html
 
@@ -51,7 +51,7 @@ async def register(
     try:
         # attempt creating User Model object, and saving to database
 
-        crud.create_user(db=db, user=user)
+        user.create(db=db, user=new_user)
 
         '''
         if creating User Model objects fails due to registered unique details -
@@ -60,9 +60,9 @@ async def register(
     except IntegrityError:
         db.rollback()
         errors = {}
-        db_user_email = crud.get_user_by_email(db, email=user.email)
-        db_user_username = crud.get_user_by_username(
-            db, username=user.username)
+        db_user_email = user.get_by_mail(db, email=new_user.email)
+        db_user_username = user.get_by_username(
+            db, username=new_user.username)
         if db_user_username:
             errors['username'] = "That username is already taken"
         if db_user_email:
