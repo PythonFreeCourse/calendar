@@ -21,9 +21,9 @@ def search(request: Request):
 
 @router.post("/search")
 async def show_results(
-    request: Request,
-    keywords: str = Form(None),
-    db: Session = Depends(get_db)):
+                        request: Request,
+                        keywords: str = Form(None),
+                        db: Session = Depends(get_db)):
     # Made up user details until there's a user login system
     current_username = "Chuck Norris"
     current_user = 1
