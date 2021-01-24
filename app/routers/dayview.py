@@ -25,8 +25,8 @@ class DivAttributes:
     FIRST_GRID_BAR = 1
     LAST_GRID_BAR = 101
     DEFAULT_COLOR = 'grey'
-    DEFAULT_TIME_FORMAT = "%H:%M"
-    MULTIDAT_TIME_FORMAT = "%d/%m %H:%M"
+    DEFAULT_FORMAT = "%H:%M"
+    MULTIDAY_FORMAT = "%d/%m %H:%M"
 
     def __init__(self, event: Event,
                  day: Union[bool, datetime] = False) -> None:
@@ -43,7 +43,7 @@ class DivAttributes:
             return self.DEFAULT_COLOR
         return color
 
-    def _minutes_position(self, minutes: int) -> int:
+    def _minutes_position(self, minutes: int) -> Union[int, None]:
         min_minutes = self.MIN_MINUTES
         max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
@@ -72,11 +72,8 @@ class DivAttributes:
 
     def _get_time_format(self) -> str:
         for multiday in [self.start_multiday, self.end_multiday]:
-            if multiday:
-                yield self.MULTIDAT_TIME_FORMAT
-            else:
-                yield self.DEFAULT_TIME_FORMAT
-
+            yield self.MULTIDAY_FORMAT if multiday else self.DEFAULT_FORMAT 
+                
     def _set_total_time(self) -> None:
         length = self.end_time - self.start_time
         self.length = length.seconds / 60
@@ -107,10 +104,10 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
             or_(and_(Event.start >= day, Event.start < day_end),
                 and_(Event.end >= day, Event.end < day_end),
                 and_(Event.start < day_end, day_end < Event.end)))
-    events_n_Attrs = [(event, DivAttributes(event, day)) for event in events]
+    events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     return templates.TemplateResponse("dayview.html", {
         "request": request,
-        "events": events_n_Attrs,
+        "events": events_n_attrs,
         "month": day.strftime("%B").upper(),
         "day": day.day
         })
