@@ -7,7 +7,7 @@ from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine
 from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
-from app.routers import agenda, event, profile, search
+from app.routers import agenda, email, event, invitation, profile, search
 
 
 if 'sqlite' in str(engine.url) and PSQL_ENVIRONMENT:
@@ -26,6 +26,8 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
+app.include_router(email.router)
+app.include_router(invitation.router)
 app.include_router(search.router)
 
 
@@ -33,5 +35,5 @@ app.include_router(search.router)
 async def home(request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
-        "message": "Hello, World!"
+        "message": "Hello, World!",
     })

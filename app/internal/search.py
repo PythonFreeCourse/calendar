@@ -32,5 +32,5 @@ def get_results_by_keywords(session: SessionLocal, keywords: str, owner_id: int)
         Event.owner_id == owner_id,
         Event.events_tsv.match(keywords)).all()
 
-    except SQLAlchemyError:
+    except (SQLAlchemyError, AttributeError):
         return []
