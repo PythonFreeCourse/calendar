@@ -10,16 +10,16 @@ from app import config
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_CONNECTION_STRING", config.DEVELOPMENT_DATABASE_STRING)
 
-if not config.PSQL_ENVIRONMENT:
-    engine = create_engine(
-        SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-    )
 
-else:
-    engine = create_engine(
-        SQLALCHEMY_DATABASE_URL
-    )
+def create_env_engine(psql_environment):
+    if not psql_environment:
+        return create_engine(
+            SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 
+    return create_engine(SQLALCHEMY_DATABASE_URL)
+
+
+engine = create_env_engine(config.PSQL_ENVIRONMENT)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
