@@ -64,3 +64,20 @@ def sqlite_engine():
     session = TestingSession()
     session.close()
     Base.metadata.drop_all(bind=sqlite_test_engine)
+
+
+@pytest.fixture
+def psql_session():
+    SQLALCHEMY_TEST_DATABASE_URL = (
+                                    "postgresql://postgres:1234"
+                                    "@localhost/postgres"
+                                   )
+    psql_test_engine = create_engine(SQLALCHEMY_TEST_DATABASE_URL)
+    TestingPsqlSession = sessionmaker(
+        autocommit=False, autoflush=False, bind=psql_test_engine)
+    
+    Base.metadata.create_all(bind=psql_test_engine)
+    session = TestingPsqlSession()
+    yield session
+    session.close()
+    Base.metadata.drop_all(bind=psql_test_engine)

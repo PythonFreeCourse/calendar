@@ -1,6 +1,6 @@
 import pytest
 from app.database.database import create_env_engine
-from app.database.models import PSQLEnvironmentError
+from app.database.models import PSQLEnvironmentError, create_event_listen
 from app.main import create_tables
 
 
@@ -19,3 +19,8 @@ def test_database_create_engine():
     sqlalchemy_database_url = "sqlite:///./test1.db"
     engine = create_env_engine(False, sqlalchemy_database_url)
     assert 'sqlite' in str(engine.url)
+
+
+def test_database_psql_event_listen(psql_session):
+    assert create_event_listen(True)
+    assert not create_event_listen(False)
