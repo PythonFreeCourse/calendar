@@ -9,10 +9,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from app.database.models import User, OAuthCredentials
 from app.database.database import get_db
 from app.routers.profile import router as profile_router
+from app.config import CLIENT_SECRET_FILE
 
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-CLIENT_SECRET_FILE = os.getenv('CLIENT_SECRET')
 
 
 router = APIRouter(
@@ -22,8 +22,7 @@ router = APIRouter(
 )
 
 @router.get("/sync")
-async def google_sync(request: Request, session = Depends(get_db)):
-    # Get relevant data from database
+async def google_sync(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
 
     credentials = None
@@ -41,8 +40,9 @@ async def google_sync(request: Request, session = Depends(get_db)):
 
     else:
         print("Fetching new Tokens")
-        flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, scopes=SCOPES)
-        flow.run_local_server( prompt='consent', authorization_prompt_message="")
+        print(CLIENT_SECRET_FILE)
+        flow = InstalledAppFlow.from_client_secrets_file(client_secrets_file=CLIENT_SECRET_FILE, scopes=SCOPES)
+        flow.run_local_server(prompt='consent')
         credentials = flow.credentials
 
         oauth_credentials = OAuthCredentials(owner=user, token=credentials.token, refresh_token=credentials.refresh_token, token_uri=credentials.token_uri, client_id=credentials.client_id, client_secret=credentials.client_secret, expiry=credentials.expiry)
