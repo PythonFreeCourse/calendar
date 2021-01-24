@@ -55,9 +55,7 @@ header {
     background-color: #F7F7F7;
 }
 
-#header-bottom {
-    display: none;
-}
+#header-bottom {display: none;}
 
 #logo-div {
     align-self: center;
@@ -76,9 +74,7 @@ main {
     flex-flow: row wrap;
 }
 
-.calendar {
-    flex: 1;
-}
+.calendar {flex: 1;}
 
 #day-display {
     flex: 0 0 0;
@@ -138,17 +134,11 @@ main {
 
 .event { font-weight: 400; }
 
-.day:hover {
-    border: 0.2rem solid #222831;
-}
+.day:hover {border: 0.2rem solid #222831;}
 
-.day:hover .day-number{
-    color: #F24726;
-}
+.day:hover .day-number{color: #F24726;}
 
-.day:hover .add-small{
-    display: block;
-}
+.day:hover .add-small{display: block;}
 
 .day-number {
     font-weight: 900;
@@ -165,9 +155,7 @@ main {
     flex-flow: row wrap;
 }
 
-.month-day-header div {
-    flex-grow: 2;
-}
+.month-day-header div {flex-grow: 2;}
 
 .add-small {
     display: none;
@@ -177,9 +165,7 @@ main {
 }
 
 /* Dates Navigation */
-.dates-navigation {
-    position: fixed;
-}
+.dates-navigation {position: fixed;}
 
 /* Events - Rotation*/
 .month-event {
@@ -229,13 +215,9 @@ main {
 }
 
 /* Alignments */
-.align-right {
-    text-align: right;
-}
+.align-right {text-align: right;}
 
-.align-left {
-    text-left: right;
-}
+.align-left {text-align: left;}
 
 /* Text Colors */
 .text-yellow {color: #FFDE4D;}

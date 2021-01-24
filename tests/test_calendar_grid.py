@@ -1,4 +1,5 @@
 import datetime
+from http import HTTPStatus
 
 import app.routers.calendar_grid as cg
 
@@ -13,14 +14,21 @@ NEXT_N_DAYS = [
     cg.Day(datetime.date(1988, 5, 6))
 ]
 DAY_TYPES = [cg.Day, cg.DayWeekend, cg.Today, cg.FirstDayMonth]
+WEEK_DAYS = cg.Week.WEEK_DAYS
 
 
 class TestCalendarGrid:
     @staticmethod
     def test_get_calendar(client):
         response = client.get("/calendar")
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert b"SUNDAY" in response.content
+
+    @staticmethod
+    def test_get_calendar_extends(client):
+        response = client.get(f"/calendar/{DAY.display()}")
+        assert response.status_code == HTTPStatus.OK
+        assert b"08" in response.content
 
     @staticmethod
     def test_create_day():
@@ -36,9 +44,12 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_next_date():
-        next_day = cg.Day(DATE + datetime.timedelta(days=1))
         next_day_generator = cg.get_next_date(DATE)
-        assert next(next_day_generator).date == next_day.date
+        next_day = next(next_day_generator, None)
+        next_day_check = cg.Day(DATE + datetime.timedelta(days=1))
+        assert next_day
+        assert isinstance(next_day, cg.Day)
+        assert next_day.date == next_day_check.date
 
     @staticmethod
     def test_get_date_before_n_days():
@@ -74,11 +85,12 @@ class TestCalendarGrid:
     @staticmethod
     def test_get_month_block(Calendar):
         month_days = cg.split_list_to_lists(
-            list(Calendar.itermonthdates(1988, 5)), 7)
-        get_block = cg.get_month_block(cg.Day(DATE), n=42)
+            list(Calendar.itermonthdates(1988, 5)), WEEK_DAYS)
+        get_block = cg.get_month_block(
+            cg.Day(DATE), n=len(month_days) * WEEK_DAYS)
         print(get_block[0][0].date)
         print(get_block[-1][-1].date)
-        for i in range(len(get_block)):
+        for i in range(len(month_days)):
             for j in range(7):
                 assert get_block[i][j].date == month_days[i][j]
 

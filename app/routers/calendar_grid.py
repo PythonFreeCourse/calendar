@@ -4,7 +4,6 @@ import locale
 from datetime import date, datetime, timedelta
 from typing import Any, Generator, Iterator, List
 
-
 DISPLAY_BLOCK = 100
 MONTH_BLOCK = 6
 
