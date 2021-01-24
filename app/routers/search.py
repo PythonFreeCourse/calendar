@@ -7,12 +7,13 @@ from sqlalchemy.orm import Session
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/search")
 def search(request: Request):
-    current_username = "Chuck Norris"  # Made up until there's a user login system
+    # Made up user details until there's a user login system
+    current_username = "Chuck Norris"
+
     return templates.TemplateResponse("search.html", {
         "request": request,
         "username": current_username
@@ -20,10 +21,14 @@ def search(request: Request):
 
 
 @router.post("/search")
-async def show_results(request: Request, keywords: str = Form(None), db: Session = Depends(get_db)):
-    current_username = "Chuck Norris"  # Made up until there's a user login system
-    current_user = 1  # Made up until there's a user login system
-    
+async def show_results(
+    request: Request,
+    keywords: str = Form(None),
+    db: Session = Depends(get_db)):
+    # Made up user details until there's a user login system
+    current_username = "Chuck Norris"
+    current_user = 1
+
     message = ""
 
     if not keywords:
@@ -33,7 +38,7 @@ async def show_results(request: Request, keywords: str = Form(None), db: Session
         results = get_results_by_keywords(db, keywords, owner_id=current_user)
         if not results:
             message = f"No matching results for '{keywords}'."
-    
+
     return templates.TemplateResponse("search.html", {
         "request": request,
         "username": current_username,

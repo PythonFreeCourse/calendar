@@ -1,6 +1,4 @@
-import os
-
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
 from app.config import PSQL_ENVIRONMENT
@@ -13,7 +11,8 @@ from app.routers import agenda, email, event, invitation, profile, search
 if 'sqlite' in str(engine.url) and PSQL_ENVIRONMENT:
     raise models.PSQLEnvironmentError(
         "You're trying to use PSQL features on SQLite env.\n"
-        "Please set app.config.PSQL_ENVIRONMENT to False and run the app again."
+        "Please set app.config.PSQL_ENVIRONMENT to False "
+        "and run the app again."
     )
 else:
     models.Base.metadata.create_all(bind=engine)

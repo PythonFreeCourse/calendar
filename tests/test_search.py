@@ -31,7 +31,7 @@ class TestSearch:
         session.add(user)
         session.commit()
         return user
-    
+
     @staticmethod
     def add_event(session, title, content, owner_id):
         event = Event(
@@ -44,26 +44,38 @@ class TestSearch:
 
         session.add(event)
         session.commit()
-    
+
     @staticmethod
     def create_data(session):
-        user = TestSearch.create_user(session)
+        TestSearch.create_user(session)
         events = [
-            {'title': "My first event", 'content': 'I am so excited', 'owner_id': 1},
-            {'title': "My second event", 'content': 'I am very emotional', 'owner_id': 1},
-            {'title': "Pick up my nephews", 'content': 'Very important', 'owner_id': 1},
-            {'title': "Solve this ticket", 'content': 'I can do this', 'owner_id': 1},
-            {'title': "Jam with my friends", 'content': "Jamming is fun", 'owner_id': 1},
-            {'title': 'test', 'content': 'love string', 'owner_id': 1}
+            {'title': "My first event",
+            'content': 'I am so excited',
+            'owner_id': 1},
+            {'title': "My second event",
+            'content': 'I am very emotional',
+            'owner_id': 1},
+            {'title': "Pick up my nephews",
+            'content': 'Very important',
+            'owner_id': 1},
+            {'title': "Solve this ticket",
+            'content': 'I can do this',
+            'owner_id': 1},
+            {'title': "Jam with my friends",
+            'content': "Jamming is fun",
+            'owner_id': 1},
+            {'title': 'test',
+            'content': 'love string',
+            'owner_id': 1}
         ]
         
         for event in events:
-            TestSearch.add_event(session, 
-                                title=event['title'],
-                                content=event['content'],
-                                owner_id=event['owner_id']
-            )
-    
+            TestSearch.add_event(session,
+                                 title=event['title'],
+                                 content=event['content'],
+                                 owner_id=event['owner_id']
+                                )
+
     @staticmethod
     def test_search_page_exists(client):
         resp = client.get(TestSearch.SEARCH)
