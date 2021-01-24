@@ -15,10 +15,10 @@ def get_stripped_keywords(keywords: str) -> str:
 
 
 def get_results_by_keywords(
-    session: SessionLocal,
-    keywords: str,
-    owner_id: int
-    ) -> List[Event]:
+                            session: SessionLocal,
+                            keywords: str,
+                            owner_id: int
+                           ) -> List[Event]:
     """Returns possible results for a search in the 'events' database table
 
     Args:

@@ -16,7 +16,7 @@ if 'sqlite' in str(engine.url) and PSQL_ENVIRONMENT:
     )
 else:
     models.Base.metadata.create_all(bind=engine)
-    
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")

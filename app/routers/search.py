@@ -2,7 +2,6 @@ from app.database.database import get_db
 from app.dependencies import templates
 from app.internal.search import get_results_by_keywords
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 
@@ -39,10 +38,13 @@ async def show_results(
         if not results:
             message = f"No matching results for '{keywords}'."
 
-    return templates.TemplateResponse("search.html", {
-        "request": request,
-        "username": current_username,
-        "message": message,
-        "results": results,
-        "keywords": keywords
-    })
+    return templates.TemplateResponse(
+                                        "search.html",
+                                        {
+                                            "request": request,
+                                            "username": current_username,
+                                            "message": message,
+                                            "results": results,
+                                            "keywords": keywords
+                                        }
+                                      )
