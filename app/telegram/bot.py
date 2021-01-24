@@ -8,4 +8,4 @@ settings: config.Settings = get_settings()
 BOT_API = settings.bot_api
 WEBHOOK_URL = settings.webhook_url
 
-pylander = Bot(BOT_API, WEBHOOK_URL)
+telegram_bot = Bot(BOT_API, WEBHOOK_URL)

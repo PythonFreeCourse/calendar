@@ -15,29 +15,27 @@ DATE_FORMAT = '%d %b %Y'
 
 def get_this_week_buttons() -> List[List[Any]]:
     today = datetime.date.today()
-    day1 = today + datetime.timedelta(days=1)
-    day2 = today + datetime.timedelta(days=2)
-    day3 = today + datetime.timedelta(days=3)
-    day4 = today + datetime.timedelta(days=4)
-    day5 = today + datetime.timedelta(days=5)
-    day6 = today + datetime.timedelta(days=6)
+    buttons = []
+    for day in range(1, 7):
+        day = today + datetime.timedelta(days=day)
+        buttons.append(day.strftime(DATE_FORMAT))
 
     return [
         [
-            {'text': day1.strftime(DATE_FORMAT),
-                'callback_data': day1.strftime(DATE_FORMAT)},
-            {'text': day2.strftime(DATE_FORMAT),
-                'callback_data': day2.strftime(DATE_FORMAT)},
-            {'text': day3.strftime(DATE_FORMAT),
-                'callback_data': day3.strftime(DATE_FORMAT)}
+            {'text': buttons[0],
+                'callback_data': buttons[0]},
+            {'text': buttons[1],
+                'callback_data': buttons[1]},
+            {'text': buttons[2],
+                'callback_data': buttons[2]}
         ],
         [
-            {'text': day4.strftime(DATE_FORMAT),
-                'callback_data': day4.strftime(DATE_FORMAT)},
-            {'text': day5.strftime(DATE_FORMAT),
-                'callback_data': day5.strftime(DATE_FORMAT)},
-            {'text': day6.strftime(DATE_FORMAT),
-                'callback_data': day6.strftime(DATE_FORMAT)}
+            {'text': buttons[3],
+                'callback_data': buttons[3]},
+            {'text': buttons[4],
+                'callback_data': buttons[4]},
+            {'text': buttons[5],
+                'callback_data': buttons[5]}
         ]
     ]
 

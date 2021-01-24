@@ -5,7 +5,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.telegram.pylander import pylander
+from app.telegram.bot import telegram_bot
 from app.routers import agenda, email, event, invitation, profile, telegram
 
 models.Base.metadata.create_all(bind=engine)
@@ -21,7 +21,7 @@ app.include_router(telegram.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 
-pylander.set_webhook()
+telegram_bot.set_webhook()
 
 
 @app.get("/")

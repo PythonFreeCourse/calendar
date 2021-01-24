@@ -1,4 +1,5 @@
 from fastapi import status
+import pytest
 
 from .client_fixture import get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
@@ -91,7 +92,8 @@ class TestChatModel:
         assert chat.first_name == 'Moshe'
 
 
-def test_bot_model():
+@pytest.mark.asyncio
+async def test_bot_model():
     bot = Bot("fake bot id", "https://google.com")
     assert bot.base == 'https://api.telegram.org/botfake bot id/'
     assert bot.webhook_setter_url == 'https://api.telegram.org/botfake \
@@ -117,7 +119,7 @@ bot id/setWebhook?url=https://google.com/telegram/'
         'description': 'Not Found'
     }
 
-    send_request = bot.send_message("654654645", "hello")
+    send_request = await bot.send_message("654654645", "hello")
     assert send_request.status_code == status.HTTP_404_NOT_FOUND
     assert send_request.json() == {
         'ok': False,
@@ -129,15 +131,17 @@ bot id/setWebhook?url=https://google.com/telegram/'
 class TestHandlers:
     TEST_USER = get_test_placeholder_user()
 
-    def test_start_handlers(self):
+    @pytest.mark.asyncio
+    async def test_start_handlers(self):
         chat = Chat(gen_message('/start'))
         message = MessageHandler(chat, self.TEST_USER)
 
         assert '/start' in message.handlers
-        assert message.process_callback() == '''Hello, Moshe!
+        assert await message.process_callback() == '''Hello, Moshe!
 Welcome to Pylander telegram client!'''
 
-    def test_default_handlers(self):
+    @pytest.mark.asyncio
+    async def test_default_handlers(self):
         wrong_start = MessageHandler(
             Chat(gen_message('start')), self.TEST_USER)
         wrong_show_events = MessageHandler(
@@ -145,36 +149,41 @@ Welcome to Pylander telegram client!'''
         message = MessageHandler(
             Chat(gen_message('hello')), self.TEST_USER)
 
-        assert wrong_start.process_callback() == "Unknown command."
-        assert wrong_show_events.process_callback() == "Unknown command."
-        assert message.process_callback() == "Unknown command."
+        assert await wrong_start.process_callback() == "Unknown command."
+        assert await wrong_show_events.process_callback() == "Unknown command."
+        assert await message.process_callback() == "Unknown command."
 
-    def test_show_events_handler(self):
+    @pytest.mark.asyncio
+    async def test_show_events_handler(self):
         chat = Chat(gen_message('/show_events'))
         message = MessageHandler(chat, self.TEST_USER)
-        assert message.process_callback() == 'Choose events day.'
+        assert await message.process_callback() == 'Choose events day.'
 
-    def test_today_handler(self):
+    @pytest.mark.asyncio
+    async def test_today_handler(self):
         chat = Chat(gen_callback('Today'))
         message = MessageHandler(chat, self.TEST_USER)
-        assert message.process_callback() == "There're no events today."
+        assert await message.process_callback() == "There're no events today."
 
-    def test_this_week_handler(self):
+    @pytest.mark.asyncio
+    async def test_this_week_handler(self):
         chat = Chat(gen_callback('This week'))
         message = MessageHandler(chat, self.TEST_USER)
-        assert message.process_callback() == 'Choose a day.'
+        assert await message.process_callback() == 'Choose a day.'
 
-    def test_chosen_day_handler(self):
+    @pytest.mark.asyncio
+    async def test_chosen_day_handler(self):
         chat = Chat(gen_callback('10 Feb 2021'))
         message = MessageHandler(chat, self.TEST_USER)
         message.handlers['10 Feb 2021'] = message.chosen_day_handler
-        assert (
-            message.process_callback() == "There're no events on February 10.")
+        assert await message.process_callback() == \
+            "There're no events on February 10."
 
 
-def test_reply_unknown_user():
+@pytest.mark.asyncio
+async def test_reply_unknown_user():
     chat = Chat(gen_message('/show_events'))
-    answer = reply_unknown_user(chat)
+    answer = await reply_unknown_user(chat)
     assert answer == '''
 Hello, Moshe!
 
@@ -191,22 +200,28 @@ https://calendar.pythonic.guru/profile/
 class TestBotClient:
 
     @staticmethod
-    def test_telegram_router(profile_test_client):
-        req = profile_test_client.get('/telegram')
-        assert req.ok
-        assert b"Start using PyLander telegram bot!" in req.content
+    @pytest.mark.asyncio
+    async def test_user_not_registered(telegram_client):
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Hello, Moshe!' in response.content
+        assert b'To use PyLander Bot you have to register' \
+            in response.content
 
     @staticmethod
-    def test_user_not_registered(telegram_client):
-        req = telegram_client.post('/telegram/', json=gen_message('/start'))
-        assert req.ok
-        assert b'Hello, Moshe!' in req.content
-        assert b'To use PyLander Bot you have to register' in req.content
-
-    @staticmethod
-    def test_user_registered(telegram_client, session):
+    @pytest.mark.asyncio
+    async def test_user_registered(telegram_client, session):
         session.add(get_test_placeholder_user())
         session.commit()
-        req = telegram_client.post('/telegram/', json=gen_message('/start'))
-        assert req.ok
-        assert b'Welcome to Pylander telegram client!' in req.content
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Welcome to Pylander telegram client!' in response.content
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_telegram_router(telegram_client):
+        response = await telegram_client.get('/telegram')
+        assert response.status_code == status.HTTP_200_OK
+        assert b"Start using PyLander telegram bot!" in response.content

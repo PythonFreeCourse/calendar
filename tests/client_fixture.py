@@ -4,7 +4,7 @@ import pytest
 from app.database.models import User
 from app.main import app
 from app.database.database import Base
-from app.routers import agenda, invitation, profile, telegram
+from app.routers import agenda, invitation, profile
 from tests.conftest import test_engine, get_test_db
 
 
@@ -59,15 +59,3 @@ def get_test_placeholder_user():
         full_name='FakeName',
         telegram_id='666666'
     )
-
-
-@pytest.fixture(scope="module")
-def telegram_client():
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[telegram.get_db] = get_test_db
-
-    with TestClient(app) as client:
-        yield client
-
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
