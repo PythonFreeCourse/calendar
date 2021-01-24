@@ -28,6 +28,12 @@ def get_test_db():
     return TestingSessionLocal()
 
 
+pytest_plugins = [
+    'tests.db_entities',
+    'smtpdfix'
+]
+
+
 @pytest.fixture
 def session():
     Base.metadata.create_all(bind=test_engine)
