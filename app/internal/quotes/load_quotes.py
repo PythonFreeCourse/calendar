@@ -3,7 +3,6 @@ from typing import Dict, List
 
 from app.database.models import Quote
 
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 
@@ -12,8 +11,11 @@ def get_quotes_from_json() -> List[Dict]:
     The JSON file content is copied from the free API:
     'https://type.fit/api/quotes'. I saved the content so the API won't be
     called every time the app is initialized."""
-    with open('app/resources/quotes.json', 'r') as f:
-        quotes_list = json.load(f)
+    try:
+        with open('app/resources/quotes.json', 'r') as f:
+            quotes_list = json.load(f)
+    except (IOError, ValueError):
+        return []
     return quotes_list
 
 
@@ -35,8 +37,5 @@ def is_quotes_table_empty(session: Session) -> bool:
 def load_daily_quotes(session: Session) -> None:
     """This function loads the daily quotes to the db,
     if they weren't already loaden"""
-    try:
-        if is_quotes_table_empty(session):
-            add_quotes_to_db(session)
-    except (SQLAlchemyError, IOError, ValueError):
-        pass
+    if is_quotes_table_empty(session):
+        add_quotes_to_db(session)
