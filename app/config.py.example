@@ -22,7 +22,7 @@ WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
 
-# email
+# EMAIL
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
@@ -35,15 +35,12 @@ email_conf = ConnectionConfig(
 )
 
 # LOGGER
-LOGGER = {
-    "logger": {
-        "path": "./var/log",
-        "filename": "calendar.log",
-        "level": "error",
-        "rotation": "20 days",
-        "retention": "1 month",
-        "format": ("<level>{level: <8}</level> <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
-                   " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
-                   " - <level>{message}</level>")
-    }
-}
+LOG_PATH = "./var/log"
+LOG_FILENAME = "calendar.log"
+LOG_LEVEL = "error"
+LOG_ROTATION_INTERVAL = "20 days"
+LOG_RETENTION_INTERVAL = "1 month"
+LOG_FORMAT = ("<level>{level: <8}</level>"
+              " <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
+              " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
+              " - <level>{message}</level>")

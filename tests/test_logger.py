@@ -3,15 +3,10 @@ import logging
 import pytest
 
 from app.internal.logger_customizer import LoggerCustomizer, LoggerConfigError
+from app import config
 
 
 class TestLogger:
-    @staticmethod
-    def test_configuration_file(caplog, logger_external_configuration):
-        with caplog.at_level(logging.ERROR):
-            logger_external_configuration.error('Testing configuration ERROR')
-            assert 'Testing configuration' in caplog.text
-
     @staticmethod
     def test_log_debug(caplog, logger_instance):
         with caplog.at_level(logging.DEBUG):
@@ -38,18 +33,10 @@ class TestLogger:
 
     @staticmethod
     def test_bad_configuration():
-        bad_config = {
-            "logger": {
-                "path": "./var/log",
-                "filename": "calendar.log",
-                "level": "eror",
-                "rotation": "20 days",
-                "retention": "1 month",
-                "format": ("<level>{level: <8}</level> "
-                           "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
-                           "- <cyan>{name}</cyan>:<cyan>{function}</cyan>"
-                           " - <level>{message}</level>")
-            }
-        }
         with pytest.raises(LoggerConfigError):
-            LoggerCustomizer.make_logger(bad_config, 'logger')
+            LoggerCustomizer.make_logger(config.LOG_PATH,
+                                         config.LOG_FILENAME,
+                                         'eror',
+                                         config.LOG_ROTATION_INTERVAL,
+                                         config.LOG_RETENTION_INTERVAL,
+                                         config.LOG_FORMAT)

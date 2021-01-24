@@ -1,6 +1,4 @@
-import json
 import sys
-from typing import Union, Dict
 
 from pathlib import Path
 from loguru import logger, _Logger as Logger
@@ -13,14 +11,24 @@ class LoggerConfigError(Exception):
 class LoggerCustomizer:
 
     @classmethod
-    def make_logger(cls, config_file_or_dict: Union[Path, Dict],
-                    logger_name: str) -> Logger:
-        """Creates a loguru logger from given configuration path or dict.
+    def make_logger(cls, log_path: Path,
+                    log_filename: str,
+                    log_level: str,
+                    log_rotation_interval: str,
+                    log_retention_interval: str,
+                    log_format: str) -> Logger:
+        """Creates a logger from given configurations
 
         Args:
-            config_file_or_dict (Union[Path, Dict]): Path to logger
-            configuration file or dictionary of configuration
-            logger_name (str): Logger instance created from configuration
+            log_path (Path): Path where the log file is located
+            log_filename (str):
+
+            log_level (str): The level we want to start logging from
+            log_rotation_interval (str): Every how long the logs
+                would be rotated
+            log_retention_interval (str): Amount of time in words defining
+                how long the log will be kept
+            log_format (str): The logging format
 
         Raises:
             LoggerConfigError: Error raised when the configuration is invalid
@@ -28,19 +36,13 @@ class LoggerCustomizer:
         Returns:
             Logger: Loguru logger instance
         """
-
-        config = cls.load_logging_config(config_file_or_dict)
         try:
-            logging_config = config.get(logger_name)
-            logs_path = logging_config.get('path')
-            log_file_path = logging_config.get('filename')
-
             logger = cls.customize_logging(
-                file_path=Path(logs_path) / Path(log_file_path),
-                level=logging_config.get('level'),
-                retention=logging_config.get('retention'),
-                rotation=logging_config.get('rotation'),
-                format=logging_config.get('format')
+                file_path=Path(log_path) / Path(log_filename),
+                level=log_level,
+                retention=log_retention_interval,
+                rotation=log_rotation_interval,
+                format=log_format
             )
         except (TypeError, ValueError) as err:
             raise LoggerConfigError(
@@ -90,21 +92,3 @@ class LoggerCustomizer:
         )
 
         return logger
-
-    @classmethod
-    def load_logging_config(cls, config: Union[Path, Dict]) -> Dict:
-        """Loads logging configuration from file or dict
-
-        Args:
-            config (Union[Path, Dict]): Path to logging configuration file
-
-        Returns:
-            Dict: Configuration parsed as dictionary
-        """
-        if isinstance(config, Path):
-            with open(config) as config_file:
-                used_config = json.load(config_file)
-        else:
-            used_config = config
-
-        return used_config

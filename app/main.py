@@ -6,9 +6,7 @@ from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
 from app.routers import agenda, event, profile, email, invitation
-
 from app.internal.logger_customizer import LoggerCustomizer
-
 from app import config
 
 models.Base.metadata.create_all(bind=engine)
@@ -18,7 +16,12 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 # Configure logger
-logger = LoggerCustomizer.make_logger(config.LOGGER, "logger")
+logger = LoggerCustomizer.make_logger(config.LOG_PATH,
+                                      config.LOG_FILENAME,
+                                      config.LOG_LEVEL,
+                                      config.LOG_ROTATION_INTERVAL,
+                                      config.LOG_RETENTION_INTERVAL,
+                                      config.LOG_FORMAT)
 app.logger = logger
 
 

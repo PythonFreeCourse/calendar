@@ -10,17 +10,12 @@ from app.internal.logger_customizer import LoggerCustomizer
 
 @pytest.fixture(scope='module')
 def logger_instance():
-    _logger = LoggerCustomizer.make_logger(config.LOGGER, "logger")
-
-    return _logger
-
-
-@pytest.fixture(scope='module')
-def logger_external_configuration():
-    from pathlib import Path
-    config_path = Path(__file__).parent
-    config_path = config_path.absolute() / 'logging_config.json'
-    _logger = LoggerCustomizer.make_logger(config_path, "logger1")
+    _logger = LoggerCustomizer.make_logger(config.LOG_PATH,
+                                           config.LOG_FILENAME,
+                                           config.LOG_LEVEL,
+                                           config.LOG_ROTATION_INTERVAL,
+                                           config.LOG_RETENTION_INTERVAL,
+                                           config.LOG_FORMAT)
 
     return _logger
 
