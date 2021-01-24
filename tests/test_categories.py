@@ -13,6 +13,10 @@ class TestCategories:
     UNALLOWED_PARAMS = "contains unallowed params"
 
     @staticmethod
+    def test_get_categories_logic_succeeded(session, user, category):
+        assert get_user_categories(session, category.user_id) == [category]
+
+    @staticmethod
     def test_creating_new_category(client, user):
         response = client.post("/categories/",
                                json={"user_id": user.id, "name": "Foo",
@@ -79,10 +83,6 @@ class TestCategories:
     def test_to_dict(category):
         assert {c.name: getattr(category, c.name) for c in
                 category.__table__.columns} == category.to_dict()
-
-    @staticmethod
-    def test_get_categories_logic_succeeded(session, user, category):
-        assert get_user_categories(session, category.user_id) == [category]
 
     @staticmethod
     @pytest.mark.parametrize('params, expected_result', [

@@ -5,6 +5,13 @@ from app.routers.invitation import get_all_invitations
 
 
 class TestShareEvent:
+    def test_share_failure(self, event, session):
+        participants = [event.owner.email]
+        share(event, participants, session)
+        invitations = get_all_invitations(
+            session=session, recipient_id=event.owner.id
+        )
+        assert invitations == []
 
     def test_share_success(self, user, event, session):
         participants = [user.email]
@@ -13,14 +20,6 @@ class TestShareEvent:
             session=session, recipient_id=user.id
         )
         assert invitations != []
-
-    def test_share_failure(self, event, session):
-        participants = [event.owner.email]
-        share(event, participants, session)
-        invitations = get_all_invitations(
-            session=session, recipient_id=event.owner.id
-        )
-        assert invitations == []
 
     def test_sort_emails(self, user, session):
         # the user is being imported
