@@ -4,8 +4,11 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 import pytest
 
-from app.main import add_event, app, check_validation, get_db
+from app.main import add_event, app, check_validation
+from app.database.database import get_db
 
+for i in get_db():
+    my_db = i
 client = TestClient(app)
 date_test_data = [(datetime.today() - timedelta(1), datetime.today())]
 event_test_data = [(
@@ -16,9 +19,8 @@ event_test_data = [(
     "vc_link": "https://fakevclink.com",
     "content": "Any Words",
     "owner_id": 123},
-    get_db
+    my_db
 )]
-
 
 def test_read_main():
     response = client.get("/")
@@ -35,6 +37,7 @@ def test_get_profile():
 
 
 @pytest.mark.parametrize('start_time,end_time', date_test_data)
+@staticmethod
 def test_check_validation(start_time, end_time):
     assert check_validation(start_time, end_time)
 
@@ -50,6 +53,7 @@ def test_get_editevent_page():
     response = client.get("/profile/122/EditEvent")
     assert response.status_code == 200
     assert b'Time range' in response.content
+
 
 def test_post_editevent():
     response = client.post(
