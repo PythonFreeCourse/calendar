@@ -172,5 +172,3 @@ def test_events_tsv_column_exists():
         assert column_created
     else:
         assert not column_created
-
-        
