@@ -94,8 +94,10 @@ def delete_event(request: Request,
         db.commit()
         if participants and event.start > datetime.now():
             pass
-            # TODO: Send them a cancellation notice if the deletion is successful
-        return RedirectResponse(url="/calendar", status_code=status.HTTP_200_OK)
+            # TODO: Send them a cancellation notice
+            # if the deletion is successful
+        return RedirectResponse(
+            url="/calendar", status_code=status.HTTP_200_OK)
     except (SQLAlchemyError, TypeError):
         return templates.TemplateResponse(
             "event/eventview.html", {"request": request, "event_id": event_id},
