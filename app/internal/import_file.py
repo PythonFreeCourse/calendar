@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime
 import os
 from pathlib import Path
@@ -6,18 +7,25 @@ from typing import Any, Dict, List, Tuple, Union
 
 from icalendar import Calendar
 
-from database.models import Event
-from database.database import SessionLocal
+from app.config import (
+    EVENT_CONTENT_LIMIT,
+    EVENT_HEADER_LIMIT,
+    EVENT_HEADER_NOT_EMPTY,
+    MAX_EVENTS_START_DATE,
+    MAX_FILE_SIZE_MB,
+    NUM_OF_VALUES,
+    VALID_FILE_EXTENSION,
+    VALID_YEARS
+)
+from app.database.models import Event
+from app.database.database import SessionLocal
 
 
-NUM_OF_VALUES = 4  # Event contains head, content, start_date and end_date.
-MAX_FILE_SIZE_MB = 5  # 5MB
-VALID_FILE_EXTENSION = (".txt", ".csv", ".ics")  # Can import only these files.
-VALID_YEARS = 20  # Events must be within 20 years range from the current year.
-EVENT_HEADER_NOT_EMPTY = 1  # 1- for not empty, 0- for empty.
-EVENT_HEADER_LIMIT = 50  # Max characters for event header.
-EVENT_CONTENT_LIMIT = 500  # Max characters for event characters.
-MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
+EVENT_PATTERN = re.compile(r"^(\w{" + str(EVENT_HEADER_NOT_EMPTY) + "," +
+                           str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
+                           str(EVENT_CONTENT_LIMIT) +
+                           r"}),\s(\d{2}-\d{2}-\d{4})," +
+                           r"\s(\d{2}-\d{2}-\d{4})$")
 
 
 def is_file_size_valid(file: str, max_size: int = MAX_FILE_SIZE_MB) -> bool:
@@ -32,9 +40,7 @@ def is_file_extension_valid(file: str,
 
 
 def is_file_exist(file: str) -> bool:
-    if Path(file).is_file():
-        return True
-    return False
+    return Path(file).is_file()
 
 
 def is_date_in_range(date: Union[str, datetime.datetime],
@@ -50,22 +56,14 @@ def is_date_in_range(date: Union[str, datetime.datetime],
             return False
     else:
         check_date = date
-    if check_date.year > now_year + valid_dates or \
-       check_date.year < now_year - valid_dates:
-        return False
-    return True
+    return now_year - valid_dates < check_date.year < now_year + valid_dates
 
 
 def is_event_text_valid(row: str) -> bool:
     """Check if the row contains valid data"""
-    get_values = re.findall(r"^(\w{" + str(EVENT_HEADER_NOT_EMPTY) + "," +
-                            str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
-                            str(EVENT_CONTENT_LIMIT) +
-                            r"}),\s(\d{2}-\d{2}-\d{4})," +
-                            r"\s(\d{2}-\d{2}-\d{4})$", row)
-    if get_values:
-        if len(get_values[0]) == NUM_OF_VALUES:
-            return True
+    get_values = EVENT_PATTERN.findall(row)
+    if get_values and len(get_values[0]) == NUM_OF_VALUES:
+        return True
     return False
 
 
@@ -74,13 +72,8 @@ def is_file_valid_to_import(file: str) -> bool:
     checking before importing that the file exist, the file extension and
     the size meet the rules we have set.
     """
-    if not is_file_exist(file):
-        return False
-    if not is_file_extension_valid(file):
-        return False
-    if not is_file_size_valid(file):
-        return False
-    return True
+    return is_file_exist(file) and is_file_extension_valid(file) and \
+        is_file_size_valid(file)
 
 
 def is_file_valid_to_save_to_database(events: List[Dict[str, Union[str, Any]]],
@@ -91,7 +84,7 @@ def is_file_valid_to_save_to_database(events: List[Dict[str, Union[str, Any]]],
     with the same date according to the rule we have set.
     """
     same_date_counter = 1
-    date_n_count = {}
+    date_n_count = defaultdict(int)
     for event in events:
         if event["S_Date"] in date_n_count:
             date_n_count[event["S_Date"]] += 1
@@ -123,23 +116,28 @@ def import_txt_file(txt_file: str) -> List[Dict[str, Union[str, Any]]]:
     return calendar_content
 
 
-def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
-    calendar_content = []
+def open_ics(ics_file: str):
     with open(ics_file, "r") as ics:
         try:
             calendar_read = Calendar.from_ical(ics.read())
         except (IndexError, ValueError):
             return list()
-        for component in calendar_read.walk():
-            if component.name == "VEVENT":
-                if str(component.get('summary')) is None or \
-                   component.get('dtstart') is None or \
-                   component.get('dtend') is None or \
-                   not is_date_in_range(component.get('dtstart').dt) or \
-                   not is_date_in_range(component.get('dtend').dt):
-                    return list()
-                else:
-                    calendar_content.append({
+    return calendar_read
+
+
+def is_valid_data_event_ics(component) -> bool:
+    """check if ics event data content is valid"""
+    if str(component.get('summary')) is None or \
+       component.get('dtstart') is None or \
+       component.get('dtend') is None or \
+       not is_date_in_range(component.get('dtstart').dt) or \
+       not is_date_in_range(component.get('dtend').dt):
+        return False
+    return True
+
+
+def save_calendar_content_ics(component, calendar_content) -> None:
+    calendar_content.append({
                         "Head": str(component.get('summary')),
                         "Content": str(component.get('description')),
                         "S_Date": component.get('dtstart').dt
@@ -147,12 +145,25 @@ def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
                         "E_Date": component.get('dtend').dt
                         .replace(tzinfo=None)
                     })
+
+
+def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
+    calendar_content = []
+    calendar_read = open_ics(ics_file)
+    if not calendar_read:
+        return list()
+    for component in calendar_read.walk():
+        if component.name == "VEVENT":
+            if is_valid_data_event_ics(component):
+                save_calendar_content_ics(component, calendar_content)
+            else:
+                return list()
     return calendar_content
 
 
 def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
                             user_id: int,
-                            session: SessionLocal = SessionLocal()) -> None:
+                            session: SessionLocal) -> None:
     """insert the events into Event table"""
     for event in events:
         event = Event(
@@ -164,11 +175,9 @@ def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
         )
         session.add(event)
     session.commit()
-    session.close()
 
 
-def user_click_import(file: str, user_id: int,
-                      session: SessionLocal = SessionLocal()) -> str:
+def user_click_import(file: str, user_id: int, session: SessionLocal) -> str:
     """
     when user choose a file and click import, we are checking the file
     and if everything is ok we will insert the data to DB
@@ -178,8 +187,7 @@ def user_click_import(file: str, user_id: int,
             import_file = import_ics_file(file)
         else:
             import_file = import_txt_file(file)
-        if import_file:
-            if is_file_valid_to_save_to_database(import_file):
-                save_events_to_database(import_file, user_id, session)
-                return True
+        if import_file and is_file_valid_to_save_to_database(import_file):
+            save_events_to_database(import_file, user_id, session)
+            return True
     return False

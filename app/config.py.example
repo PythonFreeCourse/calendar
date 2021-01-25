@@ -33,3 +33,13 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
+
+# import 
+NUM_OF_VALUES = 4  # Event contains head, content, start_date and end_date.
+MAX_FILE_SIZE_MB = 5  # 5MB
+VALID_FILE_EXTENSION = (".txt", ".csv", ".ics")  # Can import only these files.
+VALID_YEARS = 20  # Events must be within 20 years range from the current year.
+EVENT_HEADER_NOT_EMPTY = 1  # 1- for not empty, 0- for empty.
+EVENT_HEADER_LIMIT = 50  # Max characters for event header.
+EVENT_CONTENT_LIMIT = 500  # Max characters for event characters.
+MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
