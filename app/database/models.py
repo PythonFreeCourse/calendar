@@ -5,8 +5,6 @@ from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, \
 from sqlalchemy.orm import relationship, Session
 
 from app.database.database import Base
-from app.database.database import Base
-from sqlalchemy.orm import Session
 
 
 class UserEvent(Base):
@@ -50,14 +48,9 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
-
-    owner = relationship("User")
-    participants = relationship("UserEvent", back_populates="events")
-
-    owner_id = Column(Integer, ForeignKey("users.id"))
-    category_id = Column(Integer, ForeignKey("categories.id"))
     color = Column(String, nullable=True)
 
+    owner = relationship("User")
     participants = relationship("UserEvent", back_populates="events")
 
     owner_id = Column(Integer, ForeignKey("users.id"))
@@ -115,33 +108,3 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
-
-
-class Category(Base):
-    __tablename__ = "categories"
-
-    __table_args__ = (
-        UniqueConstraint('user_id', 'name', 'color'),
-    )
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    color = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
-    @classmethod
-    def create(cls, db_session: Session, name: str, color: str, user_id: int):
-        try:
-            category = cls(name=name, color=color, user_id=user_id)
-            db_session.add(category)
-            db_session.flush()
-            db_session.commit()
-            db_session.refresh(category)
-            return category
-        except Exception as e:
-            raise e
-
-    def to_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-    def __repr__(self):
-        return f'<Category {self.id} {self.name} {self.color}>'
