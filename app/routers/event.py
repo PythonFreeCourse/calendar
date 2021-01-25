@@ -3,7 +3,7 @@ from operator import attrgetter
 from typing import List
 
 from app.database.database import get_db
-from app.database.models import Event, Invitation, User, UserEvent
+from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
 from app.internal.utils import create_model
 from fastapi import APIRouter, Depends, Request
