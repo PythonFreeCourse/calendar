@@ -9,6 +9,8 @@ from app.internal.import_file import (
 
 
 FILE_TXT_SAMPLE = r"tests/files_for_import_file_tests/sample_calendar_data.txt"
+FILE_TXT_INVALID = r"tests/files_for_import_file_tests/sample_data_invalid.txt"
+FILE_RNG_INVALID = r"tests/files_for_import_file_tests/sample_rng_invalid.txt"
 FILE_CSV_SAMPLE = r"tests/files_for_import_file_tests/sample_calendar_data.csv"
 FILE_TXT_ABOVE_5MB = r"tests/files_for_import_file_tests/sample_above_5mb.txt"
 FILE_TXT_BELOW_1MB = r"tests/files_for_import_file_tests/sample_below_1mb.txt"
@@ -16,6 +18,7 @@ FILE_CSV_BELOW_1MB = r"tests/files_for_import_file_tests/sample_below_1mb.csv"
 FILE_NOT_EXIST = r"tests/files_for_import_file_tests/not_exist.txt"
 FILE_ICS = r"tests/files_for_import_file_tests/sample.ics"
 FILE_ICS_INVALID_DATA = r"tests/files_for_import_file_tests/sample2.ics"
+FILE_ICS_INVALID_DATA2 = r"tests/files_for_import_file_tests/sample3.ics"
 NOT_EXIST_BLABLA_EXTENSION = r"tests/files_for_import_file_tests/sample.blabla"
 FILE_BLABLA_EXTENSION = r"tests/files_for_import_file_tests/sample2.blabla"
 
@@ -95,7 +98,11 @@ import_txt_file_tests = [
     # txt file
     (FILE_TXT_SAMPLE, IMPORT_TXT_FILE_RESULT_DATA),
     # csv file
-    (FILE_CSV_SAMPLE, IMPORT_TXT_FILE_RESULT_DATA)
+    (FILE_CSV_SAMPLE, IMPORT_TXT_FILE_RESULT_DATA),
+    # Invalid text structure
+    (FILE_TXT_INVALID, list()),
+    # Invalid date range
+    (FILE_RNG_INVALID, list())
 ]
 
 import_ics_tests = [
@@ -110,8 +117,10 @@ import_ics_tests = [
              'E_Date': datetime.datetime(2019, 8, 2, 20, 30)
              }
         ]),
-    # ics file
-    (FILE_ICS_INVALID_DATA, list())
+    # ics invalid file
+    (FILE_ICS_INVALID_DATA, list()),
+    # ics invalid file
+    (FILE_ICS_INVALID_DATA2, list())
 ]
 
 is_file_valid_to_import_tests = [
