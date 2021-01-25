@@ -35,4 +35,4 @@ def session():
     yield session
     session.rollback()
     session.close()
-    Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(bind=test_engine)

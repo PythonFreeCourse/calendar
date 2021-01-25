@@ -9,7 +9,7 @@ from app.routers.dayview import DivAttributes
 
 # TODO add user session login
 @pytest.fixture
-def user():
+def user_dayevent():
     return User(username='test1', email='user@email.com',
                 password='1a2b3c4e5f', full_name='test me')
 
@@ -84,8 +84,8 @@ def test_div_attributes_with_costume_color(event2):
     assert div_attr.color == 'blue'
 
 
-def test_dayview_html(event1, event2, event3, session, user, client):
-    session.add_all([user, event1, event2, event3])
+def test_dayview_html(event1, event2, event3, session, user_dayevent, client):
+    session.add_all([user_dayevent, event1, event2, event3])
     session.commit()
     response = client.get("/day/2021-2-1")
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -99,8 +99,9 @@ def test_dayview_html(event1, event2, event3, session, user, client):
                                                ("2021-2-2", '1 / 101'),
                                                ("2021-2-3", '1 / 57')])
 def test_dayview_html_with_multiday_event(multiday_event, session,
-                                          user, client, day, grid_position):
-    session.add_all([user, multiday_event])
+                                          user_dayevent, client, day,
+                                          grid_position):
+    session.add_all([user_dayevent, multiday_event])
     session.commit()
     response = client.get(f"/day/{day}")
     soup = BeautifulSoup(response.content, 'html.parser')
