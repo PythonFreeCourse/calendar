@@ -8,40 +8,40 @@
 {% block content %}
 <form method="GET" action="/agenda">
     <div class="mb-3 agenda_filters"> 
-        <label for="start_date">{{ from_button }}</label><br>
-        <input class="filter" type="date" id="start_date" name="start_date" value={{ start_date }}><br>
-        <label for="end_date">{{ to_button }}</label><br>
-        <input class="filter" type="date" id="end_date" name="end_date" value={{ end_date }}><br>
+        <label for="start_date">{{ localized.from_button }}</label><br>
+        <input class="filter" type="date" id="start_date" name="start_date" value={{ variables.start_date }}><br>
+        <label for="end_date">{{ localized.to_button }}</label><br>
+        <input class="filter" type="date" id="end_date" name="end_date" value={{ variables.end_date }}><br>
         <input class="filter" type="submit" value="{{ get_agenda_button }}">
     </div>
 </form>
 <div class="exact_date">
     <div>
-        <a class="btn agenda_button" href="/agenda?days=0">{{ agenda_today }}</a>
+        <a class="btn agenda_button" href="/agenda?days=0">{{ localized.agenda_today }}</a>
     </div>
     <div>
-        <a class="btn agenda_button" href="/agenda?days=7">{{ agenda_next_week }}</a>
+        <a class="btn agenda_button" href="/agenda?days=7">{{ localized.agenda_next_week }}</a>
     </div>
     <div>
-        <a class="btn agenda_button" href="/agenda?days=30">{{ agenda_next_month }}</a>
+        <a class="btn agenda_button" href="/agenda?days=30">{{ localized.agenda_next_month }}</a>
     </div>
 </div>
 
 
 <div class="container mt-4">
-    {% if start_date > end_date %}
-        <p>Start date is greater than end date</p>
-    {% elif events | length == 0 %}
-        <p>{{ no_events_found }}</p>
-    {% elif start_date == end_date %}
-        <h1>{{ start_date.strftime("%d/%m/%Y") }}</h1>
+    {% if variables.start_date > variables.end_date %}
+        <p>{{ localized.agenda_invalid_date }}</p>
+    {% elif variables.events | length == 0 %}
+        <p>{{ localized.no_events_found }}</p>
+    {% elif variables.start_date == variables.end_date %}
+        <h1>{{ variables.start_date.strftime("%d/%m/%Y") }}</h1>
     {% else %}
-        <h1>{{ start_date.strftime("%d/%m/%Y") }} - {{end_date.strftime("%d/%m/%Y") }}</h1>
+        <h1>{{ variables.start_date.strftime("%d/%m/%Y") }} - {{ variables.end_date.strftime("%d/%m/%Y") }}</h1>
     {% endif %}
 </div>
     
 <div>
-    {% for events_date, events_list in events.items() %}
+    {% for events_date, events_list in variables.events.items() %}
     <div class="shown_dates">{{ events_date.strftime("%d/%m/%Y") }}</div>
         {% for event in events_list %}
         <div class="event_line"> {{ event[0].start.time().strftime("%H:%M") }} - {{ event[0].title }} , duration: {{ event[1] }}</div>

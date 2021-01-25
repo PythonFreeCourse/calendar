@@ -7,8 +7,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
-from app.dependencies import templates
-from app.internal import agenda_events, languages
+from app.internal import agenda_events
+from app.internal.utilities import get_template_response
 
 router = APIRouter()
 
@@ -53,12 +53,10 @@ def agenda(
         )
         events[event_obj.start.date()].append((event_obj, event_duration))
 
-    result = {
-        "request": request,
+    variables = {
         "events": events,
         "start_date": start_date,
         "end_date": end_date,
     }
 
-    result.update(languages.get_translation_words())
-    return templates.TemplateResponse("agenda.html", result)
+    return get_template_response("agenda.html", request, variables)

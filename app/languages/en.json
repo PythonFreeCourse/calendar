@@ -25,6 +25,7 @@
   "agenda_today": "Today",
   "agenda_next_week": "Next week",
   "agenda_next_month": "Next month",
+  "agenda_invalid_date": "Start date is greater than end date",
   "no_events_found": "No events found...",
   "test_word": "test"
 }

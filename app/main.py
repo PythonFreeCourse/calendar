@@ -3,8 +3,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.database import models
 from app.database.database import engine
-from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
-from app.internal import languages
+from app.dependencies import MEDIA_PATH, STATIC_PATH
+from app.internal.utilities import get_template_response
 from app.routers import agenda, email, event, profile
 
 models.Base.metadata.create_all(bind=engine)
@@ -21,6 +21,4 @@ app.include_router(email.router)
 
 @app.get("/")
 async def home(request: Request):
-    result = {"request": request}
-    result.update(languages.get_translation_words())
-    return templates.TemplateResponse("home.html", result)
+    return get_template_response("home.html", request)

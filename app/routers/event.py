@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request
 
-from app.dependencies import templates
-from app.internal import languages
+from app.internal.utilities import get_template_response
 
 router = APIRouter(
     prefix="/event",
@@ -12,13 +11,10 @@ router = APIRouter(
 
 @router.get("/edit")
 async def eventedit(request: Request):
-    result = {"request": request}
-    result.update(languages.get_translation_words())
-    return templates.TemplateResponse("event/eventedit.html", result)
+    return get_template_response("event/eventedit.html", request)
 
 
 @router.get("/view/{id}")
 async def eventview(request: Request, id: int):
-    result = {"request": request, "event_id": id}
-    result.update(languages.get_translation_words())
-    return templates.TemplateResponse("event/eventview.html", result)
+    variables = {"event_id": id}
+    return get_template_response("event/eventview.html", request, variables)

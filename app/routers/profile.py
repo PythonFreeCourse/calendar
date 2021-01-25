@@ -8,8 +8,8 @@ from starlette.status import HTTP_302_FOUND
 from app import config
 from app.database.database import get_db
 from app.database.models import User
-from app.dependencies import MEDIA_PATH, templates
-from app.internal import languages
+from app.dependencies import MEDIA_PATH
+from app.internal.utilities import get_template_response
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -46,15 +46,12 @@ async def profile(
 
     session.close()
 
-    result = {
-        "request": request,
+    variables = {
         "user": user,
         "events": upcoming_events,
     }
 
-    result.update(languages.get_translation_words())
-
-    return templates.TemplateResponse("profile.html", result)
+    return get_template_response("profile.html", request, variables)
 
 
 @router.post("/update_user_fullname")

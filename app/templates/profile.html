@@ -21,25 +21,25 @@
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateNameModal">
-                                        My name
+                                        {{ localized.edit_full_name_button }}
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateEmailModal">
-                                        My email
+                                        {{ localized.edit_email_button }}
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updatePhotoModal">
-                                        My photo
+                                        {{ localized.edit_photo_button }}
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateDescriptionModal">
-                                        About me
+                                        {{ localized.edit_description_button }}
                                     </button>
                                 </li>
                             </ul>
@@ -50,14 +50,14 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">Update Full Name</h5>
+                                        <h5 class="modal-title">{{ localized.update_full_name_title }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form action="update_user_fullname" method="post">
-                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="fullname" placeholder="Full Name" value="{{ user.full_name }}">
+                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="fullname" placeholder="Full Name" value="{{ variables.user.full_name }}">
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
                                             </div>
                                         </form>
                                     </div>
@@ -71,15 +71,15 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">Update email</h5>
+                                        <h5 class="modal-title">{{ localized.update_email_title }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form action="update_user_email" method="post">
                                             <input type="email" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="email"
-                                                placeholder="E-mail" value="{{ user.email }}">
+                                                placeholder="E-mail" value="{{ variables.user.email }}">
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
                                             </div>
                                         </form>                        
                                     </div>
@@ -92,15 +92,15 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">About me</h5>
+                                        <h5 class="modal-title">{{ localized.update_description_title }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form action="update_user_description" method="post">
                                             <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                name="description" placeholder="About me" value="{{ user.description }}">
+                                                name="description" placeholder="About me" value="{{ variables.user.description }}">
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
                                             </div>
                                         </form>
                                     </div>
@@ -115,7 +115,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">Upload photo</h5>
+                                        <h5 class="modal-title">{{ localized.update_photo_title }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
@@ -124,7 +124,7 @@
                                                 <input type="file"class="form-control-sm" accept="image/png, image/jpeg" name="file">
                                             </div>
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
                                             </div>
                                         </form>
                                     </div>               
@@ -135,19 +135,19 @@
                     <!-- End profile update menu -->
 
                     <img class="card-img-top profile-image rounded-circle mx-auto d-block"
-                     src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
+                     src="{{ url_for('media', path=variables.user.avatar) }}" alt="Profile image">
                     <div class="card-body">
-                        <h6 class="card-title text-center mb-1">{{ user.full_name }}</h6>
+                        <h6 class="card-title text-center mb-1">{{ variables.user.full_name }}</h6>
                         <p class="card-text text-center mt-0">
                             <a class="nav-link text-secondary" href="#">
                                 <i class="fa fa-spin fa-cog" aria-hidden="true"></i>
-                                Settings
+                                {{ localized.settings_button }}
                             </a>
                         </p>
                         <hr>
                         <p class="card-text text-center">
                             <small>
-                                {{ user.description }}
+                                {{ variables.user.description }}
                             </small>
                         </p>
                     </div>
@@ -158,11 +158,11 @@
                 <div class="card card-profile">
                     <div class="card-body">
                         <p class="card-title">
-                            Features
+                            {{ localized.features_title }}
                         </p>
                         <ul class="list-group">
                             <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
+                                <a class="text-decoration-none text-secondary" href="#">{{ localized.export_calendar_button }}</a>
                             </li>
                             <li class="list-group-item list-group-item-action no-border">
                                 <a class="text-decoration-none text-secondary" href="#">Your feature</a>
@@ -183,13 +183,13 @@
                 <!-- Upcoming events -->
                 <div class="mb-3">
 
-                    {% for event in events %}
+                    {% for event in variables.events %}
 
                     <!-- Events card -->
                     <div class="card card-event mb-2 pb-0">
                         <div class="card-header d-flex justify-content-between">
                             <small>
-                                <i>Upcoming Event On December 01, 2021</i>
+                                <i>{{ localized.upcoming_event_on_date.format(date = event.start) }} </i>
                             </small>
                             <span>
                                 <!-- Event settings -->
@@ -200,7 +200,7 @@
                         </div>
                         <div class="card-body pb-1">
                             <p class="card-text">
-                                The Event {{ event }} - description ...
+                                The Event {{ variables.event }} - description ...
                             </p>
                             <hr class="mb-0">
                             <small class="event-posted-time text-muted">Last updated 3 mins ago</small>

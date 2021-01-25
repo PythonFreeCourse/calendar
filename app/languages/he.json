@@ -25,6 +25,7 @@
   "agenda_today": "היום",
   "agenda_next_week": "שבוע הבא",
   "agenda_next_month": "חודש הבא",
+  "agenda_invalid_date": "Start date is greater than end date",
   "no_events_found": "לא נמצאו אירועים...",
   "test_word": "בדיקה"
 }
