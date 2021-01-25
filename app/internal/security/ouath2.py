@@ -39,8 +39,8 @@ def verify_password(plain_password, hashed_password):
 def authenticate_user(user: LoginUser):
     db_user = get_db_user_by_username(username = user.username)
     if db_user:
-        if verify_password(user.hashed_password, db_user.password, ):
-            return user
+        if verify_password(user.hashed_password, db_user.password):
+            return LoginUser(username=user.username, hashed_password=db_user.password)
     return False
 
 
@@ -57,16 +57,13 @@ async def check_jwt_token(token: str = Depends(oauth_schema)):
     try:
         jwt_payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=JWT_ALGORITHM)
         jwt_username = jwt_payload.get("sub")
+        print(jwt_payload)
         jwt_hashed_password = jwt_payload.get("hashed_password")
         jwt_expiration = jwt_payload.get("exp")
-        is_valid = False
         if time.time() < jwt_expiration:
-            db_user = await get_db_user_by_username(username=jwt_username)
+            db_user = get_db_user_by_username(username=jwt_username)
             # is_valid = await get_db_user_by_username(username=jwt_username)
             if db_user and db_user.password == jwt_hashed_password:
-                is_valid == True
-            # is_valid = await db_check_jwt_username(username)
-            if is_valid:
                 return True
             else:
                 raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
