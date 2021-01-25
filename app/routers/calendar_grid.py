@@ -29,7 +29,7 @@ class Day:
         self.dailyevents: List[Tuple] = []
         self.events:  List[Tuple] = []
         self.css: Dict[str, str] = {
-            'div': 'day',
+            'day_container': 'day',
             'date': 'day-number',
             'daily_event': 'month-event',
             'daily_event_front': ' '.join([
@@ -53,11 +53,11 @@ class Day:
         """Returns day date inf the format of 00 MONTH 00"""
         return self.date.strftime("%d %B %y").upper()
 
-    @ classmethod
+    @classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:
         return datetime.strptime(date_string, '%d %B %y')
 
-    @ classmethod
+    @classmethod
     def is_weekend(cls, date: date) -> bool:
         """Returns true if this day is represent a weekend."""
         return date.strftime("%A") in Week.DAYS_OF_THE_WEEK[-2:]
@@ -75,7 +75,7 @@ class DayWeekend(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'div': 'day ',
+            'day_container': 'day ',
             'date': ' '.join(['day-number',  'text-gray']),
             'daily_event': 'month-event',
             'daily_event_front': ' '.join([
@@ -97,7 +97,11 @@ class Today(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'div':  ' '.join(['day', 'text-darkblue', 'background-yellow']),
+            'day_container':  ' '.join([
+                'day',
+                'text-darkblue',
+                'background-yellow'
+            ]),
             'date': 'day-number',
             'daily_event': 'month-event',
             'daily_event_front': ' '.join([
@@ -120,7 +124,7 @@ class FirstDayMonth(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'div': ' '.join([
+            'day_container': ' '.join([
                 'day',
                 'text-darkblue',
                 'background-lightgray'
