@@ -5,8 +5,10 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
+from app.routers import (
+    agenda, dayview, email, event, invitation, profile, telegram)
 from app.telegram.bot import telegram_bot
-from app.routers import agenda, email, event, invitation, profile, telegram
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -18,6 +20,7 @@ app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
 app.include_router(telegram.router)
+app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 
