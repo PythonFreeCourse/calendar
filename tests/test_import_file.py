@@ -189,5 +189,5 @@ def test_is_file_valid_to_import(file1, result):
 
 
 @pytest.mark.parametrize("file1, user_id, result", user_click_import_tests)
-def test_user_click_import(file1, user_id, result, test_session):
-    assert user_click_import(file1, user_id, test_session) == result
+def test_user_click_import(file1, user_id, result, session):
+    assert user_click_import(file1, user_id, session) == result
