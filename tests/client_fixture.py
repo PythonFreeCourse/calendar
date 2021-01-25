@@ -4,7 +4,7 @@ import pytest
 from app.database.models import User
 from app.main import app
 from app.database.database import Base
-from app.routers import profile, agenda, invitation
+from app.routers import profile, agenda, invitation, event
 from tests.conftest import test_engine, get_test_db
 
 
@@ -58,3 +58,15 @@ def get_test_placeholder_user():
         password='123456fake',
         full_name='FakeName'
     )
+
+
+@pytest.fixture(scope="session")
+def event_test_client():
+    Base.metadata.create_all(bind=test_engine)
+    app.dependency_overrides[event.get_db] = get_test_db
+
+    with TestClient(app) as client:
+        yield client
+
+    app.dependency_overrides = {}
+    Base.metadata.drop_all(bind=test_engine)

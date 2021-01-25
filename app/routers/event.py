@@ -1,18 +1,16 @@
+from datetime import datetime
 from operator import attrgetter
 from typing import List
-from datetime import datetime
-from fastapi import APIRouter, Request, Depends
 
-from app.database.models import Event, Invitation, User
-from app.database.models import UserEvent
+from app.database.database import get_db
+from app.database.models import Event, Invitation, User, UserEvent
 from app.dependencies import templates
 from app.internal.utils import create_model
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.exc import SQLAlchemyError
-from app.database.database import get_db
-from starlette.status import HTTP_302_FOUND
-
-
+from sqlalchemy.orm import Session
+from starlette import status
+from starlette.responses import RedirectResponse
 
 router = APIRouter(
     prefix="/event",
@@ -59,26 +57,46 @@ def sort_by_date(events: List[Event]) -> List[Event]:
     temp = events.copy()
     return sorted(temp, key=attrgetter('start'))
 
-def get_event_by_id(db: Session, event_id: int) -> Event:
+
+def by_id(db: Session, event_id: int) -> Event:
     """Select event by id"""
-    event = db.query(Event).filter(Event.id == event_id).first()
-    return event
+
+    return db.query(Event).filter(Event.id == event_id).first()
 
 
-@router.post('/view/{id}')
-async def delete_event(request: Request, event_id: int=id, db: Session = Depends(get_db)):
+def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
+    """Returns a list of all the email address of the event invited users,
+        by event id."""
+
+    return [email[0] for email in db.query(User.email).
+            select_from(Event).
+            join(UserEvent, UserEvent.event_id == Event.id).
+            join(User, User.id == UserEvent.user_id).
+            filter(Event.id == event_id).
+            all()]
+
+
+@router.delete("/{event_id}")
+def delete_event(request: Request,
+                 event_id: int,
+                 db: Session = Depends(get_db)):
+
     # TODO: Check if the user is the owner of the event.
-    event = get_event_by_id(db, event_id)
-    # TODO do: Check who the guests at the event are.
-    # participants = db.query(User.email).join(Invitation).filter_by(event_id=event_id).all()
+    event = by_id(db, event_id)
+    participants = get_participants_emails_by_event(db, event_id)
     try:
-        await db.delete(event)
+        # Delete event
+        db.delete(event)
+
+        # Delete user_event
+        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
+
         db.commit()
-        if event.start > datetime.now(): # and invited
+        if participants and event.start > datetime.now():
             pass
             # TODO: Send them a cancellation notice if the deletion is successful
-    except SQLAlchemyError:
-        return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event_id": event_id})
-    return templates.TemplateResponse("/calendar.html",
-                                      {"request": request}, status_code=HTTP_302_FOUND)
+        return RedirectResponse(url="/calendar", status_code=status.HTTP_200_OK)
+    except (SQLAlchemyError, TypeError):
+        return templates.TemplateResponse(
+            "event/eventview.html", {"request": request, "event_id": event_id},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
