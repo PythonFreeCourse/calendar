@@ -28,6 +28,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     full_name = Column(String)
+    language = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
     is_active = Column(Boolean, default=False)
@@ -46,6 +47,7 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     content = Column(String)
+    translation_content = Column(String)
     location = Column(String)
 
     owner = relationship("User")

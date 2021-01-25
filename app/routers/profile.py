@@ -1,9 +1,9 @@
 import io
 
+from PIL import Image
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-from PIL import Image
 
 from app import config
 from app.database.database import get_db
@@ -26,6 +26,7 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
+        language='english',
     )
 
 
@@ -140,6 +141,6 @@ async def process_image(image, user):
 def get_image_crop_area(width, height):
     if width > height:
         delta = (width - height) // 2
-        return (delta, 0, width - delta, height)
+        return delta, 0, width - delta, height
     delta = (height - width) // 2
-    return (0, delta, width, width + delta)
+    return 0, delta, width, width + delta
