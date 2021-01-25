@@ -11,7 +11,7 @@ from app.database.database import get_db
 
 
 class TestApp:
-    
+
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
@@ -34,7 +34,8 @@ class TestApp:
     @staticmethod
     def test_check_validation():
         assert check_validation(TestApp.date_test_data[0],
-                                 TestApp.date_test_data[1])
+                                 TestApp.date_test_data[1]
+                                )
 
     @staticmethod
     def test_add_event(session: Session):
