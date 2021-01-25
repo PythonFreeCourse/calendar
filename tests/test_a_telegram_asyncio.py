@@ -1,8 +1,12 @@
+from datetime import timedelta
+
 from fastapi import status
 import pytest
 
+from .asyncio_fixture import today_date
 from .client_fixture import get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
+from app.telegram.keyboards import DATE_FORMAT
 from app.telegram.models import Bot, Chat
 
 
@@ -160,10 +164,21 @@ Welcome to Pylander telegram client!'''
         assert await message.process_callback() == 'Choose events day.'
 
     @pytest.mark.asyncio
-    async def test_today_handler(self):
+    async def test_no_today_events_handler(self):
         chat = Chat(gen_callback('Today'))
         message = MessageHandler(chat, self.TEST_USER)
         assert await message.process_callback() == "There're no events today."
+
+    @pytest.mark.asyncio
+    async def test_today_handler(self, fake_user_events):
+        chat = Chat(gen_callback('Today'))
+        message = MessageHandler(chat, fake_user_events)
+        assert await message.process_callback() == f'''\
+{today_date.strftime('%B %d')}, {today_date.strftime('%A')} Events:
+
+From {today_date.strftime('%d/%m %H:%M')} \
+to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
+Cool today event.\n'''
 
     @pytest.mark.asyncio
     async def test_this_week_handler(self):
@@ -172,12 +187,30 @@ Welcome to Pylander telegram client!'''
         assert await message.process_callback() == 'Choose a day.'
 
     @pytest.mark.asyncio
-    async def test_chosen_day_handler(self):
+    async def test_no_chosen_day_handler(self):
         chat = Chat(gen_callback('10 Feb 2021'))
         message = MessageHandler(chat, self.TEST_USER)
         message.handlers['10 Feb 2021'] = message.chosen_day_handler
         assert await message.process_callback() == \
             "There're no events on February 10."
+
+    @pytest.mark.asyncio
+    async def test_chosen_day_handler(self, fake_user_events):
+        chosen_date = today_date + timedelta(days=2)
+        button = str(chosen_date.strftime(DATE_FORMAT))
+        chat = Chat(gen_callback(button))
+        message = MessageHandler(chat, fake_user_events)
+        message.handlers[button] = message.chosen_day_handler
+        assert await message.chosen_day_handler() == f'''\
+{chosen_date.strftime('%B %d')}, {chosen_date.strftime('%A')} Events:
+
+From {today_date.strftime('%d/%m %H:%M')} \
+to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
+Cool today event.
+
+From {(chosen_date + timedelta(days=-1)).strftime('%d/%m %H:%M')} \
+to {(chosen_date + timedelta(days=1)).strftime('%d/%m %H:%M')}: \
+Cool (somewhen in two days) event.\n'''
 
 
 @pytest.mark.asyncio

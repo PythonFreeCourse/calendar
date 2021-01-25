@@ -47,18 +47,20 @@ Welcome to Pylander telegram client!'''
         return answer
 
     async def today_handler(self):
-        today = datetime.date.today()
+        today = datetime.datetime.today()
         events = [
-            event for event in self.user.events
-            if event.start <= today <= event.end]
+            _.events for _ in self.user.events
+            if _.events.start <= today <= _.events.end]
 
         answer = f"{today.strftime('%B %d')}, {today.strftime('%A')} Events:\n"
 
-        if not len(events):
+        if not events:
             answer = "There're no events today."
 
         for event in events:
-            answer += f'\n\n{event.title}: from {event.start} to {event.ends}.'
+            answer += f'''
+From {event.start.strftime('%d/%m %H:%M')} \
+to {event.end.strftime('%d/%m %H:%M')}: {event.title}.\n'''
 
         await telegram_bot.send_message(chat_id=self.chat.user_id, text=answer)
         return answer
@@ -79,8 +81,8 @@ Welcome to Pylander telegram client!'''
             self.chat.message, DATE_FORMAT)
 
         events = [
-            event for event in self.user.events
-            if event.start <= chosen_date <= event.end]
+            _.events for _ in self.user.events
+            if _.events.start <= chosen_date <= _.events.end]
 
         answer = f"{chosen_date.strftime('%B %d')}, \
 {chosen_date.strftime('%A')} Events:\n"
@@ -89,7 +91,9 @@ Welcome to Pylander telegram client!'''
             answer = f"There're no events on {chosen_date.strftime('%B %d')}."
 
         for event in events:
-            answer += f'\n\n{event.title}: from {event.start} to {event.ends}.'
+            answer += f'''
+From {event.start.strftime('%d/%m %H:%M')} \
+to {event.end.strftime('%d/%m %H:%M')}: {event.title}.\n'''
 
         await telegram_bot.send_message(chat_id=self.chat.user_id, text=answer)
         return answer

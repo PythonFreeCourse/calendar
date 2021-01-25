@@ -14,7 +14,7 @@ DATE_FORMAT = '%d %b %Y'
 
 
 def get_this_week_buttons() -> List[List[Any]]:
-    today = datetime.date.today()
+    today = datetime.datetime.today()
     buttons = []
     for day in range(1, 7):
         day = today + datetime.timedelta(days=day)
