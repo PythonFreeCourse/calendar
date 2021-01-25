@@ -139,7 +139,8 @@ dmypy.json
 .pyre/
 
 
-# settings
+# VScode
 .vscode/
 app/.vscode/
+
 app/routers/stam
