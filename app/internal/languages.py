@@ -1,3 +1,4 @@
+from functools import lru_cache
 import glob
 import json
 from pathlib import PureWindowsPath
@@ -8,30 +9,46 @@ from app import config
 LANGUAGE_FILES_PATH = "app/languages/*.json"
 LANGUAGE_FILES_PATH_TEST = "../app/languages/*.json"
 
-translation_words = {}
 
+@lru_cache()
+def get_translation_words(display_language: str = None) -> \
+        Dict[str, Union[str, Dict[str, str]]]:
+    """Gets and returns the translation words for a given language.
+    The returned object is a dictionary of the translated words in either
+    the user's language setting, or the default app setting.
 
-def get_translation_words() -> Dict[str, Union[str, Dict[str, str]]]:
-    """Gets and returns the translation_words, which is a dictionary of
-    the translated words in either the user's language setting,
-    or the default app setting.
+    Using the @lru_cache() decorator makes the function return the same
+    translation for a given language that was previously used, instead of
+    computing it again, executing the code of the function every time.
+
+    Args:
+        display_language (str): a valid code that follows RFC 1766.
+        See also the Language Code Identifier (LCID) Reference for a list of
+        valid codes.
 
     Returns:
-        dict[str, Union[str, Dict[str, str]]]: a dictionary of string keys and
+        Dict[str, Union[str, Dict[str, str]]]: a dictionary of string keys and
         their translation as their values. The value can either be a string,
         or a nested dictionary for plural translations.
+
+    .. _RFC 1766:
+        https://tools.ietf.org/html/rfc1766.html
+
+    .. _Language Code Identifier (LCID) Reference:
+        https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN # noqa: E501
     """
-    if translation_words:
-        return translation_words
-    # TODO: Waiting for user registration. Restore when done.
-    # display_language = get_display_language(user_id)
-    # populate_with_language(display_language)
-    populate_with_language(config.WEBSITE_LANGUAGE)
-    return translation_words
+
+    if display_language:
+        return _populate_with_language(display_language)
+    else:
+        # TODO: Waiting for user registration. Restore when done.
+        # display_language = _get_display_language(user_id)
+        # return populate_with_language(display_language)
+        return _populate_with_language(config.WEBSITE_LANGUAGE)
 
 
 # TODO: Waiting for user registration. Add doc.
-# def get_display_language(user_id: int) -> str:
+# def _get_display_language(user_id: int) -> str:
 #     # TODO: handle user language setting:
 #     #  If user is logged in, get language setting.
 #     #  If user is not logged in, get default site setting.
@@ -41,7 +58,8 @@ def get_translation_words() -> Dict[str, Union[str, Dict[str, str]]]:
 #     return config.WEBSITE_LANGUAGE
 
 
-def populate_with_language(display_language: str) -> None:
+def _populate_with_language(display_language: str) -> \
+        Dict[str, Union[str, Dict[str, str]]]:
     """Updates the translation_words to the requested language.
     If the language code is not supported by the applications, the dictionary
     defaults to the config.WEBSITE_LANGUAGE setting.
@@ -51,28 +69,24 @@ def populate_with_language(display_language: str) -> None:
         See also the Language Code Identifier (LCID) Reference for a list of
         valid codes.
 
-    .. _RFC 1766:
-        https://tools.ietf.org/html/rfc1766.html
-
-    .. _Language Code Identifier (LCID) Reference:
-        https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN # noqa
+    Returns:
+        Dict[str, Union[str, Dict[str, str]]]: a dictionary of string keys and
+        their translation as their values. The value can either be a string,
+        or a nested dictionary for plural translations.
     """
-    translation_words_all_languages = get_translations_words_all_languages()
-    global translation_words
+    translation_words_all_languages = _get_translation_words_all_languages()
     if display_language in translation_words_all_languages:
-        translation_words = translation_words_all_languages[display_language]
-    else:
-        translation_words = translation_words_all_languages[
-            config.WEBSITE_LANGUAGE]
+        return translation_words_all_languages[display_language]
+    return translation_words_all_languages[config.WEBSITE_LANGUAGE]
 
 
-def get_translations_words_all_languages() -> \
+def _get_translation_words_all_languages() -> \
         Dict[str, Dict[str, Union[str, Dict[str, str]]]]:
     """Gets and returns a dictionary of nested language dictionaries from
      the language translation files.
 
     Returns:
-        dict[str, Dict[str, Union[str, Dict[str, str]]]]: a dictionary of
+        Dict[str, Dict[str, Union[str, Dict[str, str]]]]: a dictionary of
         language codes as string keys, and nested dictionaries of translations
         as their values.
     """

@@ -1,6 +1,5 @@
 import pytest
 
-from app import config
 import app.internal.languages as languages
 
 
@@ -13,41 +12,36 @@ class TestLanguage:
 
     @staticmethod
     def test_get_translation_words():
-        translations = languages.get_translation_words()
-        assert translations
+        assert languages.get_translation_words()
 
     @staticmethod
-    def test_get_translations_words_all_languages():
-        translations_dicts = languages.get_translations_words_all_languages()
-        assert translations_dicts
+    def test_get_translation_words_all_languages():
+        assert languages._get_translation_words_all_languages()
 
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              LANGUAGE_TESTS)
-    def test_translations_words_all_languages_return_all_supported_languages(
+    def test_translation_words_all_languages_return_all_supported_languages(
             language_code, translation, is_valid):
-        translations_dicts = languages.get_translations_words_all_languages()
-        assert (language_code in translations_dicts and is_valid) or (
-                language_code not in translations_dicts and not is_valid)
+        all_translations = languages._get_translation_words_all_languages()
+        assert ((language_code in all_translations and is_valid)
+                or (language_code not in all_translations and not is_valid))
 
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              LANGUAGE_TESTS)
-    def test_translations_words_all_languages_valid_translations(
+    def test_translation_words_all_languages_valid_translations(
             language_code, translation, is_valid):
         if is_valid:
-            assert languages.get_translations_words_all_languages()[
+            assert languages._get_translation_words_all_languages()[
                        language_code]["test_word"] == translation
 
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              LANGUAGE_TESTS)
     def test_populate_with_language(language_code, translation, is_valid):
-        # Reset test to default language.
-        languages.populate_with_language(config.WEBSITE_LANGUAGE)
-
-        languages.populate_with_language(language_code)
-        assert languages.get_translation_words()["test_word"] == translation
+        translations = languages._populate_with_language(language_code)
+        assert translations["test_word"] == translation
 
     @staticmethod
     def test_get_display_language():
