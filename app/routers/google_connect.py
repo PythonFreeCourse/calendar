@@ -1,17 +1,19 @@
-import  os
+import datetime
+import pytz
 from fastapi import Depends, APIRouter, Request
 from starlette.responses import RedirectResponse
 
 from google.auth.transport.requests import Request as google_request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+
 
 from app.database.models import User, OAuthCredentials
-from app.database.database import get_db
+from app.database.database import get_db, SessionLocal
 from app.routers.profile import router as profile_router
 from app.config import CLIENT_SECRET_FILE
-
-
+from app.routers.event import  create_event
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 
@@ -53,7 +55,45 @@ async def google_sync(request: Request, session=Depends(get_db)):
     session.query(OAuthCredentials).filter_by(user_id=None).delete()
     session.commit()
 
+    get_current_year_events(credentials, user, session)
     session.close()
 
     url = profile_router.url_path_for("profile")
     return RedirectResponse(url='/profile')
+
+
+def get_current_year_events(credentials: Credentials, user: User, session: SessionLocal):
+    
+    service = build('calendar', 'v3', credentials=credentials)
+    
+    currrnt_year = datetime.datetime.now().year
+    start = datetime.datetime(currrnt_year, 1, 1).isoformat() + 'Z'
+    end = datetime.datetime(currrnt_year + 1, 1, 1).isoformat() + 'Z'
+    events_result = service.events().list(calendarId='primary', timeMin=start, timeMax=end, singleEvents=True, orderBy='startTime').execute()
+    events = events_result.get('items', [])
+    
+    for event in events:
+        location = None
+        title = event['summary']
+        # support for all day events
+        if 'dateTime' in event['start'].keys():
+            # part time event
+            start = datetime.datetime.fromisoformat(event['start']['dateTime'])
+            end = datetime.datetime.fromisoformat(event['end']['dateTime'])
+        else:
+            # all day event
+            start = event['start']['date'].split('-')
+            start = datetime.datetime(year=int(start[0]), month=int(start[1]), day=int(start[2]))
+            end = event['end']['date'].split('-')
+            end = datetime.datetime(year=int(end[0]), month=int(end[1]), day=int(end[2]))
+            pass
+        
+        
+        if 'location' in event.keys():
+            location = event['location']
+
+        e = create_event(db=session, title=title, start=start, end=end, owner_id=user.id, location=location, isGoogleEvent=True)
+    
+
+def db_cleanup():
+    pass
