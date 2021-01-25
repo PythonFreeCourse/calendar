@@ -4,7 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine
-from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
+from app.dependencies import (
+    MEDIA_PATH, STATIC_PATH, templates)
 from app.routers import (agenda, dayview, email, event, invitation, profile,
                          search)
 
@@ -28,6 +29,7 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
+app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(search.router)
