@@ -98,12 +98,11 @@ class TestSearch:
                  ]
 
         for event in events:
-            TestSearch.add_event(
-                                    session,
-                                    title=event['title'],
-                                    content=event['content'],
-                                    owner_id=event['owner_id']
-                                )
+            TestSearch.add_event(session,
+                title=event['title'],
+                content=event['content'],
+                owner_id=event['owner_id']
+            )
 
     @staticmethod
     def test_search_page_exists(client):

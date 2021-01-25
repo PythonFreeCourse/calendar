@@ -38,13 +38,11 @@ async def show_results(
         if not results:
             message = f"No matching results for '{keywords}'."
 
-    return templates.TemplateResponse(
-                                        "search.html",
-                                        {
-                                            "request": request,
-                                            "username": current_username,
-                                            "message": message,
-                                            "results": results,
-                                            "keywords": keywords
-                                        }
-                                      )
+    return templates.TemplateResponse("search.html", {
+        "request": request,
+        "username": current_username,
+        "message": message,
+        "results": results,
+        "keywords": keywords
+        }
+    )

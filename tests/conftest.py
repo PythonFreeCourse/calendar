@@ -20,9 +20,9 @@ pytest_plugins = [
 
 if PSQL_ENVIRONMENT:
     SQLALCHEMY_TEST_DATABASE_URL = (
-                                    "postgresql://postgres:1234"
-                                    "@localhost/postgres"
-                                   )
+        "postgresql://postgres:1234"
+        "@localhost/postgres"
+    )
     test_engine = create_engine(
         SQLALCHEMY_TEST_DATABASE_URL
     )
