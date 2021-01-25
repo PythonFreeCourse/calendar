@@ -63,10 +63,10 @@ def check_validation(start_time, end_time) -> bool:
         return False
 
 
-
 def add_new_event(values: dict, db) -> Event:
-    """Get User values and the DB Session insert the values to the DB and refresh it
-    exception in case that the keys in the dict is not match to the fields in the DB
+    """Get User values and the DB Session insert the values
+    to the DB and refresh it exception in case that the keys
+    in the dict is not match to the fields in the DB
     return the Event Class item"""
 
     try:

@@ -2,12 +2,11 @@ from datetime import datetime, timedelta
 
 
 from fastapi.testclient import TestClient
-import pytest
 from sqlalchemy.orm import Session
 
 
 from app.main import app
-from app.routers.event import add_event, check_validation
+from app.routers.event import add_new_event, check_validation
 from app.database.database import get_db
 
 
@@ -34,8 +33,9 @@ class TestApp:
 
     @staticmethod
     def test_check_validation():
-        assert check_validation(TestApp.date_test_data[0], TestApp.date_test_data[1])
-    
+        assert check_validation(TestApp.date_test_data[0],
+                                 TestApp.date_test_data[1])
+
     @staticmethod
     def test_add_event(session: Session):
         assert add_new_event(TestApp.event_test_data, session) is not None

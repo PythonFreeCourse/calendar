@@ -13,5 +13,5 @@ class Event(Base):
     owner_id: int
     color: str
 
-        class Config:
-            orm_mode = True
+    class Config:
+        orm_mode = True
