@@ -3,7 +3,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database.database import Base
-from app.database.database import engine
 
 pytest_plugins = [
     'tests.user_fixture',
