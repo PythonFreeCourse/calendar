@@ -1,12 +1,12 @@
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from app.database.models import Quote
 
 from sqlalchemy.orm import Session
 
 
-def get_quotes_from_json() -> List[Dict]:
+def get_quotes_from_json() -> List[Dict[str, Optional[str]]]:
     """This function reads all of the daily quotes from a specific JSON file.
     The JSON file content is copied from the free API:
     'https://type.fit/api/quotes'. I saved the content so the API won't be
