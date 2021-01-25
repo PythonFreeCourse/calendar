@@ -60,6 +60,9 @@ class Event(Base):
 
     participants = relationship("UserEvent", back_populates="events")
 
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
     def __repr__(self):
         return f'<Event {self.id}>'
 
