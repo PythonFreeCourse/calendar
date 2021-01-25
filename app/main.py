@@ -5,7 +5,8 @@ from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine
 from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
-from app.routers import agenda, email, event, invitation, profile, search
+from app.routers import (agenda, dayview, email, event, invitation, profile,
+                         search)
 
 
 def create_tables(engine, psql_environment):
