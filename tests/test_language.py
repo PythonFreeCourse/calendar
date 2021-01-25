@@ -15,6 +15,10 @@ class TestLanguage:
         assert languages.get_translation_words()
 
     @staticmethod
+    def test_get_translation_words_for_language():
+        assert languages.get_translation_words("en")
+
+    @staticmethod
     def test_get_translation_words_all_languages():
         assert languages._get_translation_words_all_languages()
 
