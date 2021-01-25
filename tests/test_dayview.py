@@ -7,6 +7,7 @@ from app.database.models import Event, User
 from app.routers.dayview import DivAttributes
 
 
+# TODO add user session login
 @pytest.fixture
 def user():
     return User(username='test1', email='user@email.com',
@@ -33,7 +34,15 @@ def event2():
 def event3():
     start = datetime(year=2021, month=2, day=3, hour=7, minute=5)
     end = datetime(year=2021, month=2, day=3, hour=9, minute=15)
-    return Event(title='test1', content='test',
+    return Event(title='test3', content='test',
+                 start=start, end=end, owner_id=1)
+
+
+@pytest.fixture
+def event_with_no_minutes_modified():
+    start = datetime(year=2021, month=2, day=3, hour=7)
+    end = datetime(year=2021, month=2, day=3, hour=8)
+    return Event(title='test_no_modify', content='test',
                  start=start, end=end, owner_id=1)
 
 
@@ -43,6 +52,14 @@ def multiday_event():
     end = datetime(year=2021, month=2, day=3, hour=13)
     return Event(title='test_multiday', content='test',
                  start=start, end=end, owner_id=1, color='blue')
+
+
+def test_minutes_position_calculation(event_with_no_minutes_modified):
+    div_attr = DivAttributes(event_with_no_minutes_modified)
+    assert div_attr._minutes_position(div_attr.start_time.minute) is None
+    assert div_attr._minutes_position(div_attr.end_time.minute) is None
+    assert div_attr._minutes_position(0) is None
+    assert div_attr._minutes_position(60) == 4
 
 
 def test_div_attributes(event1):

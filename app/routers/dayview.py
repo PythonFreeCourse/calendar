@@ -24,6 +24,9 @@ class DivAttributes:
     BASE_GRID_BAR = 5
     FIRST_GRID_BAR = 1
     LAST_GRID_BAR = 101
+    DEFAULT_COLOR = 'grey'
+    DEFAULT_FORMAT = "%H:%M"
+    MULTIDAY_FORMAT = "%d/%m %H:%M"
 
     def __init__(self, event: Event,
                  day: Union[bool, datetime] = False) -> None:
@@ -37,15 +40,17 @@ class DivAttributes:
 
     def _check_color(self, color: str) -> str:
         if color is None:
-            return 'grey'
+            return self.DEFAULT_COLOR
         return color
 
-    def _minutes_position(self, minutes: int) -> int:
+    def _minutes_position(self, minutes: int) -> Union[int, None]:
+        min_minutes = self.MIN_MINUTES
+        max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
-            if self.MIN_MINUTES < minutes <= self.MAX_MINUTES:
+            if min_minutes < minutes <= max_minutes:
                 return i
-            self.MIN_MINUTES = self.MAX_MINUTES
-            self.MAX_MINUTES += 15
+            min_minutes = max_minutes
+            max_minutes += 15
 
     def _get_position(self, time: datetime) -> int:
         grid_hour_position = time.hour * self.FULL_GRID_BAR
@@ -66,13 +71,8 @@ class DivAttributes:
         return f'{start} / {end}'
 
     def _get_time_format(self) -> str:
-        format = "%H:%M"
-        multiday_format = "%d/%m %H:%M"
         for multiday in [self.start_multiday, self.end_multiday]:
-            if multiday:
-                yield multiday_format
-            else:
-                yield format
+            yield self.MULTIDAY_FORMAT if multiday else self.DEFAULT_FORMAT
 
     def _set_total_time(self) -> None:
         length = self.end_time - self.start_time
@@ -94,22 +94,20 @@ class DivAttributes:
 
 
 @router.get('/day/{date}')
-async def dayview(request: Request, date: str,
-                  db_session=Depends(get_db), view='day'):
-    # temporary fake user until there will be login session
+async def dayview(request: Request, date: str, db_session=Depends(get_db), view='day'):
+    # TODO: add a login session
     user = db_session.query(User).filter_by(username='test1').first()
     day = datetime.strptime(date, '%Y-%m-%d')
     day_end = day + timedelta(hours=24)
-    '''events = db_session.query(Event).filter(
+    events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
             or_(and_(Event.start >= day, Event.start < day_end),
                 and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))'''
-    events = []
-    events_n_Attrs = [(event, DivAttributes(event, day)) for event in events]
+                and_(Event.start < day_end, day_end < Event.end)))
+    events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     return templates.TemplateResponse("dayview.html", {
         "request": request,
-        "events": events_n_Attrs,
+        "events": events_n_attrs,
         "month": day.strftime("%B").upper(),
         "day": day.day,
         "view": view
