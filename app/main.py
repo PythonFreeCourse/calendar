@@ -42,15 +42,7 @@ app.include_router(login.router)
 #         return response
 #     else:
 #         return    
-#     try:
-#         verification_of_token = verify_token(token)
-#         if verification_of_token:
-#             response = await call_next(request)
-#             return response
-#         else:
-#             return JSONResponse(status_code=403) # or 401
-#     except InvalidSignatureError as er:
-#         return JSONResponse(status_code=401)
+
 
 @app.get("/")
 async def home(request: Request):
