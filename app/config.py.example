@@ -33,3 +33,6 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
+
+# input
+DISPLAY = "0 python -c 'import pynput'"
