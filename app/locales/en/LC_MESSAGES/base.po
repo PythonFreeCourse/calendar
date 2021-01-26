@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-26 20:17+0200\n"
-"PO-Revision-Date: 2021-01-26 20:18+0200\n"
+"POT-Creation-Date: 2021-01-26 21:30+0200\n"
+"PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Your Card"
 msgstr ""
 
-#: tests/test_language.py:28
-msgid "test"
+#: tests/test_language.py:39
+msgid "test python translation"
 msgstr ""
 

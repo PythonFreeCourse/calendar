@@ -5,15 +5,23 @@ from app.internal import languages
 
 class TestLanguage:
     PYTHON_TESTS = [
-        ('en', 'test', True),
-        ('he', 'בדיקה', True),
-        ('de', 'test', False),  # Defaults to English translation.
+        (None, 'test python translation', False),
+        ('', 'test python translation', False),
+        ('en', 'test python translation', True),
+        ('he', 'בדיקת תרגום בפייתון', True),
+        ('de', 'test python translation', False),  # Defaults to English.
+        (["en"], 'test python translation', False),
+        (3, 'test python translation', False),
     ]
 
     HTML_TESTS = [
+        (None, 'Profile', False),
+        ('', 'Profile', False),
         ('en', 'Profile', True),
         ('he', 'פרופיל', True),
         ('de', 'Profile', False),  # Defaults to English translation.
+        (["en"], 'Profile', False),
+        (3, 'Profile', False),
     ]
 
     NUMBER_OF_LANGUAGES = 2
@@ -24,16 +32,11 @@ class TestLanguage:
         assert True
 
     @staticmethod
-    def test_set_ui_language():
-        languages.set_ui_language()
-        assert True
-
-    @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              PYTHON_TESTS)
     def test_gettext_python(client, language_code, translation, is_valid):
         languages.set_ui_language(language_code)
-        gettext_translation = _("test")  # noqa F821
+        gettext_translation = _("test python translation")  # noqa F821
         assert ((is_valid and gettext_translation == translation)
                 or (not is_valid and gettext_translation == translation))
 
