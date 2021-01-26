@@ -2,7 +2,6 @@ from datetime import datetime
 
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.expression import true
 
 from app.database.database import Base
 
@@ -71,15 +70,19 @@ class Invitation(Base):
     recipient = relationship("User")
     event = relationship("Event")
 
-<<<<<<< HEAD
-    owner = relationship("User", back_populates="events")
+    def __repr__(self):
+        return (
+            f'<Invitation '
+            f'({self.event.owner}'
+            f'to {self.recipient})>'
+        )
 
 
 class AudioSettings(Base):
     __tablename__ = "audio_settings"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id  = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"))
     music_on = Column(String, nullable=False)
     music_vol = Column(Integer)
     sfxs_on = Column(String, nullable=False)
@@ -100,11 +103,3 @@ class UserAudioTracks(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     track_id = Column(Integer, ForeignKey("audio_tracks.id"))
-=======
-    def __repr__(self):
-        return (
-            f'<Invitation '
-            f'({self.event.owner}'
-            f'to {self.recipient})>'
-        )
->>>>>>> 0b4570bb088c75e6d1848f1eadefd7f190dab1c2

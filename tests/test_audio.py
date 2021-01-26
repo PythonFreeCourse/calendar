@@ -31,17 +31,19 @@ def test_choices_Off(audio_test_client):
 
 def test_choices_On(audio_test_client):
     response = audio_test_client.post("/audio-settings/", data={
-        "music_on_off": "On", "music_choices": ["GASTRONOMICA.mp3"], "music_vol": 50,
+        "music_on_off": "On", "music_choices":
+            ["GASTRONOMICA.mp3"], "music_vol": 50,
         "sfx_on_off": "On", "sfx_choice": "click 1.wav", "sfx_vol": 50
     })
     assert response.status_code == REDIRECT
 
 
-def test_start_audio(audio_test_client):   
+def test_start_audio(audio_test_client):
     mixer.stop()
     audio_test_client.get("/audio-settings/")
     audio_test_client.post("/audio-settings/", data={
-        "music_on_off": "On", "music_choices": ["GASTRONOMICA.mp3"], "music_vol": 50,
+        "music_on_off": "On", "music_choices":
+            ["GASTRONOMICA.mp3"], "music_vol": 50,
         "sfx_on_off": "On", "sfx_choice": "click 1.wav", "sfx_vol": 50
     })
     _, _1 = None, None
@@ -57,12 +59,11 @@ def test_stop_audio(audio_test_client):
     assert response.status_code == OK
 
 
-def test_start_audio_sfx_off(audio_test_client):   
+def test_start_audio_sfx_off(audio_test_client):
     audio_test_client.get("/audio-settings/")
     audio_test_client.post("/audio-settings/", data={
         "music_on_off": "Off", "sfx_on_off": "Off"
     })
-    _, _1 = None, None
     response = audio_test_client.get("/start_audio/")
     assert response.status_code == OK
 
