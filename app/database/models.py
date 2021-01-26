@@ -50,6 +50,8 @@ class Event(Base):
 
     owner = relationship("User")
     owner_id = Column(Integer, ForeignKey("users.id"))
+    color = Column(String, nullable=True)
+
     participants = relationship("UserEvent", back_populates="events")
 
     def __repr__(self):
