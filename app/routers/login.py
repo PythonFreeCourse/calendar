@@ -3,7 +3,7 @@ from app.dependencies import templates
 from app.database.database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
 from app.internal.security.ouath2 import authenticate_user
-from app.internal.security.ouath2 import LoginUser, create_jwt_token, check_jwt_token
+from app.internal.security.ouath2 import LoginUser, create_jwt_token, check_jwt_token, oauth_schema, get_current_user
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from app.internal.security.schema import  Token
@@ -65,8 +65,13 @@ async def login(request: Request, response: Response, form: OAuth2PasswordReques
     jwt_token = create_jwt_token(authenticated_user)
     # response.headers["Authorization"] = "Bearer " + jwt_token
     # user = authenticate_user()
-    print(await check_jwt_token(jwt_token))
-    return jwt_token
+    # return jwt_token
+    jwt_token = create_jwt_token(user)
+    print(jwt_token)
+    response = RedirectResponse(
+        url='/profile', status_code=HTTP_302_FOUND)
+    response.headers["authorization"] = jwt_token
+    return response
     
     
     response.set_cookie(key="access_token",value=f"Bearer {jwt_token}", httponly=True)
@@ -75,9 +80,9 @@ async def login(request: Request, response: Response, form: OAuth2PasswordReques
         "message": "User created",
         "status_code": 201})
 
-
+# depends = check_jwt_token
 @router.get('/protected')
-async def protected_route(request: Request, jwt: bool = Depends(check_jwt_token)):
+async def protected_route(request: Request, jwt: str = Depends(get_current_user)):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "protected"

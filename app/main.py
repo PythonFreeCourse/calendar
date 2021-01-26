@@ -3,8 +3,12 @@ from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
 from app.routers import agenda, event, profile, email, invitation, register, login
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
+
+####
+from starlette.responses import RedirectResponse
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -19,6 +23,34 @@ app.include_router(register.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(login.router)
+
+# @app.middleware("http")
+# async def add_middleware_here(request: Request, response: Response):
+#     if str(request.url).__contains__("/login"):
+#         return request
+#         return RedirectResponse(
+#             url="/login", status_code=200)
+#     if "authorization" in response.headers:
+#         token = response.headers["authorization"]
+#     elif "authorization" in request.headers:
+#         token = request.headers["authorization"]
+#     if token:
+#         response = request.url
+#         response = RedirectResponse(
+#             url=await request.url(request), status_code=200)
+#         response.headers["authorization"] = token
+#         return response
+#     else:
+#         return    
+#     try:
+#         verification_of_token = verify_token(token)
+#         if verification_of_token:
+#             response = await call_next(request)
+#             return response
+#         else:
+#             return JSONResponse(status_code=403) # or 401
+#     except InvalidSignatureError as er:
+#         return JSONResponse(status_code=401)
 
 @app.get("/")
 async def home(request: Request):

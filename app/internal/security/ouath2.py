@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from .schema import LoginUser
 from app.database.models import User
 from sqlalchemy.orm.session import Session
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from app.dependencies import templates
 from app.database.database import get_db, SessionLocal
 from fastapi.security import OAuth2PasswordBearer
@@ -13,6 +13,9 @@ import jwt
 from starlette.status import HTTP_401_UNAUTHORIZED
 import time
 from app.config import JWT_ALGORITHM, JWT_SECRET_KEY
+from starlette.requests import Request
+
+
 
 
 JWT_MIN_EXP = 120
@@ -43,14 +46,12 @@ def authenticate_user(user: LoginUser):
             return LoginUser(username=user.username, hashed_password=db_user.password)
     return False
 
-
 # Create access JWT token
 def create_jwt_token(user: LoginUser):
     expiration = datetime.utcnow() + timedelta(minutes=JWT_MIN_EXP )
     jwt_payload = {"sub": user.username, "hashed_password": user.hashed_password, "exp": expiration}
     jwt_token = jwt.encode(jwt_payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
     return jwt_token
-
 
 # Check whether JWT token is correct
 async def check_jwt_token(token: str = Depends(oauth_schema)):
@@ -73,3 +74,7 @@ async def check_jwt_token(token: str = Depends(oauth_schema)):
         raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
 
 
+######
+async def get_current_user(token: str = Depends(oauth_schema)):
+    if check_jwt_token(token):
+        return token
