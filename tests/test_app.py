@@ -41,3 +41,10 @@ class TestApp:
     @staticmethod
     def test_add_event(session: Session):
         assert add_new_event(TestApp.event_test_data, session) is not None
+    
+    @staticmethod
+    def test_add_bad_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['no_colume'] = 'some data'
+        assert add_new_event(bad_event_test_data, session) is None
+    

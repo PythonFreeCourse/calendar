@@ -72,12 +72,11 @@ def add_new_event(values: dict, db) -> Event:
     try:
         if check_validation(values['start'], values['end']):
             new_event = create_model(
-                        db, Event,
-                        **values)
+                        db, Event, **values)
             return new_event
         else:
             return None
-    except (AssertionError, AttributeError) as e:
+    except (AssertionError, AttributeError, TypeError) as e:
         # Need to write into log
         print(e)
         return None
