@@ -5,7 +5,8 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, SOUNDS_PATH, templates)
-from app.routers import agenda, audio, dayview, event, profile, email, invitation
+from app.routers import (agenda, audio, dayview,
+                         event, profile, email, invitation)
 
 
 models.Base.metadata.create_all(bind=engine)
