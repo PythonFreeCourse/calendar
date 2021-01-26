@@ -21,25 +21,25 @@
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateNameModal">
-                                        {{ localized.edit_full_name_button }}
+                                        gettext("Edit name")
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateEmailModal">
-                                        {{ localized.edit_email_button }}
+                                        gettext("Edit email")
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updatePhotoModal">
-                                        {{ localized.edit_photo_button }}
+                                        gettext("Edit photo")
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateDescriptionModal">
-                                        {{ localized.edit_description_button }}
+                                        gettext("Edit description")
                                     </button>
                                 </li>
                             </ul>
@@ -50,18 +50,18 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ localized.update_full_name_title }}</h5>
+                                        <h5 class="modal-title">{{ gettext("Update name") }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form action="update_user_fullname" method="post">
-                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="fullname" placeholder="Full Name" value="{{ variables.user.full_name }}">
+                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="fullname" placeholder="Full Name" value="{{ user.full_name }}">
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
                                             </div>
                                         </form>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -71,17 +71,17 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ localized.update_email_title }}</h5>
+                                        <h5 class="modal-title">{{ gettext("Update email") }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form action="update_user_email" method="post">
                                             <input type="email" class="form-control border-top-0 border-end-0 border-start-0 mb-2" name="email"
-                                                placeholder="E-mail" value="{{ variables.user.email }}">
+                                                placeholder="E-mail" value="{{ user.email }}">
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
                                             </div>
-                                        </form>                        
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -92,19 +92,19 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ localized.update_description_title }}</h5>
+                                        <h5 class="modal-title">{{ gettext("Update description") }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form action="update_user_description" method="post">
                                             <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                name="description" placeholder="About me" value="{{ variables.user.description }}">
+                                                name="description" placeholder="About me" value="{{ user.description }}">
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
                                             </div>
                                         </form>
                                     </div>
-                        
+
                                 </div>
                             </div>
                         </div>
@@ -115,7 +115,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ localized.update_photo_title }}</h5>
+                                        <h5 class="modal-title">{{ gettext("Update photo") }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
@@ -124,10 +124,10 @@
                                                 <input type="file"class="form-control-sm" accept="image/png, image/jpeg" name="file">
                                             </div>
                                             <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit" class="btn btn-sm btn-success">{{ localized.save_changes_button }}</button>
+                                                <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
                                             </div>
                                         </form>
-                                    </div>               
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -135,19 +135,19 @@
                     <!-- End profile update menu -->
 
                     <img class="card-img-top profile-image rounded-circle mx-auto d-block"
-                     src="{{ url_for('media', path=variables.user.avatar) }}" alt="Profile image">
+                     src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
                     <div class="card-body">
-                        <h6 class="card-title text-center mb-1">{{ variables.user.full_name }}</h6>
+                        <h6 class="card-title text-center mb-1">{{ user.full_name }}</h6>
                         <p class="card-text text-center mt-0">
                             <a class="nav-link text-secondary" href="#">
                                 <i class="fa fa-spin fa-cog" aria-hidden="true"></i>
-                                {{ localized.settings_button }}
+                                {{ gettext("Settings") }}
                             </a>
                         </p>
                         <hr>
                         <p class="card-text text-center">
                             <small>
-                                {{ variables.user.description }}
+                                {{ user.description }}
                             </small>
                         </p>
                     </div>
@@ -158,38 +158,38 @@
                 <div class="card card-profile">
                     <div class="card-body">
                         <p class="card-title">
-                            {{ localized.features_title }}
+                            {{ gettext("Features") }}
                         </p>
                         <ul class="list-group">
                             <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="#">{{ localized.export_calendar_button }}</a>
+                                <a class="text-decoration-none text-secondary" href="#">{{ gettext("Export my calendar") }}</a>
                             </li>
                             <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                                <a class="text-decoration-none text-secondary" href="#">{{ gettext("Your feature") }}</a>
                             </li>
                             <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                                <a class="text-decoration-none text-secondary" href="#">{{ gettext("Your feature") }}</a>
                             </li>
                         </ul>
                     </div>
                 </div>
                 <!-- End Features card -->
-                
+
             </div>
-            
+
             <!-- Center -->
             <div class="col-5">
 
                 <!-- Upcoming events -->
                 <div class="mb-3">
 
-                    {% for event in variables.events %}
+                    {% for event in events %}
 
                     <!-- Events card -->
                     <div class="card card-event mb-2 pb-0">
                         <div class="card-header d-flex justify-content-between">
                             <small>
-                                <i>{{ localized.upcoming_event_on_date.format(date = event.start) }} </i>
+                                <i>{{ gettext("Upcoming event on (date)", date=event.start) }} </i>
                             </small>
                             <span>
                                 <!-- Event settings -->
@@ -200,19 +200,19 @@
                         </div>
                         <div class="card-body pb-1">
                             <p class="card-text">
-                                The Event {{ variables.event }} - description ...
+                                {{ gettext("The Event (event)", event=event.title) }}
                             </p>
                             <hr class="mb-0">
-                            <small class="event-posted-time text-muted">Last updated 3 mins ago</small>
+                            <small class="event-posted-time text-muted">{{ gettext("Last updated (time) ago") }}</small>
                         </div>
                     </div>
                     <!-- End Events card -->
 
                     {% endfor %}
                 </div>
-                               
+
             </div>
-            
+
             <!-- Right side -->
             <div class="col-4">
 
@@ -220,7 +220,7 @@
                 <div class="card card-profile mb-3" style="height: 18em;">
                     <div class="card-body">
                         <p class="card-title">
-                            Explore MeetUps near you
+                            {{ gettext("Explore MeetUps near you") }}
                         </p>
                     </div>
                 </div>
@@ -229,7 +229,7 @@
                 <div class="card card-profile mb-3" style="height: 18em;">
                     <div class="card-body">
                         <p class="card-title">
-                            Your Card
+                            {{ gettext("Your Card") }}
                         </p>
                     </div>
                 </div>
@@ -238,7 +238,7 @@
                 <div class="card card-profile mb-3" style="height: 18em;">
                     <div class="card-body">
                         <p class="card-title">
-                            Your Card
+                            {{ gettext("Your Card") }}
                         </p>
                     </div>
                 </div>

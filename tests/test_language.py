@@ -1,51 +1,50 @@
 import pytest
 
-import app.internal.languages as languages
+from app.internal import languages
 
 
 class TestLanguage:
-    LANGUAGE_TESTS = [
+    PYTHON_TESTS = [
         ('en', 'test', True),
         ('he', 'בדיקה', True),
-        ('de', 'test', False),  # defaults to English translation.
+        ('de', 'test', False),  # Defaults to English translation.
     ]
 
-    @staticmethod
-    def test_get_translation_words():
-        assert languages.get_translation_words()
+    HTML_TESTS = [
+        ('en', 'Profile', True),
+        ('he', 'פרופיל', True),
+        ('de', 'Profile', False),  # Defaults to English translation.
+    ]
+
+    NUMBER_OF_SUPPORTED_LANGUAGES = 2
 
     @staticmethod
-    def test_get_translation_words_for_language():
-        assert languages.get_translation_words("en")
-
-    @staticmethod
-    def test_get_translation_words_all_languages():
-        assert languages._get_translation_words_all_languages()
-
-    @staticmethod
-    @pytest.mark.parametrize("language_code, translation, is_valid",
-                             LANGUAGE_TESTS)
-    def test_translation_words_all_languages_return_all_supported_languages(
-            language_code, translation, is_valid):
-        all_translations = languages._get_translation_words_all_languages()
-        assert ((language_code in all_translations and is_valid)
-                or (language_code not in all_translations and not is_valid))
+    def test_setup_ui_language():
+        languages.setup_ui_language()
+        assert True
 
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
-                             LANGUAGE_TESTS)
-    def test_translation_words_all_languages_valid_translations(
-            language_code, translation, is_valid):
-        if is_valid:
-            assert languages._get_translation_words_all_languages()[
-                       language_code]["test_word"] == translation
+                             PYTHON_TESTS)
+    def test_gettext_python(client, language_code, translation, is_valid):
+        languages.change_ui_language(language_code)
+        gettext_translation = _("test")
+        assert ((is_valid and gettext_translation == translation)
+                or (not is_valid and gettext_translation == translation))
 
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
-                             LANGUAGE_TESTS)
-    def test_populate_with_language(language_code, translation, is_valid):
-        translations = languages._populate_with_language(language_code)
-        assert translations["test_word"] == translation
+                             HTML_TESTS)
+    def test_gettext_html(client, language_code, translation, is_valid):
+        languages.change_ui_language(language_code)
+        text = client.get("/").text
+        assert ((is_valid and translation in text)
+                or (not is_valid and translation in text))
+
+    @staticmethod
+    def test_get_supported_languages():
+        number_of_languages = len(languages._get_supported_languages())
+        assert number_of_languages == TestLanguage.NUMBER_OF_SUPPORTED_LANGUAGES
 
     @staticmethod
     def test_get_display_language():

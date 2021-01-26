@@ -8,8 +8,7 @@ from starlette.status import HTTP_302_FOUND
 from app import config
 from app.database.database import get_db
 from app.database.models import User
-from app.dependencies import MEDIA_PATH
-from app.internal.utilities import get_template_response
+from app.dependencies import MEDIA_PATH, templates
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -17,7 +16,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": _("Not found")}},
 )
 
 
@@ -46,12 +45,11 @@ async def profile(
 
     session.close()
 
-    variables = {
+    return templates.TemplateResponse("profile.html", {
+        "request": request,
         "user": user,
         "events": upcoming_events,
-    }
-
-    return get_template_response("profile.html", request, variables)
+    })
 
 
 @router.post("/update_user_fullname")
