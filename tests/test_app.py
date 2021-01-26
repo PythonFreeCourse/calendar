@@ -37,6 +37,7 @@ class TestApp:
             TestApp.date_test_data[0],
             TestApp.date_test_data[1]
                                 )
+
     @staticmethod
     def test_bad_check_validation():
         assert not check_validation(
