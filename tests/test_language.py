@@ -16,7 +16,7 @@ class TestLanguage:
         ('de', 'Profile', False),  # Defaults to English translation.
     ]
 
-    NUMBER_OF_SUPPORTED_LANGUAGES = 2
+    NUMBER_OF_LANGUAGES = 2
 
     @staticmethod
     def test_setup_ui_language():
@@ -28,7 +28,7 @@ class TestLanguage:
                              PYTHON_TESTS)
     def test_gettext_python(client, language_code, translation, is_valid):
         languages.change_ui_language(language_code)
-        gettext_translation = _("test")
+        gettext_translation = _("test")  # noqa F821
         assert ((is_valid and gettext_translation == translation)
                 or (not is_valid and gettext_translation == translation))
 
@@ -44,7 +44,7 @@ class TestLanguage:
     @staticmethod
     def test_get_supported_languages():
         number_of_languages = len(languages._get_supported_languages())
-        assert number_of_languages == TestLanguage.NUMBER_OF_SUPPORTED_LANGUAGES
+        assert number_of_languages == TestLanguage.NUMBER_OF_LANGUAGES
 
     @staticmethod
     def test_get_display_language():

@@ -16,7 +16,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": _("Not found")}},
+    responses={404: {"description": _("Not found")}},  # noqa F821
 )
 
 
