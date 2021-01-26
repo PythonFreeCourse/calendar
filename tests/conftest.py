@@ -32,3 +32,4 @@ def session():
     yield session
     session.close()
     Base.metadata.drop_all(bind=test_engine)
+    
