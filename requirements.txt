@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 alabaster==0.7.12
 argh==0.26.2
 asn1crypto==1.3.0
