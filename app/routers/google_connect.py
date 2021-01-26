@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from fastapi import Depends, APIRouter
 from starlette.responses import RedirectResponse
 
@@ -6,7 +6,6 @@ from google.auth.transport.requests import Request as google_request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-
 
 from app.database.models import Event, User, OAuthCredentials, UserEvent
 from app.database.database import get_db, SessionLocal
@@ -25,39 +24,16 @@ router = APIRouter(
 
 @router.get("/sync")
 async def google_sync(session=Depends(get_db)):
+    '''Sync with Google - if user never synced with google this funcion will take
+    the user to a consent screen to use his google calendar data with the app.
+    '''
 
     # TODO - get connected/current user
     user = session.query(User).filter_by(id=1).first()
 
-    credentials = None
-    if user.oauth_credentials is not None:
-        print("Loading credentials from DB...")
-        db_credentials = user.oauth_credentials
-        credentials = Credentials(
-            token=db_credentials.token,
-            refresh_token=db_credentials.refresh_token,
-            token_uri=db_credentials.token_uri,
-            client_id=db_credentials.client_id,
-            client_secret=db_credentials.client_secret,
-            expiry=db_credentials.expiry
-        )
-
-        if credentials.expired:
-            print('refreshing token')
-            credentials.refresh(google_request())
-            refreshed_credentials = OAuthCredentials(
-                owner=user, token=credentials.token,
-                refresh_token=credentials.refresh_token,
-                token_uri=credentials.token_uri,
-                client_id=credentials.client_id,
-                client_secret=credentials.client_secret,
-                expiry=credentials.expiry
-            )
-
-            session.add(refreshed_credentials)
-            session.commit()
-
-    else:
+    credentials, status = get_credentials_from_db(user, session)
+    if not status:
+        # first sync
         if CLIENT_SECRET_FILE is None:
             print('Google Sync is not available - missing client_secret.json')
             url = profile_router.url_path_for("profile")
@@ -99,13 +75,14 @@ async def google_sync(session=Depends(get_db)):
 
 def get_current_year_events(
                 credentials: Credentials, user: User, session: SessionLocal):
+    '''Getting user event from google calendar'''
 
     db_cleanup(user, session)
     service = build('calendar', 'v3', credentials=credentials)
 
-    currrnt_year = datetime.datetime.now().year
-    start = datetime.datetime(currrnt_year, 1, 1).isoformat() + 'Z'
-    end = datetime.datetime(currrnt_year + 1, 1, 1).isoformat() + 'Z'
+    currrnt_year = datetime.now().year
+    start = datetime(currrnt_year, 1, 1).isoformat() + 'Z'
+    end = datetime(currrnt_year + 1, 1, 1).isoformat() + 'Z'
     events_result = service.events().list(
         calendarId='primary',
         timeMin=start,
@@ -122,19 +99,19 @@ def get_current_year_events(
         # support for all day events
         if 'dateTime' in event['start'].keys():
             # part time event
-            start = datetime.datetime.fromisoformat(event['start']['dateTime'])
-            end = datetime.datetime.fromisoformat(event['end']['dateTime'])
+            start = datetime.fromisoformat(event['start']['dateTime'])
+            end = datetime.fromisoformat(event['end']['dateTime'])
         else:
             # all day event
             start = event['start']['date'].split('-')
-            start = datetime.datetime(
+            start = datetime(
                 year=int(start[0]),
                 month=int(start[1]),
                 day=int(start[2])
             )
 
             end = event['end']['date'].split('-')
-            end = datetime.datetime(
+            end = datetime(
                 year=int(end[0]),
                 month=int(end[1]),
                 day=int(end[2])
@@ -155,14 +132,51 @@ def get_current_year_events(
 
 
 def db_cleanup(user: User, session: SessionLocal):
-    to_be_removed_from_user = []
+    '''removing all user google events so the next time with be syncronized'''
+
     for user_event in user.events:
         user_event_id = user_event.id
         event = user_event.events
         if event.isGoogleEvent:
-            to_be_removed_from_user.append(user_event)
             session.query(Event).filter_by(id=event.id).delete()
             session.query(UserEvent).filter_by(id=user_event_id).delete()
+            session.commit()
 
-    for user_event_obj in to_be_removed_from_user:
-        user.events.remove(user_event_obj)
+
+def get_credentials_from_db(user: User, session: SessionLocal):
+    '''bring user credential to use with google calendar api
+    and save the credential in the db'''
+
+    credentials = None
+    status = False
+
+    if user.oauth_credentials is not None:
+        print("Loading credentials from DB...")
+        db_credentials = user.oauth_credentials
+        credentials = Credentials(
+            token=db_credentials.token,
+            refresh_token=db_credentials.refresh_token,
+            token_uri=db_credentials.token_uri,
+            client_id=db_credentials.client_id,
+            client_secret=db_credentials.client_secret,
+            expiry=db_credentials.expiry
+        )
+
+        if credentials.expired:
+            print('refreshing token')
+            credentials.refresh(google_request())
+            refreshed_credentials = OAuthCredentials(
+                owner=user, token=credentials.token,
+                refresh_token=credentials.refresh_token,
+                token_uri=credentials.token_uri,
+                client_id=credentials.client_id,
+                client_secret=credentials.client_secret,
+                expiry=credentials.expiry
+            )
+
+            session.add(refreshed_credentials)
+            session.commit()
+
+        status = True
+
+    return credentials, status
