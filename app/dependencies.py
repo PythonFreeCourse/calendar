@@ -9,5 +9,5 @@ APP_PATH = os.path.dirname(os.path.realpath(__file__))
 MEDIA_PATH = os.path.join(APP_PATH, config.MEDIA_DIRECTORY)
 STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
-
+SOUNDS_PATH = os.path.join(APP_PATH, "static\\tracks\\")
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
