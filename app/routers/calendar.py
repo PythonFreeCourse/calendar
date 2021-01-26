@@ -18,7 +18,8 @@ ADD_DAYS_ON_SCROLL: int = 42
 
 @router.get("/")
 async def calendar(request: Request) -> Response:
-    day = cg.create_day(datetime.date.today())
+    user_local_time = cg.Day.get_user_local_time()
+    day = cg.create_day(user_local_time)
     return templates.TemplateResponse(
         "calendar/calendar.html",
         {

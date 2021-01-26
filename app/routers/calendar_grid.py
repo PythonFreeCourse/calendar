@@ -3,6 +3,7 @@ import itertools
 import locale
 from datetime import date, datetime, timedelta
 from typing import Dict, Iterator, List, Tuple
+import pytz
 
 MONTH_BLOCK: int = 6
 
@@ -52,6 +53,11 @@ class Day:
     def display(self) -> str:
         """Returns day date inf the format of 00 MONTH 00"""
         return self.date.strftime("%d %B %y").upper()
+
+    @classmethod
+    def get_user_local_time(cls) -> datetime:
+        greenwich = pytz.timezone('GB')
+        return greenwich.localize(datetime.now())
 
     @classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:

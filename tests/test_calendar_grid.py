@@ -87,6 +87,15 @@ class TestCalendarGrid:
                 assert get_block[i].days[j].date == month_weeks[i].days[j]
 
     @staticmethod
+    def test_get_user_local_time():
+        time_string = "%b%w%Y"
+        server_time = cg.Day.get_user_local_time()
+        server_time_check = datetime.datetime.today()
+        assert server_time
+        assert server_time.strftime(
+            time_string) == server_time_check.strftime(time_string)
+
+    @staticmethod
     def test_is_weekend():
         assert not cg.Day.is_weekend(DATE)
         assert cg.Day.is_weekend(WEEKEND.date)
