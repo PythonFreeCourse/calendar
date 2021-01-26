@@ -5,7 +5,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, dayview, event, profile, email, invitation
+from app.routers import agenda, dayview, event, profile, email, invitation, weekly_tasks
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -20,6 +20,7 @@ app.include_router(agenda.router)
 app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
+app.include_router(weekly_tasks.router)
 
 
 @app.get("/")

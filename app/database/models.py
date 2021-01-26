@@ -34,8 +34,15 @@ class User(Base):
 
     events = relationship("UserEvent", back_populates="participants")
 
+    weekly_tasks = relationship(
+        "WeeklyTask", cascade="all, delete", back_populates="owner")
+    
+    tasks = relationship(
+        "Task", cascade="all, delete", back_populates="owner")
+
     def __repr__(self):
         return f'<User {self.id}>'
+
 
 
 class Event(Base):
@@ -76,3 +83,31 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    content = Column(String)
+    is_done = Column(Boolean, nullable=False)
+    is_important = Column(Boolean, nullable=False)
+    date_time = Column(DateTime, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="tasks")
+
+
+class WeeklyTask(Base):
+    __tablename__ = "weekly_task"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    days = Column(String, nullable=False)
+    content = Column(String)
+    is_important = Column(Boolean, nullable=False)
+    the_time = Column(String, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="weekly_tasks")

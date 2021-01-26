@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container mt-4">
+        {% if mode == "edit" %}
+        <!-- when on edit mode  -->
+            <h1>Edit Weekly Tasks</h1>
+            {% set weekly_task_id = weekly_task.id %}
+        
+        {% else %}
+        <!-- when on add mode  -->
+            <h1>Add Weekly Tasks</h1>
+            {% set weekly_task_id = "0" %}
+
+        {% endif %}
+    </div>
+
+    <!-- show massage if weekly_task not added or edited -->
+    {% if massage %}
+        <div class="alert alert-danger container mt-4" role="alert">
+            {{ massage }}
+        </div>
+    {% endif %}
+
+    <!-- set all the 'checked' if weekly task exists -->
+    {% if weekly_task %}
+
+        <!-- set all days -->
+        {% if weekly_task.days %}
+            {% if "Sun" in weekly_task.days %}
+                {% set c_sun = "checked" %}
+            {% endif %}
+
+            {% if "Mon" in weekly_task.days %}
+                {% set c_mon = "checked" %}
+            {% endif %}
+
+            {% if "Tue" in weekly_task.days %}
+                {% set c_tue = "checked" %}
+            {% endif %}
+
+            {% if "Wed" in weekly_task.days %}
+                {% set c_wed = "checked" %}
+            {% endif %}
+
+            {% if "Thu" in weekly_task.days %}
+                {% set c_thu = "checked" %}
+            {% endif %}
+
+            {% if "Fri" in weekly_task.days %}
+                {% set c_fri = "checked" %}
+            {% endif %}
+
+            {% if "Sat" in weekly_task.days %}
+                {% set c_sat = "checked" %}
+            {% endif %}
+        {% endif %}
+        <!-- End days set -->
+
+        {% if weekly_task.is_important %}
+            {% set is_important = "checked" %}
+        {% endif %}
+    {% endif %}
+    <!-- end set -->
+
+    <!-- Set title -->
+    {% if weekly_task.title == None %}
+        {% set title = "" %}
+    {% else %}
+        {% set title = weekly_task.title %}
+    {% endif %}
+    <!-- End Set title -->
+
+    <!-- Set content -->
+    {% if weekly_task.content == None %}
+        {% set content = "" %}
+    {% else %}
+        {% set content = weekly_task.content %}
+    {% endif %}
+    <!-- End Set content -->
+    
+
+    <!-- Weekly Tasks inputs -->
+    <form class="container mt-5" action="{{ url_for('weekly_task_make_change') }}" method="post">
+        
+        <!-- title input text -->
+        <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" class="form-control" value="{{ title }}" id="title" name="title" aria-describedby="emailHelp">
+        </div>
+
+        <!-- days input checkbox -->
+        <label for="days" class="form-label">Repeat Days:</label>
+        <div id="days">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="sun" {{ c_sun }}>
+                    Sunday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="mon" {{ c_mon }}>
+                    Monday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="tue" {{ c_tue }}>
+                    Tuesday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="wed" {{ c_wed }}>
+                    Wednesday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="thu" {{ c_thu }}>
+                    Thursday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="fri" {{ c_fri }}>
+                    Friday
+                </li>
+                <li class="list-group-item">
+                    <input class="form-check-input me-1" type="checkbox" value="True" name="sat" {{ c_sat }}>
+                    Saturday
+                </li>
+            </ul>
+        </div>
+
+        <!-- time input time -->
+        <div class="mb-3">
+            <label for="the_time" class="form-label">Time Of The Day:</label>
+            <input type="time" class="form-control" value="{{ weekly_task.the_time }}" id="the_time" name="the_time">
+        </div>
+
+        <!-- content input text -->
+        <div class="input-group">
+            <span class="input-group-text">Description:</span>
+            <textarea class="form-control" aria-label="content" id="content" name="content">{{ content }}</textarea>
+        </div>
+
+        <!-- is_important input checkbox -->
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_important" name="is_important" {{is_important}}>
+            <label class="form-check-label" for="is_important">Important</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        
+        <!-- hidden values -->
+        <!-- weekly task id for editing the weekly task -->
+        <input type="hidden" name="weekly_task_id" value="{{ weekly_task_id }}">
+        <!-- mode == "add" or mode == "edit" -->
+        <input type="hidden" name="mode" value="{{ mode }}">
+
+    </form>
+    <!-- End Weekly Tasks inputs -->
+
+{% endblock %}
