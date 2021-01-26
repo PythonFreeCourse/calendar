@@ -16,10 +16,10 @@ def setup_ui_language():
     and call set_ui_language() to setup an initial language for translations.
     """
     templates.env.add_extension('jinja2.ext.i18n')
-    change_ui_language()
+    set_ui_language()
 
 
-def change_ui_language(language: str = None):
+def set_ui_language(language: str = None):
     """Set the gettext translations to a given language.
     If the language requested is not supported, the translations default
     to the value of config.WEBSITE_LANGUAGE.
@@ -70,7 +70,7 @@ def change_ui_language(language: str = None):
 def _get_supported_languages() -> List[str]:
     """Get and return a list of supported translation languages codes.
 
-    :Returns:
+    Returns:
         List[str]: a list of supported translation languages codes.
     """
     try:
