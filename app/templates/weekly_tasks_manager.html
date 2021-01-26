@@ -14,8 +14,8 @@
         <div class="card card-event mb-2 pb-0">
             <div class="card-header d-flex justify-content-between">
                 <small>
-                    <i>Every: {{ weekly_task.days }}</i>
-                    <i>at: {{ weekly_task.the_time }} </i>
+                    <i><span class="text-decoration-underline">Every:</span> {{ weekly_task.days }}</i>
+                    <i><span class="text-decoration-underline">at:</span> {{ weekly_task.the_time }} </i>
                 </small>
                 <span>
                     
@@ -25,10 +25,23 @@
                             options
                         </a>
                       
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                          <li><a class="dropdown-item" href="#">edit</a></li>
-                          <li><a class="dropdown-item" href="#">remove</a></li>
-                        </ul>
+                        
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                
+                                    <li>
+                                        <form action="{{ url_for('weekly_task_edit') }}" method="post">
+                                            <button class="dropdown-item" name="edit_id" type="submit" value="{{ weekly_task.id }}">edit</button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <form action="{{ url_for('weekly_task_remove') }}" method="post">
+                                            <button class="dropdown-item" name="remove_id" type="submit" value="{{ weekly_task.id }}">remove</button>
+                                        </form>
+                                    </li>
+                                </form>
+                            </ul>                            
+                        
+
                     </div>
                     <!-- Task settings End -->
 
@@ -36,7 +49,7 @@
             </div>
             <div class="card-body pb-1">
                 <p class="card-text">
-                    {{ weekly_task.title }}: <br> {{ weekly_task.content }}
+                    <span class="fw-bold">{{ weekly_task.title }}</span> <br> {{ weekly_task.content }}
                 </p>
                 <hr class="mb-0">
                 <small class="text-muted">important: {{ weekly_task.is_important }}</small>
@@ -50,7 +63,7 @@
 
 <!-- add weekly task  -->
 <div class="container mt-4">
-    <a class="btn btn-success" href="#" role="button">Add Weekly Task</a>
+    <a class="btn btn-success" href="{{ url_for('weekly_task_add') }}" role="button">Add Weekly Task</a>
 </div>
 
 {% endblock %}

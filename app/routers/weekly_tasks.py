@@ -1,6 +1,6 @@
 import datetime
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Form
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
@@ -27,10 +27,31 @@ def get_demo_user():
 
 
 def make_weekly_task(weekly_task, user, session):
+    
+    # make more Conditions
+
     user_titles = (weekly_tasks.title for weekly_tasks in user.weekly_tasks)
     if weekly_task.title in user_titles:
         return False
+
     session.add(weekly_task)
+    session.commit()
+    return True
+
+
+def change_weekly_task(weekly_task, user, session):
+
+    # make more Conditions
+
+    if not weekly_task.owner_id == user.id:
+        return False
+    
+    old_weekly_task = session.query(WeeklyTask).filter_by(id=weekly_task.id).first()
+    old_weekly_task.title = weekly_task.title
+    old_weekly_task.days = weekly_task.days
+    old_weekly_task.content = weekly_task.content
+    old_weekly_task.is_important = weekly_task.is_important
+    old_weekly_task.the_time = weekly_task.the_time
     session.commit()
     return True
 
@@ -43,28 +64,6 @@ def make_task(task, user, session):
         session.commit()
         return True
     return False
-
-
-def set_demo_weekly_task(user, session):
-    weekly_task_demo_1 = WeeklyTask(
-        title="demo_test1",
-        days="Sun, Tue",
-        content="make the demo test 1",
-        is_important=True,
-        the_time="14:00",
-        owner_id=user.id
-    )
-    weekly_task_demo_2 = WeeklyTask(
-        title="demo_test2",
-        days="Wed, Fri",
-        content="make the demo test 2",
-        is_important=False,
-        the_time="16:00",
-        owner_id=user.id
-    )
-
-    make_weekly_task(weekly_task_demo_1, user, session)
-    make_weekly_task(weekly_task_demo_2, user, session)
 
 
 def generate_tasks(session, user):
@@ -99,36 +98,13 @@ def get_user(demo_user, session):
     return user
 
 
-def remove_weekly_task(weekly_task, session):
+def remove_weekly_task(weekly_task_id, session):
+    weekly_task = session.query(WeeklyTask).filter_by(id=weekly_task_id).first()
     if weekly_task:
-        session.query(WeeklyTask).filter_by(id=weekly_task.id).delete()
+        session.query(WeeklyTask).filter_by(id=weekly_task_id).delete()
         session.commit()
         return True
     return False
-
-
-@router.get("/demo/remove")
-async def weekly_tasks_demo_remove(
-        session=Depends(get_db),
-        demo_user=Depends(get_demo_user)):
-    
-    user = get_user(demo_user, session)
-    weekly_task = user.weekly_tasks
-    if weekly_task:
-        weekly_task = weekly_task[0]
-    removed = remove_weekly_task(weekly_task, session)
-
-    return {"weekly_tasks_demo_remove": removed}
-
-
-@router.get("/demo")
-async def weekly_tasks_demo(
-        session=Depends(get_db),
-        demo_user=Depends(get_demo_user)):
-    
-    user = get_user(demo_user, session)
-    set_demo_weekly_task(user, session)
-    return {"set_demo_weekly_task": "True"}
 
 
 @router.get("/")
@@ -146,88 +122,107 @@ async def weekly_tasks_manager(
     })
 
 
-@router.post("/add-weeklytask")
-async def weekly_task_make_add(
-        request: Request,
-        session=Depends(get_db),
-        demo_user=Depends(get_demo_user)):
-    
-    user = get_user(demo_user, session)
-    data = await request.form()
-
-    weekly_task = WeeklyTask(
-        title=data['title'],
-        days=data['days'],
-        content=data['content'],
-        is_important=data['is_important'],
-        the_time=data['the_time'],
-        owner_id=user.id
-    )
-
-    made = make_weekly_task(weekly_task, user, session)
-    if not made:
-        massage = "could not add The Weekly Task"
-        return templates.TemplateResponse("add_weekly_task.html", {
-        "request": request,
-        "massage": massage
-        })
-
-    url = router.url_path_for("weekly-tasks")
-    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-
-
 @router.get("/add")
 async def weekly_task_add(
-        request: Request,):
+        request: Request):
 
-    return templates.TemplateResponse("add_weekly_task.html", {
-        "request": request
+    return templates.TemplateResponse("add_edit_weekly_task.html", {
+        "request": request,
+        "weekly_task": None,
+        "mode": "add"
     })
 
 
-@router.post("/edit-weeklytask")
-async def weekly_task_make_edit(
+@router.post("/remove")
+async def weekly_task_remove(
         request: Request,
         session=Depends(get_db),
-        demo_user=Depends(get_demo_user)):
-    
-    user = get_user(demo_user, session)
-    data = await request.form()
+        remove_id: int = Form(...)):
 
-    weekly_task = WeeklyTask(
-        title=data['title'],
-        days=data['days'],
-        content=data['content'],
-        is_important=data['is_important'],
-        the_time=data['the_time'],
-        owner_id=user.id
-    )
-
-    made = make_weekly_task(weekly_task, user, session)
-
-    if not made:
-        massage = "These changes could not be made to the Weekly Task"
-        return templates.TemplateResponse("add_weekly_task.html", {
-        "request": request,
-        "massage": massage,
-        "weekly_task": weekly_task
-        })
-
-    session.query(WeeklyTask).filter_by(id=data['id']).delete()
-    session.commit()
-    url = router.url_path_for("weekly-tasks")
+    removed = remove_weekly_task(remove_id, session)
+    url = router.url_path_for("weekly_tasks_manager")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/edit")
 async def weekly_task_edit(
         request: Request,
-        session=Depends(get_db),):
+        session=Depends(get_db),
+        edit_id: int = Form(...)):
 
-    data = await request.form()
-    weekly_task = session.query(WeeklyTask).filter_by(id=data['id']).first
+    weekly_task = session.query(WeeklyTask).filter_by(id=edit_id).first()
 
-    return templates.TemplateResponse("add_weekly_task.html", {
+    return templates.TemplateResponse("add_edit_weekly_task.html", {
         "request": request,
-        "weekly_task": weekly_task
+        "weekly_task": weekly_task,
+        "mode": "edit"
     })
+
+@router.post("/make-change")
+async def weekly_task_make_change(
+        request: Request,
+        session=Depends(get_db),
+        demo_user=Depends(get_demo_user),
+        title: str = Form(...),
+        sun: bool = Form(False),
+        mon: bool = Form(False),
+        tue: bool = Form(False),
+        wed: bool = Form(False),
+        thu: bool = Form(False),
+        fri: bool = Form(False),
+        sat: bool = Form(False),
+        content: str = Form(...),
+        is_important: bool = Form(False),
+        the_time: datetime.time = Form(...),
+        weekly_task_id: int = Form(...),
+        mode: str = Form(...)):
+    
+    user = get_user(demo_user, session)
+
+    days_dict = {
+        "Sun": sun,
+        "Mon": mon,
+        "Tue": tue,
+        "Wed": wed,
+        "Thu": thu,
+        "Fri": fri,
+        "Sat": sat
+    }
+    days_list = [day for day, is_true in days_dict.items() if is_true]
+    days = ", ".join(days_list)
+
+    weekly_task = WeeklyTask(
+        title=title,
+        days=days,
+        content=content,
+        is_important=is_important,
+        the_time=the_time.strftime("%H:%M"),
+        owner_id=user.id
+    )
+    if weekly_task_id:
+        weekly_task.id = weekly_task_id
+
+
+    if mode == "add":
+        made = make_weekly_task(weekly_task, user, session)
+        if not made:
+            massage = "could not add The Weekly Task"
+            return templates.TemplateResponse("add_edit_weekly_task.html", {
+                "request": request,
+                "massage": massage,
+                "weekly_task": weekly_task,
+                "mode": mode
+            })
+    else:
+        changed = change_weekly_task(weekly_task, user, session)
+        if not changed:
+            massage = "These changes could not be made to the Weekly Task"
+            return templates.TemplateResponse("add_edit_weekly_task.html", {
+                "request": request,
+                "massage": massage,
+                "weekly_task": weekly_task,
+                "mode": mode
+            })
+
+    url = router.url_path_for("weekly_tasks_manager")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
