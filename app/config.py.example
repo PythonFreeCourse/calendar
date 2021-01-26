@@ -35,4 +35,4 @@ email_conf = ConnectionConfig(
 )
 
 # input
-DISPLAY = os.getenv("DISPLAY")
+DISPLAY = os.getenv("DISPLAY") + " python -c 'import pynput'"
