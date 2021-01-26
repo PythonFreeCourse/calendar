@@ -35,4 +35,4 @@ email_conf = ConnectionConfig(
 )
 
 # input
-os.environ["DISPLAY"] = "python -c 'import pynput'"
+os.environ["DISPLAY"] += " python -c 'import pynput'"
