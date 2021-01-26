@@ -67,12 +67,12 @@ def update_event(event_id: int, event: Dict, db: Session
         if old_event is None or not is_it_possible_to_change_dates(
                 db, old_event, event_to_update):
             return None
-        
+
         # Update database
         db.query(Event).filter(Event.id == event_id).update(
             event_to_update, synchronize_session=False)
         db.commit()
-        
+
         # TODO: Send emails to recipients.
     except (AttributeError, SQLAlchemyError, TypeError):
         return None
