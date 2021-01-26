@@ -24,10 +24,15 @@ class TestLanguage:
         assert True
 
     @staticmethod
+    def test_set_ui_language():
+        languages.set_ui_language()
+        assert True
+
+    @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              PYTHON_TESTS)
     def test_gettext_python(client, language_code, translation, is_valid):
-        languages.change_ui_language(language_code)
+        languages.set_ui_language(language_code)
         gettext_translation = _("test")  # noqa F821
         assert ((is_valid and gettext_translation == translation)
                 or (not is_valid and gettext_translation == translation))
@@ -36,7 +41,7 @@ class TestLanguage:
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              HTML_TESTS)
     def test_gettext_html(client, language_code, translation, is_valid):
-        languages.change_ui_language(language_code)
+        languages.set_ui_language(language_code)
         text = client.get("/").text
         assert ((is_valid and translation in text)
                 or (not is_valid and translation in text))
