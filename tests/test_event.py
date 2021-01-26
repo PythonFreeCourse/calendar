@@ -44,15 +44,15 @@ class TestEvent:
         response = client.get("/event/view")
         assert response.status_code == HTTP_404_NOT_FOUND
 
-    def test_eventedit_post_correct(self, event_test_client, user):
-        response = event_test_client.post("/event/edit",
-                                          data=CORRECT_EVENT_FORM_DATA)
+    def test_eventedit_post_correct(self, client, user):
+        response = client.post("/event/edit",
+                               data=CORRECT_EVENT_FORM_DATA)
         assert response.status_code == HTTP_303_SEE_OTHER
         assert '/event/view/' in response.headers['location']
 
-    def test_eventedit_post_wrong(self, event_test_client, user):
-        response = event_test_client.post("/event/edit",
-                                          data=WRONG_EVENT_FORM_DATA)
+    def test_eventedit_post_wrong(self, client, user):
+        response = client.post("/event/edit",
+                               data=WRONG_EVENT_FORM_DATA)
         assert response.json()['detail'] == 'VC type with no valid zoom link'
 
     def test_repr(self, event):
