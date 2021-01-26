@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="5" skipped="2" tests="87" time="26.033" timestamp="2021-01-26T18:52:27.567151" hostname="LAPTOP-72EVRM0N"><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_time_delta_string[start0-end0-2 days]" time="0.185" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_time_delta_string[start1-end1-2 days 2 hours and 30 minutes]" time="0.003" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_time_delta_string[start2-end2-30 minutes]" time="0.003" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_time_delta_string[start3-end3-2 hours]" time="0.003" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_time_delta_string[start4-end4-2 hours and 30 minutes]" time="0.003" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_time_delta_string[start5-end5-a day and 2 hours]" time="0.004" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_events_per_dates_success" time="0.451" /><testcase classname="tests.test_agenda_internal.TestAgenda" name="test_get_events_per_dates_failure" time="0.294" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_agenda_page_no_arguments_when_no_today_events" time="0.333" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_agenda_page_no_arguments_when_today_events_exist" time="0.763" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_agenda_per_7_days" time="0.716" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_agenda_per_30_days" time="0.691" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_agenda_between_two_dates" time="0.649" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_agenda_start_bigger_than_end" time="0.016" /><testcase classname="tests.test_agenda_route.TestAgenda" name="test_no_show_events_user_2" time="0.694" /><testcase classname="tests.test_app.TestApp" name="test_get_db" time="0.005" /><testcase classname="tests.test_association.TestAssociation" name="test_association_data" time="0.394" /><testcase classname="tests.test_association.TestAssociation" name="test_repr" time="0.436" /><testcase classname="tests.test_audio" name="test_get_settings" time="0.467" /><testcase classname="tests.test_audio" name="test_start_audio_default" time="0.356" /><testcase classname="tests.test_audio" name="test_stop_audio_default" time="0.240" /><testcase classname="tests.test_audio" name="test_choices_Off" time="0.143" /><testcase classname="tests.test_audio" name="test_choices_On" time="0.128" /><testcase classname="tests.test_audio" name="test_start_audio" time="0.304" /><testcase classname="tests.test_audio" name="test_stop_audio" time="0.471" /><testcase classname="tests.test_audio" name="test_start_audio_sfx_off" time="0.218" /><testcase classname="tests.test_audio" name="test_get_user" time="0.154" /><testcase classname="tests.test_dayview" name="test_minutes_position_calculation" time="0.005" /><testcase classname="tests.test_dayview" name="test_div_attributes" time="0.005" /><testcase classname="tests.test_dayview" name="test_div_attr_multiday" time="0.005" /><testcase classname="tests.test_dayview" name="test_div_attributes_with_costume_color" time="0.005" /><testcase classname="tests.test_dayview" name="test_dayview_html" time="0.345"><failure message="AttributeError: 'NoneType' object has no attribute 'id'">event1 = &lt;Event 1&gt;, event2 = &lt;Event 2&gt;, event3 = &lt;Event 3&gt;
+session = &lt;sqlalchemy.orm.session.Session object at 0x000001F3152E3C70&gt;, user = &lt;User 1&gt;
+client = &lt;starlette.testclient.TestClient object at 0x000001F3152E8460&gt;
+
+    def test_dayview_html(event1, event2, event3, session, user, client):
+        session.add_all([user, event1, event2, event3])
+        session.commit()
+&gt;       response = client.get("/day/2021-2-1")
+
+tests\test_dayview.py:90: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env\lib\site-packages\requests\sessions.py:555: in get
+    return self.request('GET', url, **kwargs)
+env\lib\site-packages\starlette\testclient.py:413: in request
+    return super().request(
+env\lib\site-packages\requests\sessions.py:542: in request
+    resp = self.send(prep, **send_kwargs)
+env\lib\site-packages\requests\sessions.py:655: in send
+    r = adapter.send(request, **kwargs)
+env\lib\site-packages\starlette\testclient.py:243: in send
+    raise exc from None
+env\lib\site-packages\starlette\testclient.py:240: in send
+    loop.run_until_complete(self.app(scope, receive, send))
+c:\programdata\anaconda3\lib\asyncio\base_events.py:616: in run_until_complete
+    return future.result()
+env\lib\site-packages\fastapi\applications.py:199: in __call__
+    await super().__call__(scope, receive, send)
+env\lib\site-packages\starlette\applications.py:111: in __call__
+    await self.middleware_stack(scope, receive, send)
+env\lib\site-packages\starlette\middleware\errors.py:181: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\middleware\errors.py:159: in __call__
+    await self.app(scope, receive, _send)
+env\lib\site-packages\starlette\exceptions.py:82: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\exceptions.py:71: in __call__
+    await self.app(scope, receive, sender)
+env\lib\site-packages\starlette\routing.py:566: in __call__
+    await route.handle(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:227: in handle
+    await self.app(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:41: in app
+    response = await func(request)
+env\lib\site-packages\fastapi\routing.py:201: in app
+    raw_response = await run_endpoint_function(
+env\lib\site-packages\fastapi\routing.py:148: in run_endpoint_function
+    return await dependant.call(**values)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = &lt;starlette.requests.Request object at 0x000001F3151474C0&gt;, date = '2021-2-1'
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x000001F3152E33A0&gt;
+
+    @router.get('/day/{date}')
+    async def dayview(request: Request, date: str, db_session=Depends(get_db)):
+        # TODO: add a login session
+        user = db_session.query(User).filter_by(username='test1').first()
+        day = datetime.strptime(date, '%Y-%m-%d')
+        day_end = day + timedelta(hours=24)
+        events = db_session.query(Event).filter(
+&gt;           Event.owner_id == user.id).filter(
+                or_(and_(Event.start &gt;= day, Event.start &lt; day_end),
+                    and_(Event.end &gt;= day, Event.end &lt; day_end),
+                    and_(Event.start &lt; day_end, day_end &lt; Event.end)))
+E       AttributeError: 'NoneType' object has no attribute 'id'
+
+app\routers\dayview.py:103: AttributeError</failure></testcase><testcase classname="tests.test_dayview" name="test_dayview_html_with_multiday_event[2021-2-1-57 / 101]" time="0.255"><failure message="AttributeError: 'NoneType' object has no attribute 'id'">multiday_event = &lt;Event 1&gt;, session = &lt;sqlalchemy.orm.session.Session object at 0x000001F3158EB700&gt;, user = &lt;User 1&gt;
+client = &lt;starlette.testclient.TestClient object at 0x000001F3152E8460&gt;, day = '2021-2-1', grid_position = '57 / 101'
+
+    @pytest.mark.parametrize("day,grid_position", [("2021-2-1", '57 / 101'),
+                                                   ("2021-2-2", '1 / 101'),
+                                                   ("2021-2-3", '1 / 57')])
+    def test_dayview_html_with_multiday_event(multiday_event, session,
+                                              user, client, day, grid_position):
+        session.add_all([user, multiday_event])
+        session.commit()
+&gt;       response = client.get(f"/day/{day}")
+
+tests\test_dayview.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env\lib\site-packages\requests\sessions.py:555: in get
+    return self.request('GET', url, **kwargs)
+env\lib\site-packages\starlette\testclient.py:413: in request
+    return super().request(
+env\lib\site-packages\requests\sessions.py:542: in request
+    resp = self.send(prep, **send_kwargs)
+env\lib\site-packages\requests\sessions.py:655: in send
+    r = adapter.send(request, **kwargs)
+env\lib\site-packages\starlette\testclient.py:243: in send
+    raise exc from None
+env\lib\site-packages\starlette\testclient.py:240: in send
+    loop.run_until_complete(self.app(scope, receive, send))
+c:\programdata\anaconda3\lib\asyncio\base_events.py:616: in run_until_complete
+    return future.result()
+env\lib\site-packages\fastapi\applications.py:199: in __call__
+    await super().__call__(scope, receive, send)
+env\lib\site-packages\starlette\applications.py:111: in __call__
+    await self.middleware_stack(scope, receive, send)
+env\lib\site-packages\starlette\middleware\errors.py:181: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\middleware\errors.py:159: in __call__
+    await self.app(scope, receive, _send)
+env\lib\site-packages\starlette\exceptions.py:82: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\exceptions.py:71: in __call__
+    await self.app(scope, receive, sender)
+env\lib\site-packages\starlette\routing.py:566: in __call__
+    await route.handle(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:227: in handle
+    await self.app(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:41: in app
+    response = await func(request)
+env\lib\site-packages\fastapi\routing.py:201: in app
+    raw_response = await run_endpoint_function(
+env\lib\site-packages\fastapi\routing.py:148: in run_endpoint_function
+    return await dependant.call(**values)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = &lt;starlette.requests.Request object at 0x000001F3157BF6D0&gt;, date = '2021-2-1'
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x000001F3157BFF10&gt;
+
+    @router.get('/day/{date}')
+    async def dayview(request: Request, date: str, db_session=Depends(get_db)):
+        # TODO: add a login session
+        user = db_session.query(User).filter_by(username='test1').first()
+        day = datetime.strptime(date, '%Y-%m-%d')
+        day_end = day + timedelta(hours=24)
+        events = db_session.query(Event).filter(
+&gt;           Event.owner_id == user.id).filter(
+                or_(and_(Event.start &gt;= day, Event.start &lt; day_end),
+                    and_(Event.end &gt;= day, Event.end &lt; day_end),
+                    and_(Event.start &lt; day_end, day_end &lt; Event.end)))
+E       AttributeError: 'NoneType' object has no attribute 'id'
+
+app\routers\dayview.py:103: AttributeError</failure></testcase><testcase classname="tests.test_dayview" name="test_dayview_html_with_multiday_event[2021-2-2-1 / 101]" time="0.239"><failure message="AttributeError: 'NoneType' object has no attribute 'id'">multiday_event = &lt;Event 1&gt;, session = &lt;sqlalchemy.orm.session.Session object at 0x000001F31571B310&gt;, user = &lt;User 1&gt;
+client = &lt;starlette.testclient.TestClient object at 0x000001F3152E8460&gt;, day = '2021-2-2', grid_position = '1 / 101'
+
+    @pytest.mark.parametrize("day,grid_position", [("2021-2-1", '57 / 101'),
+                                                   ("2021-2-2", '1 / 101'),
+                                                   ("2021-2-3", '1 / 57')])
+    def test_dayview_html_with_multiday_event(multiday_event, session,
+                                              user, client, day, grid_position):
+        session.add_all([user, multiday_event])
+        session.commit()
+&gt;       response = client.get(f"/day/{day}")
+
+tests\test_dayview.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env\lib\site-packages\requests\sessions.py:555: in get
+    return self.request('GET', url, **kwargs)
+env\lib\site-packages\starlette\testclient.py:413: in request
+    return super().request(
+env\lib\site-packages\requests\sessions.py:542: in request
+    resp = self.send(prep, **send_kwargs)
+env\lib\site-packages\requests\sessions.py:655: in send
+    r = adapter.send(request, **kwargs)
+env\lib\site-packages\starlette\testclient.py:243: in send
+    raise exc from None
+env\lib\site-packages\starlette\testclient.py:240: in send
+    loop.run_until_complete(self.app(scope, receive, send))
+c:\programdata\anaconda3\lib\asyncio\base_events.py:616: in run_until_complete
+    return future.result()
+env\lib\site-packages\fastapi\applications.py:199: in __call__
+    await super().__call__(scope, receive, send)
+env\lib\site-packages\starlette\applications.py:111: in __call__
+    await self.middleware_stack(scope, receive, send)
+env\lib\site-packages\starlette\middleware\errors.py:181: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\middleware\errors.py:159: in __call__
+    await self.app(scope, receive, _send)
+env\lib\site-packages\starlette\exceptions.py:82: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\exceptions.py:71: in __call__
+    await self.app(scope, receive, sender)
+env\lib\site-packages\starlette\routing.py:566: in __call__
+    await route.handle(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:227: in handle
+    await self.app(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:41: in app
+    response = await func(request)
+env\lib\site-packages\fastapi\routing.py:201: in app
+    raw_response = await run_endpoint_function(
+env\lib\site-packages\fastapi\routing.py:148: in run_endpoint_function
+    return await dependant.call(**values)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = &lt;starlette.requests.Request object at 0x000001F3154CE250&gt;, date = '2021-2-2'
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x000001F315511D00&gt;
+
+    @router.get('/day/{date}')
+    async def dayview(request: Request, date: str, db_session=Depends(get_db)):
+        # TODO: add a login session
+        user = db_session.query(User).filter_by(username='test1').first()
+        day = datetime.strptime(date, '%Y-%m-%d')
+        day_end = day + timedelta(hours=24)
+        events = db_session.query(Event).filter(
+&gt;           Event.owner_id == user.id).filter(
+                or_(and_(Event.start &gt;= day, Event.start &lt; day_end),
+                    and_(Event.end &gt;= day, Event.end &lt; day_end),
+                    and_(Event.start &lt; day_end, day_end &lt; Event.end)))
+E       AttributeError: 'NoneType' object has no attribute 'id'
+
+app\routers\dayview.py:103: AttributeError</failure></testcase><testcase classname="tests.test_dayview" name="test_dayview_html_with_multiday_event[2021-2-3-1 / 57]" time="0.303"><failure message="AttributeError: 'NoneType' object has no attribute 'id'">multiday_event = &lt;Event 1&gt;, session = &lt;sqlalchemy.orm.session.Session object at 0x000001F3155ABA90&gt;, user = &lt;User 1&gt;
+client = &lt;starlette.testclient.TestClient object at 0x000001F3152E8460&gt;, day = '2021-2-3', grid_position = '1 / 57'
+
+    @pytest.mark.parametrize("day,grid_position", [("2021-2-1", '57 / 101'),
+                                                   ("2021-2-2", '1 / 101'),
+                                                   ("2021-2-3", '1 / 57')])
+    def test_dayview_html_with_multiday_event(multiday_event, session,
+                                              user, client, day, grid_position):
+        session.add_all([user, multiday_event])
+        session.commit()
+&gt;       response = client.get(f"/day/{day}")
+
+tests\test_dayview.py:105: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env\lib\site-packages\requests\sessions.py:555: in get
+    return self.request('GET', url, **kwargs)
+env\lib\site-packages\starlette\testclient.py:413: in request
+    return super().request(
+env\lib\site-packages\requests\sessions.py:542: in request
+    resp = self.send(prep, **send_kwargs)
+env\lib\site-packages\requests\sessions.py:655: in send
+    r = adapter.send(request, **kwargs)
+env\lib\site-packages\starlette\testclient.py:243: in send
+    raise exc from None
+env\lib\site-packages\starlette\testclient.py:240: in send
+    loop.run_until_complete(self.app(scope, receive, send))
+c:\programdata\anaconda3\lib\asyncio\base_events.py:616: in run_until_complete
+    return future.result()
+env\lib\site-packages\fastapi\applications.py:199: in __call__
+    await super().__call__(scope, receive, send)
+env\lib\site-packages\starlette\applications.py:111: in __call__
+    await self.middleware_stack(scope, receive, send)
+env\lib\site-packages\starlette\middleware\errors.py:181: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\middleware\errors.py:159: in __call__
+    await self.app(scope, receive, _send)
+env\lib\site-packages\starlette\exceptions.py:82: in __call__
+    raise exc from None
+env\lib\site-packages\starlette\exceptions.py:71: in __call__
+    await self.app(scope, receive, sender)
+env\lib\site-packages\starlette\routing.py:566: in __call__
+    await route.handle(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:227: in handle
+    await self.app(scope, receive, send)
+env\lib\site-packages\starlette\routing.py:41: in app
+    response = await func(request)
+env\lib\site-packages\fastapi\routing.py:201: in app
+    raw_response = await run_endpoint_function(
+env\lib\site-packages\fastapi\routing.py:148: in run_endpoint_function
+    return await dependant.call(**values)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = &lt;starlette.requests.Request object at 0x000001F31578C850&gt;, date = '2021-2-3'
+db_session = &lt;sqlalchemy.orm.session.Session object at 0x000001F31578CBB0&gt;
+
+    @router.get('/day/{date}')
+    async def dayview(request: Request, date: str, db_session=Depends(get_db)):
+        # TODO: add a login session
+        user = db_session.query(User).filter_by(username='test1').first()
+        day = datetime.strptime(date, '%Y-%m-%d')
+        day_end = day + timedelta(hours=24)
+        events = db_session.query(Event).filter(
+&gt;           Event.owner_id == user.id).filter(
+                or_(and_(Event.start &gt;= day, Event.start &lt; day_end),
+                    and_(Event.end &gt;= day, Event.end &lt; day_end),
+                    and_(Event.start &lt; day_end, day_end &lt; Event.end)))
+E       AttributeError: 'NoneType' object has no attribute 'id'
+
+app\routers\dayview.py:103: AttributeError</failure></testcase><testcase classname="tests.test_email" name="test_email_send" time="0.499"><failure message="assert 0 == 1&#10;  +0&#10;  -1">client = &lt;starlette.testclient.TestClient object at 0x000001F3152E8460&gt;, user = &lt;User 1&gt;, event = &lt;Event 1&gt;
+smtpd = &lt;Proxy at 0x000001F3157D61C0 wrapping &lt;smtpdfix.lazy.AuthController object at 0x000001F315569460&gt; at 0x000001F315569460 with factory &lt;function lazy_class.&lt;locals&gt;.Lazy.__new__.&lt;locals&gt;.&lt;lambda&gt; at 0x000001F31580CD30&gt;&gt;
+
+    def test_email_send(client, user, event, smtpd):
+        mail.config.SUPPRESS_SEND = 1
+        mail.config.MAIL_SERVER = smtpd.hostname
+        mail.config.MAIL_PORT = smtpd.port
+        mail.config.USE_CREDENTIALS = False
+        mail.config.MAIL_TLS = False
+        with mail.record_messages() as outbox:
+            response = client.post(
+                "/email/send", data={
+                    "event_used": event.id, "user_to_send": user.id,
+                    "title": "Testing",
+                    "background_tasks": BackgroundTasks})
+&gt;           assert len(outbox) == 1
+E           assert 0 == 1
+E             +0
+E             -1
+
+tests\test_email.py:19: AssertionError</failure></testcase><testcase classname="tests.test_email" name="test_failed_email_send" time="0.600" /><testcase classname="tests.test_event.TestEvent" name="test_eventedit" time="0.028" /><testcase classname="tests.test_event.TestEvent" name="test_eventview_with_id" time="0.026" /><testcase classname="tests.test_event.TestEvent" name="test_eventview_without_id" time="0.012" /><testcase classname="tests.test_event.TestEvent" name="test_repr" time="0.416" /><testcase classname="tests.test_export.TestExport" name="test_create_ical_calendar" time="0.005" /><testcase classname="tests.test_export.TestExport" name="test_create_ical_event" time="0.428" /><testcase classname="tests.test_export.TestExport" name="test_add_attendees" time="0.413" /><testcase classname="tests.test_export.TestExport" name="test_event_to_ical" time="0.490" /><testcase classname="tests.test_home.TestHome" name="test_get_page" time="0.017" /><testcase classname="tests.test_invitation.TestInvitations" name="test_view_no_invitations" time="0.246" /><testcase classname="tests.test_invitation.TestInvitations" name="test_accept_invitations" time="0.493" /><testcase classname="tests.test_invitation.TestInvitations" name="test_get_all_invitations_success" time="0.542" /><testcase classname="tests.test_invitation.TestInvitations" name="test_get_all_invitations_failure" time="0.357" /><testcase classname="tests.test_invitation.TestInvitations" name="test_get_invitation_by_id" time="0.630" /><testcase classname="tests.test_invitation.TestInvitations" name="test_repr" time="0.599" /><testcase classname="tests.test_profile" name="test_get_placeholder_user" time="0.005" /><testcase classname="tests.test_profile" name="test_get_image_crop_area[20-10-result0]" time="0.006" /><testcase classname="tests.test_profile" name="test_get_image_crop_area[10-20-result1]" time="0.006" /><testcase classname="tests.test_profile" name="test_get_image_crop_area[10-10-result2]" time="0.006" /><testcase classname="tests.test_profile" name="test_profile_page" time="0.308" /><testcase classname="tests.test_profile" name="test_update_user_fullname" time="0.126" /><testcase classname="tests.test_profile" name="test_update_user_email" time="0.117" /><testcase classname="tests.test_profile" name="test_update_user_description" time="0.116" /><testcase classname="tests.test_profile" name="test_upload_user_photo" time="0.147" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_share_success" time="0.339" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_share_failure" time="0.342" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_sort_emails" time="0.215" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_send_in_app_invitation_success" time="0.350" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_send_in_app_invitation_failure" time="0.319" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_send_email_invitation" time="0.346" /><testcase classname="tests.test_share_event.TestShareEvent" name="test_accept" time="0.533" /><testcase classname="tests.test_user.TestUser" name="test_create_user" time="0.336" /><testcase classname="tests.test_user.TestUser" name="test_get_users_success" time="0.328" /><testcase classname="tests.test_user.TestUser" name="test_get_users_failure" time="0.324" /><testcase classname="tests.test_user.TestUser" name="test_does_user_exist_success" time="0.340" /><testcase classname="tests.test_user.TestUser" name="test_does_user_exist_failure" time="0.244" /><testcase classname="tests.test_user.TestUser" name="test_repr" time="0.296" /><testcase classname="tests.test_utils.TestUtils" name="test_save_success" time="0.349" /><testcase classname="tests.test_utils.TestUtils" name="test_save_failure" time="0.247" /><testcase classname="tests.test_weather_forecast" name="test_get_weather_data[invalid input type]" time="0.012"><skipped type="pytest.xfail" message="" /></testcase><testcase classname="tests.test_weather_forecast" name="test_get_weather_data[year out of range]" time="0.007"><skipped type="pytest.xfail" message="" /></testcase><testcase classname="tests.test_weather_forecast" name="test_get_weather_data[basic historical test]" time="0.013" /><testcase classname="tests.test_weather_forecast" name="test_get_weather_data[basic historical forecast test - prior in current year]" time="0.009" /><testcase classname="tests.test_weather_forecast" name="test_get_weather_data[basic historical forecast test - future]" time="0.015" /><testcase classname="tests.test_weather_forecast" name="test_get_weather_data[basic historical forecast test]" time="0.015" /><testcase classname="tests.test_weather_forecast" name="test_get_forecast_weather_data" time="0.012" /><testcase classname="tests.test_weather_forecast" name="test_location_not_found" time="0.011" /><testcase classname="tests.test_weather_forecast" name="test_historical_no_response_from_api" time="0.017" /><testcase classname="tests.test_weather_forecast" name="test_historical_exception_from_api" time="0.016" /><testcase classname="tests.test_weather_forecast" name="test_forecast_exception_from_api" time="0.086" /></testsuite></testsuites>
