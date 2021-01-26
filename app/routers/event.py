@@ -1,6 +1,6 @@
 from datetime import datetime
 from operator import attrgetter
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 from app.database.models import Event, UserEvent
 from app.dependencies import templates
@@ -30,33 +30,49 @@ async def eventview(request: Request, id: int):
 
 def by_id(db: Session, event_id: int) -> Event:
     """Select event by id"""
+
     return db.query(Event).filter(Event.id == event_id).first()
 
 
-def validate_dates(start_date: datetime, end_date: datetime) -> bool:
+def is_date_before(start_date: datetime, end_date: datetime) -> bool:
     """Check if the start date is earlier than the end date"""
+
     return start_date < end_date
+
+
+def is_it_possible_to_change_dates(
+        db: Session, old_event: Event, event: Dict[str, Any]) -> bool:
+    return is_date_before(
+        event.get('start', old_event.start),
+        event.get('end', old_event.end))
+
+
+def get_items_that_can_be_updated(event: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract only that keys to update"""
+
+    return {i: event[i] for i in (
+        'title', 'start', 'end', 'content', 'location') if i in event}
 
 
 def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
+
     # TODO Check if the user is the owner of the event.
 
-    # Extract only that keys to update
-    event_to_update = {i: event[i] for i in (
-        'title', 'start', 'end', 'content', 'location') if i in event}
-    if not bool(event_to_update):  # Event items is empty
+    event_to_update = get_items_that_can_be_updated(event)
+    if not event_to_update:
         return None
     try:
         old_event = by_id(db=db, event_id=event_id)
-        if old_event is None or not validate_dates(
-                event_to_update.get('start', old_event.start),
-                event_to_update.get('end', old_event.end)):
+        if old_event is None or not is_it_possible_to_change_dates(
+                db, old_event, event_to_update):
             return None
-
+        
+        # Update database
         db.query(Event).filter(Event.id == event_id).update(
             event_to_update, synchronize_session=False)
         db.commit()
+        
         # TODO: Send emails to recipients.
     except (AttributeError, SQLAlchemyError, TypeError):
         return None
