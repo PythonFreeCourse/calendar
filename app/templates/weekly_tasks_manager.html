@@ -13,57 +13,68 @@
     {% for weekly_task in weekly_tasks %}
         <div class="card card-event mb-2 pb-0">
             <div class="card-header d-flex justify-content-between">
+
+                <!-- Task repeat days and time -->
                 <small>
                     <i><span class="text-decoration-underline">Every:</span> {{ weekly_task.days }}</i>
                     <i><span class="text-decoration-underline">at:</span> {{ weekly_task.the_time }} </i>
                 </small>
+                <!-- End Task repeat days and time -->
+
+                <!-- Task settings -->
                 <span>
-                    
-                    <!-- Task settings -->
                     <div class="fa-ellipsis-h dropdown">
                         <a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                             options
                         </a>
-                      
-                        
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                
-                                    <li>
-                                        <form action="{{ url_for('weekly_task_edit') }}" method="post">
-                                            <button class="dropdown-item" name="edit_id" type="submit" value="{{ weekly_task.id }}">edit</button>
-                                        </form>
-                                    </li>
-                                    <li>
-                                        <form action="{{ url_for('weekly_task_remove') }}" method="post">
-                                            <button class="dropdown-item" name="remove_id" type="submit" value="{{ weekly_task.id }}">remove</button>
-                                        </form>
-                                    </li>
-                                </form>
-                            </ul>                            
-                        
 
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            
+                                <li>
+                                    <form action="{{ url_for('weekly_task_edit') }}" method="post">
+                                        <button class="dropdown-item" name="edit_id" type="submit" value="{{ weekly_task.id }}">edit</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="{{ url_for('weekly_task_remove') }}" method="post">
+                                        <button class="dropdown-item" name="remove_id" type="submit" value="{{ weekly_task.id }}">remove</button>
+                                    </form>
+                                </li>
+                            </form>
+                        </ul>                            
                     </div>
-                    <!-- Task settings End -->
-
                 </span>
+                <!-- End Task settings -->
             </div>
+
+            <!-- Set content -->
+            {% if weekly_task.content == None %}
+                {% set content = "" %}
+            {% else %}
+                {% set content = weekly_task.content %}
+            {% endif %}
+            <!-- End Set content -->
+
+            <!-- Task title and content -->
             <div class="card-body pb-1">
                 <p class="card-text">
-                    <span class="fw-bold">{{ weekly_task.title }}</span> <br> {{ weekly_task.content }}
+                    <span class="fw-bold">{{ weekly_task.title }}</span> <br> {{ content }}
                 </p>
                 <hr class="mb-0">
                 <small class="text-muted">important: {{ weekly_task.is_important }}</small>
             </div>
+            <!-- End Task title and content -->
+
         </div>
     {% endfor %}
 
 </div>
 <!-- weekly tasks End -->
 
-
 <!-- add weekly task  -->
 <div class="container mt-4">
     <a class="btn btn-success" href="{{ url_for('weekly_task_add') }}" role="button">Add Weekly Task</a>
 </div>
+<!-- End add weekly task  -->
 
 {% endblock %}
