@@ -84,14 +84,13 @@ def add_new_event(values: dict, db) -> Event:
 
 
 # start of endpoint ->
-# @router.get("/profile/{user_id}/EditEvent",response_class=HTMLResponse)
+# @router.get("/profile/{user_id}/EditEvent", response_class=HTMLResponse)
 # async def insert_info(request: Request) -> HTMLResponse:
 #     """Get request and return an html File"""
 #     return templates.TemplateResponse("editevent.html",{"request": request})
 
 
-# @router.post("/profile/{user_id}/EditEvent") 
-# this func is soupose to change with the PR of Ode and Efrat and it will be change
+# @router.post("/profile/{user_id}/EditEvent")
 # def create_event(user_id: int, event_title: str = Form(None),
 # location: Optional[str] = Form(None),
 # from_date: Optional[datetime] = Form(...),
