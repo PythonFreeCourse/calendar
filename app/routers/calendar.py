@@ -1,4 +1,3 @@
-import datetime
 from http import HTTPStatus
 
 from app.dependencies import templates
