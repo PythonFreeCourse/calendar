@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="/global_time/choose"><img src={{ url_for('static', path='global_timing/worldwide.png') }} alt="Globe-icon-to-choose-country" title="Choose Country"></a>
+
+{% if country is not none and time is not none %}
+    <h6>{{country}} {{time}}</h6>
+{% endif %}
+
+{% if data %}
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search..." title="Type in a name">
+
+<div class="countries_list_container"> 
+    <ul id="myUL">
+        {% for name in data %}
+            <li><a href='/global_time/{{name[0]}}/{{date}}/{{ip}}'>{{ name[0] }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+
+<script>
+function myFunction() {
+    var input, filter, ul, li, a, i, txtValue;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+        }
+    }
+}
+</script>
+{% endif %}
+
+{% if msg %}
+    <h6>{{ msg }}</h6>
+{% endif %}
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+{% endblock %}
