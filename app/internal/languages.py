@@ -62,7 +62,7 @@ def _get_supported_languages(language_dir: str) -> Generator[str, Any, None]:
     """Get and return a generator of supported translation languages codes.
 
     Args:
-        language_dir (str, optional): the path of the language directory.
+        language_dir (str): the path of the language directory.
 
     Returns:
         Generator[str, Any, None]: a generator expression of supported
