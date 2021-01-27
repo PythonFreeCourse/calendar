@@ -32,3 +32,26 @@ class Event(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="events")
+    tasks = relationship("Task", cascade="all, delete", back_populates="owner")
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    is_important = Column(Boolean)
+    is_done = Column(Boolean)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="tasks")
+
+
+class InternationalDays(Base):
+    __tablename__= "international_days"
+
+    id = Column(Integer, primary_key=True, index=True)
+    day = Column(String)
+    month = Column(String)
+    international_days = Column(String)

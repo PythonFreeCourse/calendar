@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ url_for('static', path='/agenda_style.css') }}" rel="stylesheet">
+    <title>International days</title>
+</head>
+<body>
+<h1>International days</h1>
+<button type="button" onclick="hiddenDay()">Did You Know?</button>
+<h3 id="demo"></h3>
+<script>
+    function hiddenDay() {
+        document.getElementById("demo").innerHTML = "Today is {{something from the db}}";
+     }
+</script>
+<!-- Javascript function to go with the above event -->
+<script>
+const GetTheDate = () => {
+    let url =''; //הדרך לפונקציה ששומרת לבסיס
+    let value = Date.now()
+    $.post(url, value)
+}
+</script>
+</body>
+</html>
