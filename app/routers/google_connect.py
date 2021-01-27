@@ -23,7 +23,7 @@ router = APIRouter(
 
 
 @router.get("/sync")
-async def google_sync(session=Depends(get_db)):
+async def google_sync(session=Depends(get_db)) -> RedirectResponse:
     '''Sync with Google - if user never synced with google this funcion will take
     the user to a consent screen to use his google calendar data with the app.
     '''
@@ -95,7 +95,8 @@ def get_current_year_events(
     return events
 
 
-def push_events_to_db(events: list, user: User, session: SessionLocal):
+def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
+    '''Adding google events to db'''
     db_cleanup(user, session)
 
     for event in events:
@@ -109,18 +110,18 @@ def push_events_to_db(events: list, user: User, session: SessionLocal):
             end = datetime.fromisoformat(event['end']['dateTime'])
         else:
             # all day event
-            start = event['start']['date'].split('-')
+            start_in_str= event['start']['date'].split('-')
             start = datetime(
-                year=int(start[0]),
-                month=int(start[1]),
-                day=int(start[2])
+                year=int(start_in_str[0]),
+                month=int(start_in_str[1]),
+                day=int(start_in_str[2])
             )
 
-            end = event['end']['date'].split('-')
+            end_in_str = event['end']['date'].split('-')
             end = datetime(
-                year=int(end[0]),
-                month=int(end[1]),
-                day=int(end[2])
+                year=int(end_in_str[0]),
+                month=int(end_in_str[1]),
+                day=int(end_in_str[2])
             )
 
         if 'location' in event.keys():
@@ -138,8 +139,8 @@ def push_events_to_db(events: list, user: User, session: SessionLocal):
     return True
 
 
-def db_cleanup(user: User, session: SessionLocal):
-    '''removing all user google events so the next time with be syncronized'''
+def db_cleanup(user: User, session: SessionLocal) -> bool:
+    '''removing all user google events so the next time will be syncronized'''
 
     for user_event in user.events:
         user_event_id = user_event.id
@@ -152,7 +153,7 @@ def db_cleanup(user: User, session: SessionLocal):
     return True
 
 
-def get_credentials_from_db(user: User, session: SessionLocal):
+def get_credentials_from_db(user: User, session: SessionLocal) -> tuple:
     '''bring user credential to use with google calendar api
     and save the credential in the db'''
 

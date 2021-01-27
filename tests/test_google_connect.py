@@ -78,6 +78,7 @@ def google_events_mock():
 def test_push_events_to_db(google_events_mock, user, session):
     assert push_events_to_db(google_events_mock, user, session)
 
+
 @pytest.mark.usefixtures("user")
 @pytest.mark.usefixtures("session")
 @pytest.mark.usefixtures("google_events_mock")
