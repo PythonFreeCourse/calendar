@@ -39,7 +39,6 @@ iniconfig==1.1.1
 Jinja2==2.11.2
 joblib==1.0.0
 lazy-object-proxy==1.5.2
-loguru==0.5.3
 mypy==0.790
 mypy-extensions==0.4.3
 MarkupSafe==1.1.1
