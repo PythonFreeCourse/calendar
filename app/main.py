@@ -4,10 +4,10 @@ from fastapi.staticfiles import StaticFiles
 from app.database import models
 from app.database.database import engine
 from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
-from app.internal.languages import setup_ui_language
+from app.internal.languages import set_ui_language
 
 # This MUST come before the app.routers import.
-setup_ui_language()
+set_ui_language()
 
 models.Base.metadata.create_all(bind=engine)
 

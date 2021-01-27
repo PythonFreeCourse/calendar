@@ -11,14 +11,6 @@ LANGUAGE_DIR_TEST = "../app/locales"
 TRANSLATION_FILE = "base"
 
 
-def setup_ui_language() -> None:
-    """Set the jinja2 environment on startup to support the i18n
-    and call set_ui_language() to setup an initial language for translations.
-    """
-    templates.env.add_extension('jinja2.ext.i18n')
-    set_ui_language()
-
-
 def set_ui_language(language: str = None) -> None:
     """Set the gettext translations to a given language.
     If the language requested is not supported, the translations default

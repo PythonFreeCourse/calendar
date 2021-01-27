@@ -27,11 +27,6 @@ class TestLanguage:
     NUMBER_OF_LANGUAGES = 2
 
     @staticmethod
-    def test_setup_ui_language():
-        languages.setup_ui_language()
-        assert True
-
-    @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              PYTHON_TESTS)
     def test_gettext_python(client, language_code, translation, is_valid):
