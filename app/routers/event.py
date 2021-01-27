@@ -124,14 +124,14 @@ def add_new_event(values: dict, db) -> Optional[Event]:
 
     if check_date_validation(values['start'], values['end']):
         try:
-                new_event = create_model(
-                            db, Event, **values)
-                create_model(
-                        db, UserEvent,
-                        user_id=values['owner_id'],
-                        event_id=new_event.id
-                    )
-                return new_event
+            new_event = create_model(
+                        db, Event, **values)
+            create_model(
+                    db, UserEvent,
+                    user_id=values['owner_id'],
+                    event_id=new_event.id
+                )
+            return new_event
         except (AssertionError, AttributeError, TypeError) as e:
             # Need to write into log
             print(e)
