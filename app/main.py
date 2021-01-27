@@ -5,7 +5,7 @@ from app.database import models
 from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, event, profile, email, invitation, whatsapp
+from app.routers import agenda, dayview, email, event, invitation, profile, whatsapp
 
 models.Base.metadata.create_all(bind=engine)
 
