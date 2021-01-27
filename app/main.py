@@ -121,7 +121,8 @@ async def time_conv(
     match = geolite2.lookup(ip)
     if match is not None:
         ip_tmz = match.timezone
-        trgt_tmz = session.query(Country.timezone).filter_by(name=country).first()
+        trgt_tmz = session.query(Country.timezone).filter_by(name=country)
+        trgt_tmz = trgt_tmz.first()
         trgt_tmz = trgt_tmz[0]
         meeting_time_with_utc = pytz.timezone(ip_tmz).localize(datetime)
         target_with_utc = pytz.timezone(trgt_tmz)
