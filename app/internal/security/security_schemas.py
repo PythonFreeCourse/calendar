@@ -5,14 +5,14 @@ from typing import Optional
 class User(models.BaseUser):
     username: str
     full_name:str
-    description: Optional[str] = None
-    avatar: Optional[str] = None
+    description: Optional[str] = "Happy new user!"
+    avatar: Optional[str] = "Happy new user!"
 
 class UserCreate(models.BaseUserCreate):
     username: str
     full_name:str
-    description: Optional[str] = None
-    avatar: Optional[str] = None
+    description: Optional[str] = "Happy new user!"
+    avatar: Optional[str] = "Happy new user!"
 
     @validator('password')
     def valid_password(cls, v: str):

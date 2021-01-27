@@ -9,12 +9,16 @@ from sqlalchemy.orm import Session
 
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+from app.internal.security.security_main import fastapi_users
+
 
 router = APIRouter(
     prefix="",
     tags=["register"],
     responses={404: {"description": "Not found"}},
 )
+
+# router = fastapi_users.get_register_router()
 
 
 @router.get("/register")
@@ -36,6 +40,7 @@ async def register(
     '''
     form = await request.form()
     form_dict = dict(form)
+    
     try:
         # creating pydantic schema object out of form data
 
@@ -63,7 +68,18 @@ async def register(
             "request": request,
             "errors": errors,
             "form_values": form_dict})
-
+    # form_dict['hashed_password'] = form_dict['password']
+    # del form_dict['password']
+    del form_dict['confirm_password']
+    print(form_dict)
+    
+    response.data = form_dict
+    response = Redirect(
+        url='/auth/register', status_code=307)
+    return response
+    
+    
+    return response
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "User created",

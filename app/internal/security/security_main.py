@@ -3,7 +3,6 @@ from app.database.models import user_db
 from app.internal.security.security_schemas import User, UserCreate, UserDB, UserUpdate
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users import FastAPIUsers
-from fastapi import Request
 
 SECRET = "SECRET"
 
@@ -21,6 +20,3 @@ fastapi_users = FastAPIUsers(
     UserUpdate,
     UserDB,
 )
-
-async def on_after_register(user: UserDB, request: Request):
-    print(f"User {user.id} has registered.")

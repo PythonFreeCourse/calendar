@@ -29,7 +29,7 @@ class User(UserTable):
     # password = Column(String, nullable=True)
     full_name = Column(String)
     description = Column(String, default="Happy new user!")
-    avatar = Column(String, default="profile.png")
+    avatar = Column(String, default="Happy new user!")
     # is_active = Column(Boolean, default=False)
 
     events = relationship("UserEvent", back_populates="participants")

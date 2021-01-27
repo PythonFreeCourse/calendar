@@ -32,3 +32,4 @@ email_conf = ConnectionConfig(
 
 # register
 DATABASE_CONNECTION_STRING = "sqlite:///calendar.db"
+JWT_SECRET_KEY = "c06857128217c661de43d746ecdbe9f1dbc3b3685957fab64512456f639b1881"
