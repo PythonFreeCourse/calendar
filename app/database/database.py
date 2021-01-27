@@ -7,9 +7,16 @@ from app import config
 settings = config.get_settings()
 SQLALCHEMY_DATABASE_URL = settings.database_connection_string
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+
+def create_env_engine(psql_environment, sqlalchemy_database_url):
+    if not psql_environment:
+        return create_engine(
+            sqlalchemy_database_url, connect_args={"check_same_thread": False})
+
+    return create_engine(sqlalchemy_database_url)
+
+
+engine = create_env_engine(config.PSQL_ENVIRONMENT, SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
