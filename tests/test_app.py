@@ -49,15 +49,15 @@ class TestApp:
     def test_add_event(session: Session):
         assert add_new_event(TestApp.event_test_data, session) is not None
 
-    # @staticmethod
-    # def test_add_bad_event(session: Session):
-    #     bad_event_test_data = TestApp.event_test_data
-    #     bad_event_test_data['no_colume'] = 'some data'
-    #     assert add_new_event(bad_event_test_data, session) is None
+    @staticmethod
+    def test_add_bad_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['no_colume'] = 'some data'
+        assert add_new_event(bad_event_test_data, session) is None
 
-    # @staticmethod
-    # def test_add_bad_times_to_event(session: Session):
-    #     bad_event_test_data = TestApp.event_test_data
-    #     bad_event_test_data['start'] = TestApp.date_test_data[1]
-    #     bad_event_test_data['end'] = TestApp.date_test_data[0]
-    #     assert add_new_event(bad_event_test_data, session) is None
+    @staticmethod
+    def test_add_bad_times_to_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['start'] = TestApp.date_test_data[1]
+        bad_event_test_data['end'] = TestApp.date_test_data[0]
+        assert add_new_event(bad_event_test_data, session) is None
