@@ -1,7 +1,6 @@
 import os
 
 from fastapi_mail import ConnectionConfig
-
 # flake8: noqa
 
 # general
@@ -9,6 +8,8 @@ DOMAIN = 'Our-Domain'
 
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
+# Set the following True if working on PSQL environment or set False otherwise
+PSQL_ENVIRONMENT = False
 
 # MEDIA
 MEDIA_DIRECTORY = 'media'
