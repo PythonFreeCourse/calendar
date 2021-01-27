@@ -7,7 +7,7 @@ from starlette.status import HTTP_302_FOUND
 from app.database.database import get_db
 from app.database.models import User, WeeklyTask
 from app.dependencies import templates
-from app.internal.weekly_tasks import make_or_change_weekly_task, remove_weekly_task
+from app.internal.weekly_tasks import make_or_change_weekly_task, remove_weekly_task, generate_tasks
 
 
 router = APIRouter(
@@ -49,6 +49,7 @@ async def weekly_tasks_manager(
     # Or will run on the background after the user left the weekly-tasks manager page
     # function:
     # generate_tasks(session, user)  # imported from app.internal.weekly_tasks
+    # session.close()
 
     return templates.TemplateResponse("weekly_tasks_manager.html", {
         "request": request,
@@ -73,6 +74,7 @@ async def weekly_task_remove(
         remove_id: int = Form(...)):
 
     remove_weekly_task(remove_id, session)
+    session.close()
     url = router.url_path_for("weekly_tasks_manager")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
@@ -145,6 +147,6 @@ async def weekly_task_make_change(
             "weekly_task": weekly_task,
             "mode": mode
         })
-
+    session.close()
     url = router.url_path_for("weekly_tasks_manager")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
