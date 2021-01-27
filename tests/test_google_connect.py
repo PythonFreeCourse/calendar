@@ -1,12 +1,15 @@
+from datetime import datetime
+
 import pytest
-# from app.routers.google_connect import db_cleanup, push_events_to_db
+from app.routers.google_connect import db_cleanup, push_events_to_db
+from app.routers.event import create_event
 
 from tests.conftest import session
 from tests.user_fixture import user
 
 
 @pytest.fixture
-def google_events():
+def google_events_mock():
     return [
         {
             "kind": "calendar#event",
@@ -55,10 +58,10 @@ def google_events():
                 "self": True
             },
             "start": {
-                "dateTime": "2021-02-25"
+                "date": "2021-02-25"
             },
             "end": {
-                "dateTime": "2021-02-25"
+                "date": "2021-02-25"
             },
             "iCalUID": "somecode",
             "sequence": 0,
@@ -71,7 +74,50 @@ def google_events():
 
 @pytest.mark.usefixtures("user")
 @pytest.mark.usefixtures("session")
-@pytest.mark.usefixtures("google_events")
-def test_push_events_to_db(session=session, user=user, events=google_events):
-    print(session, user, events)
-    assert False
+@pytest.mark.usefixtures("google_events_mock")
+def test_push_events_to_db(google_events_mock, user, session):
+    assert push_events_to_db(google_events_mock, user, session)
+
+@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("session")
+@pytest.mark.usefixtures("google_events_mock")
+def test_clean_up(google_events_mock, user, session):
+    for event in google_events_mock:
+        print(event)
+        location = None
+        title = event['summary']
+        # support for all day events
+        if 'dateTime' in event['start'].keys():
+            # part time event
+            start = datetime.fromisoformat(event['start']['dateTime'])
+            end = datetime.fromisoformat(event['end']['dateTime'])
+        else:
+            # all day event
+            start = event['start']['date'].split('-')
+            start = datetime(
+                year=int(start[0]),
+                month=int(start[1]),
+                day=int(start[2])
+            )
+
+            end = event['end']['date'].split('-')
+            end = datetime(
+                year=int(end[0]),
+                month=int(end[1]),
+                day=int(end[2])
+            )
+
+        if 'location' in event.keys():
+            location = event['location']
+
+        create_event(
+            db=session,
+            title=title,
+            start=start,
+            end=end,
+            owner_id=user.id,
+            location=location,
+            isGoogleEvent=True
+        )
+        
+        assert db_cleanup(user, session)

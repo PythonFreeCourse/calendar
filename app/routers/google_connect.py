@@ -135,6 +135,7 @@ def push_events_to_db(events: list, user: User, session: SessionLocal):
             location=location,
             isGoogleEvent=True
         )
+    return True
 
 
 def db_cleanup(user: User, session: SessionLocal):
@@ -147,6 +148,8 @@ def db_cleanup(user: User, session: SessionLocal):
             session.query(Event).filter_by(id=event.id).delete()
             session.query(UserEvent).filter_by(id=user_event_id).delete()
             session.commit()
+
+    return True
 
 
 def get_credentials_from_db(user: User, session: SessionLocal):
