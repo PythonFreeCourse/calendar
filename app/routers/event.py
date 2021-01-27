@@ -1,10 +1,7 @@
 from datetime import datetime
 from operator import attrgetter
-<<<<<<< HEAD
-from typing import List, Optional
-=======
+
 from typing import Dict, List, Optional, Any
->>>>>>> bcf470b12980bcd4734fcafda9533a9272e31560
 
 from app.database.models import Event, UserEvent
 from app.dependencies import templates
