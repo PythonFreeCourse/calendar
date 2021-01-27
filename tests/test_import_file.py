@@ -80,18 +80,18 @@ date_in_range_tests = [
 
 check_validity_of_text_tests = [
     (r"Head1, Content1, 05-21-2019, 05-21-2019", True),
-    (r"Head1Content1, 05-21-2019, 05-21-2019", False),
+    (r"Head1Content1, 05-21-2019, 05-21-2019", []),
     # title can't be empty
-    (r"  , Content1, 05-21-2019, 05-21-2019", False),
+    (r"  , Content1, 05-21-2019, 05-21-2019", []),
     # content may be empty
     (r"Head1, , 05-21-2019, 05-21-2019", True),
     # start_date can't be empty
-    (r"Head1, Content1, , 05-21-2019", False),
+    (r"Head1, Content1, , 05-21-2019", []),
     # end_date can't be empty
-    (r"Head1, Content1, 05-21-2019, ", False),
+    (r"Head1, Content1, 05-21-2019, ", []),
     # row cant have multiple events
     (r"""Head1, Content1, 05-21-2019, 05-21-2019,
-     Head2, Content2, 05-21-2019, 05-21-2019""", False)
+     Head2, Content2, 05-21-2019, 05-21-2019""", [])
 ]
 
 import_txt_file_tests = [

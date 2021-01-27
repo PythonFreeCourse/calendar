@@ -1,14 +1,25 @@
 import os
 
 from fastapi_mail import ConnectionConfig
+from pydantic import BaseSettings
 
-# flake8: noqa
+
+class Settings(BaseSettings):
+    app_name: str = "PyLander"
+    bot_api: str = "BOT_API"
+    webhook_url: str = "WEBHOOK_URL"
+
+    class Config:
+        env_file = ".env"
+
 
 # general
 DOMAIN = 'Our-Domain'
 
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
+# Set the following True if working on PSQL environment or set False otherwise
+PSQL_ENVIRONMENT = False
 
 # MEDIA
 MEDIA_DIRECTORY = 'media'
@@ -43,3 +54,5 @@ EVENT_HEADER_NOT_EMPTY = 1  # 1- for not empty, 0- for empty.
 EVENT_HEADER_LIMIT = 50  # Max characters for event header.
 EVENT_CONTENT_LIMIT = 500  # Max characters for event characters.
 MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
+# PATHS
+STATIC_ABS_PATH = os.path.abspath("static")
