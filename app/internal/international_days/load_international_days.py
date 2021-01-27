@@ -23,3 +23,12 @@ def add_international_days_to_db(session: Session) -> None:
         ]
     session.add_all(international_days_objects)
     session.commit()
+
+
+def is_international_days_table_empty(session: Session) -> bool:
+    return session.query(InternationalDays).count() == 0
+
+
+def load_daily_quotes(session: Session) -> None:
+    if is_international_days_table_empty(session):
+        add_international_days_to_db(session)
