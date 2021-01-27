@@ -37,13 +37,16 @@ def get_user(demo_user, session):
 
 
 @router.get("/")
-def weekly_tasks_manager(
+async def weekly_tasks_manager(
         request: Request,
         session=Depends(get_db),
         demo_user=Depends(get_placeholder_user)):
     
     user = get_user(demo_user, session)
-    # generate_tasks(session, user)
+
+    # TODO: Move the function to a more compatible location
+    # Need to run regularly whenever there are no tasks on the week
+    generate_tasks(session, user)
 
     return templates.TemplateResponse("weekly_tasks_manager.html", {
         "request": request,
@@ -52,7 +55,7 @@ def weekly_tasks_manager(
 
 
 @router.get("/add")
-def weekly_task_add(
+async def weekly_task_add(
         request: Request):
 
     return templates.TemplateResponse("add_edit_weekly_task.html", {
@@ -63,7 +66,7 @@ def weekly_task_add(
 
 
 @router.post("/remove")
-def weekly_task_remove(
+async def weekly_task_remove(
         session=Depends(get_db),
         remove_id: int = Form(...)):
 
@@ -73,7 +76,7 @@ def weekly_task_remove(
 
 
 @router.post("/edit")
-def weekly_task_edit(
+async def weekly_task_edit(
         request: Request,
         session=Depends(get_db),
         edit_id: int = Form(...)):
@@ -87,7 +90,7 @@ def weekly_task_edit(
 
 
 @router.post("/make-change")
-def weekly_task_make_change(
+async def weekly_task_make_change(
         request: Request,
         session=Depends(get_db),
         demo_user=Depends(get_placeholder_user),
@@ -143,10 +146,3 @@ def weekly_task_make_change(
 
     url = router.url_path_for("weekly_tasks_manager")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-
-
-# session = get_db()
-# demo_user = get_placeholder_user()
-# user = get_user(demo_user, session)
-
-# generate_tasks(session, user)
