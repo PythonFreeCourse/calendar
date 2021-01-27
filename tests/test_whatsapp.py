@@ -40,6 +40,5 @@ def test_no_number():
 
 def test_end_to_end_testing(client):
     resp = client.get('/whatsapp?phone_number=972536106106&message=testing')
-    assert resp.status_code == status.HTTP_200_OK
-    assert resp.content == b'{"link":"https://api.whatsapp.com/send?phone='\
-        b'972536106106&text=testing"}'
+    assert resp.ok
+    assert resp.json
