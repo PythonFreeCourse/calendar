@@ -47,7 +47,6 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     content = Column(String)
-    translation_content = Column(String)
     location = Column(String)
 
     owner = relationship("User")
