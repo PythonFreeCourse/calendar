@@ -50,3 +50,4 @@ watchgod==0.6
 websockets==8.1
 wsproto==1.0.0
 zipp==3.4.0
+iso-639==0.4.5
