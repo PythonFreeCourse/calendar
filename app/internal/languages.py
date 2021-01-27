@@ -11,7 +11,7 @@ LANGUAGE_DIR_TEST = "../app/locales"
 TRANSLATION_FILE = "base"
 
 
-def setup_ui_language():
+def setup_ui_language() -> None:
     """Set the jinja2 environment on startup to support the i18n
     and call set_ui_language() to setup an initial language for translations.
     """
@@ -19,22 +19,22 @@ def setup_ui_language():
     set_ui_language()
 
 
-def set_ui_language(language: str = None):
+def set_ui_language(language: str = None) -> None:
     """Set the gettext translations to a given language.
     If the language requested is not supported, the translations default
     to the value of config.WEBSITE_LANGUAGE.
 
     Args:
-        language (str, optional): a valid code that follows RFC 1766.
+        language (str, optional): a valid language code that follows RFC 1766.
             Defaults to None.
             See also the Language Code Identifier (LCID) Reference for a list of
-            valid codes.
+            valid language codes.
 
     .. _RFC 1766:
         https://tools.ietf.org/html/rfc1766.html
 
     .. _Language Code Identifier (LCID) Reference:
-        https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c?redirectedfrom=MSDN # noqa: E501
+        https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c # noqa: E501
     """
 
     # TODO: Connect when user registration is completed.
