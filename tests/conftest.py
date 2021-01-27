@@ -4,7 +4,6 @@ from app.database.database import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
 pytest_plugins = [
     'tests.user_fixture',
     'tests.event_fixture',
@@ -12,6 +11,7 @@ pytest_plugins = [
     'tests.association_fixture',
     'tests.client_fixture',
     'tests.asyncio_fixture',
+    'tests.category_fixture',
     'smtpdfix',
 ]
 
@@ -47,6 +47,7 @@ def session():
     Base.metadata.create_all(bind=test_engine)
     session = get_test_db()
     yield session
+    session.rollback()
     session.close()
     Base.metadata.drop_all(bind=test_engine)
 

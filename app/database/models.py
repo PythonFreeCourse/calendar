@@ -3,9 +3,9 @@ from datetime import datetime
 from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event)
+                        Integer, String, event, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 
 
 class UserEvent(Base):
@@ -50,11 +50,12 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
-
-    owner = relationship("User")
-    owner_id = Column(Integer, ForeignKey("users.id"))
     color = Column(String, nullable=True)
 
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
+    owner = relationship("User")
     participants = relationship("UserEvent", back_populates="events")
 
     # PostgreSQL
@@ -64,10 +65,40 @@ class Event(Base):
             'events_tsv_idx',
             'events_tsv',
             postgresql_using='gin'),
-            )
+        )
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'name', 'color'),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    color = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    @staticmethod
+    def create(db_session: Session, name: str, color: str, user_id: int):
+        try:
+            category = Category(name=name, color=color, user_id=user_id)
+            db_session.add(category)
+            db_session.flush()
+            db_session.commit()
+            db_session.refresh(category)
+            return category
+        except Exception as e:
+            raise e
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def __repr__(self):
+        return f'<Category {self.id} {self.name} {self.color}>'
 
 
 class PSQLEnvironmentError(Exception):
@@ -87,7 +118,7 @@ if PSQL_ENVIRONMENT:
         Event.__table__,
         'after_create',
         trigger_snippet.execute_if(dialect='postgresql')
-        )
+    )
 
 
 class Invitation(Base):
