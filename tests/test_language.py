@@ -39,7 +39,8 @@ class TestLanguage:
 
     @staticmethod
     def test_get_supported_languages():
-        number_of_languages = len(list(languages._get_supported_languages()))
+        number_of_languages = len(list(languages._get_supported_languages(
+            languages.LANGUAGE_DIR_TEST)))
         assert number_of_languages == TestLanguage.NUMBER_OF_LANGUAGES
 
     @staticmethod

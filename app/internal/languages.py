@@ -33,13 +33,12 @@ def set_ui_language(language: str = None) -> None:
     # if not language:
     #     language = _get_display_language(user_id: int)
 
-    if language not in _get_supported_languages():
-        language = config.WEBSITE_LANGUAGE
-
-    if Path(LANGUAGE_DIR).is_dir():
-        language_dir = LANGUAGE_DIR
-    else:
+    language_dir = LANGUAGE_DIR
+    if Path.cwd().name == "tests":  # If running from test, change dir path.
         language_dir = LANGUAGE_DIR_TEST
+
+    if language not in _get_supported_languages(language_dir):
+        language = config.WEBSITE_LANGUAGE
 
     translations = gettext.translation(TRANSLATION_FILE,
                                        localedir=language_dir,
@@ -59,16 +58,16 @@ def set_ui_language(language: str = None) -> None:
 #     return config.WEBSITE_LANGUAGE
 
 
-def _get_supported_languages() -> Generator[str, Any, None]:
+def _get_supported_languages(language_dir: str) -> Generator[str, Any, None]:
     """Get and return a generator of supported translation languages codes.
+
+    Args:
+        language_dir (str, optional): the path of the language directory.
 
     Returns:
         Generator[str, Any, None]: a generator expression of supported
             translation languages codes.
     """
-    try:
-        language_dir = os.scandir(LANGUAGE_DIR)
-    except FileNotFoundError:
-        language_dir = os.scandir(LANGUAGE_DIR_TEST)
+
     return (language.name for language in
-            [Path(f.path) for f in language_dir if f.is_dir()])
+            [Path(f.path) for f in os.scandir(language_dir) if f.is_dir()])
