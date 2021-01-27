@@ -1,4 +1,5 @@
 from app.routers import whatsapp
+from fastapi import status
 
 
 def test_whatsapp_send():
@@ -35,3 +36,10 @@ def test_no_number():
     assert whatsapp.make_link(phone_number, message) == {
         "link": "https://api.whatsapp.com/send?phone=&text=Which+phone+"
         "number%3F"}
+
+
+def test_end_to_end_testing(client):
+    resp = client.get('/whatsapp?phone_number=972536106106&message=testing')
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.content == b'{"link":"https://api.whatsapp.com/send?phone='\
+        b'972536106106&text=testing"}'
