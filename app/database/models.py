@@ -36,9 +36,10 @@ class User(Base):
     is_active = Column(Boolean, default=False)
 
     events = relationship("UserEvent", back_populates="participants")
-    
+
     oauth_credentials = relationship(
-        "OAuthCredentials", cascade="all, delete", back_populates="owner", uselist=False)
+        "OAuthCredentials", cascade="all, delete", back_populates="owner",
+        uselist=False)
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -108,10 +109,10 @@ class Invitation(Base):
 
     def __repr__(self):
         return (
-        f'<Invitation '
-        f'({self.event.owner}'
-        f'to {self.recipient})>'
-    )
+            f'<Invitation '
+            f'({self.event.owner}'
+            f'to {self.recipient})>'
+        )
 
 
 class OAuthCredentials(Base):
@@ -127,4 +128,3 @@ class OAuthCredentials(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates=__tablename__, uselist=False)
-  

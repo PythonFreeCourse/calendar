@@ -110,7 +110,7 @@ def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
             end = datetime.fromisoformat(event['end']['dateTime'])
         else:
             # all day event
-            start_in_str= event['start']['date'].split('-')
+            start_in_str = event['start']['date'].split('-')
             start = datetime(
                 year=int(start_in_str[0]),
                 month=int(start_in_str[1]),

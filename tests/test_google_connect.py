@@ -1,11 +1,8 @@
 from datetime import datetime
 
 import pytest
-from app.routers.google_connect import db_cleanup, push_events_to_db
 from app.routers.event import create_event
-
-from tests.conftest import session
-from tests.user_fixture import user
+from app.routers.google_connect import db_cleanup, push_events_to_db
 
 
 @pytest.fixture
@@ -120,5 +117,5 @@ def test_clean_up(google_events_mock, user, session):
             location=location,
             isGoogleEvent=True
         )
-        
+
         assert db_cleanup(user, session)

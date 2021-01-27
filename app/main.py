@@ -8,7 +8,9 @@ from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
 from app.routers import (
-    agenda, dayview, email, event, invitation, profile, search, telegram, google_connect)
+    agenda, dayview, email, event, invitation,
+    profile, search, telegram, google_connect)
+
 from app.telegram.bot import telegram_bot
 
 
