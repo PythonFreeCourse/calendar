@@ -1,9 +1,9 @@
 from datetime import datetime
 
+from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
                         Integer, String, event)
-from sqlalchemy.dialects import postgresql
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship
 
@@ -57,23 +57,36 @@ class Event(Base):
     participants = relationship("UserEvent", back_populates="events")
 
     # PostgreSQL
-    events_tsv = Column(TSVECTOR)
-    __table_args__ = (Index('events_tsv_idx', 'events_tsv', postgresql_using = 'gin'),)
+    if PSQL_ENVIRONMENT:
+        events_tsv = Column(TSVECTOR)
+        __table_args__ = (Index(
+            'events_tsv_idx',
+            'events_tsv',
+            postgresql_using='gin'),
+            )
 
     def __repr__(self):
         return f'<Event {self.id}>'
 
 
-# PostgreSQL
-trigger_snippet = DDL("""
-CREATE TRIGGER ix_events_tsv_update BEFORE INSERT OR UPDATE
-ON events
-FOR EACH ROW EXECUTE PROCEDURE
-tsvector_update_trigger(events_tsv,'pg_catalog.english', 'title', 'content')
-""")
+class PSQLEnvironmentError(Exception):
+    pass
+
 
 # PostgreSQL
-event.listen(Event.__table__, 'after_create', trigger_snippet.execute_if(dialect = 'postgresql'))
+if PSQL_ENVIRONMENT:
+    trigger_snippet = DDL("""
+    CREATE TRIGGER ix_events_tsv_update BEFORE INSERT OR UPDATE
+    ON events
+    FOR EACH ROW EXECUTE PROCEDURE
+    tsvector_update_trigger(events_tsv,'pg_catalog.english','title','content')
+    """)
+
+    event.listen(
+        Event.__table__,
+        'after_create',
+        trigger_snippet.execute_if(dialect='postgresql')
+        )
 
 
 class Invitation(Base):
