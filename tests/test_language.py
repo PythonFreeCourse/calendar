@@ -43,6 +43,11 @@ class TestLanguage:
         assert number_of_languages == TestLanguage.NUMBER_OF_LANGUAGES
 
     @staticmethod
+    def test_get_language_directory():
+        pytest.MonkeyPatch().chdir(languages.LANGUAGE_DIR_TEST)
+        assert languages._get_language_directory()
+
+    @staticmethod
     def test_get_display_language():
         # TODO: Waiting for user registration.
         #  Test: no user, user not logged in and user with non-english set.

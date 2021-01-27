@@ -56,7 +56,12 @@ def set_ui_language(language: str = None) -> None:
 #     return config.WEBSITE_LANGUAGE
 
 
-def _get_language_directory():
+def _get_language_directory() -> str:
+    """Get and return the language directory relative path.
+
+    Returns:
+        str: the language directory relative path.
+    """
     language_dir = LANGUAGE_DIR
     if Path.cwd().name == "tests":  # If running from test, change dir path.
         language_dir = LANGUAGE_DIR_TEST
@@ -69,6 +74,7 @@ def _get_supported_languages(language_dir: str = None) -> \
 
     Args:
         language_dir (str, optional): the path of the language directory.
+            Defaults to None.
 
     Returns:
         Generator[str, Any, None]: a generator expression of supported
