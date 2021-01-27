@@ -34,7 +34,7 @@ async def google_sync(session=Depends(get_db)):
     credentials, status = get_credentials_from_db(user, session)
     if not status:
         # first sync
-        if CLIENT_SECRET_FILE is None:
+        if CLIENT_SECRET_FILE is None:  # if there is no client_secrets.json
             print('Google Sync is not available - missing client_secret.json')
             url = profile_router.url_path_for("profile")
             return RedirectResponse(url=url)
@@ -66,7 +66,8 @@ async def google_sync(session=Depends(get_db)):
     session.query(OAuthCredentials).filter_by(user_id=None).delete()
     session.commit()
 
-    get_current_year_events(credentials, user, session)
+    events = get_current_year_events(credentials, user, session)
+    push_events_to_db(events, user, session)
     session.close()
 
     url = profile_router.url_path_for("profile")
@@ -75,9 +76,8 @@ async def google_sync(session=Depends(get_db)):
 
 def get_current_year_events(
                 credentials: Credentials, user: User, session: SessionLocal):
-    '''Getting user event from google calendar'''
+    '''Getting user events from google calendar'''
 
-    db_cleanup(user, session)
     service = build('calendar', 'v3', credentials=credentials)
 
     currrnt_year = datetime.now().year
@@ -92,8 +92,14 @@ def get_current_year_events(
     ).execute()
 
     events = events_result.get('items', [])
+    return events
+
+
+def push_events_to_db(events: list, user: User, session: SessionLocal):
+    db_cleanup(user, session)
 
     for event in events:
+        print(event)
         location = None
         title = event['summary']
         # support for all day events
