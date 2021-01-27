@@ -1,7 +1,7 @@
 import gettext
 import os
 from pathlib import Path
-from typing import List
+from typing import Any, Generator
 
 from app import config
 from app.dependencies import templates
@@ -59,15 +59,16 @@ def set_ui_language(language: str = None) -> None:
 #     return config.WEBSITE_LANGUAGE
 
 
-def _get_supported_languages() -> List[str]:
-    """Get and return a list of supported translation languages codes.
+def _get_supported_languages() -> Generator[str, Any, None]:
+    """Get and return a generator of supported translation languages codes.
 
     Returns:
-        List[str]: a list of supported translation languages codes.
+        Generator[str, Any, None]: a generator expression of supported
+            translation languages codes.
     """
     try:
         language_dir = os.scandir(LANGUAGE_DIR)
     except FileNotFoundError:
         language_dir = os.scandir(LANGUAGE_DIR_TEST)
-    return [language.name for language in
-            [Path(f.path) for f in language_dir if f.is_dir()]]
+    return (language.name for language in
+            [Path(f.path) for f in language_dir if f.is_dir()])

@@ -4,49 +4,44 @@ from app.internal import languages
 
 
 class TestLanguage:
-    PYTHON_TESTS = [
-        (None, 'test python translation', False),
-        ('', 'test python translation', False),
-        ('en', 'test python translation', True),
-        ('he', 'בדיקת תרגום בפייתון', True),
-        ('de', 'test python translation', False),  # Defaults to English.
-        (["en"], 'test python translation', False),
-        (3, 'test python translation', False),
-    ]
-
-    HTML_TESTS = [
-        (None, 'Profile', False),
-        ('', 'Profile', False),
-        ('en', 'Profile', True),
-        ('he', 'פרופיל', True),
-        ('de', 'Profile', False),  # Defaults to English translation.
-        (["en"], 'Profile', False),
-        (3, 'Profile', False),
+    # Empty, invalid, or non-'he' language codes, are set to the default
+    # language setting at config.WEBSITE_LANGUAGE,
+    # which is currently set to 'en' (English).
+    LANGUAGE_TESTS = [
+        ('en', 'test python translation', 'Profile', True),
+        ('he', 'בדיקת תרגום בפייתון', 'פרופיל', True),
+        (None, 'test python translation', 'Profile', False),
+        ('', 'test python translation', 'Profile', False),
+        ('de', 'test python translation', 'Profile', False),
+        (["en"], 'test python translation', 'Profile', False),
+        (3, 'test python translation', 'Profile', False),
     ]
 
     NUMBER_OF_LANGUAGES = 2
 
     @staticmethod
-    @pytest.mark.parametrize("language_code, translation, is_valid",
-                             PYTHON_TESTS)
-    def test_gettext_python(client, language_code, translation, is_valid):
+    @pytest.mark.parametrize("language_code, python_translation,"
+                             "html_translation, is_valid", LANGUAGE_TESTS)
+    def test_gettext_python(client, language_code, python_translation,
+                            html_translation, is_valid):
         languages.set_ui_language(language_code)
         gettext_translation = _("test python translation")  # noqa F821
-        assert ((is_valid and gettext_translation == translation)
-                or (not is_valid and gettext_translation == translation))
+        assert ((is_valid and gettext_translation == python_translation)
+                or (not is_valid and gettext_translation == python_translation))
 
     @staticmethod
-    @pytest.mark.parametrize("language_code, translation, is_valid",
-                             HTML_TESTS)
-    def test_gettext_html(client, language_code, translation, is_valid):
+    @pytest.mark.parametrize("language_code, python_translation,"
+                             "html_translation, is_valid", LANGUAGE_TESTS)
+    def test_gettext_html(client, language_code, python_translation,
+                          html_translation, is_valid):
         languages.set_ui_language(language_code)
         text = client.get("/").text
-        assert ((is_valid and translation in text)
-                or (not is_valid and translation in text))
+        assert ((is_valid and html_translation in text)
+                or (not is_valid and html_translation in text))
 
     @staticmethod
     def test_get_supported_languages():
-        number_of_languages = len(languages._get_supported_languages())
+        number_of_languages = len(list(languages._get_supported_languages()))
         assert number_of_languages == TestLanguage.NUMBER_OF_LANGUAGES
 
     @staticmethod
