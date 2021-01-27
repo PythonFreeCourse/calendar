@@ -1,5 +1,4 @@
 from app.routers import whatsapp
-from fastapi import status
 
 
 def test_whatsapp_send():
