@@ -62,7 +62,7 @@ add_countries_to_db()
 
 @app.get("/")
 async def home(
-    request: Request):
+        request: Request):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!"
@@ -71,7 +71,7 @@ async def home(
 
 @app.get("/global_time")
 async def time(
-    request: Request):
+        request: Request):
     """
     Displays a globe icon.
     By Click the page transfers to "/global_time/choose".
@@ -121,10 +121,10 @@ async def time_conv(
     match = geolite2.lookup(ip)
     if match is not None:
         ip_tmz = match.timezone
-        target_tmz = session.query(Country.timezone).filter_by(name=country).first()
-        target_tmz = target_tmz[0]
+        trgt_tmz = session.query(Country.timezone).filter_by(name=country).first()
+        trgt_tmz = trgt_tmz[0]
         meeting_time_with_utc = pytz.timezone(ip_tmz).localize(datetime)
-        target_with_utc = pytz.timezone(target_tmz)
+        target_with_utc = pytz.timezone(trgt_tmz)
         target_time = meeting_time_with_utc.astimezone(target_with_utc)
         target_meeting_hour = target_time.strftime("%H:%M")
         return templates.TemplateResponse("event/partials/global_time.html", {
