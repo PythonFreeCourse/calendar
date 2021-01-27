@@ -1,6 +1,7 @@
 dev.db
 test.db
 config.py
+.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -116,6 +117,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+Scripts/*
+pyvenv.cfg
 
 # Spyder project settings
 .spyderproject
@@ -134,3 +137,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# VScode
+.vscode/
+app/.vscode/
+
+app/routers/stam
