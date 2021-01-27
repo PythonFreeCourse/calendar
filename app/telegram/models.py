@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 
+from httpx import AsyncClient
 import requests
 
 
@@ -47,10 +48,10 @@ class Bot:
             self, chat_id: str,
             text: str,
             reply_markup: Optional[Dict[str, Any]] = None):
-        message = {
-            'chat_id': chat_id,
-            'text': text,
-            'reply_markup': None}
-        if reply_markup:
-            message.update(reply_markup)
-        return requests.post(f'{self.base}sendMessage', data=message)
+        async with AsyncClient(base_url=self.base) as ac:
+            message = {
+                'chat_id': chat_id,
+                'text': text}
+            if reply_markup:
+                message.update(reply_markup)
+            return await ac.post('sendMessage', data=message)
