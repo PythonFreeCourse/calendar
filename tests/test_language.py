@@ -1,11 +1,13 @@
+from pathlib import Path
+
 import pytest
 
 from app.internal import languages
 
 
 class TestLanguage:
-    # Empty, invalid, or non-'he' language codes, are set to the default
-    # language setting at config.WEBSITE_LANGUAGE,
+    # Empty, invalid, or valid, but unsupported non-'he' language codes,
+    # are set to the default language setting at config.WEBSITE_LANGUAGE,
     # which is currently set to 'en' (English).
     LANGUAGE_TESTS = [
         ('en', 'test python translation', 'Profile', True),
@@ -41,6 +43,11 @@ class TestLanguage:
     def test_get_supported_languages():
         number_of_languages = len(list(languages._get_supported_languages()))
         assert number_of_languages == TestLanguage.NUMBER_OF_LANGUAGES
+
+    @staticmethod
+    def test_get_language_directory():
+        pytest.MonkeyPatch().setattr(Path, 'is_dir', lambda x: True)
+        assert languages._get_language_directory()
 
     @staticmethod
     def test_get_display_language():

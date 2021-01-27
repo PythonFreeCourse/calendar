@@ -63,7 +63,8 @@ def _get_language_directory() -> str:
         str: the language directory relative path.
     """
     language_dir = LANGUAGE_DIR
-    if Path.cwd().name == "tests":  # If running from test, change dir path.
+    if Path(LANGUAGE_DIR_TEST).is_dir():
+        # If running from test, change dir path.
         language_dir = LANGUAGE_DIR_TEST
     return language_dir
 
