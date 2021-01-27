@@ -117,9 +117,8 @@ def import_txt_file(txt_file: str) -> List[Dict[str, Union[str, Any]]]:
     calendar_content = []
     events = open_txt_file(txt_file)
     for event in events:
-        if not is_event_text_valid(event):
-            return list()
-        if not save_calendar_content_txt(event, calendar_content):
+        if (not is_event_text_valid(event) or
+           not save_calendar_content_txt(event, calendar_content)):
             return list()
     return calendar_content
 
