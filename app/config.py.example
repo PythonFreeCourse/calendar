@@ -18,6 +18,8 @@ DOMAIN = 'Our-Domain'
 
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
+# Set the following True if working on PSQL environment or set False otherwise
+PSQL_ENVIRONMENT = False
 
 # MEDIA
 MEDIA_DIRECTORY = 'media'
@@ -42,3 +44,6 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
+
+# PATHS
+STATIC_ABS_PATH = os.path.abspath("static")

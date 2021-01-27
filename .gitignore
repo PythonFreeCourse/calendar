@@ -138,4 +138,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
+# VScode
+.vscode/
+app/.vscode/
+
 app/routers/stam
