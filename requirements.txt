@@ -87,3 +87,4 @@ word-forms==2.1.0
 wsproto==1.0.0
 zipp==3.4.0
 iso-639==0.4.5
+textblob>=0.15.3
