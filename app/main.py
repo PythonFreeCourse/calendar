@@ -7,7 +7,9 @@ from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
 from app.routers import (
-    agenda, dayview, email, event, invitation, profile, search, telegram)
+    agenda, dayview, email, event, invitation, profile, search, telegram,
+    whatsapp
+    )
 from app.telegram.bot import telegram_bot
 
 
@@ -34,6 +36,7 @@ app.include_router(telegram.router)
 app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
+app.include_router(whatsapp.router)
 app.include_router(search.router)
 
 telegram_bot.set_webhook()
