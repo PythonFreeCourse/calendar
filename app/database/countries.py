@@ -375,7 +375,8 @@ countries = [
             'America/Mexico_City', 'America/Monterrey',
             'America/Ojinaga', 'America/Tijuana'],
         'code': 'MX', 'name': 'Mexico'},
-    {'timezones': ['Pacific/Chuuk',
+    {'timezones': [
+            'Pacific/Chuuk',
             'Pacific/Kosrae', 'Pacific/Pohnpei'],
         'code': 'FM', 'name': 'Micronesia'},
     {'timezones': ['Europe/Chisinau'],
@@ -593,7 +594,7 @@ countries = [
     {'timezones': [
             'America/Adak',
             'America/Anchorage', 'America/Boise',
-            'America/Chicago','US/Central',
+            'America/Chicago', 'US/Central',
             'America/Denver', 'America/Detroit',
             'US/Michigan', 'America/Indiana/Indianapolis',
             'America/Indiana/Knox', 'America/Indiana/Marengo',
@@ -602,7 +603,7 @@ countries = [
             'America/Indiana/Winamac', 'America/Juneau',
             'America/Kentucky/Louisville', 'America/Kentucky/Monticello',
             'America/Los_Angeles', 'US/Pacific', 'America/Menominee',
-            'America/Metlakatla', 'America/New_York','US/Eastern',
+            'America/Metlakatla', 'America/New_York', 'US/Eastern',
             'America/Nome', 'America/North_Dakota/Beulah',
             'America/North_Dakota/Center',
             'America/North_Dakota/New_Salem',
