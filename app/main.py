@@ -49,7 +49,3 @@ async def home(request: Request):
         "request": request,
         "message": "Hello, World!",
     })
-
-
-if __name__ == "__main__":
-    uvicorn.run(app)
