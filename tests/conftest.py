@@ -13,6 +13,7 @@ pytest_plugins = [
     'tests.client_fixture',
     'tests.asyncio_fixture',
     'smtpdfix',
+    'tests.quotes_fixture'
 ]
 
 # When testing in a PostgreSQL environment please make sure that:
