@@ -16,6 +16,7 @@ def get_by_username(db: Session, username: str) -> models.User:
 
 def get_by_mail(db: Session, email: str) -> models.User:
     '''query database for a user by unique email'''
+    print("test")
     return db.query(models.User).filter(models.User.email == email).first()
 
 
@@ -28,6 +29,7 @@ def create(db: Session, user: schemas.UserCreate) -> models.User:
     hashed_password = bcrypt.hashpw(unhashed_password, salt)
     user_details = {
         'username': user.username,
+        'hashed_password': "password",
         'full_name': user.full_name,
         'email': user.email,
         'password': hashed_password,

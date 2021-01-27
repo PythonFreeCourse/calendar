@@ -2,11 +2,13 @@ from app.internal import user
 from app.database import schemas
 from app.database.database import get_db
 from app.dependencies import templates
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 router = APIRouter(
     prefix="",
@@ -28,7 +30,7 @@ async def register_user_form(request: Request) -> templates:
 
 @router.post("/register")
 async def register(
-                request: Request, db: Session = Depends(get_db)) -> templates:
+                request: Request, response: Response, db: Session = Depends(get_db)) -> templates:
     '''
     rendering register route post method.
     '''
@@ -48,25 +50,15 @@ async def register(
             "request": request,
             "errors": errors,
             "form_values": form_dict})
-    try:
-        # attempt creating User Model object, and saving to database
-
-        user.create(db=db, user=new_user)
-
-        '''
-        if creating User Model objects fails due to registered unique details -
-        rendering errors to register.html
-        '''
-    except IntegrityError:
-        db.rollback()
-        errors = {}
-        db_user_email = user.get_by_mail(db, email=new_user.email)
-        db_user_username = user.get_by_username(
-            db, username=new_user.username)
-        if db_user_username:
-            errors['username'] = "That username is already taken"
-        if db_user_email:
-            errors['email'] = "Email already registered"
+    errors = {}
+    db_user_email = user.get_by_mail(db, email=new_user.email)
+    db_user_username = user.get_by_username(
+        db, username=new_user.username)
+    if db_user_username:
+        errors['username'] = "That username is already taken"
+    if db_user_email:
+        errors['email'] = "Email already registered"
+    if errors:
         return templates.TemplateResponse("register.html", {
             "request": request,
             "errors": errors,

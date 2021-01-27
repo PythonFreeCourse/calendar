@@ -15,9 +15,14 @@ engine = create_engine(
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-Base = declarative_base()
+# Base = declarative_base()
 
+############### fast-api Users
 
+from sqlalchemy.ext.declarative import DeclarativeMeta
+Base: DeclarativeMeta = declarative_base()
+
+############################
 def get_db():
     db = SessionLocal()
     try:

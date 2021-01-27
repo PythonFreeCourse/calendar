@@ -28,8 +28,12 @@ class UserBase(BaseModel):
         orm_mode = True
 
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
     '''Validating fields types'''
+    username: str
+    email: str
+    full_name: str
+    description: Optional[str] = None
     password: str
     confirm_password: str
 
