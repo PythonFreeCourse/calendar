@@ -7,7 +7,7 @@ from starlette.status import HTTP_302_FOUND
 from app.database.database import get_db
 from app.database.models import User, WeeklyTask
 from app.dependencies import templates
-from app.internal.weekly_tasks import generate_tasks, make_or_change_weekly_task, remove_weekly_task
+from app.internal.weekly_tasks import make_or_change_weekly_task, remove_weekly_task
 
 
 router = APIRouter(
@@ -44,9 +44,11 @@ async def weekly_tasks_manager(
     
     user = get_user(demo_user, session)
 
-    # TODO: Move the function to a more compatible location
+    # TODO: Move the below function to a compatible location
     # Need to run regularly whenever there are no tasks on the week
-    generate_tasks(session, user)
+    # Or will run on the background after the user left the weekly-tasks manager page
+    # function:
+    # generate_tasks(session, user)  # imported from app.internal.weekly_tasks
 
     return templates.TemplateResponse("weekly_tasks_manager.html", {
         "request": request,
