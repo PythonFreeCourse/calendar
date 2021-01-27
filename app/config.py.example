@@ -45,7 +45,7 @@ email_conf = ConnectionConfig(
     USE_CREDENTIALS=True,
 )
 
-# import 
+# import
 NUM_OF_VALUES = 4  # Event contains head, content, start_date and end_date.
 MAX_FILE_SIZE_MB = 5  # 5MB
 VALID_FILE_EXTENSION = (".txt", ".csv", ".ics")  # Can import only these files.
