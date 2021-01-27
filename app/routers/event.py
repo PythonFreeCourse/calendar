@@ -69,7 +69,6 @@ def add_new_event(values: dict, db) -> Optional[Event]:
     in the dict is not match to the fields in the DB
     return the Event Class item"""
 
-
     if check_date_validation(values['start'], values['end']):
         try:
                 new_event = create_model(
@@ -85,4 +84,4 @@ def add_new_event(values: dict, db) -> Optional[Event]:
             print(e)
             return None
     else:
-                return None
+            return None
