@@ -13,7 +13,6 @@ from app.config import (
     EVENT_HEADER_NOT_EMPTY,
     MAX_EVENTS_START_DATE,
     MAX_FILE_SIZE_MB,
-    NUM_OF_VALUES,
     VALID_FILE_EXTENSION,
     VALID_YEARS
 )
@@ -63,8 +62,8 @@ def is_date_in_range(date: Union[str, datetime.datetime],
 
 def is_event_text_valid(row: str) -> bool:
     """Check if the row contains valid data"""
-    get_values = EVENT_PATTERN.findall(row)
-    return get_values and len(get_values[0]) == NUM_OF_VALUES
+    get_values = EVENT_PATTERN.search(row)
+    return get_values is not None
 
 
 def is_file_valid_to_import(file: str) -> bool:
