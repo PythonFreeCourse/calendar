@@ -68,14 +68,15 @@ async def register(
             "request": request,
             "errors": errors,
             "form_values": form_dict})
-    # form_dict['hashed_password'] = form_dict['password']
-    # del form_dict['password']
+
     del form_dict['confirm_password']
-    print(form_dict)
-    
-    response.data = form_dict
-    response = Redirect(
+    form_dict["is_active"] = True
+    form_dict["is_superuser"] = True
+    form_dict["is_verified"] = True
+    print(form_dict)    
+    response = RedirectResponse(
         url='/auth/register', status_code=307)
+    response.body = form_dict
     return response
     
     
