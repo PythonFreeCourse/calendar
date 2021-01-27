@@ -43,8 +43,6 @@ async def profile(
         session.commit()
         user = session.query(User).filter_by(id=1).first()
 
-    session.close()
-
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
@@ -64,8 +62,6 @@ async def update_user_fullname(
     user.full_name = new_fullname
     session.commit()
 
-    session.close()
-
     url = router.url_path_for("profile")
     response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
     return response
@@ -83,8 +79,6 @@ async def update_user_email(
     user.email = new_email
     session.commit()
 
-    session.close()
-
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
@@ -100,8 +94,6 @@ async def update_profile(
     # Update database
     user.description = new_description
     session.commit()
-
-    session.close()
 
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
