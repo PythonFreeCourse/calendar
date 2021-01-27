@@ -20,24 +20,22 @@ class TestLanguage:
     NUMBER_OF_LANGUAGES = 2
 
     @staticmethod
-    @pytest.mark.parametrize("language_code, python_translation,"
-                             "html_translation, is_valid", LANGUAGE_TESTS)
-    def test_gettext_python(client, language_code, python_translation,
-                            html_translation, is_valid):
+    @pytest.mark.parametrize("language_code, translation, __, is_valid",
+                             LANGUAGE_TESTS)
+    def test_gettext_python(client, language_code, translation, __, is_valid):
         languages.set_ui_language(language_code)
         gettext_translation = _("test python translation")  # noqa F821
-        assert ((is_valid and gettext_translation == python_translation)
-                or (not is_valid and gettext_translation == python_translation))
+        assert ((is_valid and gettext_translation == translation)
+                or (not is_valid and gettext_translation == translation))
 
     @staticmethod
-    @pytest.mark.parametrize("language_code, python_translation,"
-                             "html_translation, is_valid", LANGUAGE_TESTS)
-    def test_gettext_html(client, language_code, python_translation,
-                          html_translation, is_valid):
+    @pytest.mark.parametrize("language_code, __, translation, is_valid",
+                             LANGUAGE_TESTS)
+    def test_gettext_html(client, language_code, __, translation, is_valid):
         languages.set_ui_language(language_code)
         text = client.get("/").text
-        assert ((is_valid and html_translation in text)
-                or (not is_valid and html_translation in text))
+        assert ((is_valid and translation in text)
+                or (not is_valid and translation in text))
 
     @staticmethod
     def test_get_supported_languages():
