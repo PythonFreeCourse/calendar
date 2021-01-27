@@ -5,7 +5,7 @@ from typing import List
 from fastapi import APIRouter, Request
 from fastapi import Depends
 from fastapi.responses import RedirectResponse
-from starlette.status import HTTP_303_SEE_OTHER
+from starlette.status import HTTP_302_FOUND
 
 from app.database.database import get_db
 from app.database.models import Event
@@ -51,7 +51,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     event = create_event(session, title, start, end, owner_id, content,
                          location)
     return RedirectResponse(f'/event/view/{event.id}',
-                            status_code=HTTP_303_SEE_OTHER)
+                            status_code=HTTP_302_FOUND)
 
 
 @router.get("/view/{id}")

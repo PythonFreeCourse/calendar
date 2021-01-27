@@ -1,4 +1,4 @@
-from starlette.status import HTTP_303_SEE_OTHER, HTTP_404_NOT_FOUND
+from starlette.status import HTTP_302_FOUND, HTTP_404_NOT_FOUND
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -47,7 +47,7 @@ class TestEvent:
     def test_eventedit_post_correct(self, client, user):
         response = client.post("/event/edit",
                                data=CORRECT_EVENT_FORM_DATA)
-        assert response.status_code == HTTP_303_SEE_OTHER
+        assert response.status_code == HTTP_302_FOUND
         assert '/event/view/' in response.headers['location']
 
     def test_eventedit_post_wrong(self, client, user):
