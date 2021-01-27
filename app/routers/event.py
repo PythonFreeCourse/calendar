@@ -5,10 +5,9 @@ from typing import Any, Dict, List, Optional
 from app.database.models import Event, UserEvent
 from app.dependencies import templates
 from app.internal.utils import create_model
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from app.database.database import get_db
 
 router = APIRouter(
     prefix="/event",
@@ -93,7 +92,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
         # Update database
         db.query(Event).filter(Event.id == event_id).update(
-            event_to_update, synchronize_session='evaluate')
+            event_to_update, synchronize_session=False)
         db.commit()
 
         # TODO: Send emails to recipients.
