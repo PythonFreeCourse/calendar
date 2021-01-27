@@ -1,7 +1,17 @@
 import os
 
 from fastapi_mail import ConnectionConfig
-# flake8: noqa
+from pydantic import BaseSettings
+
+
+class Settings(BaseSettings):
+    app_name: str = "PyLander"
+    bot_api: str = "BOT_API"
+    webhook_url: str = "WEBHOOK_URL"
+
+    class Config:
+        env_file = ".env"
+
 
 # general
 DOMAIN = 'Our-Domain'

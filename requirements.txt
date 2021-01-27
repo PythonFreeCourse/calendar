@@ -4,6 +4,7 @@ aiosmtpd==1.2.2
 aiosmtplib==1.1.4
 apipkg==1.5
 arrow==0.17.0
+asyncio==3.4.3
 async-timeout==3.0.1
 atomicwrites==1.4.0
 atpublic==2.1.2
