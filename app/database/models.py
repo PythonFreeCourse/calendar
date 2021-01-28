@@ -1,11 +1,15 @@
-from datetime import datetime
+from __future__ import annotations
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
+from datetime import datetime
+from typing import Dict, Any
+
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
                         Integer, String, event, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship, Session
+
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 
 
 class UserEvent(Base):
@@ -83,21 +87,23 @@ class Category(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     @staticmethod
-    def create(db_session: Session, name: str, color: str, user_id: int):
+    def create(db_session: Session, name: str, color: str,
+               user_id: int) -> Category:
         try:
             category = Category(name=name, color=color, user_id=user_id)
             db_session.add(category)
             db_session.flush()
             db_session.commit()
             db_session.refresh(category)
-            return category
         except Exception as e:
             raise e
+        else:
+            return category
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'<Category {self.id} {self.name} {self.color}>'
 
 

@@ -21,9 +21,10 @@ class TestCategories:
         response = client.post("/categories/",
                                json={"user_id": user.id, "name": "Foo",
                                      "color": "eecc11"})
-        assert response.status_code == status.HTTP_200_OK
-        assert {"user_id": user.id, "name": "Foo", "color": "eecc11"}.items() \
-               <= response.json()['category'].items()
+        assert response.ok
+        assert {"user_id": user.id, "name": "Foo",
+                "color": "eecc11"}.items() <= response.json()[
+                   'category'].items()
 
     @staticmethod
     def test_creating_not_unique_category_failed(client, user, category):
@@ -45,7 +46,7 @@ class TestCategories:
     def test_get_user_categories(client, category):
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
-        assert response.status_code == status.HTTP_200_OK
+        assert response.ok
         assert response.json() == [
             {"user_id": category.user_id, "color": "121212",
              "name": "Guitar Lesson", "id": category.id}]
@@ -54,7 +55,7 @@ class TestCategories:
     def test_get_category_by_name(client, user, category):
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}")
-        assert response.status_code == status.HTTP_200_OK
+        assert response.ok
         assert response.json() == [
             {"user_id": category.user_id, "color": "121212",
              "name": "Guitar Lesson", "id": category.id}]
@@ -63,7 +64,7 @@ class TestCategories:
     def test_get_category_by_color(client, user, category):
         response = client.get(f"/categories/?user_id={category.user_id}&"
                               f"color={category.color}")
-        assert response.status_code == status.HTTP_200_OK
+        assert response.ok
         assert response.json() == [
             {"user_id": category.user_id, "color": "121212",
              "name": "Guitar Lesson", "id": category.id}]

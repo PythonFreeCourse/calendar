@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -37,17 +37,17 @@ def get_categories(request: Request,
 # TODO(issue#29): get current user_id from session
 @router.post("/")
 async def set_category(category: CategoryModel,
-                       db_session: Session = Depends(get_db)) -> Dict:
+                       db_sess: Session = Depends(get_db)) -> Dict[str, Any]:
     try:
-        cat = Category.create(db_session,
+        cat = Category.create(db_sess,
                               name=category.name,
                               color=category.color,
                               user_id=category.user_id)
     except IntegrityError:
-        db_session.rollback()
+        db_sess.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=f"category is already exists for "
-                                   f"{category.user_id} user.")
+                                   f"user {category.user_id}.")
     else:
         return {"category": cat.to_dict()}
 

@@ -2,19 +2,19 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
+from app import config
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
+from app.internal.logger_customizer import LoggerCustomizer
 from app.internal.quotes import load_quotes, daily_quotes
 from app.routers import (
     agenda, categories, dayview, email, event, invitation, profile, search,
     telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
-from app.internal.logger_customizer import LoggerCustomizer
-from app import config
 
 
 def create_tables(engine, psql_environment):
