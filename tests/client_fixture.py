@@ -14,28 +14,30 @@ def client():
     return TestClient(app)
 
 
-@pytest.fixture(scope="session")
-def agenda_test_client():
+def create_test_client(get_db_function):
     Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[agenda.get_db] = get_test_db
+    app.dependency_overrides[get_db_function] = get_test_db
 
     with TestClient(app) as client:
         yield client
 
     app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def agenda_test_client():
+    yield from create_test_client(agenda.get_db)
 
 
 @pytest.fixture(scope="session")
 def invitation_test_client():
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[invitation.get_db] = get_test_db
+    yield from create_test_client(invitation.get_db)
 
-    with TestClient(app) as client:
-        yield client
 
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
+@pytest.fixture(scope="session")
+def home_test_client():
+    yield from create_test_client(main.get_db)
 
 
 @pytest.fixture(scope="session")
@@ -44,18 +46,6 @@ def profile_test_client():
     app.dependency_overrides[profile.get_db] = get_test_db
     app.dependency_overrides[
         profile.get_placeholder_user] = get_test_placeholder_user
-
-    with TestClient(app) as client:
-        yield client
-
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
-
-
-@pytest.fixture(scope="session")
-def home_test_client():
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[main.get_db] = get_test_db
 
     with TestClient(app) as client:
         yield client
