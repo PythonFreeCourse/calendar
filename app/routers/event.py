@@ -1,17 +1,16 @@
 from datetime import datetime as dt
 from operator import attrgetter
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Request
-from fastapi import Depends
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from starlette import status
+from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
 from app.database.database import get_db
-from app.database.models import Event, UserEvent
-from app.database.models import User
+from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
 from app.internal.event import validate_zoom_link
 from app.internal.utils import create_model
@@ -136,3 +135,44 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
     temp = events.copy()
     return sorted(temp, key=attrgetter('start'))
+
+
+def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
+    """Returns a list of all the email address of the event invited users,
+        by event id."""
+
+    return [email[0] for email in db.query(User.email).
+            select_from(Event).
+            join(UserEvent, UserEvent.event_id == Event.id).
+            join(User, User.id == UserEvent.user_id).
+            filter(Event.id == event_id).
+            all()]
+
+
+@router.delete("/{event_id}")
+def delete_event(request: Request,
+                 event_id: int,
+                 db: Session = Depends(get_db)):
+
+    # TODO: Check if the user is the owner of the event.
+    event = by_id(db, event_id)
+    participants = get_participants_emails_by_event(db, event_id)
+    try:
+        # Delete event
+        db.delete(event)
+
+        # Delete user_event
+        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
+
+        db.commit()
+
+    except (SQLAlchemyError, TypeError):
+        return templates.TemplateResponse(
+            "event/eventview.html", {"request": request, "event_id": event_id},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if participants and event.start > dt.now():
+        pass
+        # TODO: Send them a cancellation notice
+        # if the deletion is successful
+    return RedirectResponse(
+        url="/calendar", status_code=status.HTTP_200_OK)
