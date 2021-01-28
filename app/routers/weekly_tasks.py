@@ -140,7 +140,6 @@ async def weekly_task_make_change(
         massage = "These changes could not be made to the Weekly Task"
 
     if not made_change:
-        massage = "could not add The Weekly Task"
         return templates.TemplateResponse("add_edit_weekly_task.html", {
             "request": request,
             "massage": massage,

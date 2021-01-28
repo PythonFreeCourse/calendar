@@ -10,6 +10,7 @@ pytest_plugins = [
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',
+    'tests.weekly_tasks_fixture',
     'smtpdfix',
 ]
 
