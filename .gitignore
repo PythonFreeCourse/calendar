@@ -138,7 +138,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
 .vscode
 pyvenv.cfg
 bin
+
 app/routers/stam

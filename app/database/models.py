@@ -115,6 +115,7 @@ class Invitation(Base):
         )
 
 
+
 class OAuthCredentials(Base):
     __tablename__ = "oauth_credentials"
 
@@ -128,3 +129,12 @@ class OAuthCredentials(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates=__tablename__, uselist=False)
+
+
+class Quote(Base):
+    __tablename__ = "quotes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String, nullable=False)
+    author = Column(String)
+
