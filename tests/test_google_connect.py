@@ -1,8 +1,11 @@
 from datetime import datetime
 
+import app.routers.google_connect as google_connect
 import pytest
 from app.routers.event import create_event
-from app.routers.google_connect import db_cleanup, push_events_to_db
+from app.routers.profile import router as profile_router
+from google.oauth2.credentials import Credentials
+from starlette.responses import RedirectResponse
 
 
 @pytest.fixture
@@ -69,11 +72,32 @@ def google_events_mock():
     ]
 
 
+def safe_get_credentials_from_db():
+    return Credentials(
+        token="somecode",
+        refresh_token="somecode",
+        token_uri="some_uri",
+        client_id="somecode",
+        client_secret="some_secret",
+        expiry="2021-01-28 10:04:16.334745"
+    ), True
+
+
+def safe_get_current_year_events(google_events_mock):
+    return google_events_mock
+
+
+def safe_google_sync():
+    url = profile_router.url_path_for("profile")
+    resp = RedirectResponse(url=url, status_code=200)
+    return resp
+
+
 @pytest.mark.usefixtures("user")
 @pytest.mark.usefixtures("session")
 @pytest.mark.usefixtures("google_events_mock")
 def test_push_events_to_db(google_events_mock, user, session):
-    assert push_events_to_db(google_events_mock, user, session)
+    assert google_connect.push_events_to_db(google_events_mock, user, session)
 
 
 @pytest.mark.usefixtures("user")
@@ -118,4 +142,23 @@ def test_clean_up(google_events_mock, user, session):
             isGoogleEvent=True
         )
 
-        assert db_cleanup(user, session)
+        assert google_connect.db_cleanup(user, session)
+
+
+def test_get_credentials_from_db():
+    google_connect.get_credentials_from_db = safe_get_credentials_from_db
+    credentials, status = google_connect.get_credentials_from_db()
+    assert status
+
+
+@pytest.mark.usefixtures("google_events_mock")
+def test_get_current_year_events(google_events_mock):
+    google_connect.get_current_year_events = safe_get_current_year_events
+    mock_events = google_connect.get_current_year_events(google_events_mock)
+    assert mock_events == google_events_mock
+
+
+def test_google_sync():
+    google_connect.google_sync = safe_google_sync
+    resp = google_connect.google_sync()
+    assert resp.status_code == 200
