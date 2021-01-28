@@ -32,15 +32,17 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
     user = session.query(User).filter_by(id=1).first()
 
     credentials, status = get_credentials_from_db(user, session)
-    if not status:
+    if status:
+        if credentials.expired:
+            credentials = refresh_token(credentials, session, user)
+
+    elif not status:
         # first sync
         if CLIENT_SECRET_FILE is None:  # if there is no client_secrets.json
             print('Google Sync is not available - missing client_secret.json')
             url = profile_router.url_path_for("profile")
             return RedirectResponse(url=url)
 
-        print("Fetching new Tokens")
-        print(CLIENT_SECRET_FILE)
         flow = InstalledAppFlow.from_client_secrets_file(
             client_secrets_file=CLIENT_SECRET_FILE,
             scopes=SCOPES
@@ -78,11 +80,11 @@ def get_current_year_events(
                 credentials: Credentials, user: User, session: SessionLocal):
     '''Getting user events from google calendar'''
 
-    service = build('calendar', 'v3', credentials=credentials)
-
     currrnt_year = datetime.now().year
     start = datetime(currrnt_year, 1, 1).isoformat() + 'Z'
     end = datetime(currrnt_year + 1, 1, 1).isoformat() + 'Z'
+
+    service = build('calendar', 'v3', credentials=credentials)
     events_result = service.events().list(
         calendarId='primary',
         timeMin=start,
@@ -172,21 +174,26 @@ def get_credentials_from_db(user: User, session: SessionLocal) -> tuple:
             expiry=db_credentials.expiry
         )
 
-        if credentials.expired:
-            print('refreshing token')
-            credentials.refresh(google_request())
-            refreshed_credentials = OAuthCredentials(
-                owner=user, token=credentials.token,
-                refresh_token=credentials.refresh_token,
-                token_uri=credentials.token_uri,
-                client_id=credentials.client_id,
-                client_secret=credentials.client_secret,
-                expiry=credentials.expiry
-            )
-
-            session.add(refreshed_credentials)
-            session.commit()
-
         status = True
 
     return credentials, status
+
+
+def refresh_token(credentials: Credentials,
+                  session: SessionLocal, user: User) -> Credentials:
+    print('refreshing token')
+    credentials.refresh(google_request())
+    refreshed_credentials = OAuthCredentials(
+        owner=user,
+        token=credentials.token,
+        refresh_token=credentials.refresh_token,
+        token_uri=credentials.token_uri,
+        client_id=credentials.client_id,
+        client_secret=credentials.client_secret,
+        expiry=credentials.expiry
+    )
+
+    session.add(refreshed_credentials)
+    session.commit()
+
+    return refreshed_credentials

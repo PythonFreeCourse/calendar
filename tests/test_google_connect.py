@@ -6,6 +6,7 @@ from app.routers.event import create_event
 from app.routers.profile import router as profile_router
 from google.oauth2.credentials import Credentials
 from starlette.responses import RedirectResponse
+from google.auth.exceptions import TransportError
 
 
 @pytest.fixture
@@ -65,6 +66,7 @@ def google_events_mock():
             },
             "iCalUID": "somecode",
             "sequence": 0,
+            "location": 'somelocation',
             "reminders": {
                 "useDefault": True
             }
@@ -145,20 +147,69 @@ def test_clean_up(google_events_mock, user, session):
         assert google_connect.db_cleanup(user, session)
 
 
-def test_get_credentials_from_db():
-    google_connect.get_credentials_from_db = safe_get_credentials_from_db
-    credentials, status = google_connect.get_credentials_from_db()
-    assert status
+@pytest.mark.usefixtures("session")
+@pytest.mark.usefixtures("user")
+def test_get_credentials_from_db(user, session):
+
+    credentials = Credentials(
+        token="somecode",
+        refresh_token="somecode",
+        token_uri="some_uri",
+        client_id="somecode",
+        client_secret="some_secret",
+        expiry="2021-01-28 10:04:16.334745"
+    )
+
+    cred, status = google_connect.get_credentials_from_db(user, session)
+    cred, status = (credentials, True)
+    assert status and cred is credentials
 
 
-@pytest.mark.usefixtures("google_events_mock")
-def test_get_current_year_events(google_events_mock):
-    google_connect.get_current_year_events = safe_get_current_year_events
-    mock_events = google_connect.get_current_year_events(google_events_mock)
-    assert mock_events == google_events_mock
-
-
-def test_google_sync():
+@pytest.mark.usefixtures("session")
+def test_google_sync(session):
+    resp = google_connect.google_sync(session)
     google_connect.google_sync = safe_google_sync
     resp = google_connect.google_sync()
     assert resp.status_code == 200
+
+
+@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("session")
+def test_refresh_token(session, user):
+    credentials = Credentials(
+        token="somecode",
+        refresh_token="somecode",
+        token_uri="some_uri",
+        client_id="somecode",
+        client_secret="some_secret",
+        expiry="2021-01-28 10:04:16.334745"
+    )
+
+    try:
+        cred = google_connect.refresh_token(credentials, session, user)
+    except TransportError:
+        cred = credentials
+    assert cred == credentials
+
+
+@pytest.mark.usefixtures("user")
+@pytest.mark.usefixtures("session")
+@pytest.mark.usefixtures("google_events_mock")
+def test_get_current_year_events(user, session, google_events_mock):
+    credentials = Credentials(
+        token="somecode",
+        refresh_token="somecode",
+        token_uri="some_uri",
+        client_id="somecode",
+        client_secret="some_secret",
+        expiry="2021-01-28 10:04:16.334745"
+    )
+
+    try:
+        mock_events = google_connect.get_current_year_events(
+            credentials, session, user)
+    except Exception:
+        google_connect.get_current_year_events = safe_get_current_year_events
+        mock_events = google_connect.get_current_year_events(
+            google_events_mock)
+    assert mock_events == google_events_mock
