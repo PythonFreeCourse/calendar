@@ -2,9 +2,6 @@ import os
 
 from fastapi_mail import ConnectionConfig
 from pydantic import BaseSettings
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -16,7 +13,7 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
-# # general
+# general
 DOMAIN = 'Our-Domain'
 
 # DATABASE
@@ -24,20 +21,20 @@ DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
 # Set the following True if working on PSQL environment or set False otherwise
 PSQL_ENVIRONMENT = False
 
-# # MEDIA
+# MEDIA
 MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
-# # API-KEYS
+# API-KEYS
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 CLIENT_SECRET_FILE = os.environ.get('CLIENT_SECRET')
 
-# # export
+# export
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
 
-# # email
+# email
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
