@@ -1,11 +1,11 @@
-from fastapi.testclient import TestClient
 import pytest
-
+from app.database.database import Base
 from app.database.models import User
 from app.main import app
-from app.database.database import Base
-from app.routers import profile, agenda, invitation, event
-from tests.conftest import test_engine, get_test_db
+from app.routers import agenda, event, invitation, profile
+from fastapi.testclient import TestClient
+
+from tests.conftest import get_test_db, test_engine
 
 
 @pytest.fixture(scope="session")
@@ -56,7 +56,8 @@ def get_test_placeholder_user():
         username='fake_user',
         email='fake@mail.fake',
         password='123456fake',
-        full_name='FakeName'
+        full_name='FakeName',
+        telegram_id='666666'
     )
 
 
