@@ -7,7 +7,6 @@
     <title>Go_to_date</title>
 </head>
 <body>
-    <h1>id: {{ id }}</h1>
     <button class="open-button" onclick="openForm()">Go to specific date</button>
 
     <div class="form-popup" id="myForm">
@@ -20,6 +19,6 @@
       </form>
     </div>
     
-    <script src="{{url_for('static', filename='popup.js')}}"></script>
+    <script src="{{url_for('static', path='popup.js')}}"></script>
 </body>
 </html>
