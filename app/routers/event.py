@@ -86,7 +86,7 @@ def update_event(event_id: int, event: Dict, db: Session
         old_event = by_id(db=db, event_id=event_id)
 
         if (not event_to_update
-            or old_event is None
+                or old_event is None
                 or not is_change_dates_allowed(db, old_event, event_to_update)):
             return None
 
