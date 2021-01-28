@@ -4,7 +4,6 @@ from app.internal.security.security_schemas import User, UserCreate, UserDB, Use
 from fastapi_users.authentication import JWTAuthentication
 from fastapi_users import FastAPIUsers
 
-SECRET = "SECRET"
 
 auth_backends = []
 

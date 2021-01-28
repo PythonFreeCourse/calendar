@@ -6,13 +6,13 @@ class User(models.BaseUser):
     username: str
     full_name:str
     description: Optional[str] = "Happy new user!"
-    avatar: Optional[str] = "Happy new user!"
+    avatar: Optional[str] = "profile.png"
 
 class UserCreate(models.BaseUserCreate):
     username: str
     full_name:str
     description: Optional[str] = "Happy new user!"
-    avatar: Optional[str] = "Happy new user!"
+    avatar: Optional[str] = "profile.png"
 
     @validator('password')
     def valid_password(cls, v: str):

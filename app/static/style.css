@@ -67,3 +67,17 @@ body {
     padding-left: 12.5rem;
 }
 
+#errorBox{
+    color: red;
+    display: none;
+}
+
+#passwordLengthError{
+    color: red;
+    display: none;
+}
+
+#registerSuccessful{
+    color: blue;
+    display: none;
+}

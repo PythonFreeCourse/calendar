@@ -2,7 +2,7 @@
 {% block content %}
     <div class="container">
         <h3>Please Register</h3>
-        <form method="" id="registerForm">
+        <form method="post">
             <div class="row">
                 <label for="username" class="col-sm-2 col-form-label">Username</label>
                 <div class="col-auto">
@@ -54,21 +54,18 @@
                         Must be between 3 to 20 characters.
                     </span>
                 </div>
-                <!-- {% if errors and "password" in errors %} -->
-                <small class="error-message" id="passwordLengthError">Password length must be between 6 to 20 characters</small><br>
-                <!-- {% endif %} -->
+                {% if errors and "password" in errors %}
+                    <small class="error-message">{{ errors['password'] }}</small><br>
+                {% endif %}
             </div>
             <div class="row">
                 <label for="confirm_password" class="col-sm-2 col-form-label">Confirm Password</label>
                 <div class="col-auto">
-                    <input type="text" class="form-control" name="confirm_password" id="confirm_password" placeholder="Required"><br>
-                    
-                    <!-- <small class="error-message" id="confirmPasswordError">Passwords do not match</small><br> -->
-                    <!-- {% if errors %}
+                    {% if errors %}
                         <input type="text"class="form-control" name="confirm_password" id="confirm_password" value="{{ form_values['confirm_password'] }}"><br>
                     {% else %}
                         <input type="text" class="form-control" name="confirm_password" id="confirm_password" placeholder="Required"><br>
-                    {% endif %} -->
+                    {% endif %}
                 </div>
                 <div class="col-auto">
                     <span id="ConfirmPasswordHelpInline" class="form-text">
@@ -113,8 +110,6 @@
                 </div>
             </div>
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
-            <div class="" role = "alert" id="errorBox"></div>
         </form>
     </div>
-<script src="{{ url_for('static', path='/register.js') }}"></script>
 {% endblock %}
