@@ -10,7 +10,7 @@ from app.dependencies import (
 from app.internal.quotes import load_quotes, daily_quotes
 from app.routers import (
     agenda, dayview, email, event, invitation, profile, search, telegram,
-    whatsapp
+    whatsapp, getjoke
     )
 from app.telegram.bot import telegram_bot
 from app.internal.logger_customizer import LoggerCustomizer
@@ -52,6 +52,7 @@ app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(whatsapp.router)
+app.include_router(getjoke.router)
 app.include_router(search.router)
 
 telegram_bot.set_webhook()
