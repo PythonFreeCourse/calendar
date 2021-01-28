@@ -11,13 +11,13 @@ from app.config import (
     EVENT_CONTENT_LIMIT,
     EVENT_HEADER_LIMIT,
     EVENT_HEADER_NOT_EMPTY,
+    EVENT_VALID_YEARS,
     MAX_EVENTS_START_DATE,
     MAX_FILE_SIZE_MB,
-    VALID_FILE_EXTENSION,
-    VALID_YEARS
+    VALID_FILE_EXTENSION
 )
-from app.database.models import Event
 from app.database.database import SessionLocal
+from app.routers.event import create_event
 
 
 DATE_FORMAT = "%m-%d-%Y"
@@ -45,7 +45,7 @@ def is_file_exist(file: str) -> bool:
 
 
 def is_date_in_range(date: Union[str, datetime.datetime],
-                     valid_dates: int = VALID_YEARS) -> bool:
+                     valid_dates: int = EVENT_VALID_YEARS) -> bool:
     """
     check if date is valid and in the range according to the rule we have set
     """
@@ -170,15 +170,17 @@ def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
                             session: SessionLocal) -> None:
     """insert the events into Event table"""
     for event in events:
-        event = Event(
-            title=event["Head"],
-            content=event["Content"],
-            start=event["S_Date"],
-            end=event["E_Date"],
-            owner_id=user_id
-        )
-        session.add(event)
-    session.commit()
+        title = event["Head"]
+        content = event["Content"]
+        start = event["S_Date"]
+        end = event["E_Date"]
+        owner_id = user_id
+        create_event(db=session,
+                     title=title,
+                     content=content,
+                     start=start,
+                     end=end,
+                     owner_id=owner_id)
 
 
 def user_click_import(file: str, user_id: int, session: SessionLocal) -> str:
