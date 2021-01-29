@@ -70,14 +70,6 @@ class Day:
         return date.strftime("%A") in Week.DAYS_OF_THE_WEEK[-2:]
 
 
-class Week:
-    WEEK_DAYS: int = 7
-    DAYS_OF_THE_WEEK: List[str] = calendar.day_name
-
-    def __init__(self, days: List[Day]):
-        self.days: List[Day] = days
-
-
 class DayWeekend(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
@@ -154,6 +146,14 @@ class FirstDayMonth(Day):
 
     def __str__(self) -> str:
         return self.date.strftime("%d %b %y").upper()
+
+
+class Week:
+    WEEK_DAYS: int = 7
+    DAYS_OF_THE_WEEK: List[str] = calendar.day_name
+
+    def __init__(self, days: List[Day]):
+        self.days: List[Day] = days
 
 
 def create_day(day: datetime) -> Day:

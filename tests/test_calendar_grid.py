@@ -1,5 +1,4 @@
 import datetime
-from http import HTTPStatus
 
 import app.routers.calendar_grid as cg
 
@@ -21,13 +20,13 @@ class TestCalendarGrid:
     @staticmethod
     def test_get_calendar(client):
         response = client.get("/calendar")
-        assert response.status_code == HTTPStatus.OK
+        assert response.status_code.OK
         assert b"SUNDAY" in response.content
 
     @staticmethod
     def test_get_calendar_extends(client):
         response = client.get(f"/calendar/{DAY.display()}")
-        assert response.status_code == HTTPStatus.OK
+        assert response.status_code.OK
         assert b"08" in response.content
 
     @staticmethod

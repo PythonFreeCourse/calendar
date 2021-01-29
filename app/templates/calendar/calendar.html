@@ -4,32 +4,48 @@
 <div class="container">
     <nav class="text-lightgray background-darkblue">
         <div class="menu">
-            <div>
-                <ion-icon name="menu" alt="Menu bar icon"></ion-icon>
+            <div class="fixed-features">
+                <div>
+                    <a href="/profile">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                    </a>
+                </div>
+                <div>
+                    <ion-icon name="search" alt="Search icon"></ion-icon>
+                </div>
+                <div>
+                    <ion-icon name="settings-outline"></ion-icon>
+                </div>
+                <div>
+                    <ion-icon name="calendar-outline"></ion-icon>
+                </div>
+                <div>
+                    <ion-icon name="cube-outline"></ion-icon>
+                </div>
             </div>
-            <div>
-                <ion-icon name="search" alt="Search icon"></ion-icon>
+            <div class="user-features">
+                <div class="feature" name="feather01">
+                    <ion-icon name="chatbox"></ion-icon>
+                </div>
             </div>
-            <div>
-                <ion-icon name="calendar-outline"></ion-icon>
-            </div>
-            <div>
-                <ion-icon name="add" alt="add event icon"></ion-icon>
+            <div id="open-features">
+                <ion-icon name="ellipsis-vertical"></ion-icon>
             </div>
         </div>
     </nav>
+    <div class="background-lightgray" id="feature-settings">
+        <div class="title"> FEATURE NAME </div>
+    </div>
     <div>
         <header>
             <div>
                 <div class="title"> {{day.display()}}</div>
                 <div class="sec-title"> Location 0<sup>o</sup>c 00:00</div>
             </div>
-            <div id="logo-div"><a href="/calendar">
+            <div id="logo-div">
+                <a href="/calendar">
                     <h1 class="title"> PYLENDAR </h1>
-                </a></div>
-            <div id="header-bottom">
-                <div class="search-div float-left"> Search </div>
-                <div> Month </div>
+                </a>
             </div>
         </header>
         <main>

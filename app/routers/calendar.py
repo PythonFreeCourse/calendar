@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from starlette.responses import Response
 
 router = APIRouter(
-    prefix="/calendar",
+    prefix="/calendar/month",
     tags=["calendar"],
     responses={404: {"description": "Not found"}},
 )
