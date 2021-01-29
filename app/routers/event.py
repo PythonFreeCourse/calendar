@@ -31,6 +31,34 @@ async def eventview(request: Request, id: int):
                                       {"request": request, "event_id": id})
 
 
+@router.delete("/{event_id}")
+def delete_event(request: Request,
+                 event_id: int,
+                 db: Session = Depends(get_db)):
+    # TODO: Check if the user is the owner of the event.
+    event = by_id(db, event_id)
+    participants = get_participants_emails_by_event(db, event_id)
+    try:
+        # Delete event
+        db.delete(event)
+
+        # Delete user_event
+        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
+
+        db.commit()
+
+    except (SQLAlchemyError, TypeError):
+        return templates.TemplateResponse(
+            "event/eventview.html", {"request": request, "event_id": event_id},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if participants and event.start > datetime.now():
+        pass
+        # TODO: Send them a cancellation notice
+        # if the deletion is successful
+    return RedirectResponse(
+        url="/calendar", status_code=status.HTTP_200_OK)
+
+
 def by_id(db: Session, event_id: int) -> Event:
     """Select event by id"""
 
@@ -59,7 +87,6 @@ def get_items_that_can_be_updated(event: Dict[str, Any]) -> Dict[str, Any]:
 
 def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
-
     # TODO Check if the user is the owner of the event.
 
     event_to_update = get_items_that_can_be_updated(event)
@@ -114,37 +141,8 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
         by event id."""
 
     return [email[0] for email in db.query(User.email).
-            select_from(Event).
-            join(UserEvent, UserEvent.event_id == Event.id).
-            join(User, User.id == UserEvent.user_id).
-            filter(Event.id == event_id).
-            all()]
-
-
-@router.delete("/{event_id}")
-def delete_event(request: Request,
-                 event_id: int,
-                 db: Session = Depends(get_db)):
-
-    # TODO: Check if the user is the owner of the event.
-    event = by_id(db, event_id)
-    participants = get_participants_emails_by_event(db, event_id)
-    try:
-        # Delete event
-        db.delete(event)
-
-        # Delete user_event
-        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
-
-        db.commit()
-
-    except (SQLAlchemyError, TypeError):
-        return templates.TemplateResponse(
-            "event/eventview.html", {"request": request, "event_id": event_id},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if participants and event.start > datetime.now():
-        pass
-        # TODO: Send them a cancellation notice
-        # if the deletion is successful
-    return RedirectResponse(
-        url="/calendar", status_code=status.HTTP_200_OK)
+        select_from(Event).
+        join(UserEvent, UserEvent.event_id == Event.id).
+        join(User, User.id == UserEvent.user_id).
+        filter(Event.id == event_id).
+        all()]
