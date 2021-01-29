@@ -21,25 +21,31 @@
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateNameModal">
-                                        My name
+                                        Update full name
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateEmailModal">
-                                        My email
+                                        Update email adress
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updatePhotoModal">
-                                        My photo
+                                        Update profile photo
                                     </button>
                                 </li>
                                 <li class="list-group-item no-border">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
                                         data-bs-target="#updateDescriptionModal">
-                                        About me
+                                        Update profile status
+                                    </button>
+                                </li>
+                                <li class="list-group-item no-border">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal"
+                                        data-bs-target="#telegramModal">
+                                        Register telegram Id
                                     </button>
                                 </li>
                             </ul>
@@ -131,6 +137,32 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Telegram modal -->
+                        <div class="modal modal-sm" id="telegramModal" tabindex="-1" data-bs-backdrop="static"
+                            aria-labelledby="telegramModalLabel" aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h5 class="modal-title">My Telegram Id</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="update_telegram_id" method="post">
+                                            <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+                                                name="telegram_id" placeholder="Telegram id"
+                                                {% if user.telegram_id %}
+                                                value="{{ user.telegram_id }}"
+                                                {% endif %}>
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!-- End profile update menu -->
 
@@ -158,14 +190,21 @@
                 <div class="card card-profile">
                     <div class="card-body">
                         <p class="card-title">
-                            Features
+                            Explore more features
                         </p>
                         <ul class="list-group">
+                            {% if not user.telegram_id %}
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-success" href="https://t.me/pylander_bot" target="_blank">
+                                    <strong>Try PyLander bot</strong> 
+                                </a>
+                            </li>
+                            {% endif %}
                             <li class="list-group-item list-group-item-action no-border">
                                 <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
                             </li>
                             <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                                <a class="text-decoration-none text-secondary" href="/keyboard_shortcuts" >Keyboard Shortcuts</a>
                             </li>
                             <li class="list-group-item list-group-item-action no-border">
                                 <a class="text-decoration-none text-secondary" href="#">Your feature</a>
@@ -245,5 +284,4 @@
             </div>
         </div>
     </div>
-    <script type="module" src="{{ url_for('static', path='/keyboard_shortcuts/profile_shortcuts.js') }}"></script>
 {% endblock %}

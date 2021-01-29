@@ -42,6 +42,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a> 
+                    </li>
                 </ul>
             </div>
         </div>
@@ -61,6 +64,5 @@
         integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
         crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
-    <script type="module" src="{{ url_for('static', path='/keyboard_shortcuts/home_shortcuts.js') }}"></script>
 </body>
 </html>
