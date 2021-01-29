@@ -314,3 +314,8 @@ def test_google_sync_third_path(mocker, google_connect_test_client,
 
     connect = google_connect_test_client.get('google/sync')
     assert connect.status_code == 200
+
+
+def test_isClientSecretNotNone():
+    answer = google_connect.isClientSecretNotNone()
+    assert answer is not None
