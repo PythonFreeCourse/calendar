@@ -1,7 +1,5 @@
 from datetime import datetime, time
 
-import pytest
-
 from app.database.models import WeeklyTask, Task, User
 from app.routers.weekly_tasks import get_placeholder_user
 from app.internal.weekly_tasks import check_inputs, generate_tasks
