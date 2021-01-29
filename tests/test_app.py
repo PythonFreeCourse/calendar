@@ -33,10 +33,9 @@ class TestApp:
 
     @staticmethod
     def check_date_validation():
-        assert check_date_validation(
-            TestApp.date_test_data[0],
-            TestApp.date_test_data[1]
-                                )
+        start = TestApp.date_test_data[0]
+        end = TestApp.date_test_data[1]
+        assert check_date_validation(start, end)
 
     @staticmethod
     def test_bad_check_validation():
