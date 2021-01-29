@@ -30,15 +30,14 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
 
     # TODO - get connected/current user
     user = session.query(User).filter_by(id=1).first()
-
-    credentials, status = get_credentials_from_db(user, session)
+    credentials, status = get_credentials_from_db(user)
     if status:
         if credentials.expired:
             credentials = refresh_token(credentials, session, user)
 
     elif not status:
         # first sync
-        if CLIENT_SECRET_FILE is None:  # if there is no client_secrets.json
+        if isClientSecretNotNone():  # if there is no client_secrets.json
             print('Google Sync is not available - missing client_secret.json')
             url = profile_router.url_path_for("profile")
             return RedirectResponse(url=url)
@@ -76,6 +75,10 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
     return RedirectResponse(url=url)
 
 
+def isClientSecretNotNone():
+    return CLIENT_SECRET_FILE is None
+
+
 def get_current_year_events(
                 credentials: Credentials, user: User, session: SessionLocal):
     '''Getting user events from google calendar'''
@@ -102,7 +105,6 @@ def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
     db_cleanup(user, session)
 
     for event in events:
-        print(event)
         location = None
         title = event['summary']
         # support for all day events
@@ -155,7 +157,7 @@ def db_cleanup(user: User, session: SessionLocal) -> bool:
     return True
 
 
-def get_credentials_from_db(user: User, session: SessionLocal) -> tuple:
+def get_credentials_from_db(user: User) -> tuple:
     '''bring user credential to use with google calendar api
     and save the credential in the db'''
 
@@ -175,7 +177,6 @@ def get_credentials_from_db(user: User, session: SessionLocal) -> tuple:
         )
 
         status = True
-
     return credentials, status
 
 
@@ -195,5 +196,4 @@ def refresh_token(credentials: Credentials,
 
     session.add(refreshed_credentials)
     session.commit()
-
     return refreshed_credentials
