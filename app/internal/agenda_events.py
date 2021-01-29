@@ -1,32 +1,35 @@
 from datetime import date, timedelta
-from typing import List, Optional
+from typing import List, Optional, Union, Iterator
+
+import arrow
+from sqlalchemy.orm import Session
 
 from app.database.models import Event
-from app.database import SessionLocal
-import arrow
-from sqlalchemy.exc import SQLAlchemyError
+from app.routers.event import sort_by_date
+from app.routers.user import get_all_user_events
 
 
 def get_events_per_dates(
-        session: SessionLocal,
+        session: Session,
         user_id: int,
         start: Optional[date],
         end: Optional[date]
-        ) -> List[Event]:
-    """Read from the db. Return a list of all the user events between
-    the relevant dates."""
+) -> Union[Iterator[Event], list]:
+    """Read from the db. Return a list of all
+    the user events between the relevant dates."""
+
     if start > end:
         return []
-    try:
-        events = (
-            session.query(Event).filter(Event.owner_id == user_id)
-            .filter(Event.start.between(start, end + timedelta(days=1)))
-            .order_by(Event.start).all()
-            )
-    except SQLAlchemyError:
-        return []
-    else:
-        return events
+
+    return (
+        filter_dates(
+            sort_by_date(
+                get_all_user_events(session, user_id)
+            ),
+            start,
+            end,
+        )
+    )
 
 
 def build_arrow_delta_granularity(diff: timedelta) -> List[str]:
@@ -51,5 +54,16 @@ def get_time_delta_string(start: date, end: date) -> str:
     granularity = build_arrow_delta_granularity(diff)
     duration_string = arrow_end.humanize(
         arrow_start, only_distance=True, granularity=granularity
-        )
+    )
     return duration_string
+
+
+def filter_dates(
+        events: List[Event], start: Optional[date],
+        end: Optional[date]) -> Iterator[Event]:
+    """filter events by a time frame."""
+
+    yield from (
+        event for event in events
+        if start <= event.start.date() <= end
+    )

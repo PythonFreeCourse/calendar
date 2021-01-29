@@ -9,7 +9,6 @@ from app import config
 from app.database.models import User
 from app.dependencies import get_db, MEDIA_PATH, templates
 
-
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 
@@ -25,7 +24,7 @@ def get_placeholder_user():
         username='new_user',
         email='my@email.po',
         password='1a2s3d4f5g6',
-        full_name='My Name'
+        full_name='My Name',
     )
 
 
@@ -48,7 +47,7 @@ async def profile(
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
-        "events": upcoming_events
+        "events": upcoming_events,
     })
 
 

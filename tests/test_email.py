@@ -1,7 +1,6 @@
-
+from fastapi import BackgroundTasks
 
 from app.internal.email import mail
-from fastapi import BackgroundTasks
 
 
 def test_email_send(client, user, event, smtpd):

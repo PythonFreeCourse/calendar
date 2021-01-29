@@ -1,42 +1,25 @@
-from datetime import datetime
+from datetime import time
 from typing import Union
 
-# Code revision required after holiday times feature is added
-ISRAELI_JEWISH = 1
 
 MINIMUM_WAGE = 29.12
+ISRAELI_JEWISH = 1  # Revision required after holiday times feature is added
 REGULAR_HOUR_BASIS = 8
 FIRST_OVERTIME_AMOUNT = 2
 FIRST_OVERTIME_PAY = 1.25
 SECOND_OVERTIME_PAY = 1.50
 NIGHT_HOUR_BASIS = 7
-NIGHT_START = 22
-NIGHT_END = 6
+NIGHT_START = time(hour=22)
+NIGHT_END = time(hour=6)
+NIGHT_MIN_LEN = time(hour=2)
 WEEK_WORKING_HOURS = 42
 STANDARD_TRANSPORT = 11.8
 MAXIMUM_TRANSPORT = 22.6
-PENSION = 6
-TAX_POINTS = 2.25
 
 OFF_DAY_ADDITION = 0.5
-
-DEFAULT_DATETIME = datetime(1970, 1, 1)
 SATURDAY = 5
-
 HOURS_SECONDS_RATIO = 3600
-MINUTES_SECONDS_RATIO = 60
-DAY_SECONDS_RATIO = 86400
 
 NUMERIC = Union[float, int]
-
-TAX_POINT_WORTH = 218
-TAX_STEPS = {
-    6290: 10,
-    9030: 14,
-    14490: 20,
-    20140: 31, 
-    41910: 35,
-    53970: 47,
-}
-TAX_EXTRA_STEP = 50
-MAX_PENSION_TAX_EXEMPTION = 609
+HOUR_FORMAT = '%H:%M:%S'
+ALT_HOUR_FORMAT = '%H:%M'

@@ -1,44 +1,51 @@
 from datetime import date
-from typing import Any, Dict
+from typing import Dict
 
 from fastapi import APIRouter, Request
 from fastapi.param_functions import Depends
-from sqlalchemy.sql.expression import and_
+from starlette.responses import RedirectResponse, Response
 
+from app.database import SessionLocal
 from app.database.models import SalarySettings, User
 from app.dependencies import get_db, templates
-from app.routers.salary.utils import calc_salary, create_default_settings, get_event_by_category, get_settings
+from app.internal.utils import save
+from app.routers.salary import utils
 from app.routers.profile import get_placeholder_user
 
 
 router = APIRouter(
-    prefix="/profile/salary",
-    tags=["salary"],
+    prefix='/salary',
+    tags=['salary'],
+    dependencies=[Depends(get_db)],
 )
 
-# Code revision required after user login feature is added
 def get_current_user() -> User:
-    db = get_db()
-    session = next(db)
+    """Mock function for current user information retrival."""
+    # Code revision required after user login feature is added
+    session = SessionLocal()
     new_user = get_placeholder_user()
-    user = session.query(User).filter_by(id=1).first()
+    user = session.query(User).first()
     if not user:
-        session.add(new_user)
-        session.commit()
-        user = session.query(User).filter_by(id=1).first()
+        save(session, new_user)
+        user = session.query(User).first()
+
     return user
 
 
 def get_user_categories() -> Dict[int, str]:
+    """Mock function for user relevant category search."""
+    # Code revision required after categories feature is added
     return {
         1: 'Workout',
-        3: 'Flight',
-        17: 'Going to the Movies',
+        17: 'Flight',
+        42: 'Going to the Movies',
         666: 'Lucy\'s Inferno',
     }
 
 
 def get_holiday_categories() -> Dict[int, str]:
+    """Mock function for user relevant holiday category search."""
+    # Code revision required after holiday times feature is added
     return {
         1: 'Israel - Jewish',
         3: 'Iraq - Muslim',
@@ -47,28 +54,71 @@ def get_holiday_categories() -> Dict[int, str]:
     }
 
 
-@router.post("/new")
-@router.get("/new")
-async def create_settings(request: Request, session=Depends(get_db)) -> Any:
+# def get_user_salary_categories(user_id: int) -> Dict[int, str]:
+#     # Code revision required after categories feature is added
+#     return {key: value
+#             for key, value in get_user_categories().items()
+#             if utils.get_settings(user_id, key)}
+
+
+def get_salary_categories(user_id: int,
+                          existing: bool = True) -> Dict[int, str]:
+    """Returns a dict of all categories the user has created salary settings
+    for. If `existing` is False, a dict with all the categories the user has
+    defined but yet to create a salary setting for is returned.
+
+    Args:
+        user_id (int): Id of the relevant user.
+        existing (bool, optional): Wether to return categories of existing
+                                   salary setting, or all other user relevant
+                                   categories.
+
+    Returns:
+        dict(int, str): All categories the user has created salary settings
+                        for if `existing` is True, all other categories
+                        otherwise.
+
+    Raises:
+        None
+    """
+    categories = {}
+    for key, value in get_user_categories().items():
+        settings = utils.get_settings(user_id, key)
+        if all((existing, settings)) or not any((existing, settings)):
+            categories[key] = value
+    return categories
+
+
+@router.get('/')
+def salary_home() -> Response:
+    """Redirects user to salary view page if any salary settings exist, and to
+    settings creation page otherwise."""
+    user = get_current_user()
+    if get_salary_categories(user.id):
+        return RedirectResponse(router.url_path_for('pick_category'))
+
+    return RedirectResponse(router.url_path_for('create_settings'))
+
+
+@router.post('/new')
+@router.get('/new')
+async def create_settings(request: Request,
+                          session=Depends(get_db)) -> Response:
+    """Renders a salary settings creation page with all available user related
+    categories and default settings. Redirects to alary view page upon
+    creation."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     # Code revision required after holiday times feature is added
     # Code revision required after Shabbat times feature is added
-    wage = create_default_settings()
-    categories = get_user_categories()
+    user = get_current_user()
+    wage = utils.DEFAULT_SETTINGS
+    categories = get_salary_categories(user.id, False)
     holidays = get_holiday_categories()
 
     form = await request.form()
     if form:
-        user = get_current_user()
-        category_id = form['category_id']
-        settings = get_settings(user.id, category_id)
-
-        if settings:
-            return {
-                "status": "failure",
-                "message": "Settings for given user and category already exit",
-            }
+        category_id = int(form['category_id'])
 
         settings = SalarySettings(
             user = user,
@@ -78,19 +128,21 @@ async def create_settings(request: Request, session=Depends(get_db)) -> Any:
             holiday_category_id = form['holiday_category_id'],
             regular_hour_basis = form['regular_hour_basis'],
             night_hour_basis = form['night_hour_basis'],
+            night_start = utils.get_time_from_string(form['night_start']),
+            night_end = utils.get_time_from_string(form['night_end']),
+            night_min_len = utils.get_time_from_string(form['night_min_len']),
             first_overtime_amount = form['first_overtime_amount'],
             first_overtime_pay = form['first_overtime_pay'],
             second_overtime_pay = form['second_overtime_pay'],
             week_working_hours = form['week_working_hours'],
             daily_transport = form['daily_transport'],
-            pension = form['pension'],
-            tax_points = form['tax_points'],
         )
-        session.add(settings)
-        session.commit()
-        return {key: value for key, value in form.items()}
+        save(session, settings)
 
-    return templates.TemplateResponse("salary/settings.j2", {
+        return RedirectResponse(router.url_path_for(
+            'view_salary', category_id=str(category_id)))
+
+    return templates.TemplateResponse('salary/settings.j2', {
         'request': request,
         'wage': wage,
         'categories': categories,
@@ -98,49 +150,170 @@ async def create_settings(request: Request, session=Depends(get_db)) -> Any:
     })
 
 
-@router.post("/view")
-@router.get("/view")
-async def pick_category(request: Request) -> Any:
-    pass
-
-
-@router.post("/view/{category_id}")
-@router.get("/view/{category_id}")
-async def view_salary(request: Request, category_id: int) -> Any:
+@router.post('/edit')
+@router.get('/edit')
+async def pick_settings(request: Request) -> Response:
+    """Renders a category salary settings edit choice page, redirects to the
+    relevant salary settings edit page upon submition, or to settings creation
+    page if none exist prior."""
+    # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     form = await request.form()
     user = get_current_user()
-    wage = get_settings(user.id, category_id)
+    categories = get_salary_categories(user.id)
 
     if form:
+        category = form['category_id']
+        return RedirectResponse(router.url_path_for('edit_settings',
+                                                    category_id=category))
+
+    if categories:
+        return templates.TemplateResponse('salary/pick.j2', {
+            'request': request,
+            'categories': categories,
+            'edit': True,
+        })
+
+    return RedirectResponse(router.url_path_for('create_settings'))
+
+
+@router.post('/edit/{category_id}')
+@router.get('/edit/{category_id}')
+async def edit_settings(request: Request, category_id: int,
+                          session=Depends(get_db)) -> Response:
+    """Renders a salary settings edit page for setting corresponding to
+    logged-in user and `category_id`, redirects to category salary settings
+    edit choice page page if settings don't exist."""
+    # Code revision required after user login feature is added
+    # Code revision required after categories feature is added
+    # Code revision required after holiday times feature is added
+    # Code revision required after Shabbat times feature is added
+    form = await request.form()
+    user = get_current_user()
+    wage = utils.get_settings(user.id, category_id)
+    holidays = get_holiday_categories()
+
+    try:
+        category = get_user_categories()[category_id]
+
+    except (AttributeError, KeyError):
+        return RedirectResponse(router.url_path_for('pick_settings'))
+
+    try:  # try block prevents crashing upon redirection to the page.
+        wage.wage = form['wage']
+        wage.off_day = form['off_day']
+        wage.holiday_category_id = form['holiday_category_id']
+        wage.regular_hour_basis = form['regular_hour_basis']
+        wage.night_hour_basis = form['night_hour_basis']
+        wage.night_start = utils.get_time_from_string(form['night_start'])
+        wage.night_end = utils.get_time_from_string(form['night_end'])
+        wage.night_min_len = utils.get_time_from_string(form['night_min_len'])
+        wage.first_overtime_amount = form['first_overtime_amount']
+        wage.first_overtime_pay = form['first_overtime_pay']
+        wage.second_overtime_pay = form['second_overtime_pay']
+        wage.week_working_hours = form['week_working_hours']
+        wage.daily_transport = form['daily_transport']
+
+        save(session, wage)
+        return RedirectResponse(router.url_path_for(
+            'view_salary', category_id=str(category_id)))
+
+    except KeyError:
+        if wage:
+            return templates.TemplateResponse('salary/settings.j2', {
+                'request': request,
+                'wage': wage,
+                'category': category,
+                'category_id': category_id,
+                'holidays': holidays
+            })
+
+        return RedirectResponse(router.url_path_for('pick_settings'))
+
+
+@router.post('/view')
+@router.get('/view')
+async def pick_category(request: Request) -> Response:
+    """Render a category salary calculation view choice page, redirects to the
+    relevant salary calculation view page upon submition, or to settings
+    creation page if non salary settings exist prior."""
+    # Code revision required after user login feature is added
+    # Code revision required after categories feature is added
+    form = await request.form()
+    user = get_current_user()
+    categories = get_salary_categories(user.id)
+
+    if form:
+        category = form['category_id']
+        return RedirectResponse(router.url_path_for('view_salary',
+                                                    category_id=category))
+
+    if categories:
+        return templates.TemplateResponse('salary/pick.j2', {
+            'request': request,
+            'categories': categories,
+        })
+
+    return RedirectResponse(router.url_path_for('salary_home'))
+
+
+@router.post('/view/{category_id}')
+@router.get('/view/{category_id}')
+async def view_salary(request: Request, category_id: int) -> Response:
+    """Render month choice pre calculation display page. Overtime, additions &
+    deductions to be calculated can be provided. Displays calculation details
+    upon submition. Redirects to '/salary' if salary settings don't exist for
+    logged-in user and `category_id`.
+    """
+    # Code revision required after user login feature is added
+    # Code revision required after categories feature is added
+    form = await request.form()
+    user = get_current_user()
+    wage = utils.get_settings(user.id, category_id)
+
+    try:
+        category = get_user_categories()[category_id]
+
+    except KeyError:
+        return RedirectResponse(router.url_path_for('salary_home'))
+
+    try:  # try block prevents crashing upon redirection to the page.
         try:
             overtime = form['overtime']
+
         except KeyError:
-            overtime = False
+            overtime = ''
+
         year, month = map(int, form['month'].split('-'))
-        month_name = date(1, month, 1).strftime("%b")
-        salary = calc_salary(
-            year=year, month=month, wage=wage, overtime=overtime,
+        month_name = date(1, month, 1).strftime('%b')
+        salary = utils.calc_salary(
+            year=year, month=month, wage=wage, overtime=bool(overtime),
             deduction=int(form['deduction']), bonus=int(form['bonus']),
         )
-        category = get_user_categories()[category_id]
-        return templates.TemplateResponse("salary/view.j2", {
+
+        return templates.TemplateResponse('salary/view.j2', {
             'request': request,
             'category': category,
+            'category_id': category_id,
             'month': month_name,
             'salary': salary,
-            "wage": wage
+            'wage': wage
         })
-        #return {'salary': salary}
 
-    shifts = get_event_by_category(category_id=category_id)
-    start_date = shifts[0]['start']
-    end_date = shifts[-1]['start']
-    start = f"{start_date.year}-{str(start_date.month).zfill(2)}"
-    end = f"{end_date.year}-{str(end_date.month).zfill(2)}"
+    except KeyError:
+        if wage:
+            shifts = utils.get_event_by_category(category_id=category_id)
+            start_date = shifts[0].start
+            end_date = shifts[-1].start
+            start = f'{start_date.year}-{str(start_date.month).zfill(2)}'
+            end = f'{end_date.year}-{str(end_date.month).zfill(2)}'
 
-    return templates.TemplateResponse("salary/month.j2", {
-        'request': request,
-        'start': start,
-        'end': end,
-    })
+            return templates.TemplateResponse('salary/month.j2', {
+                'request': request,
+                'category': category,
+                'category_id': category_id,
+                'start': start,
+                'end': end,
+            })
+
+        return RedirectResponse(router.url_path_for('pick_category'))
