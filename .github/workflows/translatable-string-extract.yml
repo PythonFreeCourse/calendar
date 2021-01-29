@@ -1,0 +1,28 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: update-translations
+
+on: [push]
+
+jobs:
+  update-translations:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Create base.pot file
+        run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot
+
+      - name: Move to /app directory
+        run: cd app
+
+      - name: Update 'en' language base.po file
+        run: pybabel update -l en -i locales/base.pot -d locales -D base
+
+      - name: Update 'he' language base.po file
+        run: pybabel update -l he -i locales/base.pot -d locales -D base
+
+      - name: Update .mo files
+        run: pybabel update -i locales/base.pot -d locales
