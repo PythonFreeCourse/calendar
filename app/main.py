@@ -1,19 +1,16 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.orm import Session
 
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import (agenda, dayview, email, event, invitation, profile,
-                         search)
-
-from datetime import datetime
-from sqlalchemy.orm import Session
+from app.routers import (agenda, celebrity, dayview, email, event, invitation,
+                         profile, search)
 
 
-models.Base.metadata.drop_all(bind=engine)
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:
         raise models.PSQLEnvironmentError(
@@ -38,6 +35,7 @@ app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(search.router)
+app.include_router(celebrity.router)
 
 
 @app.get("/")
