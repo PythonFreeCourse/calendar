@@ -18,6 +18,18 @@ def user(session: Session) -> User:
 
 
 @pytest.fixture
+def user2(session: Session) -> User:
+    test_user2 = create_model(
+        session, User,
+        username='test_username2',
+        password='test_password2',
+        email='test2.email@gmail.com',
+    )
+    yield test_user2
+    delete_instance(session, test_user2)
+
+
+@pytest.fixture
 def sender(session: Session) -> User:
     sender = create_model(
         session, User,
