@@ -55,10 +55,6 @@ def session():
 
 
 @pytest.fixture
-def Calendar():
-    return calendar.Calendar(0)
-
-
 def sqlite_engine():
     SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
     sqlite_test_engine = create_engine(
@@ -72,3 +68,8 @@ def sqlite_engine():
     session = TestingSession()
     session.close()
     Base.metadata.drop_all(bind=sqlite_test_engine)
+
+
+@pytest.fixture
+def Calendar():
+    return calendar.Calendar(0)
