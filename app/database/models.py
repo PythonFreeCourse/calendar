@@ -39,13 +39,12 @@ class User(Base):
 
     weekly_tasks = relationship(
         "WeeklyTask", cascade="all, delete", back_populates="owner")
-    
+
     tasks = relationship(
         "Task", cascade="all, delete", back_populates="owner")
 
     def __repr__(self):
         return f'<User {self.id}>'
-
 
 
 class Event(Base):

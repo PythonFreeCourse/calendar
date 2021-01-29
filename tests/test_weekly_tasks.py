@@ -16,7 +16,7 @@ def test_get_placeholder_user():
 
 
 def test_weekly_tasks_manager(weekly_tasks_test_client):
-    # Get weekly-tasks page 
+    # Get weekly-tasks page
     data = weekly_tasks_test_client.get('/weekly-tasks').content
 
     # Verify that it is the page and there are no tasks
@@ -24,8 +24,11 @@ def test_weekly_tasks_manager(weekly_tasks_test_client):
     assert b'Test Task 1' not in data
 
 
-def test_weekly_tasks_add(weekly_tasks_test_client, weekly_task, input_weekly_task):
-    # Get weekly-tasks/add page 
+def test_weekly_tasks_add(
+    weekly_tasks_test_client,
+    weekly_task, input_weekly_task
+):
+    # Get weekly-tasks/add page
     data = weekly_tasks_test_client.get('/weekly-tasks/add').content
     # Verify that it is the add page
     assert b'Add Weekly Tasks' in data
@@ -51,8 +54,8 @@ def test_weekly_tasks_add(weekly_tasks_test_client, weekly_task, input_weekly_ta
 
     # on successful attempt doesn't returns to add page
     assert b'Add Weekly Tasks' not in data
-    
-    # Get weekly-tasks manager page 
+
+    # Get weekly-tasks manager page
     data = weekly_tasks_test_client.get('/weekly-tasks').content
     # Checks that all weekly task details are displayed
     assert b'Weekly Tasks' in data
@@ -62,8 +65,11 @@ def test_weekly_tasks_add(weekly_tasks_test_client, weekly_task, input_weekly_ta
     assert weekly_task.the_time.encode() in data
 
 
-def test_weekly_tasks_edit(weekly_tasks_test_client, weekly_task, session, input_weekly_task):
-    # Get weekly tasks from db for edit 
+def test_weekly_tasks_edit(
+    weekly_tasks_test_client, weekly_task,
+    session, input_weekly_task
+):
+    # Get weekly tasks from db for edit
     w_t = session.query(WeeklyTask).filter_by(title=weekly_task.title).first()
     data = weekly_tasks_test_client.post(
         '/weekly-tasks/edit', data={"edit_id": w_t.id}).content
@@ -97,11 +103,11 @@ def test_weekly_tasks_edit(weekly_tasks_test_client, weekly_task, session, input
 
     data = weekly_tasks_test_client.post(
         '/weekly-tasks/make-change', data=input_weekly_task).content
-    
+
     # on successful attempt doesn't returns to add page
     assert b'Edit Weekly Tasks' not in data
 
-    # Get weekly-tasks manager page 
+    # Get weekly-tasks manager page
     data = weekly_tasks_test_client.get('/weekly-tasks').content
     # Checks that all weekly task details are displayed correctly
     assert b'Weekly Tasks' in data
@@ -113,13 +119,16 @@ def test_weekly_tasks_edit(weekly_tasks_test_client, weekly_task, session, input
     assert weekly_task.the_time.encode() in data
 
 
-def test_weekly_tasks_remove(weekly_tasks_test_client, session, input_weekly_task, weekly_task):
+def test_weekly_tasks_remove(
+    weekly_tasks_test_client, session,
+    input_weekly_task, weekly_task
+):
     # adds weekly_task
     input_weekly_task['mode'] = 'add'
     input_weekly_task['weekly_task_id'] = '0'
     data = weekly_tasks_test_client.post(
         '/weekly-tasks/make-change', data=input_weekly_task).content
-    
+
     # Checking if added successfully
     data = weekly_tasks_test_client.get('/weekly-tasks').content
     w_t = session.query(WeeklyTask).filter_by(title=weekly_task.title).first()
@@ -130,7 +139,7 @@ def test_weekly_tasks_remove(weekly_tasks_test_client, session, input_weekly_tas
     # removes weekly_task
     weekly_tasks_test_client.post(
         '/weekly-tasks/remove', data={'remove_id': w_t.id})
-    
+
     # Checking if removed successfully
     data = weekly_tasks_test_client.get('/weekly-tasks').content
     w_t = session.query(WeeklyTask).filter_by(title=weekly_task.title).first()
@@ -167,16 +176,29 @@ def test_internal_weekly_tasks_make_task(user, session):
     assert made_task.date_time == date_time
 
 
-def test_internal_weekly_tasks_make_or_change_weekly_task(user, session, weekly_task):
+def test_internal_weekly_tasks_make_or_change_weekly_task(
+    user,
+    session,
+    weekly_task
+):
     # seting the time
-    date_time = datetime.strptime(f"2021-01-28 {weekly_task.the_time}", "%Y-%m-%d %H:%M")
+    date_string = f"2021-01-28 {weekly_task.the_time}"
+    date_format = "%Y-%m-%d %H:%M"
+    date_time = datetime.strptime(date_string, date_format)
     the_time = date_time.time()
 
     # When unable to create the weekly task
-    made, w_t = make_or_change_weekly_task(user, session,
-        mode="add", weekly_task_id=0, title=None, days=weekly_task.days,
-        content=weekly_task.content, is_important=weekly_task.is_important,
-        the_time=the_time)
+    made, w_t = make_or_change_weekly_task(
+        user,
+        session,
+        mode="add",
+        weekly_task_id=0,
+        title=None,
+        days=weekly_task.days,
+        content=weekly_task.content,
+        is_important=weekly_task.is_important,
+        the_time=the_time
+    )
     assert not made
     # As much data as possible is saved, except for time and days
     assert w_t.content == weekly_task.content
@@ -184,49 +206,79 @@ def test_internal_weekly_tasks_make_or_change_weekly_task(user, session, weekly_
     assert w_t.the_time != weekly_task.the_time
 
     # When successful on making the weekly task
-    made, w_t  = make_or_change_weekly_task(user, session,
-        mode="add", weekly_task_id=0, title=weekly_task.title, days=weekly_task.days,
-        content=weekly_task.content, is_important=weekly_task.is_important,
-        the_time=the_time)
+    made, w_t = make_or_change_weekly_task(
+        user,
+        session,
+        mode="add",
+        weekly_task_id=0,
+        title=weekly_task.title,
+        days=weekly_task.days,
+        content=weekly_task.content,
+        is_important=weekly_task.is_important,
+        the_time=the_time
+    )
     assert made
 
     # the weekly task added to the db and successfully saved the data
-    weekly_task_from_db = session.query(WeeklyTask).filter_by(title=weekly_task.title).first()
+    w_task_query = session.query(WeeklyTask)
+    w_task_by_title = w_task_query.filter_by(title=weekly_task.title)
+    weekly_task_from_db = w_task_by_title.first()
     assert weekly_task_from_db
     assert weekly_task_from_db.content == weekly_task.content
     assert weekly_task_from_db.the_time == weekly_task.the_time
 
     # with the id of the weekly task we edit it
     edit_id = weekly_task_from_db.id
-    made, w_t = make_or_change_weekly_task(user, session,
-        mode="edit", weekly_task_id=edit_id, title="new title", days=weekly_task.days,
-        content="new content", is_important=weekly_task.is_important,
-        the_time=the_time)
+    made, w_t = make_or_change_weekly_task(
+        user, session,
+        mode="edit",
+        weekly_task_id=edit_id,
+        title="new title",
+        days=weekly_task.days,
+        content="new content",
+        is_important=weekly_task.is_important,
+        the_time=the_time
+    )
     assert made
-    edited_w_t_from_db = session.query(WeeklyTask).filter_by(id=edit_id).first()
+    w_task_query = session.query(WeeklyTask)
+    w_task_by_id = w_task_query.filter_by(id=edit_id)
+    edited_w_t_from_db = w_task_by_id.first()
     assert edited_w_t_from_db.content == "new content"
     assert edited_w_t_from_db.title == "new title"
 
 
 def test_internal_weekly_tasks_remove_weekly_task(user, session, weekly_task):
     # seting the time and making the weekly task
-    date_time = datetime.strptime(f"2021-01-28 {weekly_task.the_time}", "%Y-%m-%d %H:%M")
+    date_time_string = f"2021-01-28 {weekly_task.the_time}"
+    date_time_format = "%Y-%m-%d %H:%M"
+    date_time = datetime.strptime(date_time_string, date_time_format)
     the_time = date_time.time()
-    made, _ = make_or_change_weekly_task(user, session,
-        mode="add", weekly_task_id=0, title=weekly_task.title, days=weekly_task.days,
-        content=weekly_task.content, is_important=weekly_task.is_important,
-        the_time=the_time)
+    made, _ = make_or_change_weekly_task(
+        user,
+        session,
+        mode="add",
+        weekly_task_id=0,
+        title=weekly_task.title,
+        days=weekly_task.days,
+        content=weekly_task.content,
+        is_important=weekly_task.is_important,
+        the_time=the_time
+    )
     assert made
 
     # Checks if the weekly task exists in the db
-    weekly_task_from_db = session.query(WeeklyTask).filter_by(title=weekly_task.title).first()
+    w_task_query = session.query(WeeklyTask)
+    w_task_by_title = w_task_query.filter_by(title=weekly_task.title)
+    weekly_task_from_db = w_task_by_title.first()
     assert weekly_task_from_db
     # geting the id of the weekly task to remove it
     weekly_task_id = weekly_task_from_db.id
     removed = remove_weekly_task(weekly_task_id, session)
     assert removed
     # Checks if the weekly task exists in the db after removal
-    weekly_task_from_db = session.query(WeeklyTask).filter_by(title=weekly_task.title).first()
+    w_task_query = session.query(WeeklyTask)
+    w_task_by_title = w_task_query.filter_by(title=weekly_task.title)
+    weekly_task_from_db = w_task_by_title.first()
     assert not weekly_task_from_db
 
     # Trying to remove a weekly task that does not exists
@@ -236,12 +288,21 @@ def test_internal_weekly_tasks_remove_weekly_task(user, session, weekly_task):
 
 def test_internal_weekly_tasks_generate_tasks(user, session, weekly_task):
     # seting the time and making the weekly task
-    date_time = datetime.strptime(f"2021-01-28 {weekly_task.the_time}", "%Y-%m-%d %H:%M")
+    date_time_string = f"2021-01-28 {weekly_task.the_time}"
+    date_time_format = "%Y-%m-%d %H:%M"
+    date_time = datetime.strptime(date_time_string, date_time_format)
     the_time = date_time.time()
-    made, _ = make_or_change_weekly_task(user, session,
-        mode="add", weekly_task_id=0, title=weekly_task.title, days=weekly_task.days,
-        content=weekly_task.content, is_important=weekly_task.is_important,
-        the_time=the_time)
+    made, _ = make_or_change_weekly_task(
+        user,
+        session,
+        mode="add",
+        weekly_task_id=0,
+        title=weekly_task.title,
+        days=weekly_task.days,
+        content=weekly_task.content,
+        is_important=weekly_task.is_important,
+        the_time=the_time
+    )
     assert made
 
     # Activates the function
