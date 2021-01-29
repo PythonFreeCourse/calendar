@@ -14,6 +14,9 @@
             <span class="month fw-bold text-white">{{month}}</span>
             <span class="day fw-bold text-white">{{day}}</span>
         </div>
+        {% if zodiac %}
+        <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Today's zodiac sign: {{zodiac.name}}" target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.png') }}" alt="zodiac sign" width="15em" height="15em"></a>
+        {% endif %}
         <div class="schedule">
             <div class="container times bg-primeary position">
                 {% for i in range(24)%}

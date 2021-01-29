@@ -1,9 +1,17 @@
 from datetime import date
 
-from app.internal.quotes import daily_quotes
+from app.internal import daily_quotes
 
 DATE = date(2021, 1, 1)
 DATE2 = date(2021, 1, 2)
+
+
+def test_create_quote_object():
+    quotes_fields = {
+        'text': 'some_quote', 'author': 'Freud'}
+    result = daily_quotes.create_quote_object(quotes_fields)
+    assert result.text == 'some_quote'
+    assert result.author == 'Freud'
 
 
 # Tests for providing a daily-quote from the db:
