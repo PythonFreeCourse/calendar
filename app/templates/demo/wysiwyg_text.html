@@ -3,17 +3,18 @@
 {% block content %}
 
 <div class="container mt-4">
-    <!-- not formatted text -->
-    <h1>{{message}}</h1>
 </div>
-<div style="width: 80%;">
+<div style="width: 70%;">
     <form method="post">
         <textarea id="summernote" name="editordata"></textarea>
         <input type="submit" value="send" />
     </form>
 </div>
 
-<!-- formatted text -->
+<h3>Raw html</h3>
+{{message}}
+<br>
+<h3>Formatted html with css</h3>
 {{message|safe}}
 
 {% endblock %}
