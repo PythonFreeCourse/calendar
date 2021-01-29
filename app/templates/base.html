@@ -46,14 +46,8 @@
                         <a class="nav-link" href="/search">Search</a> 
                     </li>
                     <li class="nav-item">
-                        <button onclick="getDailyJoke()" class="btn btn-link" style='text-decoration:none;'>get a joke</button>
-                        <script>
-                        function getDailyJoke() {
-                          fetch('/getjoke')
-                            .then(response => response.json())
-                            .then(data => alert(data.value.joke));
-                        }
-                        </script>
+                        <button onclick="getDailyJoke()" class="btn btn-link" style='text-decoration:none;'>Get a Joke</button>
+                        <script src="../static/joke.js"></script>
                     </li>
                 </ul>
             </div>
