@@ -20,13 +20,13 @@ class TestCalendarGrid:
     @staticmethod
     def test_get_calendar(client):
         response = client.get("/calendar")
-        assert response.status_code.OK
+        assert response.ok
         assert b"SUNDAY" in response.content
 
     @staticmethod
     def test_get_calendar_extends(client):
         response = client.get(f"/calendar/{DAY.display()}")
-        assert response.status_code.OK
+        assert response.ok
         assert b"08" in response.content
 
     @staticmethod
