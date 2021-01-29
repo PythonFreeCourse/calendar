@@ -13,7 +13,17 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
-# general
+
+class Settings(BaseSettings):
+    app_name: str = "PyLander"
+    bot_api: str = "BOT_API"
+    webhook_url: str = "WEBHOOK_URL"
+
+    class Config:
+        env_file = ".env"
+
+
+# GENERAL
 DOMAIN = 'Our-Domain'
 
 # DATABASE
@@ -29,11 +39,11 @@ AVATAR_SIZE = (120, 120)
 # API-KEYS
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
-# export
+# EXPORT
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
 
-# email
+# EMAIL
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
@@ -47,3 +57,14 @@ email_conf = ConnectionConfig(
 
 # PATHS
 STATIC_ABS_PATH = os.path.abspath("static")
+
+# LOGGER
+LOG_PATH = "./var/log"
+LOG_FILENAME = "calendar.log"
+LOG_LEVEL = "error"
+LOG_ROTATION_INTERVAL = "20 days"
+LOG_RETENTION_INTERVAL = "1 month"
+LOG_FORMAT = ("<level>{level: <8}</level>"
+              " <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
+              " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
+              " - <level>{message}</level>")
