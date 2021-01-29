@@ -1,5 +1,5 @@
-from app.internal.wysiwyg_editor import clean_html
 import pytest
+from app.internal.wysiwyg_editor import clean_html
 
 XXS_ATTACKS = [
     "<b onmouseover=alert('Wufff!')>click me!</b>",
@@ -9,14 +9,13 @@ XXS_ATTACKS = [
     "<script>alert(‘XSS’)</script>",
     "http://testing.com/book.html?default= \
     <script>alert(document.cookie)</script>"]
-# paramtrieze xss attacks
 
 
 @pytest.mark.parametrize("text", XXS_ATTACKS)
 def test_bleach_clean(text):
     cleaned = clean_html(text)
     assert cleaned != text
-    # assert '&lt;' in cleaned or '&gt;' in cleaned
+    assert "<script>" not in cleaned
 
 
 REGULAR_HTML = [
@@ -27,9 +26,7 @@ REGULAR_HTML = [
 
 
 @pytest.mark.parametrize("text", REGULAR_HTML)
-def test_dont_need_clean(text):
+def test_bleach_dont_need_clean(text):
     cleaned = clean_html(text)
-    print(cleaned)
-    print(text)
     assert cleaned == text
     assert '&lt;' not in cleaned or '&gt;' not in cleaned

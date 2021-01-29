@@ -1,8 +1,5 @@
 import bleach
 
-# כתיבת טסטים
-# טסטים לפי XXS
-
 
 def clean_html(html: str) -> str:
     """
