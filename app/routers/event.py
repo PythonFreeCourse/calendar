@@ -134,5 +134,4 @@ def add_new_event(values: dict, db) -> Optional[Event]:
             )
         return new_event
     except (AssertionError, AttributeError, TypeError):
-        return None
-        
+        return None     
