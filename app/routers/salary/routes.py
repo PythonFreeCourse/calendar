@@ -8,7 +8,7 @@ from starlette.responses import RedirectResponse, Response
 from app.database import SessionLocal
 from app.database.models import SalarySettings, User
 from app.dependencies import get_db, templates
-from app.internal.utils import save
+from app.internal.utils import create_model, save
 from app.routers.salary import utils
 from app.routers.profile import get_placeholder_user
 
@@ -120,24 +120,25 @@ async def create_settings(request: Request,
     if form:
         category_id = int(form['category_id'])
 
-        settings = SalarySettings(
-            user = user,
-            category_id = category_id,
-            wage = form['wage'],
-            off_day = form['off_day'],
-            holiday_category_id = form['holiday_category_id'],
-            regular_hour_basis = form['regular_hour_basis'],
-            night_hour_basis = form['night_hour_basis'],
-            night_start = utils.get_time_from_string(form['night_start']),
-            night_end = utils.get_time_from_string(form['night_end']),
-            night_min_len = utils.get_time_from_string(form['night_min_len']),
-            first_overtime_amount = form['first_overtime_amount'],
-            first_overtime_pay = form['first_overtime_pay'],
-            second_overtime_pay = form['second_overtime_pay'],
-            week_working_hours = form['week_working_hours'],
-            daily_transport = form['daily_transport'],
-        )
-        save(session, settings)
+        settings = {
+            'user_id': user.id,
+            'category_id': category_id,
+            'wage': form['wage'],
+            'off_day': form['off_day'],
+            'holiday_category_id': form['holiday_category_id'],
+            'regular_hour_basis': form['regular_hour_basis'],
+            'night_hour_basis': form['night_hour_basis'],
+            'night_start': utils.get_time_from_string(form['night_start']),
+            'night_end': utils.get_time_from_string(form['night_end']),
+            'night_min_len': utils.get_time_from_string(form['night_min_len']),
+            'first_overtime_amount': form['first_overtime_amount'],
+            'first_overtime_pay': form['first_overtime_pay'],
+            'second_overtime_pay': form['second_overtime_pay'],
+            'week_working_hours': form['week_working_hours'],
+            'daily_transport': form['daily_transport'],
+        }
+
+        create_model(session, SalarySettings, **settings)
 
         return RedirectResponse(router.url_path_for(
             'view_salary', category_id=str(category_id)))
@@ -182,8 +183,9 @@ async def pick_settings(request: Request) -> Response:
 async def edit_settings(request: Request, category_id: int,
                           session=Depends(get_db)) -> Response:
     """Renders a salary settings edit page for setting corresponding to
-    logged-in user and `category_id`, redirects to category salary settings
-    edit choice page page if settings don't exist."""
+    logged-in user and `category_id`, redirects to month choice pre calculation
+    display page upon submition, or to category salary settings edit choice
+    page if settings don't exist."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     # Code revision required after holiday times feature is added
@@ -219,16 +221,13 @@ async def edit_settings(request: Request, category_id: int,
             'view_salary', category_id=str(category_id)))
 
     except KeyError:
-        if wage:
-            return templates.TemplateResponse('salary/settings.j2', {
-                'request': request,
-                'wage': wage,
-                'category': category,
-                'category_id': category_id,
-                'holidays': holidays
-            })
-
-        return RedirectResponse(router.url_path_for('pick_settings'))
+        return templates.TemplateResponse('salary/settings.j2', {
+            'request': request,
+            'wage': wage,
+            'category': category,
+            'category_id': category_id,
+            'holidays': holidays
+        })
 
 
 @router.post('/view')
@@ -254,7 +253,7 @@ async def pick_category(request: Request) -> Response:
             'categories': categories,
         })
 
-    return RedirectResponse(router.url_path_for('salary_home'))
+    return RedirectResponse(router.url_path_for('create_settings'))
 
 
 @router.post('/view/{category_id}')
@@ -275,7 +274,7 @@ async def view_salary(request: Request, category_id: int) -> Response:
         category = get_user_categories()[category_id]
 
     except KeyError:
-        return RedirectResponse(router.url_path_for('salary_home'))
+        return RedirectResponse(router.url_path_for('pick_category'))
 
     try:  # try block prevents crashing upon redirection to the page.
         try:
@@ -301,19 +300,16 @@ async def view_salary(request: Request, category_id: int) -> Response:
         })
 
     except KeyError:
-        if wage:
-            shifts = utils.get_event_by_category(category_id=category_id)
-            start_date = shifts[0].start
-            end_date = shifts[-1].start
-            start = f'{start_date.year}-{str(start_date.month).zfill(2)}'
-            end = f'{end_date.year}-{str(end_date.month).zfill(2)}'
+        shifts = utils.get_event_by_category(category_id=category_id)
+        start_date = shifts[0].start
+        end_date = shifts[-1].start
+        start = f'{start_date.year}-{str(start_date.month).zfill(2)}'
+        end = f'{end_date.year}-{str(end_date.month).zfill(2)}'
 
-            return templates.TemplateResponse('salary/month.j2', {
-                'request': request,
-                'category': category,
-                'category_id': category_id,
-                'start': start,
-                'end': end,
-            })
-
-        return RedirectResponse(router.url_path_for('pick_category'))
+        return templates.TemplateResponse('salary/month.j2', {
+            'request': request,
+            'category': category,
+            'category_id': category_id,
+            'start': start,
+            'end': end,
+        })

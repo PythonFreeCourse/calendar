@@ -18,7 +18,14 @@
           {% endfor %}
         </select>
       </div>
-      <button type="submit" class="btn btn-sm btn-primary">View salary</button>
+
+      <button type="submit" class="btn btn-sm btn-primary">
+        {% if edit %}
+          Edit settings
+        {% else %}
+          View salary
+        {% endif %}
+      </button>
     </form>
 
     <div>

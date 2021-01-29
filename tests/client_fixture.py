@@ -1,12 +1,14 @@
 from typing import Iterator
+
 from fastapi.testclient import TestClient
 import pytest
 
 from app.database.models import Base, User
-from app.main import app
-from app.routers import profile, agenda, invitation
+from app import main
+from app.routers import agenda, event, invitation, profile
 from app.routers.salary import routes as salary
-from tests.conftest import test_engine, get_test_db
+from tests.conftest import get_test_db, test_engine
+
 
 
 def get_test_placeholder_user() -> Iterator[User]:
@@ -20,54 +22,54 @@ def get_test_placeholder_user() -> Iterator[User]:
 
 @pytest.fixture(scope="session")
 def client() -> Iterator[TestClient]:
-    return TestClient(app)
+    return TestClient(main.app)
+
+
+def create_test_client(get_db_function) -> Iterator[TestClient]:
+    Base.metadata.create_all(bind=test_engine)
+    main.app.dependency_overrides[get_db_function] = get_test_db
+
+    with TestClient(main.app) as client:
+        yield client
+
+    main.app.dependency_overrides = {}
+    Base.metadata.drop_all(bind=test_engine)
 
 
 @pytest.fixture(scope="session")
 def agenda_test_client() -> Iterator[TestClient]:
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[agenda.get_db] = get_test_db
+    yield from create_test_client(agenda.get_db)
 
-    with TestClient(app) as client:
-        yield client
 
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
+@pytest.fixture(scope="session")
+def event_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(event.get_db)
+
+
+@pytest.fixture(scope="session")
+def home_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(main.get_db)
 
 
 @pytest.fixture(scope="session")
 def invitation_test_client() -> Iterator[TestClient]:
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[invitation.get_db] = get_test_db
-
-    with TestClient(app) as client:
-        yield client
-
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
+    yield from create_test_client(invitation.get_db)
 
 
 @pytest.fixture(scope="session")
 def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[profile.get_db] = get_test_db
-    app.dependency_overrides[
+    main.app.dependency_overrides[profile.get_db] = get_test_db
+    main.app.dependency_overrides[
         profile.get_placeholder_user] = get_test_placeholder_user
 
-    with TestClient(app) as client:
+    with TestClient(main.app) as client:
         yield client
 
-    app.dependency_overrides = {}
+    main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
 
 
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[salary.get_db] = get_test_db
-
-    with TestClient(app) as client:
-        yield client
-
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
+    yield from create_test_client(salary.get_db)

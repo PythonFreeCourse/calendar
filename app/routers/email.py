@@ -1,9 +1,9 @@
-from app.internal.email import send as internal_send
 from fastapi import APIRouter, BackgroundTasks, Depends, Form, HTTPException
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 
 from app.dependencies import get_db
+from app.internal.email import send as internal_send
 
 
 router = APIRouter(

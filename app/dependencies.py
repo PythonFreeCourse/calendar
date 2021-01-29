@@ -1,3 +1,4 @@
+from functools import lru_cache
 import os
 
 from fastapi.templating import Jinja2Templates
@@ -20,3 +21,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@lru_cache()
+def get_settings():
+    return config.Settings()

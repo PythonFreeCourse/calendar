@@ -1,6 +1,7 @@
 import datetime
-import frozendict
 import functools
+
+import frozendict
 import requests
 
 from app import config

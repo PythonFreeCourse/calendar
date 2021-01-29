@@ -31,11 +31,11 @@ NIGHT_SHIFTS = [
 
 HOLIDAY_TIMES = [
     (datetime(2020, 1, 3, 15), datetime(2020, 1, 4, 1),  # Friday - Saturday
-     config.SATURDAY, 1, (datetime(2020, 1, 4), datetime(2020, 1, 5))),
+     (datetime(2020, 1, 4), datetime(2020, 1, 5))),
     (datetime(2020, 1, 4, 15), datetime(2020, 1, 5, 1),  # Saturday - Sunday
-     config.SATURDAY, 1, (datetime(2020, 1, 4), datetime(2020, 1, 5))),
+     (datetime(2020, 1, 4), datetime(2020, 1, 5))),
     (datetime(2020, 1, 5, 15), datetime(2020, 1, 6, 1),  # Sunday - Monday
-     config.SATURDAY, 1, (datetime.min, datetime.min)),
+     (datetime.min, datetime.min)),
 ]
 
 SYNC_TIMES = [
@@ -178,15 +178,15 @@ def test_is_night_shift(wage: SalarySettings, start: datetime, end: datetime,
     assert utils.is_night_shift(start, end, wage) == boolean
 
 
-@pytest.mark.parametrize('start, end, off_day, holiday_category_id, dates',
+@pytest.mark.parametrize('start, end, dates',
                          HOLIDAY_TIMES)
 def test_get_relevant_holiday_times(
-    start: datetime, end: datetime, off_day: int, holiday_category_id: int,
+    wage: SalarySettings, start: datetime, end: datetime,
     dates: Tuple[datetime, datetime]) -> None:
     # Code revision required after holiday times feature is added
     # Code revision required after Shabbat times feature is added
     assert utils.get_relevant_holiday_times(
-        start, end, off_day, holiday_category_id) == dates
+        start, end, wage) == dates
 
 
 @pytest.mark.parametrize(

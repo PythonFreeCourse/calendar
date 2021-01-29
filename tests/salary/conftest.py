@@ -10,9 +10,11 @@ from app.routers.salary import config
 
 MESSAGES = {
     'create_settings': 'Already created your settings?',
-    'pick_category': 'Want to create salary settings for a different category? ',
-    'view_salary': 'Need to alter your settings?',
+    'pick_settings': 'Edit Settings',
     'edit_settings': 'Settings don\'t need editing?',
+    'pick_category': 'Calculate Salary',
+    'view_salary': 'Need to alter your settings?',
+    'salary_calc': 'Total Salary:',
 }
 
 ROUTES = {
@@ -27,6 +29,10 @@ HTTP_CODES = {
     'temp_redirect': 307,
 }
 
+CATEGORY_ID = 1
+INVALID_CATEGORY_ID = 2
+MONTH = '2021-01'
+
 
 @pytest.fixture
 def wage(session: Session, user: User) -> Iterator[SalarySettings]:
@@ -34,7 +40,7 @@ def wage(session: Session, user: User) -> Iterator[SalarySettings]:
         session,
         SalarySettings,
         user_id=user.id,
-        category_id=1,
+        category_id=CATEGORY_ID,
         wage=30,
         off_day=config.SATURDAY,
         holiday_category_id=config.ISRAELI_JEWISH,
