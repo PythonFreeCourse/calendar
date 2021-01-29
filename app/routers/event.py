@@ -1,14 +1,21 @@
 from datetime import datetime
 from operator import attrgetter
+<<<<<<< HEAD
 
 from typing import Dict, List, Optional, Any
+=======
+from typing import Any, Dict, List, Optional
+>>>>>>> bb388ce16967db8da257d12f51b404470b3d1c97
 
-from app.database.models import Event, UserEvent
+from app.database.database import get_db
+from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
 from app.internal.utils import create_model
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from starlette import status
+from starlette.responses import RedirectResponse
 
 router = APIRouter(
     prefix="/event",
