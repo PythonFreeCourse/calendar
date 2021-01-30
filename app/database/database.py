@@ -1,11 +1,14 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from app import config
 
-settings = config.get_settings()
-SQLALCHEMY_DATABASE_URL = settings.database_connection_string
+
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "DATABASE_CONNECTION_STRING", config.DEVELOPMENT_DATABASE_STRING)
 
 
 def create_env_engine(psql_environment, sqlalchemy_database_url):

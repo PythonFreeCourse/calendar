@@ -5,9 +5,9 @@ from fastapi.templating import Jinja2Templates
 
 from app import config
 
-settings = config.get_settings()
+
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
-MEDIA_PATH = os.path.join(APP_PATH, settings.media_directory)
+MEDIA_PATH = os.path.join(APP_PATH, config.MEDIA_DIRECTORY)
 STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
 
