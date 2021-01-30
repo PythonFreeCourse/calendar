@@ -101,9 +101,8 @@ def send_email_invitation(sender_name: str,
 
 
 def send_email_file(file_path: str,
-                    recipient_mail: str,
-                    background_tasks: BackgroundTasks = BackgroundTasks
-                    ) -> bool:
+                          recipient_mail: str,
+                          background_tasks: BackgroundTasks = BackgroundTasks):
     """
     his function takes as parameters the file's path,
     the recipient's email address, configuration, and
