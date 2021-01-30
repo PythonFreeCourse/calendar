@@ -8,7 +8,8 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 # from app.internal.security.schema import  Token
 from starlette.status import HTTP_401_UNAUTHORIZED
-
+from app.internal.security.security_main  import fastapi_users
+from app.internal.security.security_schemas import User
 
 router = APIRouter(
     prefix="",
@@ -17,14 +18,40 @@ router = APIRouter(
 )
 
 @router.get("/login")
-async def login_user_form(request: Request) -> templates:
+async def login_user_form(request: Request, response: Response) -> templates:
     '''
     rendering register route get method
     '''
     return templates.TemplateResponse("login.html", {
         "request": request,
-        "errors": None
+        "errors": None,
     })
+
+@router.post("/login")
+async def login_user(request: Request, response: Response) -> templates:
+    '''
+    rendering register route get method
+    '''
+    print(response.body)
+    form = await request.form()
+    form_dict = dict(form)
+    url = f"/auth/jwt/login?username={form['username']}&password=${form['password']}"
+    response =  RedirectResponse(
+        url='/auth/jwt/login',
+        headers=form_dict,
+        status_code=307)
+    # print(response.headers)
+    # print(dir(response))
+    print(response)
+    return response
+
+
+
+
+    # return templates.TemplateResponse("login.html", {
+    #     "request": request,
+    #     "errors": None,
+    # })
 
 
 # @router.post('/login')
@@ -86,9 +113,9 @@ async def login_user_form(request: Request) -> templates:
 #         "status_code": 201})
 
 # # depends = check_jwt_token
-# @router.get('/protected')
-# async def protected_route(request: Request, jwt: str = Depends(get_current_user)):
-#     return templates.TemplateResponse("home.html", {
-#         "request": request,
-#         "message": "protected"
-#     })
+# user: User = Depends(fastapi_users.get_current_active_user)
+@router.get("/protected")
+async def protected_route(user: User = Depends(fastapi_users.get_current_active_user)):
+    # user = await fastapi_users.get_current_active_user()
+    return user.username
+    return f"Hello, Protected"

@@ -23,7 +23,7 @@ app.include_router(login.router)
 ##### fastapi_Users
 from app.internal.security.security_main import fastapi_users, jwt_authentication
 from app.internal.security.redirecting import on_after_register
-from app.database.models import UserDB
+from app.database.models import  UserDB
 
 # async def on_after_register(user: UserDB, request: Request):
     
@@ -41,6 +41,15 @@ app.include_router(
 
 app.include_router(
     fastapi_users.get_verify_router("SECRET"), prefix="/auth",tags=["auth"],)
+
+# @app.on_event("startup")
+# async def startup():
+#     await database.connect()
+
+
+# @app.on_event("shutdown")
+# async def shutdown():
+#     await database.disconnect()
 ##########
 
 @app.get("/")

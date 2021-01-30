@@ -20,7 +20,6 @@ router = APIRouter(
 
 # router = fastapi_users.get_register_router()
 
-
 @router.get("/register")
 async def register_user_form(request: Request) -> templates:
     '''

@@ -44,9 +44,9 @@
                 <label for="password" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-auto">
                     {% if errors %}
-                        <input type="text" class="form-control" name="password" id="password" value="{{ form_values['password'] }}"><br>
+                        <input type="password" class="form-control" name="password" id="password" value="{{ form_values['password'] }}"><br>
                     {% else %}
-                        <input type="text" class="form-control" name="password" id="password" placeholder="Required"><br>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Required"><br>
                     {% endif %}
                 </div>
                 <div class="col-auto">
@@ -62,9 +62,9 @@
                 <label for="confirm_password" class="col-sm-2 col-form-label">Confirm Password</label>
                 <div class="col-auto">
                     {% if errors %}
-                        <input type="text"class="form-control" name="confirm_password" id="confirm_password" value="{{ form_values['confirm_password'] }}"><br>
+                        <input type="password"class="form-control" name="confirm_password" id="confirm_password" value="{{ form_values['confirm_password'] }}"><br>
                     {% else %}
-                        <input type="text" class="form-control" name="confirm_password" id="confirm_password" placeholder="Required"><br>
+                        <input type="password" class="form-control" name="confirm_password" id="confirm_password" placeholder="Required"><br>
                     {% endif %}
                 </div>
                 <div class="col-auto">

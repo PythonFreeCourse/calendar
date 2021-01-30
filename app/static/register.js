@@ -55,14 +55,14 @@ async function submitSignUp(e){
     };
     if (validateFields(user)){
         delete user["confirm_password"];
-        await post(user)
+        await postRegister(user)
     }
 }
 registerForm.addEventListener("submit", submitSignUp)
 
 
 
-async function post(user) {
+async function postRegister(user) {
     try {
         // Create request to api service
         const req = await fetch('http://127.0.0.1:8000/auth/register', {

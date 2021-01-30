@@ -3,9 +3,9 @@
     <div class="container">
         <h3>Login</h3>
         <small id="registerSuccessful">You successfully registered!</small>
-        <form method="post">
+        <form id="loginForm", method="post">
             <div class="row">
-                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <label for="username" class="col-sm-2 col-form-label">Email</label>
                 <div class="col-auto">
                     <input type="text" class="form-control" name="username" id="username" autofocus><br>
                 </div>
@@ -13,11 +13,11 @@
             <div class="row">
                 <label for="password" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-auto">
-                    <input type="text" class="form-control" name="password" id="username"><br>
+                    <input type="password" class="form-control" name="password" id="password"><br>
                 </div>
             </div>
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Log In">
         </form>
     </div>
-<script src="{{ url_for('static', path='/login.js') }}"></script>
+<!-- <script src="{{ url_for('static', path='/login.js') }}"></script> -->
 {% endblock %}
