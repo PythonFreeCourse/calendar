@@ -68,8 +68,8 @@ class Event(Base):
 
     def get_event_duration(self):
         if self.owner.has_speedy_meetings_enabled():
-            return DEFAULT_DURATION * SHORT_MEETING
-        return DEFAULT_DURATION
+            return self.DEFAULT_DURATION * self.SHORT_MEETING
+        return self.DEFAULT_DURATION
 
     def get_default_end_time(self):
         return self.start + get_event_duration()
