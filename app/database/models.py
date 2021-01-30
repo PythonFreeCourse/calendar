@@ -33,6 +33,7 @@ class User(Base):
     language = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
+    telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
 
     events = relationship("UserEvent", back_populates="participants")
@@ -108,3 +109,11 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class Quote(Base):
+    __tablename__ = "quotes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String, nullable=False)
+    author = Column(String)
