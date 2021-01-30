@@ -71,7 +71,9 @@ def delete_event(event_id: int,
 def get_event_by_id(db: Session, event_id: int) -> Event:
     """Gets a single event by id"""
     if not isinstance(db, Session):
-        raise AttributeError(f'Could not connect to database. db instance type received: {type(db)}')
+        raise AttributeError(
+            f'Could not connect to database. '
+            f'db instance type received: {type(db)}')
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
