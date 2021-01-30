@@ -1,7 +1,10 @@
+from typing import List, Optional
+
 from app.config import email_conf
 from app.database.models import Event, User
-from fastapi import BackgroundTasks
+from fastapi import BackgroundTasks, UploadFile
 from fastapi_mail import FastMail, MessageSchema
+from pydantic import EmailStr
 from sqlalchemy.orm.session import Session
 
 mail = FastMail(email_conf)
@@ -38,3 +41,30 @@ def send(
     )
     background_tasks.add_task(mail.send_message, message)
     return True
+
+def send_internal(subject: str,
+                  recipients: List[str],
+                  body: str,
+                  subtype: Optional[str] = None,
+                  file_attachments: Optional[List[str]] = None):
+    if file_attachments is None:
+        file_attachments = []
+
+    message = MessageSchema(
+         subject=subject,
+         recipients=[EmailStr(recipient) for recipient in recipients],
+         body=body,
+         subtype=subtype,
+         attachments=[UploadFile(file_attachment) for file_attachment in file_attachments])
+
+    return send_internal_internal(message)
+
+
+async def send_internal_internal(msg: MessageSchema):
+    """
+    This function receives message and
+    configuration as parameters and sends the message.
+    :param msg: MessageSchema, message
+    :return: None
+    """
+    await mail.send_message(msg)
