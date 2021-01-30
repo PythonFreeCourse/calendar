@@ -54,7 +54,10 @@ def send(
     recipients = {"email": [user_to_send.email]}.get("email")
     body = f"begins at:{event_used.start} : {event_used.content}"
 
-    background_tasks.add_task(send_internal, subject=subject, recipients=recipients, body=body)
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body)
     return True
 
 
@@ -147,7 +150,8 @@ async def send_internal(subject: str,
          recipients=[EmailStr(recipient) for recipient in recipients],
          body=body,
          subtype=subtype,
-         attachments=[UploadFile(file_attachment) for file_attachment in file_attachments])
+         attachments=[UploadFile(file_attachment)
+                      for file_attachment in file_attachments])
 
     return await send_internal_internal(message)
 

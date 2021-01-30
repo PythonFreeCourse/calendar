@@ -70,8 +70,10 @@ def test_send_mail_invalid_email(client, configured_smtpd):
             "recipient_mail": "test#mail.com"
         })
 
-        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        assert response.json() == {"detail": "Please enter valid email address"}
+        assert response.status_code ==\
+               status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.json() ==\
+               {"detail": "Please enter valid email address"}
         assert not outbox
 
 

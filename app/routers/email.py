@@ -57,7 +57,9 @@ def send_invitation(invitation: InvitationParams,
     try:
         EmailStr.validate(invitation.recipient_mail)
     except EmailError:
-        raise HTTPException(status_code=422, detail=INVALID_EMAIL_ADDRESS_ERROR_MESSAGE)
+        raise HTTPException(
+            status_code=422,
+            detail=INVALID_EMAIL_ADDRESS_ERROR_MESSAGE)
 
     if not send_email_invitation(
             sender_name=invitation.sender_name,
