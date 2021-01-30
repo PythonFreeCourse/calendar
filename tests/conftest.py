@@ -1,7 +1,9 @@
 import pytest
+from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 
 pytest_plugins = [
     'tests.user_fixture',
@@ -9,14 +11,31 @@ pytest_plugins = [
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',
+    'tests.asyncio_fixture',
+    'tests.logger_fixture',
     'smtpdfix',
+    'tests.quotes_fixture'
 ]
 
-SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
+# When testing in a PostgreSQL environment please make sure that:
+#   - Base string is a PSQL string
+#   - app.config.PSQL_ENVIRONMENT is set to True
 
-test_engine = create_engine(
-    SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+if PSQL_ENVIRONMENT:
+    SQLALCHEMY_TEST_DATABASE_URL = (
+        "postgresql://postgres:1234"
+        "@localhost/postgres"
+    )
+    test_engine = create_engine(
+        SQLALCHEMY_TEST_DATABASE_URL
+    )
+
+else:
+    SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
+    test_engine = create_engine(
+        SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+
 TestingSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=test_engine)
 
@@ -32,3 +51,19 @@ def session():
     yield session
     session.close()
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture
+def sqlite_engine():
+    SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
+    sqlite_test_engine = create_engine(
+        SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
+    )
+
+    TestingSession = sessionmaker(
+        autocommit=False, autoflush=False, bind=sqlite_test_engine)
+
+    yield sqlite_test_engine
+    session = TestingSession()
+    session.close()
+    Base.metadata.drop_all(bind=sqlite_test_engine)

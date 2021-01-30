@@ -68,4 +68,15 @@
     <a id="off" onclick="stop_audio()">Stop Audio</a>
 </div>
 
+<!-- I chose to add the quote day to the home page until the relavent calendar view will be developed.  -->
+<div>
+    {% if quote %}
+        {% if not quote.author%}
+            <p><i>"{{ quote.text }}"</i></p>
+        {% else %}
+            <p><i>"{{ quote.text }}"</i> <span style="font-size: small;">&nbsp; \ {{quote.author}}</span></p>
+        {% endif %}
+    {% endif %}
+</div>
+
 {% endblock %}
