@@ -30,7 +30,12 @@ async def eventedit(request: Request):
 @router.get("/view/{event_id}")
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
-    event = get_event_by_id(db, event_id)
+    try:
+        event = get_event_by_id(db, event_id)
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Event not found")
+    except MultipleResultsFound:
+        raise HTTPException(status_code=500, detail="Multiple events found")
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = '%H:%M' if event.start.date() == event.end.date() else start_format
     return templates.TemplateResponse("event/eventview.html",
@@ -46,7 +51,7 @@ def delete_event(event_id: int,
     try:
         event = get_event_by_id(db, event_id)
     except (NoResultFound, MultipleResultsFound):
-        raise HTTPException(status_code=500, detail="Event not found")
+        raise HTTPException(status_code=404, detail="Event not found")
 
     participants = get_participants_emails_by_event(db, event_id)
 
