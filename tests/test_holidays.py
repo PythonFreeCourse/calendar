@@ -4,6 +4,7 @@ from app.routers import profile
 from fastapi import status
 import os
 
+
 class TestHolidaysImport:
     HOLIDAYS = '/profile/import_holidays'
 
