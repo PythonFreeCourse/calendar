@@ -100,9 +100,9 @@ import_txt_file_tests = [
     # csv file
     (FILE_CSV_SAMPLE, IMPORT_TXT_FILE_RESULT_DATA),
     # Invalid text structure
-    (FILE_TXT_INVALID, list()),
+    (FILE_TXT_INVALID, []),
     # Invalid date range
-    (FILE_RNG_INVALID, list())
+    (FILE_RNG_INVALID, [])
 ]
 
 import_ics_tests = [
@@ -118,9 +118,9 @@ import_ics_tests = [
              }
         ]),
     # ics invalid file
-    (FILE_ICS_INVALID_DATA, list()),
+    (FILE_ICS_INVALID_DATA, []),
     # ics invalid file
-    (FILE_ICS_INVALID_DATA2, list())
+    (FILE_ICS_INVALID_DATA2, [])
 ]
 
 is_file_valid_to_import_tests = [
