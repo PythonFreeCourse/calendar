@@ -22,15 +22,15 @@ def test_eventedit(event_test_client):
 
 
 def test_eventview_with_id(event_test_client, session, event):
-    id = event.id
+    event_id = event.id
     event_details = [event.title, event.content, event.location, event.start,
                      event.end, event.color]
-    response = event_test_client.get(f"/event/view/{id}")
+    response = event_test_client.get(f"/event/view/{event_id}")
     assert response.ok
     assert b"View Event" in response.content
     for event_detail in event_details:
-        assert str(event_detail).encode(
-            'utf-8') in response.content, f'{event_detail} not in view event page'
+        assert str(event_detail).encode('utf-8') in response.content, \
+            f'{event_detail} not in view event page'
 
 
 def test_eventview_without_id(event_test_client):
@@ -87,16 +87,17 @@ def test_delete_failed(event_test_client, event):
 
 
 def test_get_event_by_valid_id(session, event):
-    id = event.id
-    result = get_event_by_id(db=session, event_id=id)
+    event_id = event.id
+    result = get_event_by_id(db=session, event_id=event_id)
     expected_type = Event
-    assert type(
-        result) == expected_type, f'get_event_by_id returned unexpected type. Expected: {expected_type}, Actual: {type(result)}'
-    assert result.id == id, 'get_event_by_id returned the wrong event'
+    assert type(result) == expected_type, \
+        f'get_event_by_id returned unexpected type. ' \
+        f'Expected: {expected_type}, Actual: {type(result)}'
+    assert result.id == event_id, 'get_event_by_id returned the wrong event'
 
 
 def test_get_event_by_unexisting_id(session):
-    id = 2
+    event_id = 2
     with pytest.raises(NoResultFound) as excinfo:
-        get_event_by_id(db=session, event_id=id)
+        get_event_by_id(db=session, event_id=event_id)
     assert 'Event ID does not exist.' in str(excinfo)

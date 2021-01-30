@@ -37,7 +37,8 @@ async def eventview(request: Request, event_id: int,
     except MultipleResultsFound:
         raise HTTPException(status_code=500, detail="Multiple events found")
     start_format = '%A, %d/%m/%Y %H:%M'
-    end_format = '%H:%M' if event.start.date() == event.end.date() else start_format
+    end_format = ('%H:%M' if event.start.date() == event.end.date()
+                  else start_format)
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
@@ -92,8 +93,8 @@ def is_date_before(start_date: datetime, end_date: datetime) -> bool:
     return start_date < end_date
 
 
-def is_it_possible_to_change_dates(
-        db: Session, old_event: Event, event: Dict[str, Any]) -> bool:
+def is_it_possible_to_change_dates(old_event: Event,
+                                   event: Dict[str, Any]) -> bool:
     return is_date_before(
         event.get('start', old_event.start),
         event.get('end', old_event.end))
@@ -119,8 +120,7 @@ def update_event(event_id: int, event: Dict, db: Session
         raise HTTPException(status_code=404, detail="Event not found")
 
     try:
-        if not is_it_possible_to_change_dates(
-                db, old_event, event_to_update):
+        if not is_it_possible_to_change_dates(old_event, event_to_update):
             return None
 
         # Update database
@@ -166,9 +166,10 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
     """Returns a list of all the email address of the event invited users,
         by event id."""
 
-    return [email[0] for email in db.query(User.email).
-        select_from(Event).
-        join(UserEvent, UserEvent.event_id == Event.id).
-        join(User, User.id == UserEvent.user_id).
-        filter(Event.id == event_id).
-        all()]
+    return (
+        [email[0] for email in db.query(User.email).
+            select_from(Event).
+            join(UserEvent, UserEvent.event_id == Event.id).
+            join(User, User.id == UserEvent.user_id).
+            filter(Event.id == event_id).
+            all()])
