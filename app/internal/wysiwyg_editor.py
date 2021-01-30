@@ -3,7 +3,7 @@ import bleach
 
 def clean_html(html: str) -> str:
     """
-    This function is getting an html string and checking
+    This function gets an html string  and checks
     for malicious and not allowed tags, attrs and styles
     and then returns it cleaned without the not allowed parameters.
 
