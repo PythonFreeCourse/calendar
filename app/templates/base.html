@@ -15,7 +15,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-transparent">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Calendar</a>
+            <a class="navbar-brand" href="#">{{ gettext("Calendar") }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
                 aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -23,21 +23,21 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">{{ gettext("Home") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">Profile</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">{{ gettext("Profile") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sign In</a>
+                        <a class="nav-link" href="#">{{ gettext("Sign in") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sign Up</a>
+                        <a class="nav-link" href="#">{{ gettext("Sign up") }}</a>
                     </li>
                     <li class="nav-item">
                         <!-- new button for the agenda page. should be available after login
                         place will change later according to the web design -->
-                        <a class="nav-link" href="/agenda">Agenda</a> 
+                        <a class="nav-link" href="/agenda">{{ gettext("Agenda") }}</a>
                     </li>
                 </ul>
             </div>

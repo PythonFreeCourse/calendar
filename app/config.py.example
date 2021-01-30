@@ -12,6 +12,9 @@ MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
+# DEFAULT WEBSITE LANGUAGE
+WEBSITE_LANGUAGE = "en"
+
 email_conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME") or "user",
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD") or "password",
