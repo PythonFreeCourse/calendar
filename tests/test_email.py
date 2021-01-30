@@ -1,6 +1,6 @@
 import pytest
 
-from app.internal.email import mail, send_internal_internal
+from app.internal.email import mail
 from fastapi import BackgroundTasks, status
 
 
@@ -32,9 +32,6 @@ def test_failed_email_send(client, user, event, smtpd):
                 "background_tasks": BackgroundTasks})
         assert len(outbox) == 0
         assert not response.ok
-
-
-
 
 
 @pytest.fixture
