@@ -2,12 +2,13 @@ import pytest
 from iso639 import languages
 from textblob import TextBlob
 
-from app.internal.translation import \
-    translate_text, \
-    translate_text_for_user, \
-    _get_user_language, \
-    _lang_full_to_short, \
+from app.internal.translation import (
+    translate_text,
+    translate_text_for_user,
+    _get_user_language,
+    _lang_full_to_short,
     _detect_text_language
+)
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang",
@@ -19,8 +20,10 @@ from app.internal.translation import \
 def test_translate_text_with_original_lang(text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert "Hello my friend" == answer
-    assert TextBlob(text).detect_language() == languages.get(name=original_lang.capitalize()).alpha2
-    assert TextBlob(answer).detect_language() == languages.get(name=target_lang.capitalize()).alpha2
+    assert TextBlob(text).detect_language() == languages.get(
+        name=original_lang.capitalize()).alpha2
+    assert TextBlob(answer).detect_language() == languages.get(
+        name=target_lang.capitalize()).alpha2
 
 
 @pytest.mark.parametrize("text, target_lang",
@@ -31,7 +34,8 @@ def test_translate_text_with_original_lang(text, target_lang, original_lang):
 def test_translate_text_without_original_lang(text, target_lang):
     answer = translate_text(text, target_lang)
     assert "Hello my friend" == answer
-    assert TextBlob(answer).detect_language() == languages.get(name=target_lang.capitalize()).alpha2
+    assert TextBlob(answer).detect_language() == languages.get(
+        name=target_lang.capitalize()).alpha2
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang",
@@ -41,7 +45,10 @@ def test_translate_text_without_original_lang(text, target_lang):
                           ("Hallo, mein Freund", "german", "german"),
                           ("Ciao amico", "italian", "italian")
                           ])
-def test_translate_text_with_same_original_target_lang_with_original_lang(text, target_lang, original_lang):
+def test_translate_text_with_same_original_target_lang_with_original_lang(
+        text,
+        target_lang,
+        original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
 
@@ -53,7 +60,9 @@ def test_translate_text_with_same_original_target_lang_with_original_lang(text, 
                           ("Hallo, mein Freund", "german"),
                           ("Ciao amico", "italian")
                           ])
-def test_translate_text_with_same_original_target_lang_without_original_lang(text, target_lang):
+def test_translate_text_with_same_original_target_lang_without_original_lang(
+        text,
+        target_lang):
     answer = translate_text(text, target_lang)
     assert answer == text
 
@@ -100,7 +109,10 @@ def test_detect_text_language():
                           ("Bdonfdjourr", "english", "french"),
                           ("Hafdllnnc", "english", "german"),
                           ])
-def test_translate_text_with_text_impossible_to_translate(text, target_lang, original_lang):
+def test_translate_text_with_text_impossible_to_translate(
+        text,
+        target_lang,
+        original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
 

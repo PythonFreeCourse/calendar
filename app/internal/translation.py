@@ -11,7 +11,10 @@ from app.database.models import User
 download_corpora.download_all()
 
 
-def translate_text(text: str, target_lang: str, original_lang: Optional[str] = None) -> str:
+def translate_text(text: str,
+                   target_lang: str,
+                   original_lang: Optional[str] = None
+                   ) -> str:
     """
     Translate text to the target language
     optionally given the original language
@@ -27,7 +30,9 @@ def translate_text(text: str, target_lang: str, original_lang: Optional[str] = N
         return text
 
     try:
-        return str(TextBlob(text).translate(from_lang=original_lang, to=_lang_full_to_short(target_lang)))
+        return str(TextBlob(text).translate(
+            from_lang=original_lang,
+            to=_lang_full_to_short(target_lang)))
     except NotTranslated:
         return text
 
@@ -55,7 +60,9 @@ def _get_user_language(user_id: int, session: SessionLocal) -> str:
         return language_user
 
 
-def translate_text_for_user(text: str, session: SessionLocal, user_id: int) -> str:
+def translate_text_for_user(text: str,
+                            session: SessionLocal,
+                            user_id: int) -> str:
     """
     Gets a text and a user-id and returns the text,
     translated to the language the user speaks
