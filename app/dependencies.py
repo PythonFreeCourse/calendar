@@ -1,3 +1,4 @@
+from functools import lru_cache
 import os
 
 from fastapi.templating import Jinja2Templates
@@ -11,3 +12,8 @@ STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
+
+
+@lru_cache()
+def get_settings():
+    return config.Settings()

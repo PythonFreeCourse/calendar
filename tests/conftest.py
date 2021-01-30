@@ -11,7 +11,10 @@ pytest_plugins = [
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',
+    'tests.asyncio_fixture',
+    'tests.logger_fixture',
     'smtpdfix',
+    'tests.quotes_fixture'
 ]
 
 # When testing in a PostgreSQL environment please make sure that:

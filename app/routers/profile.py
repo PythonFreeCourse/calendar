@@ -27,6 +27,7 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
+        telegram_id=''
     )
 
 
@@ -64,8 +65,7 @@ async def update_user_fullname(
     session.commit()
 
     url = router.url_path_for("profile")
-    response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-    return response
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/update_user_email")
@@ -111,12 +111,25 @@ async def upload_user_photo(
         # Save to database
         user.avatar = await process_image(pic, user)
         session.commit()
-
     finally:
-        session.close()
-
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.post("/update_telegram_id")
+async def update_telegram_id(
+        request: Request, session=Depends(get_db)):
+
+    user = session.query(User).filter_by(id=1).first()
+    data = await request.form()
+    new_telegram_id = data['telegram_id']
+
+    # Update database
+    user.telegram_id = new_telegram_id
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 async def process_image(image, user):
