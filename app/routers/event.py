@@ -9,6 +9,7 @@ from app.internal.utils import create_model
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse
 
@@ -47,10 +48,6 @@ def delete_event(request: Request,
 
         db.commit()
 
-    except (SQLAlchemyError, TypeError):
-        return templates.TemplateResponse(
-            "event/eventview.html", {"request": request, "event_id": event_id},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
     if participants and event.start > datetime.now():
         pass
         # TODO: Send them a cancellation notice
@@ -59,10 +56,18 @@ def delete_event(request: Request,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def by_id(db: Session, event_id: int) -> Event:
-    """Select event by id"""
-
-    return db.query(Event).filter(Event.id == event_id).first()
+def get_event_by_id(db: Session, event_id: int) -> Event:
+    """Gets a single event by id"""
+    try:
+        event = db.query(Event).filter_by(id=event_id).one()
+    except NoResultFound:
+        raise NoResultFound(f"Event ID does not exist. ID: {event_id}")
+    except MultipleResultsFound:
+        error_message = f'Multiple results found when getting event. ' \
+                        f'Expected only one. ID: {event_id}'
+        logger.critical(error_message)
+        raise MultipleResultsFound(error_message)
+    return event
 
 
 def is_date_before(start_date: datetime, end_date: datetime) -> bool:
@@ -93,7 +98,7 @@ def update_event(event_id: int, event: Dict, db: Session
     if not event_to_update:
         return None
     try:
-        old_event = by_id(db=db, event_id=event_id)
+        old_event = get_event_by_id(db=db, event_id=event_id)
         if old_event is None or not is_it_possible_to_change_dates(
                 db, old_event, event_to_update):
             return None
@@ -106,7 +111,7 @@ def update_event(event_id: int, event: Dict, db: Session
         # TODO: Send emails to recipients.
     except (AttributeError, SQLAlchemyError, TypeError):
         return None
-    return by_id(db=db, event_id=event_id)
+    return get_event_by_id(db=db, event_id=event_id)
 
 
 def create_event(db, title, start, end, owner_id, content=None, location=None):
