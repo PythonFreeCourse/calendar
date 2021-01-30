@@ -66,7 +66,7 @@ class TestEvent:
                in response.headers['location'])
 
     def test_eventedit_post_wrong(self, client, user):
-        response = client.post("/event/edit",
+        response = client.post(client.app.url_path_for('create_new_event'),
                                data=WRONG_EVENT_FORM_DATA)
         assert response.json()['detail'] == 'VC type with no valid zoom link'
 
