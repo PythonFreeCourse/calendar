@@ -27,10 +27,16 @@ async def eventedit(request: Request):
                                       {"request": request})
 
 
-@router.get("/view/{id}")
-async def eventview(request: Request, id: int):
+@router.get("/view/{event_id}")
+async def eventview(request: Request, event_id: int,
+                    db: Session = Depends(get_db)):
+    event = get_event_by_id(db, event_id)
+    start_format = '%A, %d/%m/%Y %H:%M'
+    end_format = '%H:%M' if event.start.date() == event.end.date() else start_format
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event_id": id})
+                                      {"request": request, "event": event,
+                                       "start_format": start_format,
+                                       "end_format": end_format})
 
 
 @router.delete("/{event_id}")
