@@ -5,6 +5,7 @@ from app.database.models import Event, User
 from fastapi import BackgroundTasks, UploadFile
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import EmailStr
+from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
 
 mail = FastMail(email_conf)
@@ -34,20 +35,22 @@ def send(
         User.id == user_to_send).first()
     if not user_to_send or not event_used:
         return False
-    message = MessageSchema(
-        subject=f"{title} {event_used.title}",
-        recipients={"email": [user_to_send.email]}.get("email"),
-        body=f"begins at:{event_used.start} : {event_used.content}",
-    )
-    background_tasks.add_task(send_internal_internal, message)
+    if not verify_email_pattern(user_to_send.email):
+        return False
+
+    subject = f"{title} {event_used.title}"
+    recipients = {"email": [user_to_send.email]}.get("email")
+    body = f"begins at:{event_used.start} : {event_used.content}"
+
+    background_tasks.add_task(send_internal, subject=subject, recipients=recipients, body=body)
     return True
 
 
-def send_internal(subject: str,
-                  recipients: List[str],
-                  body: str,
-                  subtype: Optional[str] = None,
-                  file_attachments: Optional[List[str]] = None):
+async def send_internal(subject: str,
+                        recipients: List[str],
+                        body: str,
+                        subtype: Optional[str] = None,
+                        file_attachments: Optional[List[str]] = None):
     if file_attachments is None:
         file_attachments = []
 
@@ -58,7 +61,7 @@ def send_internal(subject: str,
          subtype=subtype,
          attachments=[UploadFile(file_attachment) for file_attachment in file_attachments])
 
-    return send_internal_internal(message)
+    return await send_internal_internal(message)
 
 
 async def send_internal_internal(msg: MessageSchema):
@@ -69,3 +72,19 @@ async def send_internal_internal(msg: MessageSchema):
     :return: None
     """
     await mail.send_message(msg)
+
+
+def verify_email_pattern(email: str) -> bool:
+    """
+    This function checks the correctness
+    of the entered email address
+    :param email: str, the entered email address
+    :return: bool,
+    True if the entered email address is correct,
+    False if the entered email address is incorrect.
+    """
+    try:
+        EmailStr.validate(email)
+        return True
+    except EmailError:
+        return False
