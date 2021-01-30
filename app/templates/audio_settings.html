@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>Audio Settings</h1>
+    <form action="{{ url_for('get_choices') }}" method="post" id="form1">
+        Music:
+        <input type="radio" id="Music On" name="music_on_off" value="On" onclick="set_checked('Music On')" />
+        <label for="Music On">On</label>
+        <input type="radio" id="Music Off" name="music_on_off" value="Off" onclick="set_checked('Music Off')" checked/>
+        <label for="Music Off">Off</label>
+        <br /><br />
+        <label for="music">Select music tracks:</label> <br> {% for song_name in song_names %}
+        <input type="checkbox" class="music" name="music_choices" value="{{song_name}}.mp3" disabled>
+        <label for="music">{{song_name}}</label><br> {% endfor %}
+        <br /> Volume:
+        <input id="rangeInput music" type="range" min="0" max="100" name="music_vol" disabled/>
+        <br /><br /><br /> Sound Effects:
+        <input type="radio" id="Sound Effects On" name="sfx_on_off" value="On" onclick="set_checked('Sound Effects On')" />
+        <label for="Sound Effects On">On</label>
+        <input type="radio" id="Sound Effects Off" name="sfx_on_off" value="Off" onclick="set_checked('Sound Effects Off')" checked />
+        <label for="Sound Effects Off">Off</label>
+        <br /><br />
+        <label for="Sound Effect">Select sound effect:</label> <br>
+        <select name="sfx_choice" id="sfx" disabled>
+        {% for sfx_name in sfx_names %}
+        <option value="{{sfx_name}}.wav">{{sfx_name}}</option>
+        {% endfor %}
+        </select>
+        <br /><br /> Volume:
+        <input id="rangeInput sfx" type="range" min="0" max="100" name="sfx_vol" disabled/>
+        <br /><br /><br />
+        <button type="submit" form="form1" onclick="set_default()">
+        Activate
+      </button>
+        <br /><br />
+    </form>
+</div>
+
+{% endblock %}

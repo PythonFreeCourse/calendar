@@ -47,7 +47,6 @@ py==1.10.0
 pycodestyle==2.6.0
 pydantic==1.7.3
 pyflakes==2.2.0
-pygame==2.0.1
 pynput==1.7.2
 pyparsing==2.4.7
 pytest==6.2.1

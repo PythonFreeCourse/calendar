@@ -33,6 +33,3 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
-
-# input
-os.environ["DISPLAY"] += " python -c 'import pynput'"

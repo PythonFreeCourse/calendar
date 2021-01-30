@@ -1,7 +1,6 @@
-import pathlib
-import threading
+import json
+from pathlib import Path
 from os import listdir
-from time import sleep
 from typing import Dict, List, Optional, Tuple, Union
 
 from app.database.database import get_db
@@ -10,19 +9,16 @@ from app.database.models import (AudioSettings, AudioTracks, User,
 from app.dependencies import SOUNDS_PATH, templates
 from app.routers.profile import get_placeholder_user
 from fastapi import APIRouter, Depends, Form, Request
-from pygame import mixer
-from pynput.mouse import Button, Listener
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-
 
 DEFAULT_MUSIC = ["GASTRONOMICA.mp3"]
 DEFAULT_MUSIC_VOL = 0.5
 DEFAULT_SFX = "click 1.wav"
 DEFAULT_SFX_VOL = 0.5
-CHOSEN_SFX = pathlib.Path(SOUNDS_PATH)
-CHOSEN_VOL = None
+CHOSEN_SFX = Path(SOUNDS_PATH)
+CHOSEN_SFX_VOL = None
 AUDIO_SETTINGS_PATH = "/audio-settings"
 
 router = APIRouter(
@@ -40,6 +36,12 @@ router2 = APIRouter(
 router3 = APIRouter(
     prefix="/stop_audio",
     tags=["stop_audio"],
+    responses={404: {"description": "Not found"}},
+)
+
+router4 = APIRouter(
+    prefix="/free_achievement",
+    tags=["free_achievement"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -61,14 +63,13 @@ def audio_settings(
         templates.TemplateResponse: renders the audio.html page
         with the relevant information.
     """
-
-    songs = (file for file in listdir(SOUNDS_PATH) if file.endswith("mp3"))
-    song_names = [name.split('.')[0] for name in songs]
-    sfxs = (file for file in listdir(SOUNDS_PATH) if file.endswith("wav"))
-    sfx_names = [name.split('.')[0] for name in sfxs]
+    song_names = [Path(file).stem for file in listdir(
+        SOUNDS_PATH) if Path(file).suffix == ".mp3"]
+    sfx_names = [Path(file).stem for file in listdir(
+        SOUNDS_PATH) if Path(file).suffix == ".wav"]
     init_audio_tracks(session, song_names, sfx_names)
 
-    return templates.TemplateResponse("audio.html", {
+    return templates.TemplateResponse("audio_settings.html", {
         "request": request,
         'song_names': song_names,
         'sfx_names': sfx_names,
@@ -89,6 +90,7 @@ async def get_choices(
     """This function saves users' choices in the db.
 
     Args:
+        request (Request): the http request
         session (Session): the database.
         new_user (User): default user.
         need to be replaced with real one,
@@ -114,6 +116,7 @@ async def get_choices(
          "sfxs_on": sfx_on_off, "sfxs_vol": sfx_vol})
     save_audio_settings(
         session, new_user, music_choices, sfx_choice, user_choices)
+
     return RedirectResponse("/", status_code=HTTP_302_FOUND)
 
 
@@ -127,8 +130,6 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
     Returns:
         RedirectResponse: redirect the user to home.html.
     """
-    global CHOSEN_SFX
-    global CHOSEN_VOL
     (music_on, playlist, music_vol,
         sfxs_on, sfx_choice, sfxs_vol) = get_audio_settings(session)
     if music_on is not None:
@@ -137,50 +138,27 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
         sfx_choice, sfxs_vol = handle_disabled_enabled(
             sfxs_on, sfx_choice, sfxs_vol)
 
-    if not mixer.get_init():
-        mixer.init()
+    if not playlist:
+        playlist = DEFAULT_MUSIC
+        music_vol = DEFAULT_MUSIC_VOL
 
-    if not mixer.get_busy():
-        if not playlist:
-            playlist = DEFAULT_MUSIC
-            music_vol = DEFAULT_MUSIC_VOL
+    if not sfx_choice:
+        CHOSEN_SFX = DEFAULT_SFX
+        CHOSEN_SFX_VOL = DEFAULT_SFX_VOL
+    else:
+        CHOSEN_SFX = sfx_choice
+        CHOSEN_SFX_VOL = sfxs_vol
 
-        if music_on == "On" or music_on is None:
-            music_thread = threading.Thread(
-                target=play_music, args=(playlist, music_vol), daemon=True)
-            music_thread.start()
-
-        if not sfx_choice:
-            CHOSEN_SFX = str(pathlib.Path(SOUNDS_PATH).joinpath(DEFAULT_SFX))
-            CHOSEN_VOL = DEFAULT_SFX_VOL
-        else:
-            CHOSEN_SFX = str(pathlib.Path(SOUNDS_PATH).joinpath(sfx_choice))
-            CHOSEN_VOL = sfxs_vol
-
-        if sfxs_on == "On" or sfxs_on is None:
-            sfx_thread = threading.Thread(target=init_sfx, daemon=True)
-            sfx_thread.start()
-
-    return RedirectResponse("/", status_code=HTTP_302_FOUND)
+    return json.dumps(
+        {"music_on": music_on,
+            "playlist": playlist,
+            "music_vol": music_vol,
+            "sfxs_on": sfxs_on,
+            "sfx_choice": CHOSEN_SFX,
+            "sfxs_vol": CHOSEN_SFX_VOL})
 
 
-@router3.get("/")
-async def stop_audio() -> RedirectResponse:
-    """Stops audio.
-
-    Returns:
-        RedirectResponse: redirect the user to home.html.
-    """
-    if mixer.get_init():
-        mixer.stop()
-        global LISTENER
-        LISTENER.stop()
-        LISTENER = Listener(on_click=on_click)
-
-    return RedirectResponse("/", status_code=HTTP_302_FOUND)
-
-
-# Functions for audio control:
+# Functions for audio setup according to users' choices:
 
 
 def init_audio_tracks(
@@ -215,46 +193,63 @@ def add_audio_track(session: Session, title: str, is_music: bool):
         session.commit()
 
 
-def play_music(tracks: List[str], vol: int):
-    """This function gets a music playlist and a desired volume as input.
-    It loops through the list until it stops by the users' input.
+def get_tracks(
+    session: Session,
+    user_id: int
+        ) -> Tuple[Optional[List[str]], Optional[str]]:
+    """Retrieves audio selections from the database,
+    for both music and sound effects.
 
     Args:
-        tracks (List[str]): list of music tracks.
-        vol (int): chosen volume for the tracks.
+        session (Session): the database.
+        user_id (int): current users' id.
+
+    Returns:
+        Tuple[Optional[List[str]], Optional[str]]:
+        returns the playlist of music tracks, as well as sound effect choice.
     """
-    while mixer.get_init():
-        for track in tracks:
-            track = SOUNDS_PATH + track
-            music = mixer.Sound(track)
-            music.set_volume(vol)
-            music.play()
-            sleep(music.get_length())
+    playlist = []
+    sfx_choice = None
+    tracks = session.query(UserAudioTracks).filter_by(user_id=user_id)
+    for track in tracks:
+        track = session.query(AudioTracks).filter_by(id=track.track_id).first()
+        if not track.is_music:
+            sfx_choice = track.title + ".wav"
+        else:
+            playlist.append(track.title + ".mp3")
+
+    return playlist, sfx_choice
 
 
-def init_sfx():
-    """This function starts listening for mouse clicks on a new thread.
-    On each click it calls the on_click function,
-    which plays a sound effect chosen by the user.
-    """
-    LISTENER.start()
-
-
-def on_click(_, _1, button: Button, pressed: bool):
-    """For each left-button mouse click, plays a sound effect
-    chosen by the user in the desired volume.
+def get_audio_settings(
+    session: Session,
+    user_id: int = 1
+        ) -> (
+            Tuple[Optional[List[str]],
+                  Optional[int],
+                  Optional[str],
+                  Optional[int]]):
+    """Retrieves audio settings from the database.
 
     Args:
-        button (Button): a mouse button object.
-        pressed (bool): a bool indicating if a mouse button was pressed.
+        session (Session): [description]
+        user_id (int, optional): [description]. Defaults to 1.
+
+    Returns:
+        Tuple[str, Optional[List[str]], Optional[int],
+        str, Optional[str], Optional[int]]: the audio settings.
     """
-    if pressed and button == button.left:
-        sfx = mixer.Sound(CHOSEN_SFX)
-        sfx.set_volume(CHOSEN_VOL)
-        sfx.play()
+    music_on, music_vol, sfxs_on, sfxs_vol = None, None, None, None
+    playlist, sfx_choice = get_tracks(session, user_id)
+    audio_settings = session.query(
+        AudioSettings).filter_by(user_id=user_id).first()
+    if audio_settings:
+        music_on = audio_settings.music_on
+        music_vol = audio_settings.music_vol
+        sfxs_on = audio_settings.sfxs_on
+        sfxs_vol = audio_settings.sfxs_vol
 
-
-LISTENER = Listener(on_click=on_click)
+    return music_on, playlist, music_vol, sfxs_on, sfx_choice, sfxs_vol
 
 
 def handle_disabled_enabled(
@@ -411,65 +406,3 @@ def create_new_user_audio_record(session: Session, choice, user_id: int):
     record = UserAudioTracks(user_id=user_id, track_id=track_id)
     session.add(record)
     session.commit()
-
-
-# Functions for playing audio according to users' choices:
-
-
-def get_tracks(
-    session: Session,
-    user_id: int
-        ) -> Tuple[Optional[List[str]], Optional[str]]:
-    """Retrieves audio selections from the database,
-    for both music and sound effects.
-
-    Args:
-        session (Session): the database.
-        user_id (int): current users' id.
-
-    Returns:
-        Tuple[Optional[List[str]], Optional[str]]:
-        returns the playlist of music tracks, as well as sound effect choice.
-    """
-    playlist = []
-    sfx_choice = None
-    tracks = session.query(UserAudioTracks).filter_by(user_id=user_id)
-    for track in tracks:
-        track = session.query(AudioTracks).filter_by(id=track.track_id).first()
-        if not track.is_music:
-            sfx_choice = track.title + ".wav"
-        else:
-            playlist.append(track.title + ".mp3")
-
-    return playlist, sfx_choice
-
-
-def get_audio_settings(
-    session: Session,
-    user_id: int = 1
-        ) -> (
-            Tuple[Optional[List[str]],
-                  Optional[int],
-                  Optional[str],
-                  Optional[int]]):
-    """Retrieves audio settings from the database.
-
-    Args:
-        session (Session): [description]
-        user_id (int, optional): [description]. Defaults to 1.
-
-    Returns:
-        Tuple[str, Optional[List[str]], Optional[int],
-        str, Optional[str], Optional[int]]: the audio settings.
-    """
-    music_on, music_vol, sfxs_on, sfxs_vol = None, None, None, None
-    playlist, sfx_choice = get_tracks(session, user_id)
-    audio_settings = session.query(
-        AudioSettings).filter_by(user_id=user_id).first()
-    if audio_settings:
-        music_on = audio_settings.music_on
-        music_vol = audio_settings.music_vol
-        sfxs_on = audio_settings.sfxs_on
-        sfxs_vol = audio_settings.sfxs_vol
-
-    return music_on, playlist, music_vol, sfxs_on, sfx_choice, sfxs_vol

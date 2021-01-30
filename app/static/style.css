@@ -58,3 +58,17 @@ body {
     border: none;
     background-color: whitesmoke;
 }
+
+#on,
+#off {
+    background: rgb(197, 204, 197);
+    border: 3px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 20px;
+    color: rgb(20, 20, 20);
+    font-size: 20px;
+    transition-duration: .1s;
+    text-decoration: none;
+    cursor: pointer;
+}

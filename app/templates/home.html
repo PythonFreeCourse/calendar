@@ -1,11 +1,71 @@
 {% extends "base.html" %} {% block content %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#on").click(function() {
+            $.getJSON("start_audio", function(audio_settings) {
+                music = document.getElementById("my_audio");
+                sfx = document.getElementById("sfx");
+                var audio_settings = JSON.parse(audio_settings);
+                var music_on = audio_settings["music_on"];
+
+                if (music.muted && (music_on == "On" || music_on == null)) {
+                    var choices = audio_settings["playlist"];
+                    music.src = "../static/tracks/" + choices[Math.floor(Math.random() * choices.length)];
+                    music.volume = audio_settings["music_vol"];
+                    music.muted = false;
+                }
+
+                if (music.paused) {
+                    music.play();
+                }
+
+                sfx_on = audio_settings["sfxs_on"];
+                if (sfx.muted && (sfx_on == "On" || sfx_on == null)) {
+                    sfx_choice = audio_settings["sfx_choice"];
+                    sfx.src = "../static/tracks/" + sfx_choice;
+                    sfx.volume = audio_settings["sfxs_vol"];
+                    sfx.muted = false;
+                }
+
+                if (!sfx.muted) {
+                    document.body.addEventListener('click', play_sfx, true);
+                }
+            });
+        });
+    });
+
+
+    function play_sfx() {
+        sfx = document.getElementById("sfx");
+        sfx.play();
+    }
+
+
+    function stop_audio() {
+        music = document.getElementById("my_audio");
+        sfx = document.getElementById("sfx");
+
+        if (!music.paused) {
+            music.pause();
+            music.currentTime = 0;
+        }
+
+        if (!sfx.muted) {
+            sfx.muted = true;
+            document.body.removeEventListener('click', play_sfx, false);
+        }
+    }
+</script>
+
 <div class="container mt-4">
     <h1>{{message}}</h1>
 </div>
+<br>
 <div>
-    <a class="container mt-4" href="{{ url_for('start_audio') }}">Start Audio</a>
-    <a class="container mt-4" href="{{ url_for( 'stop_audio') }} ">Stop Audio</a>
+    <a id="on">Start Audio</a>
+    <a id="off" onclick="stop_audio()">Stop Audio</a>
 </div>
 
 {% endblock %}
