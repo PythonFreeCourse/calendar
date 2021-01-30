@@ -51,8 +51,10 @@ def delete_event(event_id: int,
     # TODO: Check if the user is the owner of the event.
     try:
         event = get_event_by_id(db, event_id)
-    except (NoResultFound, MultipleResultsFound):
+    except NoResultFound:
         raise HTTPException(status_code=404, detail="Event not found")
+    except MultipleResultsFound:
+        raise HTTPException(status_code=500, detail="Multiple events found")
 
     participants = get_participants_emails_by_event(db, event_id)
 
@@ -116,9 +118,10 @@ def update_event(event_id: int, event: Dict, db: Session
         return None
     try:
         old_event = get_event_by_id(db, event_id)
-    except (NoResultFound, MultipleResultsFound):
+    except NoResultFound:
         raise HTTPException(status_code=404, detail="Event not found")
-
+    except MultipleResultsFound:
+        raise HTTPException(status_code=500, detail="Multiple events found")
     try:
         if not is_it_possible_to_change_dates(old_event, event_to_update):
             return None
