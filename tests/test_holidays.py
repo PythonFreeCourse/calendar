@@ -2,7 +2,7 @@ import pytest
 from app.database.models import Event, User
 from app.routers import profile
 from fastapi import status
-
+import os
 
 class TestHolidaysImport:
     HOLIDAYS = '/profile/import_holidays'
@@ -23,7 +23,8 @@ class TestHolidaysImport:
     @pytest.mark.asyncio
     async def test_get_holidays(self, session):
         TestHolidaysImport.create_user(session)
-        with open('ics_example.txt', 'r') as file:
+        cwd = os.getcwd()
+        with open(f'{cwd}/ics_example.txt', 'r') as file:
             ics_content = file.read()
             holidays = profile.get_holidays_from_file(ics_content, session)
             await profile.save_holidays_to_db(holidays, session)
