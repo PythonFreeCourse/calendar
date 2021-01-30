@@ -42,6 +42,7 @@ def send(
     background_tasks.add_task(mail.send_message, message)
     return True
 
+
 def send_internal(subject: str,
                   recipients: List[str],
                   body: str,
