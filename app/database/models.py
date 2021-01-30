@@ -42,7 +42,6 @@ class User(Base):
     def has_speedy_meetings_enabled(self) -> bool:
         return self.speedy_meetings_enabled
 
-
     def __repr__(self):
         return f'<User {self.id}>'
 
@@ -67,14 +66,13 @@ class Event(Base):
 
     participants = relationship("UserEvent", back_populates="events")
 
-    def get_default_end_time(self):
-        return self.start + get_event_duration()
-
-
     def get_event_duration(self):
         if owner.has_speedy_meetings_enabled():
             return DEFAULT_DURATION * SHORT_MEETING
         return DEFAULT_DURATION
+
+    def get_default_end_time(self):
+        return self.start + get_event_duration()
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
