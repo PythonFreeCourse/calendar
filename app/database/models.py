@@ -2,7 +2,7 @@ from datetime import datetime
 
 from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
-from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index, 
+from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
                         func, Integer, String, event)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship
@@ -56,7 +56,7 @@ class Event(Base):
     title = Column(String, nullable=False)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
-    default_end = Column(Integer, default=func.get_default_end_time())
+    default_end = Column(Integer, default=func.get_default_end_time)
     content = Column(String)
     location = Column(String)
 
@@ -89,7 +89,6 @@ class Event(Base):
 
 class PSQLEnvironmentError(Exception):
     pass
-
 
 # PostgreSQL
 if PSQL_ENVIRONMENT:
