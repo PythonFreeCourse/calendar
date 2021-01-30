@@ -72,7 +72,7 @@ class Event(Base):
         return self.DEFAULT_DURATION
 
     def get_default_end_time(self):
-        return self.start + get_event_duration()
+        return self.start + self.get_event_duration()
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -89,6 +89,7 @@ class Event(Base):
 
 class PSQLEnvironmentError(Exception):
     pass
+
 
 # PostgreSQL
 if PSQL_ENVIRONMENT:
