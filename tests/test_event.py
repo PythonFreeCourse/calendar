@@ -29,8 +29,8 @@ def test_eventview_with_id(event_test_client, session, event):
     assert response.ok
     assert b"View Event" in response.content
     for event_detail in event_details:
-        assert str(event_detail).encode('utf-8') in response.content, \
-            f'{event_detail} not in view event page'
+        assert (str(event_detail).encode('utf-8') in response.content,
+                f'{event_detail} not in view event page')
 
 
 def test_eventview_without_id(event_test_client):
@@ -90,9 +90,9 @@ def test_get_event_by_valid_id(session, event):
     event_id = event.id
     result = get_event_by_id(db=session, event_id=event_id)
     expected_type = Event
-    assert type(result) == expected_type, \
-        f'get_event_by_id returned unexpected type. ' \
-        f'Expected: {expected_type}, Actual: {type(result)}'
+    assert (type(result) == expected_type,
+        f'get_event_by_id returned unexpected type. ' 
+        f'Expected: {expected_type}, Actual: {type(result)}')
     assert result.id == event_id, 'get_event_by_id returned the wrong event'
 
 

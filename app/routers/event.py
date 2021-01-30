@@ -58,9 +58,8 @@ def delete_event(event_id: int,
 
     participants = get_participants_emails_by_event(db, event_id)
 
-    db.delete(event)  # Delete event
-    db.query(UserEvent).filter_by(event_id=event_id) \
-        .delete()  # Delete user_event
+    db.delete(event)
+    db.query(UserEvent).filter_by(event_id=event_id).delete()
     db.commit()
 
     if participants and event.start > datetime.now():
@@ -82,8 +81,9 @@ def get_event_by_id(db: Session, event_id: int) -> Event:
     except NoResultFound:
         raise NoResultFound(f"Event ID does not exist. ID: {event_id}")
     except MultipleResultsFound:
-        error_message = f'Multiple results found when getting event. ' \
-                        f'Expected only one. ID: {event_id}'
+        error_message = (
+            f'Multiple results found when getting event. Expected only one. '
+            f'ID: {event_id}')
         logger.critical(error_message)
         raise MultipleResultsFound(error_message)
     return event
