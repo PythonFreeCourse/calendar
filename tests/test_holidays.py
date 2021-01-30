@@ -24,8 +24,9 @@ class TestHolidaysImport:
     @pytest.mark.asyncio
     async def test_get_holidays(self, session):
         TestHolidaysImport.create_user(session)
-        cwd = os.getcwd()
-        with open(f'{cwd}/ics_example.txt', 'r') as file:
+        folder = os.path.dirname(os.path.abspath(__file__))
+        test_file = os.path.join(folder, 'ics_example.txt')
+        with open(test_file, 'r') as file:
             ics_content = file.read()
             holidays = profile.get_holidays_from_file(ics_content, session)
             await profile.save_holidays_to_db(holidays, session)
