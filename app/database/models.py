@@ -67,7 +67,7 @@ class Event(Base):
     participants = relationship("UserEvent", back_populates="events")
 
     def get_event_duration(self):
-        if owner.has_speedy_meetings_enabled():
+        if self.owner.has_speedy_meetings_enabled():
             return DEFAULT_DURATION * SHORT_MEETING
         return DEFAULT_DURATION
 
