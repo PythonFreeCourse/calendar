@@ -67,8 +67,7 @@ def get_test_placeholder_user():
         username='fake_user',
         email='fake@mail.fake',
         password='123456fake',
-        full_name='FakeName',
-        language_id=1
+        full_name='FakeName'
     )
 
 
