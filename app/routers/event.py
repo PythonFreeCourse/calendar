@@ -2,16 +2,17 @@ from datetime import datetime
 from operator import attrgetter
 from typing import Any, Dict, List, Optional
 
-from app.database.database import get_db
-from app.database.models import Event, User, UserEvent
-from app.dependencies import templates
-from app.internal.utils import create_model
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse
+
+from app.database.database import get_db
+from app.database.models import Event, User, UserEvent
+from app.dependencies import logger, templates
+from app.internal.utils import create_model
 
 router = APIRouter(
     prefix="/event",
@@ -33,20 +34,20 @@ async def eventview(request: Request, id: int):
 
 
 @router.delete("/{event_id}")
-def delete_event(request: Request,
-                 event_id: int,
+def delete_event(event_id: int,
                  db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the event.
-    event = by_id(db, event_id)
-    participants = get_participants_emails_by_event(db, event_id)
     try:
-        # Delete event
-        db.delete(event)
+        event = get_event_by_id(db, event_id)
+    except (NoResultFound, MultipleResultsFound):
+        raise HTTPException(status_code=500, detail="Event not found")
 
-        # Delete user_event
-        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
+    participants = get_participants_emails_by_event(db, event_id)
 
-        db.commit()
+    db.delete(event)  # Delete event
+    db.query(UserEvent).filter_by(event_id=event_id) \
+        .delete()  # Delete user_event
+    db.commit()
 
     if participants and event.start > datetime.now():
         pass
