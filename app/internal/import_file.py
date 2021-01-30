@@ -118,7 +118,7 @@ def import_txt_file(txt_file: str) -> List[Dict[str, Union[str, Any]]]:
     for event in events:
         if (not is_event_text_valid(event) or
            not save_calendar_content_txt(event, calendar_content)):
-            return list()
+            return []
     return calendar_content
 
 
@@ -127,7 +127,7 @@ def open_ics(ics_file: str) -> Union[List, Calendar]:
         try:
             calendar_read = Calendar.from_ical(ics.read())
         except (IndexError, ValueError):
-            return list()
+            return []
     return calendar_read
 
 
@@ -155,13 +155,13 @@ def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
     calendar_content = []
     calendar_read = open_ics(ics_file)
     if not calendar_read:
-        return list()
+        return []
     for component in calendar_read.walk():
         if component.name == DESC_EVENT:
             if is_valid_data_event_ics(component):
                 save_calendar_content_ics(component, calendar_content)
             else:
-                return list()
+                return []
     return calendar_content
 
 
