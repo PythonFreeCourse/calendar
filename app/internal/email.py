@@ -1,4 +1,7 @@
+import os
 from typing import List, Optional
+
+from starlette.templating import Jinja2Templates
 
 from app.config import email_conf
 from app.database.models import Event, User
@@ -9,6 +12,15 @@ from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
 
 mail = FastMail(email_conf)
+
+templates = Jinja2Templates(directory=os.path.join("app", "templates"))
+
+# application name
+CALENDAR_SITE_NAME = "Calendar"
+# link to the home page of the application
+CALENDAR_HOME_PAGE = "calendar.pythonic.guru"
+# link to the application registration page
+CALENDAR_REGISTRATION_PAGE = r"calendar.pythonic.guru/registration"
 
 
 def send(
@@ -43,6 +55,83 @@ def send(
     body = f"begins at:{event_used.start} : {event_used.content}"
 
     background_tasks.add_task(send_internal, subject=subject, recipients=recipients, body=body)
+    return True
+
+
+def send_email_invitation(sender_name: str,
+                          recipient_name: str,
+                          recipient_mail: str,
+                          background_tasks: BackgroundTasks = BackgroundTasks
+                          ) -> bool:
+    """
+    This function takes as parameters the sender's name,
+    the recipient's name and his email address, configuration, and
+    sends the recipient an invitation to his email address in
+    the format HTML.
+    :param sender_name: str, the sender's name
+    :param recipient_name: str, the recipient's name
+    :param recipient_mail: str, the recipient's email address
+    :param background_tasks: (BackgroundTasks): Function from fastapi that lets
+            you apply tasks in the background.
+    :return: bool, True if the invitation was successfully
+    sent to the recipient, and False if the entered
+    email address is incorrect.
+    """
+    if not verify_email_pattern(recipient_mail):
+        return False
+
+    template = templates.get_template("invite_mail.html")
+    html = template.render(recipient=recipient_name, sender=sender_name,
+                           site_name=CALENDAR_SITE_NAME,
+                           registration_link=CALENDAR_REGISTRATION_PAGE,
+                           home_link=CALENDAR_HOME_PAGE,
+                           addr_to=recipient_mail)
+
+    subject = "Invitation"
+    recipients = [recipient_mail]
+    body = html
+    subtype = "html"
+
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body,
+                              subtype=subtype)
+    return True
+
+
+def send_email_file(file_path: str,
+                    recipient_mail: str,
+                    background_tasks: BackgroundTasks = BackgroundTasks
+                    ) -> bool:
+    """
+    his function takes as parameters the file's path,
+    the recipient's email address, configuration, and
+    sends the recipient an file to his email address.
+    :param file_path: str, the file's path
+    :param recipient_mail: str, the recipient's email address
+    :param background_tasks: (BackgroundTasks): Function from fastapi that lets
+            you apply tasks in the background.
+    :return: bool, True if the file was successfully
+    sent to the recipient, and False if the entered
+    email address is incorrect or file does not exist.
+    """
+    if not verify_email_pattern(recipient_mail):
+        return False
+
+    if os.path.exists(file_path) is False:
+        return False
+
+    subject = "File"
+    recipients = [recipient_mail]
+    body = "file"
+    file_attachments = [file_path]
+
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body,
+                              file_attachments=file_attachments)
     return True
 
 
