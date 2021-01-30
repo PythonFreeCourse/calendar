@@ -9,8 +9,8 @@ from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, SOUNDS_PATH, templates)
 from app.internal.quotes import load_quotes, daily_quotes
 from app.routers import (
-    agenda, audio, dayview, email, event, invitation, profile, search, telegram,
-    whatsapp
+    agenda, audio, dayview, email, event, invitation,
+    profile, search, telegram, whatsapp
     )
 from app.telegram.bot import telegram_bot
 from app.internal.logger_customizer import LoggerCustomizer
