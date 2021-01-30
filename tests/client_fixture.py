@@ -81,7 +81,6 @@ def audio_test_client():
         audio.get_placeholder_user] = get_test_placeholder_user2
     with TestClient(app) as client:
         yield client
-    app.dependency_overrides = {}
 
 
 @pytest.fixture(scope="session")
