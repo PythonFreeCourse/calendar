@@ -9,7 +9,6 @@ from app.database.database import get_db
 from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH
 
-import requests
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
@@ -94,28 +93,9 @@ class DivAttributes:
         return (start_multiday, end_multiday)
 
 
-
-def get_currency_by_date(date):
-    return requests.get(f'https://api.exchangeratesapi.io/{date}').json()['rates']
-
-
 @router.get('/day/{date}')
 async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     # TODO: add a login session
-    user = User(username='test1', email='user@email.com',
-                password='1a2b3c4e5f', full_name='test me')
-
-    start = datetime(year=2021, month=2, day=1, hour=7, minute=5)
-    end = datetime(year=2021, month=2, day=1, hour=9, minute=15)
-    event = Event(title='test1', content='test',
-                 start=start, end=end, owner_id=1)
-    start = datetime(year=2021, month=2, day=1, hour=13)
-    end = datetime(year=2021, month=2, day=3, hour=13)
-    event1 = Event(title='test_multiday', content='test',
-                 start=start, end=end, owner_id=1, color='blue')
-    db_session.add_all([user, event, event1])
-    db_session.commit()
-    
     user = db_session.query(User).filter_by(username='test1').first()
     day = datetime.strptime(date, '%Y-%m-%d')
     day_end = day + timedelta(hours=24)
@@ -129,6 +109,6 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
         "request": request,
         "events": events_n_attrs,
         "month": day.strftime("%B").upper(),
-        "day": day.day,
-        "currency": get_currency_by_date(date)
+        "day": day.day
         })
+    
