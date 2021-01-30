@@ -56,7 +56,7 @@ class Event(Base):
     title = Column(String, nullable=False)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
-    default_end = Column(Integer, default=func.get_default_end_time)
+    default_end = Column(Integer, default=func.get_default_end_time())
     content = Column(String)
     location = Column(String)
 
