@@ -31,4 +31,4 @@ class TestHolidaysImport:
             ics_content = file.read()
             holidays = profile.get_holidays_from_file(ics_content, session)
             await profile.save_holidays_to_db(holidays, session)
-        assert len(session.query(Event).all()) == 4
+            assert len(session.query(Event).all()) == 4
