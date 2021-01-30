@@ -39,7 +39,7 @@ def send(
         recipients={"email": [user_to_send.email]}.get("email"),
         body=f"begins at:{event_used.start} : {event_used.content}",
     )
-    background_tasks.add_task(mail.send_message, message)
+    background_tasks.add_task(send_internal_internal, message)
     return True
 
 
