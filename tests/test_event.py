@@ -81,7 +81,7 @@ def test_successful_deletion(event_test_client, session, event):
 
 def test_delete_failed(event_test_client, event):
     response = event_test_client.delete("/event/2")
-    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_get_event_by_valid_id(session, event):
