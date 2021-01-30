@@ -11,7 +11,6 @@ from app import config
 from app.database.database import get_db
 from app.database.models import User, Event, UserEvent
 from app.dependencies import MEDIA_PATH, templates
-from app.routers.event import create_event
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -174,12 +173,15 @@ async def update_holidays(
 
 def get_holidays_from_file(file, session):
     """
-    this function using regex to extract holiday title and date from standrd ics file
+    this function using regex to extract holiday title
+    and date from standrd ics file
     :param file:standard ics file
     :param session:current connection
     :return:list of holidays events
     """
-    regex = re.compile(r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})', re.MULTILINE)
+    regex = re.compile(
+        r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
+        re.MULTILINE)
     holidays_iter = regex.finditer(file)
     holidays = []
     for holiday in holidays_iter:

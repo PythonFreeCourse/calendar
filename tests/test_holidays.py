@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pytest
 from app.database.models import Event, User
 from app.routers import profile
