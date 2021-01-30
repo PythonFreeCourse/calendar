@@ -14,7 +14,8 @@ NO_API_RESPONSE = "No response from server"
 
 
 @functools.lru_cache(maxsize=128, typed=False)
-async def get_data_from_api(formatted_date: str, location: str) -> Dict[str, int]:
+async def get_data_from_api(formatted_date: str, location: str)\
+        -> Dict[str, int]:
     """ get the relevant astronomical data by calling the "weather api" API.
     Args:
         formatted_date (date) - relevant date.
@@ -30,7 +31,8 @@ async def get_data_from_api(formatted_date: str, location: str) -> Dict[str, int
     output = {}
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(ASTRONOMY_URL, params=input_query_string)
+            response = await client.get(ASTRONOMY_URL,
+                                        params=input_query_string)
     except httpx.HTTPError:
         output["Success"] = False
         output["ErrorDescription"] = NO_API_RESPONSE
@@ -67,4 +69,5 @@ def get_astronomical_data(requested_date: datetime.datetime, location: str)\
     """
     formatted_date = requested_date.strftime('%Y-%m-%d')
     loop = asyncio.get_event_loop()
-    return loop.run_until_complete(get_data_from_api(formatted_date, location))
+    return loop.run_until_complete(get_data_from_api(formatted_date,
+                                                     location))
