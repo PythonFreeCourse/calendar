@@ -35,14 +35,14 @@ def test_get_astronomical_data(requests_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
     requests_mock.get(ASTRONOMY_URL, json=RESPONSE_FROM_MOCK)
     output = get_astronomical_data(requested_date, "tel aviv")
-    assert output['Status'] == 0
+    assert output['Success'] is True
 
 
 def test_astronomical_data_error_from_api(requests_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2021)
     requests_mock.get(ASTRONOMY_URL, json=ERROR_RESPONSE_FROM_MOCK)
     output = get_astronomical_data(requested_date, "123")
-    assert output['Status'] == -1
+    assert output['Success'] is False
 
 
 @responses.activate
@@ -51,7 +51,7 @@ def test_astronomical_exception_from_api():
     with pytest.raises(requests.exceptions.ConnectionError):
         requests.get(ASTRONOMY_URL)
     output = get_astronomical_data(requested_date, "456")
-    assert output['Status'] == -1
+    assert output['Success'] is False
 
 
 @responses.activate
@@ -60,4 +60,4 @@ def test_astronomical_no_response_from_api():
     responses.add(responses.GET, ASTRONOMY_URL, status=500)
     requests.get(ASTRONOMY_URL)
     output = get_astronomical_data(requested_date, "789")
-    assert output['Status'] == -1
+    assert output['Success'] is False
