@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from fastapi import HTTPException
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
@@ -56,16 +57,17 @@ def test_successful_update(event, session):
 
 def test_update_db_close(event):
     data = {"title": "Problem connecting to db", }
-    assert update_event(event_id=event.id,
-                        event=data, db=None) is None
+    with pytest.raises(AttributeError):
+        update_event(event_id=event.id, event=data, db=None)
 
 
 def test_update_event_does_not_exist(event, session):
     data = {
         "content": "An update test for an event does not exist"
     }
-    assert update_event(
-        event_id=500, event=data, db=session) is None
+    with pytest.raises(HTTPException):
+        response = update_event(event_id=500, event=data, db=session)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_repr(event):

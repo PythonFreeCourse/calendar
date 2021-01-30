@@ -70,6 +70,8 @@ def delete_event(event_id: int,
 
 def get_event_by_id(db: Session, event_id: int) -> Event:
     """Gets a single event by id"""
+    if not isinstance(db, Session):
+        raise AttributeError(f'Could not connect to database. db instance type received: {type(db)}')
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
@@ -110,8 +112,12 @@ def update_event(event_id: int, event: Dict, db: Session
     if not event_to_update:
         return None
     try:
-        old_event = get_event_by_id(db=db, event_id=event_id)
-        if old_event is None or not is_it_possible_to_change_dates(
+        old_event = get_event_by_id(db, event_id)
+    except (NoResultFound, MultipleResultsFound):
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    try:
+        if not is_it_possible_to_change_dates(
                 db, old_event, event_to_update):
             return None
 
@@ -123,6 +129,7 @@ def update_event(event_id: int, event: Dict, db: Session
         # TODO: Send emails to recipients.
     except (AttributeError, SQLAlchemyError, TypeError):
         return None
+
     return get_event_by_id(db=db, event_id=event_id)
 
 
