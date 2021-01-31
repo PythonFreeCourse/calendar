@@ -160,10 +160,9 @@ def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
         return []
     for component in calendar_read.walk():
         if component.name == DESC_EVENT:
-            if is_valid_data_event_ics(component):
-                save_calendar_content_ics(component, calendar_content)
-            else:
+            if not is_valid_data_event_ics(component):
                 return []
+            save_calendar_content_ics(component, calendar_content)
     return calendar_content
 
 
