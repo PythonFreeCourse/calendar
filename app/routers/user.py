@@ -15,7 +15,7 @@ def create_user(username, password, email, session: Session) -> User:
         password=password,
         email=email,
     )
-    save(user, session=session)
+    save(session, user)
     return user
 
 

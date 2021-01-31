@@ -3,8 +3,7 @@ from datetime import timedelta
 from fastapi import status
 import pytest
 
-from .asyncio_fixture import today_date
-from .client_fixture import get_test_placeholder_user
+from tests.asyncio_fixture import today_date, get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.keyboards import DATE_FORMAT
 from app.telegram.models import Bot, Chat
@@ -250,6 +249,7 @@ class TestBotClient:
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
+        print(response.text)
         assert b'Welcome to Pylander telegram client!' in response.content
 
     @staticmethod

@@ -312,7 +312,7 @@ def test_calc_salary(
 
 @mock.patch('app.routers.salary.utils.SessionLocal',
             new=TestingSessionLocal)
-def test_get_settings(session: Session,
+def test_get_settings(salary_session: Session,
                       wage: SalarySettings) -> None:
     assert utils.get_settings(wage.user_id,
                               wage.category_id) is not None

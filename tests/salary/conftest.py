@@ -1,11 +1,13 @@
+from tests.conftest import get_test_db
 from typing import Iterator
 
 import pytest
 from sqlalchemy.orm.session import Session
 
-from app.database.models import SalarySettings, User
+from app.database.models import Base, SalarySettings, User
 from app.internal.utils import create_model, delete_instance
 from app.routers.salary import config
+from tests.conftest import test_engine
 
 
 MESSAGES = {
@@ -24,23 +26,40 @@ ROUTES = {
     'view': '/salary/view'
 }
 
-HTTP_CODES = {
-    'ok': 200,
-    'temp_redirect': 307,
-}
-
 CATEGORY_ID = 1
 INVALID_CATEGORY_ID = 2
 ALT_CATEGORY_ID = 42
 MONTH = '2021-01'
 
 
+@pytest.fixture(scope='package')
+def salary_session() -> Iterator[Session]:
+    Base.metadata.create_all(bind=test_engine)
+    session = get_test_db()
+    yield session
+    session.close()
+    Base.metadata.drop_all(bind=test_engine)
+
+
 @pytest.fixture
-def wage(session: Session, user: User) -> Iterator[SalarySettings]:
+def salary_user(salary_session: Session):
+    test_user = create_model(
+        salary_session, User,
+        username='test_username',
+        password='test_password',
+        email='test.email@gmail.com',
+    )
+    yield test_user
+    delete_instance(salary_session, test_user)
+
+
+@pytest.fixture
+def wage(salary_session: Session,
+         salary_user: User) -> Iterator[SalarySettings]:
     wage = create_model(
-        session,
+        salary_session,
         SalarySettings,
-        user_id=user.id,
+        user_id=salary_user.id,
         category_id=CATEGORY_ID,
         wage=30,
         off_day=config.SATURDAY,
@@ -57,4 +76,4 @@ def wage(session: Session, user: User) -> Iterator[SalarySettings]:
         daily_transport=config.STANDARD_TRANSPORT,
     )
     yield wage
-    delete_instance(session, wage)
+    delete_instance(salary_session, wage)

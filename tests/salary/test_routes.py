@@ -1,5 +1,6 @@
 from unittest import mock
 
+from fastapi import status
 import pytest
 from requests.sessions import Session
 from starlette.testclient import TestClient
@@ -50,11 +51,11 @@ def get_current_user() -> User:
 
 @mock.patch('app.routers.salary.routes.SessionLocal',
             new=TestingSessionLocal)
-def test_get_current_user(session: Session) -> None:
+def test_get_current_user(salary_session: Session) -> None:
     # Code revision required after user login feature is added
-    assert session.query(User).filter_by(id=1).first() is None
+    assert salary_session.query(User).filter_by(id=1).first() is None
     routes.get_current_user()
-    assert session.query(User).filter_by(id=1).first() is not None
+    assert salary_session.query(User).filter_by(id=1).first() is not None
 
 
 def test_get_user_categories() -> None:
@@ -79,9 +80,9 @@ def test_get_holiday_categories() -> None:
     assert routes.get_holiday_categories() == holidays
 
 
-def test_get_salary_categories_empty(user: User) -> None:
+def test_get_salary_categories_empty(salary_user: User) -> None:
     # Code revision required after categories feature is added
-    assert routes.get_salary_categories(user.id) == {}
+    assert routes.get_salary_categories(salary_user.id) == {}
 
 
 @mock.patch('app.routers.salary.utils.SessionLocal',
@@ -109,7 +110,7 @@ def test_get_salary_categories_new(wage: SalarySettings) -> None:
 def test_pages_respond_ok(salary_test_client: TestClient,
                           wage: SalarySettings, path: str) -> None:
     response = salary_test_client.get(path)
-    assert response.status_code == conftest.HTTP_CODES['ok']
+    assert response.status_code == status.HTTP_200_OK
 
 
 @mock.patch('app.routers.salary.utils.SessionLocal',
@@ -119,7 +120,7 @@ def test_pages_respond_ok(salary_test_client: TestClient,
 def test_home_page_redirects_to_new(
         salary_test_client: TestClient) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
-    assert response.status_code == conftest.HTTP_CODES['ok']
+    assert response.status_code == status.HTTP_200_OK
     assert conftest.MESSAGES['create_settings'] in response.text
 
 
@@ -131,7 +132,7 @@ def test_home_page_redirects_to_new(
 def test_home_page_redirects_to_view(salary_test_client: TestClient,
                                      wage: SalarySettings) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
-    assert response.status_code == conftest.HTTP_CODES['ok']
+    assert response.status_code == status.HTTP_200_OK
     assert conftest.MESSAGES['pick_category'] in response.text
 
 
@@ -140,10 +141,10 @@ def test_home_page_redirects_to_view(salary_test_client: TestClient,
                      get_current_user=get_current_user)
 @mock.patch('app.routers.salary.utils.SessionLocal',
             new=TestingSessionLocal)
-def test_create_settings(salary_test_client: TestClient, session: Session,
-                         user: User) -> None:
+def test_create_settings(salary_test_client: TestClient,
+                         salary_session: Session, salary_user: User) -> None:
     category_id = conftest.CATEGORY_ID
-    assert utils.get_settings(user.id, category_id) is None
+    assert utils.get_settings(salary_user.id, category_id) is None
     data = {
         'category_id': category_id,
         'wage': utils.DEFAULT_SETTINGS.wage,
@@ -162,11 +163,11 @@ def test_create_settings(salary_test_client: TestClient, session: Session,
         }
     response = salary_test_client.post(
         conftest.ROUTES['new'], data=data, allow_redirects=True)
-    assert response.status_code == conftest.HTTP_CODES['ok']
+    assert response.status_code == status.HTTP_200_OK
     assert conftest.MESSAGES['view_salary'] in response.text
-    settings = utils.get_settings(user.id, category_id)
+    settings = utils.get_settings(salary_user.id, category_id)
     assert settings
-    delete_instance(session, settings)
+    delete_instance(salary_session, settings)
 
 
 @pytest.mark.parametrize('path', EMPTY_PICKS)
@@ -175,7 +176,7 @@ def test_create_settings(salary_test_client: TestClient, session: Session,
 def test_empty_category_pick_redirects_to_new(salary_test_client: TestClient,
                                               path: str) -> None:
     response = salary_test_client.get(path)
-    assert any(temp.status_code == conftest.HTTP_CODES['temp_redirect']
+    assert any(temp.status_code == status.HTTP_307_TEMPORARY_REDIRECT
                for temp in response.history)
 
 
@@ -218,7 +219,7 @@ def test_edit_settings(salary_test_client: TestClient,
         'daily_transport': wage.daily_transport,
     }
     response = salary_test_client.post(route, data=data, allow_redirects=True)
-    assert response.status_code == conftest.HTTP_CODES['ok']
+    assert response.status_code == status.HTTP_200_OK
     assert conftest.MESSAGES['view_salary'] in response.text
     assert settings != utils.get_settings(wage.user_id, wage.category_id)
 
@@ -233,7 +234,7 @@ def test_invalid_category_redirect(
     salary_test_client: TestClient, wage: SalarySettings, path: str,
         message: str) -> None:
     response = salary_test_client.get(path)
-    assert any(temp.status_code == conftest.HTTP_CODES['temp_redirect']
+    assert any(temp.status_code == status.HTTP_307_TEMPORARY_REDIRECT
                for temp in response.history)
     print(response.text)
     assert message in response.text
@@ -268,5 +269,5 @@ def test_view_salary(salary_test_client: TestClient,
         'overtime': True
     }
     response = salary_test_client.post(route, data=data)
-    assert response.status_code == conftest.HTTP_CODES['ok']
+    assert response.status_code == status.HTTP_200_OK
     assert conftest.MESSAGES['salary_calc'] in response.text
