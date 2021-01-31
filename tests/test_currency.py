@@ -1,5 +1,3 @@
-import datetime
-
 import pytest
 import requests
 from app.internal.currency import is_valid_currency_api_response
@@ -41,7 +39,7 @@ def requests_mock_error(monkeypatch):
 
     def mock_requests_error(url):
         return MockResponse()
-    
+
     monkeypatch.setattr(requests, 'get', mock_requests_error)
 
 
