@@ -1,4 +1,3 @@
-import pytest
 from app.database.models import Event
 from app.routers import profile
 import os
