@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title>currency</title>
+</head>
+
+<body>
+    {% if currency and base %}
+    <div>
+        <p style="margin: 1rem;">
+            <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button"
+                aria-expanded="false" aria-controls="multiCollapseExample1">Currency</a>
+        </p>
+        <div class="row" style="margin: 1rem; width: 14rem;">
+            <div class="col">
+                <div class="collapse multi-collapse" id="multiCollapseExample1">
+                    <ul class="list-group list-group-flush" id="currency">
+                        <!-- JS currency content -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <script>
+        function getCurrency(base_currency) {
+            var x = document.getElementById("currency");
+            function Get(yourUrl) {
+                var Httpreq = new XMLHttpRequest(); // a new request
+                Httpreq.open("GET", yourUrl, false);
+                Httpreq.send(null);
+                return Httpreq.responseText;
+            }
+
+            var data = JSON.parse(Get('https://api.exchangeratesapi.io/{{ date|safe }}?base=' + base_currency));
+            if ('error' in data) {
+                x.innerHTML = "";
+                return false;
+            }
+
+            var text = `<li class="list-group-item title_size_small"><strong>BASE: `
+                + base_currency + `</strong></li>`;
+
+            for (key in data.rates) {
+                if (key !== base_currency) {
+                    text += `<li class="list-group-item title_size_small">`
+                        + `<a href="javascript:void(0)" onclick='getCurrency("` + key + `");return fasle;'>`
+                        + key + `</a>: ` + data.rates[key] + `</li>`;
+                }
+            }
+
+            text += `<li class="list-group-item title_size_small"><strong>`
+                + `{{ date | safe }}</strong></li>`;
+
+            x.innerHTML = text;
+            return true;
+        }
+        getCurrency("{{ base | safe }}");
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
