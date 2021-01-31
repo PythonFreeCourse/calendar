@@ -7,6 +7,9 @@ from fastapi import APIRouter, Request
 
 router = APIRouter()
 
+# TODO: Add this as a feature to the calendar view/
+#           day view/features panel frontend
+
 
 @router.get("/currency")
 def today_currency(request: Request):
