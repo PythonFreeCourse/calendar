@@ -13,7 +13,6 @@ class TestHolidaysImport:
         assert resp.ok
         assert b'Import holidays using ics file' in resp.content
 
-
     def test_get_holidays(self, session, user):
         current_folder = os.path.dirname(os.path.realpath(__file__))
         resource_folder = os.path.join(current_folder, 'resources')
