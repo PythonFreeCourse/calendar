@@ -27,6 +27,8 @@ class Chat:
 
 
 class Bot:
+    MEMORY = {}
+
     def __init__(self, bot_api: str, webhook_url: str):
         self.base = self._set_base_url(bot_api)
         self.webhook_setter_url = self._set_webhook_setter_url(webhook_url)
