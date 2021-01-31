@@ -1,9 +1,10 @@
 import os
 from typing import List, Optional
 
-from starlette.templating import Jinja2Templates
 
-from app.config import email_conf
+from app.config import (email_conf, templates,
+                        CALENDAR_SITE_NAME, CALENDAR_HOME_PAGE,
+                        CALENDAR_REGISTRATION_PAGE)
 from app.database.models import Event, User
 from fastapi import BackgroundTasks, UploadFile
 from fastapi_mail import FastMail, MessageSchema
@@ -12,15 +13,6 @@ from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
 
 mail = FastMail(email_conf)
-
-templates = Jinja2Templates(directory=os.path.join("app", "templates"))
-
-# application name
-CALENDAR_SITE_NAME = "Calendar"
-# link to the home page of the application
-CALENDAR_HOME_PAGE = "calendar.pythonic.guru"
-# link to the application registration page
-CALENDAR_REGISTRATION_PAGE = r"calendar.pythonic.guru/registration"
 
 
 def send(

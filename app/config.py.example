@@ -2,6 +2,7 @@ import os
 
 from fastapi_mail import ConnectionConfig
 from pydantic import BaseSettings
+from starlette.templating import Jinja2Templates
 
 
 class Settings(BaseSettings):
@@ -44,6 +45,15 @@ email_conf = ConnectionConfig(
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
 )
+
+templates = Jinja2Templates(directory=os.path.join("app", "templates"))
+
+# application name
+CALENDAR_SITE_NAME = "Calendar"
+# link to the home page of the application
+CALENDAR_HOME_PAGE = "calendar.pythonic.guru"
+# link to the application registration page
+CALENDAR_REGISTRATION_PAGE = r"calendar.pythonic.guru/registration"
 
 # PATHS
 STATIC_ABS_PATH = os.path.abspath("static")
