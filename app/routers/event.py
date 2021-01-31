@@ -85,6 +85,7 @@ def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
 
     # TODO Check if the user is the owner of the event.
+
     event_to_update = get_event_with_editable_fields_only(event)
     is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS)
     try:
