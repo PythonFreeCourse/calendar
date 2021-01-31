@@ -121,7 +121,7 @@ def send_email_file(file_path: str,
     if not verify_email_pattern(recipient_mail):
         return False
 
-    if os.path.exists(file_path) is False:
+    if not os.path.exists(file_path):
         return False
 
     subject = "File"
