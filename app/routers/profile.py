@@ -151,17 +151,6 @@ def get_image_crop_area(width, height):
     return (0, delta, width, width + delta)
 
 
-@router.get("/import_holidays")
-def import_holidays(request: Request):
-    # Made up user details until there's a user login system
-    current_username = "Chuck Norris"
-
-    return templates.TemplateResponse("holidays.html", {
-        "request": request,
-        "username": current_username
-    })
-
-
 @router.post("/update_holidays")
 async def update_holidays(
         file: UploadFile = File(...), session=Depends(get_db)):
