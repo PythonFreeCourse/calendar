@@ -68,7 +68,8 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     for key in to_check.keys():
         if types[key] and not isinstance(to_check[key], types[key]):
             errors.append(
-                f"{key} is '{type(to_check[key]).__name__}' and it should be" + f"from type '{types[key].__name__}'")
+                f"{key} is '{type(to_check[key]).__name__}' and it should be"
+                + f"from type '{types[key].__name__}'")
     if errors:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
