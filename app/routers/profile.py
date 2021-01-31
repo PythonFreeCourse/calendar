@@ -165,10 +165,10 @@ def import_holidays(request: Request):
 @router.post("/update_holidays")
 async def update_holidays(
         file: UploadFile = File(...), session=Depends(get_db)):
-    icsfile = file.read()
+    icsfile = await file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
     try:
-        await save_holidays_to_db(holidays, session)
+        save_holidays_to_db(holidays, session)
     except SQLAlchemyError as ex:
         logger.error(ex)
     finally:
@@ -201,7 +201,7 @@ def get_holidays_from_file(file, session):
     return holidays
 
 
-async def save_holidays_to_db(holidays, session):
+def save_holidays_to_db(holidays, session):
     """
     this function saves holiday list into database.
     :param holidays: list of holidays events
