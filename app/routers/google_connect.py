@@ -12,6 +12,7 @@ from app.database.database import get_db, SessionLocal
 from app.routers.profile import router as profile_router
 from app.config import CLIENT_SECRET_FILE
 from app.routers.event import create_event
+from loguru import logger
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
@@ -37,8 +38,9 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
 
     elif not status:
         # first sync
-        if isClientSecretNotNone():  # if there is no client_secrets.json
-            print('Google Sync is not available - missing client_secret.json')
+        if is_client_secret_not_none():  # if there is no client_secrets.json
+            logger.error(
+                'Google Sync is not available - missing client_secret.json')
             url = profile_router.url_path_for("profile")
             return RedirectResponse(url=url)
 
@@ -63,7 +65,6 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
         session.add(oauth_credentials)
         session.commit()
 
-    print("clean up db")
     session.query(OAuthCredentials).filter_by(user_id=None).delete()
     session.commit()
 
@@ -75,12 +76,12 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
     return RedirectResponse(url=url)
 
 
-def isClientSecretNotNone():
+def is_client_secret_not_none():
     return CLIENT_SECRET_FILE is None
 
 
 def get_current_year_events(
-                credentials: Credentials, user: User, session: SessionLocal):
+        credentials: Credentials, user: User, session: SessionLocal) -> list:
     '''Getting user events from google calendar'''
 
     currrnt_year = datetime.now().year
@@ -105,15 +106,20 @@ def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
     db_cleanup(user, session)
 
     for event in events:
+        # Running over the events that have come from the API
         location = None
-        title = event['summary']
+        title = event['summary']  # The Google event title
+
         # support for all day events
         if 'dateTime' in event['start'].keys():
-            # part time event
+            # This case handles part time events (not all day events)
             start = datetime.fromisoformat(event['start']['dateTime'])
             end = datetime.fromisoformat(event['end']['dateTime'])
         else:
-            # all day event
+            # This case handles all day events
+            # It takes the date string in this format yyyy-mm-dd
+            # - according to the documentation
+            # and then split it and passing it to datetime constructor.
             start_in_str = event['start']['date'].split('-')
             start = datetime(
                 year=int(start_in_str[0]),
@@ -129,16 +135,18 @@ def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
             )
 
         if 'location' in event.keys():
+            # This case handles if Google Event has a location attached
             location = event['location']
 
         create_event(
+            # creating an event obj and pushing it into the db
             db=session,
             title=title,
             start=start,
             end=end,
             owner_id=user.id,
             location=location,
-            isGoogleEvent=True
+            is_google_event=True
         )
     return True
 
@@ -149,7 +157,7 @@ def db_cleanup(user: User, session: SessionLocal) -> bool:
     for user_event in user.events:
         user_event_id = user_event.id
         event = user_event.events
-        if event.isGoogleEvent:
+        if event.is_google_event:
             session.query(Event).filter_by(id=event.id).delete()
             session.query(UserEvent).filter_by(id=user_event_id).delete()
             session.commit()
@@ -165,7 +173,6 @@ def get_credentials_from_db(user: User) -> tuple:
     status = False
 
     if user.oauth_credentials is not None:
-        print("Loading credentials from DB...")
         db_credentials = user.oauth_credentials
         credentials = Credentials(
             token=db_credentials.token,
@@ -182,7 +189,6 @@ def get_credentials_from_db(user: User) -> tuple:
 
 def refresh_token(credentials: Credentials,
                   session: SessionLocal, user: User) -> Credentials:
-    print('refreshing token')
     credentials.refresh(google_request())
     refreshed_credentials = OAuthCredentials(
         owner=user,

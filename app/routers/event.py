@@ -83,7 +83,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db, title, start, end,
-                 owner_id, content=None, location=None, isGoogleEvent=False):
+                 owner_id, content=None, location=None, is_google_event=False):
     """Creates an event and an association."""
 
     event = create_model(
@@ -94,7 +94,7 @@ def create_event(db, title, start, end,
         content=content,
         owner_id=owner_id,
         location=location,
-        isGoogleEvent=isGoogleEvent
+        is_google_event=is_google_event
     )
     create_model(
         db, UserEvent,

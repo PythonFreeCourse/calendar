@@ -54,7 +54,7 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
-    isGoogleEvent = Column(Boolean)
+    is_google_event = Column(Boolean)
 
     owner = relationship("User")
     owner_id = Column(Integer, ForeignKey("users.id"))
