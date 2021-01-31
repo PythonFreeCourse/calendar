@@ -2,8 +2,9 @@ from datetime import datetime
 
 from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
-from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event)
+from sqlalchemy import (DDL, Boolean, Column, DateTime,
+                        ForeignKey, Index,
+                        Integer, String, event, JSON)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship
 
@@ -64,7 +65,7 @@ class Event(Base):
             'events_tsv_idx',
             'events_tsv',
             postgresql_using='gin'),
-            )
+        )
 
     def __repr__(self):
         return f'<Event {self.id}>'
@@ -87,7 +88,7 @@ if PSQL_ENVIRONMENT:
         Event.__table__,
         'after_create',
         trigger_snippet.execute_if(dialect='postgresql')
-        )
+    )
 
 
 class Invitation(Base):
@@ -108,6 +109,16 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class WikipediaEvents(Base):
+    __tablename__ = "wikipedia_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(String, nullable=False)
+    wikipedia = Column(String, nullable=False)
+    events = Column(JSON, nullable=True)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
 class Quote(Base):

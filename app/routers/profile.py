@@ -46,7 +46,7 @@ async def profile(
         user = session.query(User).filter_by(id=1).first()
 
     # Get on this day data from wiki
-    on_this_day_data = get_on_this_day_events()
+    on_this_day_data = get_on_this_day_events(session)
 
     return templates.TemplateResponse("profile.html", {
         "request": request,
