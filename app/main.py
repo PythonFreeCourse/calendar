@@ -2,13 +2,11 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from app import config
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import (
-    MEDIA_PATH, STATIC_PATH, templates)
-from app.internal.logger_customizer import LoggerCustomizer
+    MEDIA_PATH, STATIC_PATH, templates, logger)
 from app.internal.quotes import load_quotes, daily_quotes
 from app.routers import (
     agenda, categories, dayview, email, event, invitation, profile, search,
@@ -35,14 +33,6 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 load_quotes.load_daily_quotes(next(get_db()))
 
-# Configure logger
-logger = LoggerCustomizer.make_logger(config.LOG_PATH,
-                                      config.LOG_FILENAME,
-                                      config.LOG_LEVEL,
-                                      config.LOG_ROTATION_INTERVAL,
-                                      config.LOG_RETENTION_INTERVAL,
-                                      config.LOG_FORMAT)
-app.logger = logger
 
 routers_to_include = [
     agenda.router,
@@ -66,7 +56,7 @@ telegram_bot.set_webhook()
 # TODO: I add the quote day to the home page
 # until the relevant calendar view will be developed.
 @app.get("/")
-@app.logger.catch()
+@logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
