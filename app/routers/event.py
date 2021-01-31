@@ -1,16 +1,20 @@
-from datetime import datetime
+from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, Optional
 
-from app.database.database import get_db
-from app.database.models import Event, User, UserEvent
-from app.dependencies import templates
-from app.internal.utils import create_model
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
+
+from app.database.database import get_db
+from app.database.models import Event, User, UserEvent
+from app.dependencies import templates
+from app.internal.event import validate_zoom_link
+from app.internal.utils import create_model
+from app.routers.user import create_user
 
 router = APIRouter(
     prefix="/event",
@@ -25,6 +29,31 @@ async def eventedit(request: Request):
                                       {"request": request})
 
 
+@router.post("/edit")
+async def create_new_event(request: Request, session=Depends(get_db)):
+    data = await request.form()
+    title = data['title']
+    content = data['description']
+    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
+                        '%Y-%m-%d %H:%M')
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
+                      '%Y-%m-%d %H:%M')
+    user = session.query(User).filter_by(id=1).first()
+    user = user if user else create_user("u", "p", "e@mail.com", session)
+    owner_id = user.id
+    location_type = data['location_type']
+    is_zoom = location_type == 'vc_url'
+    location = data['location']
+
+    if is_zoom:
+        validate_zoom_link(location)
+
+    event = create_event(session, title, start, end, owner_id, content,
+                         location)
+    return RedirectResponse(router.url_path_for('eventview', id=event.id),
+                            status_code=HTTP_302_FOUND)
+
+
 @router.get("/view/{id}")
 async def eventview(request: Request, id: int):
     return templates.TemplateResponse("event/eventview.html",
@@ -37,7 +66,7 @@ def by_id(db: Session, event_id: int) -> Event:
     return db.query(Event).filter(Event.id == event_id).first()
 
 
-def is_date_before(start_date: datetime, end_date: datetime) -> bool:
+def is_date_before(start_date: dt, end_date: dt) -> bool:
     """Check if the start date is earlier than the end date"""
 
     return start_date < end_date
@@ -59,7 +88,6 @@ def get_items_that_can_be_updated(event: Dict[str, Any]) -> Dict[str, Any]:
 
 def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
-
     # TODO Check if the user is the owner of the event.
 
     event_to_update = get_items_that_can_be_updated(event)
@@ -142,7 +170,7 @@ def delete_event(request: Request,
         return templates.TemplateResponse(
             "event/eventview.html", {"request": request, "event_id": event_id},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if participants and event.start > datetime.now():
+    if participants and event.start > dt.now():
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
