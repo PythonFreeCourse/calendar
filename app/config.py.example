@@ -13,16 +13,6 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 
-
-class Settings(BaseSettings):
-    app_name: str = "PyLander"
-    bot_api: str = "BOT_API"
-    webhook_url: str = "WEBHOOK_URL"
-
-    class Config:
-        env_file = ".env"
-
-
 # GENERAL
 DOMAIN = 'Our-Domain'
 
