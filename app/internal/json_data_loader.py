@@ -1,6 +1,8 @@
 import json
+import os
 from typing import Dict, List, Callable, Union
 
+from loguru import logger
 from sqlalchemy.orm import Session
 
 from app.database.database import Base
@@ -14,7 +16,11 @@ def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
     try:
         with open(path, 'r') as f:
             json_content_list = json.load(f)
-    except (IOError, ValueError):
+    except (IOError, ValueError) as err:
+        file_name = os.path.basename(path)
+        logger.warning(
+            f"An error occurred during reading of json file: {file_name}", err
+            )
         return []
     return json_content_list
 
@@ -28,13 +34,14 @@ def load_data(
         table: Base, object_creator_function: Callable) -> None:
     """This function loads the specific data to the db,
     if it wasn't already loaded"""
-    if is_table_empty(session, table):
-        json_objects_list = get_data_from_json(path)
-        objects = [
-            object_creator_function(json_object)
-            for json_object in json_objects_list]
-        session.add_all(objects)
-        session.commit()
+    if not is_table_empty(session, table):
+        return None
+    json_objects_list = get_data_from_json(path)
+    objects = [
+        object_creator_function(json_object)
+        for json_object in json_objects_list]
+    session.add_all(objects)
+    session.commit()
 
 
 def load_to_db(session) -> None:

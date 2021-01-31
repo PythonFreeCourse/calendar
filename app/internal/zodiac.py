@@ -22,13 +22,14 @@ def create_zodiac_object(zodiac_fields: Dict[str, Union[str, int]]) -> Zodiac:
 def get_zodiac_of_day(session: Session, date: date) -> Zodiac:
     """This function return a zodiac object
     according to the current day."""
+    first_month_of_sign_filter = and_(
+        Zodiac.start_month == date.month,
+        Zodiac.start_day_in_month <= date.day)
+    second_month_of_sign_filter = and_(
+        Zodiac.end_month == date.month,
+        Zodiac.end_day_in_month >= date.day)
     zodiac_obj = session.query(Zodiac).filter(
-        or_((and_(Zodiac.start_month == date.month,
-            Zodiac.start_day_in_month <= date.day)),
-            (and_
-                (Zodiac.end_month == date.month,
-                    Zodiac.end_day_in_month >= date.day))
-            )).first()
+        or_(first_month_of_sign_filter, second_month_of_sign_filter)).first()
     return zodiac_obj
 
 
