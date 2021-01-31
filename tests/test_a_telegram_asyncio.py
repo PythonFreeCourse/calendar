@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from fastapi import status
 import pytest
@@ -132,6 +132,36 @@ bot id/setWebhook?url=https://google.com/telegram/'
     }
 
 
+class TestBotClient:
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_user_not_registered(telegram_client):
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Hello, Moshe!' in response.content
+        assert b'To use PyLander Bot you have to register' \
+            in response.content
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_user_registered(telegram_client, session):
+        session.add(get_test_placeholder_user())
+        session.commit()
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Welcome to Pylander telegram client!' in response.content
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_telegram_router(telegram_client):
+        response = await telegram_client.get('/telegram')
+        assert response.status_code == status.HTTP_200_OK
+        assert b"Start using PyLander telegram bot!" in response.content
+
+
 class TestHandlers:
     TEST_USER = get_test_placeholder_user()
 
@@ -173,12 +203,8 @@ Welcome to Pylander telegram client!'''
     async def test_today_handler(self, fake_user_events):
         chat = Chat(gen_callback('Today'))
         message = MessageHandler(chat, fake_user_events)
-        assert await message.process_callback() == f'''\
-{today_date.strftime('%B %d')}, {today_date.strftime('%A')} Events:
-
-From {today_date.strftime('%d/%m %H:%M')} \
-to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
-Cool today event.\n'''
+        answer = f"{today_date.strftime('%A, %B %d')}:\n"
+        assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
     async def test_this_week_handler(self):
@@ -191,8 +217,8 @@ Cool today event.\n'''
         chat = Chat(gen_callback('10 Feb 2021'))
         message = MessageHandler(chat, self.TEST_USER)
         message.handlers['10 Feb 2021'] = message.chosen_day_handler
-        assert await message.process_callback() == \
-            "There're no events on February 10."
+        answer = "There're no events on February 10."
+        assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
     async def test_chosen_day_handler(self, fake_user_events):
@@ -201,16 +227,97 @@ Cool today event.\n'''
         chat = Chat(gen_callback(button))
         message = MessageHandler(chat, fake_user_events)
         message.handlers[button] = message.chosen_day_handler
-        assert await message.chosen_day_handler() == f'''\
-{chosen_date.strftime('%B %d')}, {chosen_date.strftime('%A')} Events:
+        answer = f"{chosen_date.strftime('%A, %B %d')}:\n"
+        assert await message.chosen_day_handler() == answer
 
-From {today_date.strftime('%d/%m %H:%M')} \
-to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
-Cool today event.
+    @pytest.mark.asyncio
+    async def test_new_event_handler(self):
+        chat = Chat(gen_message('/new_event'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Please, give your event a title.'
+        assert await message.process_callback() == answer
 
-From {(chosen_date + timedelta(days=-1)).strftime('%d/%m %H:%M')} \
-to {(chosen_date + timedelta(days=1)).strftime('%d/%m %H:%M')}: \
-Cool (somewhen in two days) event.\n'''
+    @pytest.mark.asyncio
+    async def test_process_new_event(self):
+        chat = Chat(gen_message('New Title'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Title:\nNew Title\n\n'
+        answer += 'Add a description of the event.'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('New Content'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Content:\nNew Content\n\n'
+        answer += 'Where the event will be held?'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('Universe'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Location:\nUniverse\n\n'
+        answer += 'When does it start?'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('Not valid start datetime input'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = '❗️ Please, enter a valid date/time.'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('today'))
+        message = MessageHandler(chat, self.TEST_USER)
+        today = datetime.today()
+        answer = f'Starts on:\n{today.strftime("%d %b %Y %H:%M")}\n\n'
+        answer += 'And when does it end?'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('Not valid end datetime input'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = '❗️ Please, enter a valid date/time.'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('tomorrow'))
+        message = MessageHandler(chat, self.TEST_USER)
+        tomorrow = today + timedelta(days=1)
+        answer = 'Title:\nNew Title\n\n'
+        answer += 'Content:\nNew Content\n\n'
+        answer += 'Location:\nUniverse\n\n'
+        answer += f'Starts on:\n{today.strftime("%d %b %Y %H:%M")}\n\n'
+        answer += f'Ends on:\n{tomorrow.strftime("%d %b %Y %H:%M")}'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('create'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'New event was successfully created 🎉'
+        assert await message.process_callback() == answer
+
+    @pytest.mark.asyncio
+    async def test_process_new_event_cancel(self):
+        chat = Chat(gen_message('/new_event'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Please, give your event a title.'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('cancel'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = '🚫 The process was canceled.'
+        assert await message.process_callback() == answer
+
+    @pytest.mark.asyncio
+    async def test_process_new_event_restart(self):
+        chat = Chat(gen_message('/new_event'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Please, give your event a title.'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('New Title'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Title:\nNew Title\n\n'
+        answer += 'Add a description of the event.'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('restart'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = 'Please, give your event a title.'
+        assert await message.process_callback() == answer
 
 
 @pytest.mark.asyncio
@@ -228,33 +335,3 @@ Keep it secret!
 
 https://calendar.pythonic.guru/profile/
 '''
-
-
-class TestBotClient:
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_user_not_registered(telegram_client):
-        response = await telegram_client.post(
-            '/telegram/', json=gen_message('/start'))
-        assert response.status_code == status.HTTP_200_OK
-        assert b'Hello, Moshe!' in response.content
-        assert b'To use PyLander Bot you have to register' \
-            in response.content
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_user_registered(telegram_client, session):
-        session.add(get_test_placeholder_user())
-        session.commit()
-        response = await telegram_client.post(
-            '/telegram/', json=gen_message('/start'))
-        assert response.status_code == status.HTTP_200_OK
-        assert b'Welcome to Pylander telegram client!' in response.content
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_telegram_router(telegram_client):
-        response = await telegram_client.get('/telegram')
-        assert response.status_code == status.HTTP_200_OK
-        assert b"Start using PyLander telegram bot!" in response.content

@@ -75,13 +75,13 @@ Welcome to Pylander telegram client!'''
         for event in events:
             start = event.start.strftime("%d %b %Y %H:%M")
             end = event.end.strftime("%d %b %Y %H:%M")
-            answer = f'Title:\n{event.title}\n\n'
-            answer += f'Content:\n{event.content}\n\n'
-            answer += f'Location:\n{event.location}\n\n'
-            answer += f'Starts on:\n{start}\n\n'
-            answer += f'Ends on:\n{end}'
+            text = f'Title:\n{event.title}\n\n'
+            text += f'Content:\n{event.content}\n\n'
+            text += f'Location:\n{event.location}\n\n'
+            text += f'Starts on:\n{start}\n\n'
+            text += f'Ends on:\n{end}'
             await telegram_bot.send_message(
-                chat_id=self.chat.user_id, text=answer)
+                chat_id=self.chat.user_id, text=text)
             await asyncio.sleep(1)
 
         return answer
@@ -117,13 +117,13 @@ Welcome to Pylander telegram client!'''
         for event in events:
             start = event.start.strftime("%d %b %Y %H:%M")
             end = event.end.strftime("%d %b %Y %H:%M")
-            answer = f'Title:\n{event.title}\n\n'
-            answer += f'Content:\n{event.content}\n\n'
-            answer += f'Location:\n{event.location}\n\n'
-            answer += f'Starts on:\n{start}\n\n'
-            answer += f'Ends on:\n{end}'
+            text = f'Title:\n{event.title}\n\n'
+            text += f'Content:\n{event.content}\n\n'
+            text += f'Location:\n{event.location}\n\n'
+            text += f'Starts on:\n{start}\n\n'
+            text += f'Ends on:\n{end}'
             await telegram_bot.send_message(
-                chat_id=self.chat.user_id, text=answer)
+                chat_id=self.chat.user_id, text=text)
             await asyncio.sleep(1)
 
         return answer
