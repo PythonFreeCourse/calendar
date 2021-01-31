@@ -22,15 +22,16 @@ async function submitLogin(e){
     await postLogin(user)
 }
 
-// loginForm.addEventListener("submit", submitLogin)
-await postLogin()
-async function postLogin() {
+loginForm.addEventListener("submit", submitLogin)
+
+async function postLogin(user) {
     try {
         // Create request to api service
-        const req = await fetch('http://127.0.0.1:8000/auth/jwt/login', {
+        const req = await fetch('http://localhost:8000/auth/cookie/login', {
             method: 'POST',
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `username=${form.username.data}&password=${form.password.data}`
+            // headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: { "Content-Type": "Content-Type: multipart/form-data" },
+            body: `username=${user.username}&password=${user.password}`
         });
         const res = await req.json();
         if (req.status === 400){
@@ -40,16 +41,11 @@ async function postLogin() {
             console.log("Missing details");
         }
         if (req.status === 200){
-            localStorage.setItem('okLoginMessage', "hi, you successfully sign in")
-            function user() {
-                var x = "/login?response=" + res
-                const xhr = new XMLHttpRequest();
-                xhr.open("GET", x, true);
-            xhr.send();
-            }
-            console.log(res)
-            setCookie("fastapiusersauth4", res["access_token"])
-            window.location.href = "http://127.0.0.1:8000/protected";
+            localStorage.setItem('okLoginMessage', `${user.username}, you successfully sign in`)
+            
+            console.log('success')
+            // setCookie("fastapiusersauth", res["access_token"])
+            // window.location.href = "http://127.0.0.1:8000/protected";
         }
     } catch(err) {
         

@@ -6,9 +6,28 @@ from app.routers import agenda, event, profile, email, invitation, register, log
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+##### fastapi_Users
+from fastapi.middleware.cors import CORSMiddleware
+origins = [
+    "https://localhost:8000",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+################
+
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
@@ -24,14 +43,22 @@ app.include_router(login.router)
 from app.internal.security.security_main import fastapi_users, jwt_authentication
 from app.internal.security.redirecting import on_after_register
 from app.database.models import  UserDB
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 # async def on_after_register(user: UserDB, request: Request):
     
 #     print(f"User {user.id} has registered.")
 
 
+# app.include_router(
+#     fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"],)
 app.include_router(
-    fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/jwt", tags=["auth"],)
+    fastapi_users.get_auth_router(jwt_authentication), prefix="/logout", tags=["auth"],)
+
+app.include_router(
+    fastapi_users.get_auth_router(jwt_authentication), prefix="/auth/cookie", tags=["auth"],)
 
 app.include_router(
     fastapi_users.get_register_router(on_after_register),prefix="/auth",tags=["auth"],)

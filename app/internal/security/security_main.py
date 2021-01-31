@@ -8,8 +8,8 @@ from fastapi_users import FastAPIUsers
 auth_backends = []
 
 jwt_authentication = JWTAuthentication(secret=JWT_SECRET_KEY, lifetime_seconds=3600)
-cookie_authentication = CookieAuthentication(secret=JWT_SECRET_KEY, lifetime_seconds=500, cookie_name='fastapiusersauth4', cookie_httponly=True)
-auth_backends.append(jwt_authentication)
+cookie_authentication = CookieAuthentication(secret=JWT_SECRET_KEY, lifetime_seconds=500, name='my_cookie', cookie_httponly=True)
+# auth_backends.append(jwt_authentication)
 auth_backends.append(cookie_authentication)
 #auth_backends,
 fastapi_users = FastAPIUsers(

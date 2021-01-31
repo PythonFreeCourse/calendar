@@ -3,7 +3,7 @@
     <div class="container">
         <h3>Login</h3>
         <small id="registerSuccessful">You successfully registered!</small>
-        <form id="loginForm", method="post">
+        <form id="loginForm", method="">
             <div class="row">
                 <label for="username" class="col-sm-2 col-form-label">Email</label>
                 <div class="col-auto">
@@ -19,5 +19,6 @@
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Log In">
         </form>
     </div>
-<!-- <script src="{{ url_for('static', path='/login.js') }}"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>
+<script src="{{ url_for('static', path='/login.js') }}"></script>
 {% endblock %}

@@ -27,23 +27,48 @@ async def login_user_form(request: Request, response: Response) -> templates:
         "errors": None,
     })
 
-@router.post("/login")
-async def login_user(request: Request, response: Response) -> templates:
-    '''
-    rendering register route get method
-    '''
-    print(response.body)
-    form = await request.form()
-    form_dict = dict(form)
-    url = f"/auth/jwt/login?username={form['username']}&password=${form['password']}"
-    response =  RedirectResponse(
-        url='/auth/jwt/login',
-        headers=form_dict,
-        status_code=307)
-    # print(response.headers)
-    # print(dir(response))
-    print(response)
-    return response
+
+########cookie route
+# @router.post("/login")
+# async def login_user(request: Request, response: Response) -> templates:
+#     '''
+#     rendering register route get method
+#     '''
+#     print(response.body)
+#     form = await request.form()
+#     form_dict = dict(form)
+#     url = f"/auth/jwt/login?username={form['username']}&password=${form['password']}"
+#     response =  RedirectResponse(
+#         url='/auth/cookie/login',
+#         headers=form_dict,
+#         status_code=307)
+#     # print(response.headers)
+#     # print(dir(response))
+#     print(response)
+#     return response
+#     return RedirectResponse(
+#         url='/protected',
+#         status_code=HTTP_302_FOUND)
+###############
+
+
+# @router.post("/login")
+# async def login_user(request: Request, response: Response) -> templates:
+#     '''
+#     rendering register route get method
+#     '''
+#     print(response.body)
+#     form = await request.form()
+#     form_dict = dict(form)
+#     url = f"/auth/jwt/login?username={form['username']}&password=${form['password']}"
+#     response =  RedirectResponse(
+#         url='/auth/jwt/login',
+#         headers=form_dict,
+#         status_code=307)
+#     # print(response.headers)
+#     # print(dir(response))
+#     print(response)
+#     return response
 
 
 
