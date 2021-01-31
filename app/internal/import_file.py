@@ -185,7 +185,7 @@ def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
                      owner_id=owner_id)
 
 
-def user_click_import(file: str, user_id: int, session: SessionLocal) -> str:
+def user_click_import(file: str, user_id: int, session: SessionLocal) -> bool:
     """
     when user choose a file and click import, we are checking the file
     and if everything is ok we will insert the data to DB
