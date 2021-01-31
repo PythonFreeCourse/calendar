@@ -82,4 +82,5 @@ class TestEvent:
     def test_no_connection_to_db(self, event):
         with pytest.raises(HTTPException):
             response = delete_event(event_id=1, db=None)
-            assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+            assert response.status_code == status.\
+                HTTP_500_INTERNAL_SERVER_ERROR
