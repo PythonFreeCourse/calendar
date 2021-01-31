@@ -6,7 +6,7 @@ from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
 from app.internal.utils import create_model
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -53,22 +53,25 @@ def is_date_before(start_date: datetime, end_date: datetime) -> bool:
 
 
 def is_change_dates_allowed(
-        db: Session, old_event: Event, event: Dict[str, Any]) -> bool:
-    return is_date_before(
-        event.get('start', old_event.start),
-        event.get('end', old_event.end))
+        old_event: Event, event: Dict[str, Any]) -> bool:
+    try:
+        return is_date_before(
+            event.get('start', old_event.start),
+            event.get('end', old_event.end))
+    except TypeError:
+        return False
 
 
-def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]
-                          ) -> bool:
+def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     """validate dictionary values by dictionary of types"""
+    errors = []
     for key in to_check.keys():
         if types[key] and not isinstance(to_check[key], types[key]):
-            # for future log
-            # print(key, 'is "'+type(to_check[key]).__name__+
-            #    '" and it should be from type "'+ types[key].__name__+ '"')
-            return False
-    return True
+            errors.append(
+                f"{key} is '{type(to_check[key]).__name__}' and it should be from type '{types[key].__name__}'")
+    if errors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
 
 
 def get_event_with_editable_fields_only(event: Dict[str, Any]
@@ -83,15 +86,11 @@ def update_event(event_id: int, event: Dict, db: Session
 
     # TODO Check if the user is the owner of the event.
     event_to_update = get_event_with_editable_fields_only(event)
-    if not is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS):
-        return None
+    is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS)
     try:
-        old_event = by_id(db=db, event_id=event_id)
-
-        if (not event_to_update
-                or old_event is None
-                or not is_change_dates_allowed(
-                    db, old_event, event_to_update)):
+        old_event = by_id(db, event_id)
+        forbidden = not is_change_dates_allowed(old_event, event_to_update)
+        if not event_to_update or old_event is None or forbidden:
             return None
 
         # Update database
@@ -100,7 +99,7 @@ def update_event(event_id: int, event: Dict, db: Session
         db.commit()
 
         # TODO: Send emails to recipients.
-        return by_id(db=db, event_id=event_id)
+        return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError):
         return None
 
@@ -145,12 +144,18 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
 
 
 @router.delete("/{event_id}")
-def delete_event(request: Request,
-                 event_id: int,
+def delete_event(event_id: int,
                  db: Session = Depends(get_db)):
 
     # TODO: Check if the user is the owner of the event.
-    event = by_id(db, event_id)
+    try:
+        event = by_id(db, event_id)
+    except AttributeError:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="Could not connect to database")
+    if not event:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="The event was not found")
     participants = get_participants_emails_by_event(db, event_id)
     try:
         # Delete event
@@ -162,9 +167,8 @@ def delete_event(request: Request,
         db.commit()
 
     except (SQLAlchemyError, TypeError):
-        return templates.TemplateResponse(
-            "event/eventview.html", {"request": request, "event_id": event_id},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Deletion failed")
     if participants and event.start > datetime.now():
         pass
         # TODO: Send them a cancellation notice
