@@ -1,7 +1,7 @@
 import pytest
 from app.internal.wysiwyg_editor import clean_html
 
-XXS_ATTACKS = [
+XSS_ATTACKS = [
     "<b onmouseover=alert('Wufff!')>click me!</b>",
     r"<img src=\"http://url.to.file.which/not.exist\" \
         onerror=alert(document.cookie);>",
@@ -11,7 +11,7 @@ XXS_ATTACKS = [
     <script>alert(document.cookie)</script>"]
 
 
-@pytest.mark.parametrize("text", XXS_ATTACKS)
+@pytest.mark.parametrize("text", XSS_ATTACKS)
 def test_bleach_clean(text):
     cleaned = clean_html(text)
     assert cleaned != text
