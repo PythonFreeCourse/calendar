@@ -187,8 +187,9 @@ def get_holidays_from_file(file, session):
     parsed_holidays = REGEX_EXTRACT_HOLIDAYS.finditer(file)
     holidays = []
     for holiday in parsed_holidays:
+        valid_ascii_chars_range = 128
         title = holiday.groupdict()['title'].strip()
-        title_to_save = ''.join([i if ord(i) < 128 else '' for i in title])
+        title_to_save = ''.join([i if ord(i) < valid_ascii_chars_range else '' for i in title])
         date = holiday.groupdict()['date'].strip()
         holiday = Event(
             title=title_to_save,
