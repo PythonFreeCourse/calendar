@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
+from loguru import logger
 
 router = APIRouter(
     prefix="/event",
@@ -70,6 +71,7 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
             errors.append(
                 f"{key} is '{type(to_check[key]).__name__}' and it should be"
                 + f"from type '{types[key].__name__}'")
+            logger.warning(errors)
     if errors:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
@@ -102,7 +104,8 @@ def update_event(event_id: int, event: Dict, db: Session
 
         # TODO: Send emails to recipients.
         return by_id(db, event_id)
-    except (AttributeError, SQLAlchemyError):
+    except (AttributeError, SQLAlchemyError) as e:
+        logger.error(str(e))
         return None
 
 
@@ -152,7 +155,8 @@ def delete_event(event_id: int,
     # TODO: Check if the user is the owner of the event.
     try:
         event = by_id(db, event_id)
-    except AttributeError:
+    except AttributeError as e:
+        logger.error(str(e) + "Could not connect to database")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Could not connect to database")
     if not event:
@@ -168,7 +172,8 @@ def delete_event(event_id: int,
 
         db.commit()
 
-    except (SQLAlchemyError, TypeError):
+    except (SQLAlchemyError, TypeError) as e:
+        logger.error(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Deletion failed")
