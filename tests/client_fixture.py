@@ -72,7 +72,7 @@ def get_test_placeholder_user2():
         full_name='FakeName'
     )
 
-"""
+
 @pytest.fixture
 def audio_test_client():
     Base.metadata.create_all(bind=test_engine)
@@ -81,7 +81,7 @@ def audio_test_client():
         audio.get_placeholder_user] = get_test_placeholder_user2
     with TestClient(app) as client:
         yield client
-"""
+
 
 @pytest.fixture(scope="session")
 def event_test_client():
