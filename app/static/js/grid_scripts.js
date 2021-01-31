@@ -3,7 +3,6 @@ let last = 0;
 let lastIndex = 0;
 
 function setToggle(elementClass, targetElement, classToAdd) {
-    alert(lastIndex);
     let allDays = document.getElementsByClassName(elementClass);
     for (let i = lastIndex; i < allDays.length; ++i) {
         allDays[i].addEventListener("click", function () {
