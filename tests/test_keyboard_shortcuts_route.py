@@ -1,4 +1,5 @@
 OK_STATUS_CODE = 200
+DATA_IN_SHORTCUTS_PAGE = b'General Shortcuts'
 
 
 class TestKeyboardShortcuts:
@@ -7,3 +8,7 @@ class TestKeyboardShortcuts:
     def test_get_page(self, client):
         res = client.get(self.URL)
         assert res.status_code == OK_STATUS_CODE
+
+    def test_get_keyboard_shortcuts_page(self, client):
+        res = client.get(self.URL)
+        assert DATA_IN_SHORTCUTS_PAGE in res.content
