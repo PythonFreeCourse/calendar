@@ -17,8 +17,8 @@ from app.dependencies import MEDIA_PATH, templates
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 REGEX_EXTRACT_HOLIDAYS = re.compile(
-        r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
-        re.MULTILINE)
+    r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
+    re.MULTILINE)
 
 router = APIRouter(
     prefix="/profile",
@@ -219,5 +219,3 @@ async def save_holidays_to_db(holidays, session):
         userevents.append(userevent)
     session.add_all(userevents)
     session.commit()
-
-
