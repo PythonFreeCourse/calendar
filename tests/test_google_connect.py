@@ -172,7 +172,18 @@ def test_get_credentials_from_db(session):
 
 
 @pytest.mark.usefixtures("session", "user", "credentials")
-def test_refresh_token(session, user, credentials):
+def test_refresh_token(mocker, session, user, credentials):
+
+    def safe_expired():
+        return False
+
+    assert google_connect.refresh_token(credentials, session, user)
+
+    mocker.patch(
+        'google.oauth2.credentials.Credentials.expired',
+        return_value=safe_expired
+    )
+
     assert google_connect.refresh_token(credentials, session, user)
 
 
@@ -305,3 +316,34 @@ def test_google_sync_third_path(mocker, google_connect_test_client,
 def test_is_client_secret_not_none():
     answer = google_connect.is_client_secret_not_none()
     assert answer is not None
+
+
+@pytest.mark.usefixtures("session")
+def test_clean_up_old_credentials_from_db(session):
+    google_connect.clean_up_old_credentials_from_db(session)
+    assert len(session.query(OAuthCredentials)
+               .filter_by(user_id=None).all()) == 0
+
+
+@pytest.mark.usefixtures("session", 'user', 'credentials')
+def test_get_credentials_from_consent_screen(mocker, session,
+                                             user, credentials):
+    mocker.patch(
+        'google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file',
+        return_value=mocker.Mock(name='flow', **{
+            "credentials": credentials,
+            "run_local_server": safe_run_local_server
+        })
+    )
+    assert google_connect.get_credentials_from_consent_screen(
+                                                user, session) == credentials
+
+
+@pytest.mark.usefixtures("session")
+def test_get_active_user(session):
+    create_user(session=session,
+                username='new_test_username',
+                password='new_test_password',
+                email='new_test.email@gmail.com')
+
+    assert google_connect.get_active_user(session=session)

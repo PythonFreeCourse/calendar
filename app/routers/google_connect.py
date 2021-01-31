@@ -29,12 +29,11 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
     the user to a consent screen to use his google calendar data with the app.
     '''
 
-    # TODO - get connected/current user
-    user = session.query(User).filter_by(id=1).first()
+    user = get_active_user(session)
     credentials, status = get_credentials_from_db(user)
+
     if status:
-        if credentials.expired:
-            credentials = refresh_token(credentials, session, user)
+        credentials = refresh_token(credentials, session, user)
 
     elif not status:
         # first sync
@@ -44,29 +43,12 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
             url = profile_router.url_path_for("profile")
             return RedirectResponse(url=url)
 
-        flow = InstalledAppFlow.from_client_secrets_file(
-            client_secrets_file=CLIENT_SECRET_FILE,
-            scopes=SCOPES
-        )
+        credentials = get_credentials_from_consent_screen(
+                            user=user,
+                            session=session
+                        )
 
-        flow.run_local_server(prompt='consent')
-        credentials = flow.credentials
-
-        oauth_credentials = OAuthCredentials(
-            owner=user,
-            token=credentials.token,
-            refresh_token=credentials.refresh_token,
-            token_uri=credentials.token_uri,
-            client_id=credentials.client_id,
-            client_secret=credentials.client_secret,
-            expiry=credentials.expiry
-        )
-
-        session.add(oauth_credentials)
-        session.commit()
-
-    session.query(OAuthCredentials).filter_by(user_id=None).delete()
-    session.commit()
+    clean_up_old_credentials_from_db(session=session)
 
     events = get_current_year_events(credentials, user, session)
     push_events_to_db(events, user, session)
@@ -74,6 +56,43 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
 
     url = profile_router.url_path_for("profile")
     return RedirectResponse(url=url)
+
+
+def clean_up_old_credentials_from_db(session: SessionLocal) -> None:
+    session.query(OAuthCredentials).filter_by(user_id=None).delete()
+    session.commit()
+
+
+def get_credentials_from_consent_screen(user: User,
+                                        session: SessionLocal) -> Credentials:
+    flow = InstalledAppFlow.from_client_secrets_file(
+        client_secrets_file=CLIENT_SECRET_FILE,
+        scopes=SCOPES
+    )
+
+    flow.run_local_server(prompt='consent')
+    credentials = flow.credentials
+
+    oauth_credentials = OAuthCredentials(
+        owner=user,
+        token=credentials.token,
+        refresh_token=credentials.refresh_token,
+        token_uri=credentials.token_uri,
+        client_id=credentials.client_id,
+        client_secret=credentials.client_secret,
+        expiry=credentials.expiry
+    )
+
+    session.add(oauth_credentials)
+    session.commit()
+
+    return credentials
+
+
+def get_active_user(session: SessionLocal) -> User:
+    # TODO - get connected/current user
+    user = session.query(User).filter_by(id=1).first()
+    return user
 
 
 def is_client_secret_not_none():
@@ -189,17 +208,21 @@ def get_credentials_from_db(user: User) -> tuple:
 
 def refresh_token(credentials: Credentials,
                   session: SessionLocal, user: User) -> Credentials:
-    credentials.refresh(google_request())
-    refreshed_credentials = OAuthCredentials(
-        owner=user,
-        token=credentials.token,
-        refresh_token=credentials.refresh_token,
-        token_uri=credentials.token_uri,
-        client_id=credentials.client_id,
-        client_secret=credentials.client_secret,
-        expiry=credentials.expiry
-    )
 
-    session.add(refreshed_credentials)
-    session.commit()
+    if credentials.expired:
+        credentials.refresh(google_request())
+        refreshed_credentials = OAuthCredentials(
+            owner=user,
+            token=credentials.token,
+            refresh_token=credentials.refresh_token,
+            token_uri=credentials.token_uri,
+            client_id=credentials.client_id,
+            client_secret=credentials.client_secret,
+            expiry=credentials.expiry
+        )
+
+        session.add(refreshed_credentials)
+        session.commit()
+    else:
+        refreshed_credentials = credentials
     return refreshed_credentials
