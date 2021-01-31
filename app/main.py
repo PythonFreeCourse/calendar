@@ -4,8 +4,7 @@ from sqlalchemy.orm import Session
 
 from app import config
 from app.database import engine, models
-from app.dependencies import get_db, MEDIA_PATH, STATIC_PATH, templates
-from app.internal.logger_customizer import LoggerCustomizer
+from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal.quotes import load_quotes, daily_quotes
 from app.routers import (agenda, dayview, email, event, invitation, profile,
                          search, telegram, whatsapp)
@@ -31,14 +30,6 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 load_quotes.load_daily_quotes(next(get_db()))
 
-# Configure logger
-logger = LoggerCustomizer.make_logger(config.LOG_PATH,
-                                      config.LOG_FILENAME,
-                                      config.LOG_LEVEL,
-                                      config.LOG_ROTATION_INTERVAL,
-                                      config.LOG_RETENTION_INTERVAL,
-                                      config.LOG_FORMAT)
-app.logger = logger
 
 app.include_router(profile.router)
 app.include_router(event.router)
@@ -57,7 +48,7 @@ telegram_bot.set_webhook()
 # TODO: I add the quote day to the home page
 # until the relavent calendar view will be developed.
 @app.get("/")
-@app.logger.catch()
+@logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {

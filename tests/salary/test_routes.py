@@ -30,7 +30,11 @@ CATEGORY_PICK = [
     (conftest.ROUTES['view'], conftest.MESSAGES['view_salary']),
 ]
 
-INVALIDS = [
+INVALID = [
+    (conftest.ROUTES['edit'] + '/' + str(conftest.ALT_CATEGORY_ID),
+     conftest.MESSAGES['pick_settings']),
+    (conftest.ROUTES['view'] + '/' + str(conftest.ALT_CATEGORY_ID),
+     conftest.MESSAGES['pick_category']),
     (conftest.ROUTES['edit'] + '/' + str(conftest.INVALID_CATEGORY_ID),
      conftest.MESSAGES['pick_settings']),
     (conftest.ROUTES['view'] + '/' + str(conftest.INVALID_CATEGORY_ID),
@@ -188,14 +192,6 @@ def test_pick_category(salary_test_client: TestClient, wage: SalarySettings,
     assert message in response.text
 
 
-# def test_pick_settings(salary_test_client: TestClient,
-#                        wage: SalarySettings) -> None:
-#     data = {'category_id': wage.category_id}
-#     response = salary_test_client.post(conftest.ROUTES['edit'], data=data,
-#                                        allow_redirects=True)
-#     assert conftest.MESSAGES['edit_settings'] in response.text
-
-
 @mock.patch.multiple('app.routers.salary.routes',
                      SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
@@ -227,17 +223,33 @@ def test_edit_settings(salary_test_client: TestClient,
     assert settings != utils.get_settings(wage.user_id, wage.category_id)
 
 
-@pytest.mark.parametrize('path, message', INVALIDS)
+@pytest.mark.parametrize('path, message', INVALID)
 @mock.patch.multiple('app.routers.salary.routes',
                      SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
 @mock.patch('app.routers.salary.utils.SessionLocal',
             new=TestingSessionLocal)
-def test_invalid_page_redirects(salary_test_client: TestClient,
-                                wage: SalarySettings, path: str,
-                                message: str) -> None:
+def test_invalid_category_redirect(
+    salary_test_client: TestClient, wage: SalarySettings, path: str,
+        message: str) -> None:
     response = salary_test_client.get(path)
+    assert any(temp.status_code == conftest.HTTP_CODES['temp_redirect']
+               for temp in response.history)
+    print(response.text)
     assert message in response.text
+
+
+# @pytest.mark.parametrize('path, message', INVALIDS)
+# @mock.patch.multiple('app.routers.salary.routes',
+#                      SessionLocal=TestingSessionLocal,
+#                      get_current_user=get_current_user)
+# @mock.patch('app.routers.salary.utils.SessionLocal',
+#             new=TestingSessionLocal)
+# def test_invalid_page_redirects(salary_test_client: TestClient,
+#                                 wage: SalarySettings, path: str,
+#                                 message: str) -> None:
+#     response = salary_test_client.get(path)
+#     assert message in response.text
 
 
 @mock.patch.multiple('app.routers.salary.routes',

@@ -222,13 +222,16 @@ async def edit_settings(request: Request, category_id: int,
             'view_salary', category_id=str(category_id)))
 
     except KeyError:
-        return templates.TemplateResponse('salary/settings.j2', {
-            'request': request,
-            'wage': wage,
-            'category': category,
-            'category_id': category_id,
-            'holidays': holidays
-        })
+        if wage:
+            return templates.TemplateResponse('salary/settings.j2', {
+                'request': request,
+                'wage': wage,
+                'category': category,
+                'category_id': category_id,
+                'holidays': holidays
+            })
+
+        return RedirectResponse(router.url_path_for('pick_settings'))
 
 
 @router.post('/view')
@@ -301,16 +304,19 @@ async def view_salary(request: Request, category_id: int) -> Response:
         })
 
     except KeyError:
-        shifts = utils.get_event_by_category(category_id=category_id)
-        start_date = shifts[0].start
-        end_date = shifts[-1].start
-        start = f'{start_date.year}-{str(start_date.month).zfill(2)}'
-        end = f'{end_date.year}-{str(end_date.month).zfill(2)}'
+        if wage:
+            shifts = utils.get_event_by_category(category_id=category_id)
+            start_date = shifts[0].start
+            end_date = shifts[-1].start
+            start = f'{start_date.year}-{str(start_date.month).zfill(2)}'
+            end = f'{end_date.year}-{str(end_date.month).zfill(2)}'
 
-        return templates.TemplateResponse('salary/month.j2', {
-            'request': request,
-            'category': category,
-            'category_id': category_id,
-            'start': start,
-            'end': end,
-        })
+            return templates.TemplateResponse('salary/month.j2', {
+                'request': request,
+                'category': category,
+                'category_id': category_id,
+                'start': start,
+                'end': end,
+            })
+
+        return RedirectResponse(router.url_path_for('pick_category'))
