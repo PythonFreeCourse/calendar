@@ -1,70 +1,19 @@
 {% extends 'calendar/layout.html' %}
 
-{% block body %}
-<div class="container">
-    <nav class="text-lightgray background-darkblue">
-        <div class="menu">
-            <div class="fixed-features">
-                <div>
-                    <a href="/profile">
-                        <ion-icon name="person-circle-outline"></ion-icon>
-                    </a>
-                </div>
-                <div>
-                    <ion-icon name="search" alt="Search icon"></ion-icon>
-                </div>
-                <div>
-                    <ion-icon name="settings-outline"></ion-icon>
-                </div>
-                <div>
-                    <ion-icon name="calendar-outline"></ion-icon>
-                </div>
-                <div>
-                    <ion-icon name="cube-outline"></ion-icon>
-                </div>
-            </div>
-            <div class="user-features">
-                <div class="feature" name="feather01">
-                    <ion-icon name="chatbox"></ion-icon>
-                </div>
-            </div>
-            <div id="open-features">
-                <ion-icon name="ellipsis-vertical"></ion-icon>
-            </div>
-        </div>
-    </nav>
-    <div class="background-lightgray" id="feature-settings">
-        <div class="title"> FEATURE NAME </div>
+{% block main %}
+<div class="calendar">
+    <div class="calender-days-titles">
+        {% for d in week_days %}
+        {% if d == day.sday %}
+        <div class="day-title underline-yellow"><b>{{ d.upper() }}</b></div>
+        {% else %}
+        <div class="day-title"> {{ d.upper() }}</div>
+        {% endif %}
+        {% endfor %}
     </div>
-    <div>
-        <header>
-            <div>
-                <div class="title"> {{day.display()}}</div>
-                <div class="sec-title"> Location 0<sup>o</sup>c 00:00</div>
-            </div>
-            <div id="logo-div">
-                <a href="/calendar/month">
-                    <h1 class="title"> PYLENDAR </h1>
-                </a>
-            </div>
-        </header>
-        <main>
-            <div class="calendar">
-                <div class="calender-days-titles">
-                    {% for d in week_days %}
-                    {% if d == day.sday %}
-                    <div class="day-title underline-yellow"><b>{{ d.upper() }}</b></div>
-                    {% else %}
-                    <div class="day-title"> {{ d.upper() }}</div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-                <div id="calender-grid">
-                    {% include 'calendar/add_week.html' %}
-                </div>
-            </div>
-            <div id="day-view"></div>
-        </main>
+    <div id="calender-grid">
+        {% include 'calendar/add_week.html' %}
     </div>
 </div>
+<div id="day-view"></div>
 {% endblock %}

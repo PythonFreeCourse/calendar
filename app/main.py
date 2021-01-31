@@ -6,11 +6,13 @@ from app import config
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
-from app.dependencies import MEDIA_PATH, STATIC_PATH, templates
-from app.internal.logger_customizer import LoggerCustomizer
-from app.internal.quotes import daily_quotes, load_quotes
-from app.routers import (agenda, calendar, dayview, email, event, invitation,
-                         profile, search, telegram, whatsapp)
+from app.dependencies import (
+    MEDIA_PATH, STATIC_PATH, templates, logger)
+from app.internal.quotes import load_quotes, daily_quotes
+from app.routers import (
+    agenda, dayview, email, event, invitation, profile, search, telegram,
+    whatsapp
+)
 from app.telegram.bot import telegram_bot
 
 
@@ -33,14 +35,6 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.include_router(calendar.router)
 load_quotes.load_daily_quotes(next(get_db()))
 
-# Configure logger
-logger = LoggerCustomizer.make_logger(config.LOG_PATH,
-                                      config.LOG_FILENAME,
-                                      config.LOG_LEVEL,
-                                      config.LOG_ROTATION_INTERVAL,
-                                      config.LOG_RETENTION_INTERVAL,
-                                      config.LOG_FORMAT)
-app.logger = logger
 
 app.include_router(profile.router)
 app.include_router(event.router)
@@ -56,7 +50,7 @@ telegram_bot.set_webhook()
 
 
 @app.get("/")
-@app.logger.catch()
+@logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
