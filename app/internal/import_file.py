@@ -3,7 +3,7 @@ import datetime
 import os
 from pathlib import Path
 import re
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, Generator, List, Tuple, Union
 
 from icalendar import Calendar
 
@@ -18,6 +18,7 @@ from app.config import (
 )
 from app.database.database import SessionLocal
 from app.routers.event import create_event
+from loguru import logger
 
 
 DATE_FORMAT = "%m-%d-%Y"
@@ -91,9 +92,10 @@ def is_file_valid_to_save_to_database(events: List[Dict[str, Union[str, Any]]],
     return same_date_counter <= max_event_start_date
 
 
-def open_txt_file(txt_file: str) -> List[str]:
+def open_txt_file(txt_file: str) -> Generator[str, None, None]:
     with open(txt_file, "r") as text:
-        return text.readlines()
+        for row in text.readlines():
+            yield row
 
 
 def save_calendar_content_txt(event: str, calendar_content: List) -> bool:
@@ -114,8 +116,7 @@ def save_calendar_content_txt(event: str, calendar_content: List) -> bool:
 
 def import_txt_file(txt_file: str) -> List[Dict[str, Union[str, Any]]]:
     calendar_content = []
-    events = open_txt_file(txt_file)
-    for event in events:
+    for event in open_txt_file(txt_file):
         if (not is_event_text_valid(event) or
            not save_calendar_content_txt(event, calendar_content)):
             return []
@@ -126,7 +127,8 @@ def open_ics(ics_file: str) -> Union[List, Calendar]:
     with open(ics_file, "r") as ics:
         try:
             calendar_read = Calendar.from_ical(ics.read())
-        except (IndexError, ValueError):
+        except (IndexError, ValueError) as e:
+            logger.error(f"open_ics function failed error message: {e}")
             return []
     return calendar_read
 
