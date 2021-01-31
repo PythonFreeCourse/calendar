@@ -184,9 +184,8 @@ class SalarySettings(Base):
     )
     daily_transport = Column(
         Float, CheckConstraint(
-            f"daily_transport<={SalaryConfig.MAXIMUM_TRANSPORT}",
-            ),
-         nullable=False, default=SalaryConfig.STANDARD_TRANSPORT,
+            f"daily_transport<={SalaryConfig.MAXIMUM_TRANSPORT}"),
+        nullable=False, default=SalaryConfig.STANDARD_TRANSPORT,
     )
 
     user = relationship("User", back_populates="salary_settings")

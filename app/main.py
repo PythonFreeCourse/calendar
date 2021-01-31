@@ -7,8 +7,8 @@ from app.database import engine, models
 from app.dependencies import get_db, MEDIA_PATH, STATIC_PATH, templates
 from app.internal.logger_customizer import LoggerCustomizer
 from app.internal.quotes import load_quotes, daily_quotes
-from app.routers import (agenda, dayview, email, event, invitation, profile, search, telegram,
-                         whatsapp)
+from app.routers import (agenda, dayview, email, event, invitation, profile,
+                         search, telegram, whatsapp)
 from app.routers.salary import routes as salary
 from app.telegram.bot import telegram_bot
 

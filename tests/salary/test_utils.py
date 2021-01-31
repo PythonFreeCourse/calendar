@@ -20,13 +20,20 @@ NIGHT_TIMES = [
 ]
 
 NIGHT_SHIFTS = [
-    (datetime(2020, 12, 1, 23, 15), datetime(2020, 12, 1, 5, 15), False),  # Invalid shift
-    (datetime(2020, 12, 1, 9, 15), datetime(2020, 12, 1, 18, 15), False),  # Not during night
-    (datetime(2020, 12, 1, 20, 15), datetime(2020, 12, 1, 23, 15), False),  # Too short - evening
-    (datetime(2020, 12, 1, 5, 15), datetime(2020, 12, 1, 6, 15), False),  # Too short - morning
-    (datetime(2020, 12, 1, 3, 15), datetime(2020, 12, 1, 7, 15), True),  # Same Date 
-    (datetime(2020, 12, 1, 19, 15), datetime(2020, 12, 2, 1, 15), True),  # Date changing
-    (datetime(2020, 12, 1, 19, 15), datetime(2020, 12, 2, 7, 15), True)  # Entire night
+    # Invalid shift
+    (datetime(2020, 12, 1, 23, 15), datetime(2020, 12, 1, 5, 15), False),
+    # Not during night
+    (datetime(2020, 12, 1, 9, 15), datetime(2020, 12, 1, 18, 15), False),
+    # Too short - evening
+    (datetime(2020, 12, 1, 20, 15), datetime(2020, 12, 1, 23, 15), False),
+    # Too short - morning
+    (datetime(2020, 12, 1, 5, 15), datetime(2020, 12, 1, 6, 15), False),
+    # Same Date
+    (datetime(2020, 12, 1, 3, 15), datetime(2020, 12, 1, 7, 15), True),
+    # Date changing
+    (datetime(2020, 12, 1, 19, 15), datetime(2020, 12, 2, 1, 15), True),
+    # Entire night
+    (datetime(2020, 12, 1, 19, 15), datetime(2020, 12, 2, 7, 15), True)
 ]
 
 HOLIDAY_TIMES = [
@@ -52,44 +59,52 @@ HOLIDAY_HOURS = [
 ]
 
 OVERTIMES = [
-    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19), (10.5, 2)),  # Regular shift
-    (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4), (11, 3)),  # Night shift
-    (datetime(2021, 1, 2, 9), datetime(2021, 1, 2, 19), (15.5, 2)),  # Off-day shift
-    (datetime(2021, 1, 2, 14), datetime(2021, 1, 3, 0), (16, 3)),  # Night off-day shift
+    # Regular shift
+    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19), (10.5, 2)),
+    # Night shift
+    (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4), (11, 3)),
+    # Off-day shift
+    (datetime(2021, 1, 2, 9), datetime(2021, 1, 2, 19), (15.5, 2)),
+    # Night off-day shift
+    (datetime(2021, 1, 2, 14), datetime(2021, 1, 3, 0), (16, 3))
 ]
 
 SHIFTS = [
-    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19), 315),  # Regular shift
-    (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4), 330),  # Night shift
-    (datetime(2021, 1, 2, 9), datetime(2021, 1, 2, 19), 465),  # Off-day shift
-    (datetime(2021, 1, 2, 14), datetime(2021, 1, 3, 0), 480),  # Night off-day shift
+    # Regular shift
+    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19), 315),
+    # Night shift
+    (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4), 330),
+    # Off-day shift
+    (datetime(2021, 1, 2, 9), datetime(2021, 1, 2, 19), 465),
+    # Night off-day shift
+    (datetime(2021, 1, 2, 14), datetime(2021, 1, 3, 0), 480),
 ]
 
 WEEK_SHIFTS = [
-    ((Event(start = datetime(2021, 1, 10, 9),
-            end = datetime(2021, 1, 10, 19)),), 0.0),
-    ((Event(start = datetime(2021, 1, 10, 9),
-            end = datetime(2021, 1, 10, 19)),
-      Event(start = datetime(2021, 1, 11, 9),
-            end = datetime(2021, 1, 11, 17)),
-      Event(start = datetime(2021, 1, 12, 9),
-            end = datetime(2021, 1, 12, 17)),
-      Event(start = datetime(2021, 1, 13, 9),
-            end = datetime(2021, 1, 13, 18)),
-      Event(start = datetime(2021, 1, 14, 9),
-            end = datetime(2021, 1, 14, 17))), 0.0),
-    ((Event(start = datetime(2021, 1, 10, 9),
-            end = datetime(2021, 1, 10, 19)),
-      Event(start = datetime(2021, 1, 11, 9),
-            end = datetime(2021, 1, 11, 17)),
-      Event(start = datetime(2021, 1, 12, 9),
-            end = datetime(2021, 1, 12, 17)),
-      Event(start = datetime(2021, 1, 13, 9),
-            end = datetime(2021, 1, 13, 18)),
-      Event(start = datetime(2021, 1, 14, 9),
-            end = datetime(2021, 1, 14, 17)),
-      Event(start = datetime(2021, 1, 15, 9),
-            end = datetime(2021, 1, 15, 14, 58))), 119.0),
+    ((Event(start=datetime(2021, 1, 10, 9),
+            end=datetime(2021, 1, 10, 19)),), 0.0),
+    ((Event(start=datetime(2021, 1, 10, 9),
+            end=datetime(2021, 1, 10, 19)),
+      Event(start=datetime(2021, 1, 11, 9),
+            end=datetime(2021, 1, 11, 17)),
+      Event(start=datetime(2021, 1, 12, 9),
+            end=datetime(2021, 1, 12, 17)),
+      Event(start=datetime(2021, 1, 13, 9),
+            end=datetime(2021, 1, 13, 18)),
+      Event(start=datetime(2021, 1, 14, 9),
+            end=datetime(2021, 1, 14, 17))), 0.0),
+    ((Event(start=datetime(2021, 1, 10, 9),
+            end=datetime(2021, 1, 10, 19)),
+      Event(start=datetime(2021, 1, 11, 9),
+            end=datetime(2021, 1, 11, 17)),
+      Event(start=datetime(2021, 1, 12, 9),
+            end=datetime(2021, 1, 12, 17)),
+      Event(start=datetime(2021, 1, 13, 9),
+            end=datetime(2021, 1, 13, 18)),
+      Event(start=datetime(2021, 1, 14, 9),
+            end=datetime(2021, 1, 14, 17)),
+      Event(start=datetime(2021, 1, 15, 9),
+            end=datetime(2021, 1, 15, 14, 58))), 119.0),
 ]
 
 MONTHS = [
@@ -146,8 +161,8 @@ def create_month_shifts(start: datetime, end: datetime,
         for j in range(6):
             if j < 5 or add_sixth_day:
                 shifts.append(Event(
-                    start = start + timedelta(i) * 7 + timedelta(j), 
-                    end = end + timedelta(i) * 7 + timedelta(j)))
+                    start=start + timedelta(i) * 7 + timedelta(j),
+                    end=end + timedelta(i) * 7 + timedelta(j)))
     return shifts
 
 
@@ -182,7 +197,7 @@ def test_is_night_shift(wage: SalarySettings, start: datetime, end: datetime,
                          HOLIDAY_TIMES)
 def test_get_relevant_holiday_times(
     wage: SalarySettings, start: datetime, end: datetime,
-    dates: Tuple[datetime, datetime]) -> None:
+        dates: Tuple[datetime, datetime]) -> None:
     # Code revision required after holiday times feature is added
     # Code revision required after Shabbat times feature is added
     assert utils.get_relevant_holiday_times(
@@ -190,11 +205,13 @@ def test_get_relevant_holiday_times(
 
 
 @pytest.mark.parametrize(
-    'event_1_start, event_1_end, event_2_start, event_2_end, total', SYNC_TIMES)
-def test_get_total_synchronous_hours(
-    event_1_start: datetime, event_1_end: datetime,
-    event_2_start: datetime, event_2_end: datetime,
-    total: float) -> None:
+    'event_1_start, event_1_end, event_2_start, event_2_end, total',
+    SYNC_TIMES)
+def test_get_total_synchronous_hours(event_1_start: datetime,
+                                     event_1_end: datetime,
+                                     event_2_start: datetime,
+                                     event_2_end: datetime,
+                                     total: float) -> None:
     assert utils.get_total_synchronous_hours(
         event_1_start, event_1_end, event_2_start, event_2_end) == total
 
@@ -215,8 +232,8 @@ def test_adjust_overtime(wage: SalarySettings, start: datetime, end: datetime,
 
 
 @pytest.mark.parametrize('start, end, salary', SHIFTS)
-def test_calc_shift_salary(wage: SalarySettings, start: datetime, end: datetime,
-                     salary: float) -> None:
+def test_calc_shift_salary(wage: SalarySettings, start: datetime,
+                           end: datetime, salary: float) -> None:
     assert utils.calc_shift_salary(start, end, wage) == salary
 
 
@@ -229,18 +246,18 @@ def test_calc_weekly_overtime(wage: SalarySettings, shifts: Tuple[Event, ...],
 def test_get_event_by_category() -> None:
     # Code revision required after categories feature is added
     shifts = (
-        Event(start = datetime(2021, 1, 10, 9),
-                  end = datetime(2021, 1, 10, 19)),
-        Event(start = datetime(2021, 1, 11, 9),
-                  end = datetime(2021, 1, 11, 17)),
-        Event(start = datetime(2021, 1, 12, 9),
-                  end = datetime(2021, 1, 12, 17)),
-        Event(start = datetime(2021, 1, 13, 9),
-                  end = datetime(2021, 1, 13, 18)),
-        Event(start = datetime(2021, 1, 14, 9),
-                  end = datetime(2021, 1, 14, 17)),
-        Event(start = datetime(2021, 1, 15, 9),
-                  end = datetime(2021, 1, 15, 14, 58)),
+        Event(start=datetime(2021, 1, 10, 9),
+              end=datetime(2021, 1, 10, 19)),
+        Event(start=datetime(2021, 1, 11, 9),
+              end=datetime(2021, 1, 11, 17)),
+        Event(start=datetime(2021, 1, 12, 9),
+              end=datetime(2021, 1, 12, 17)),
+        Event(start=datetime(2021, 1, 13, 9),
+              end=datetime(2021, 1, 13, 18)),
+        Event(start=datetime(2021, 1, 14, 9),
+              end=datetime(2021, 1, 14, 17)),
+        Event(start=datetime(2021, 1, 15, 9),
+              end=datetime(2021, 1, 15, 14, 58)),
     )
     events = utils.get_event_by_category()
     assert len(events) == len(shifts)
@@ -288,7 +305,7 @@ def test_calc_transport(amount: int, daily_transport: float,
             side_effect=get_event_by_category)
 def test_calc_salary(
     mocked_func, wage: SalarySettings, overtime: bool,
-    deduction: config.NUMERIC, salary: Dict[str, config.NUMERIC]) -> None:
+        deduction: config.NUMERIC, salary: Dict[str, config.NUMERIC]) -> None:
     # Code revision required after categories feature is added
     assert utils.calc_salary(2021, 1, wage, overtime, 0, deduction) == salary
 

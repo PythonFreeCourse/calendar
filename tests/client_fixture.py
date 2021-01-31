@@ -10,7 +10,6 @@ from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 
 
-
 def get_test_placeholder_user() -> Iterator[User]:
     return User(
         username='fake_user',

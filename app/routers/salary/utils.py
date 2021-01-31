@@ -8,19 +8,19 @@ from app.routers.salary import config
 
 
 DEFAULT_SETTINGS = SalarySettings(
-    wage = config.MINIMUM_WAGE,
-    off_day = config.SATURDAY,
-    holiday_category_id = config.ISRAELI_JEWISH,
-    regular_hour_basis = config.REGULAR_HOUR_BASIS,
-    night_hour_basis = config.NIGHT_HOUR_BASIS,
-    night_start = config.NIGHT_START,
-    night_end = config.NIGHT_END,
-    night_min_len = config.NIGHT_MIN_LEN,
-    first_overtime_amount = config.FIRST_OVERTIME_AMOUNT,
-    first_overtime_pay = config.FIRST_OVERTIME_PAY,
-    second_overtime_pay = config.SECOND_OVERTIME_PAY,
-    week_working_hours = config.WEEK_WORKING_HOURS,
-    daily_transport = config.STANDARD_TRANSPORT,
+    wage=config.MINIMUM_WAGE,
+    off_day=config.SATURDAY,
+    holiday_category_id=config.ISRAELI_JEWISH,
+    regular_hour_basis=config.REGULAR_HOUR_BASIS,
+    night_hour_basis=config.NIGHT_HOUR_BASIS,
+    night_start=config.NIGHT_START,
+    night_end=config.NIGHT_END,
+    night_min_len=config.NIGHT_MIN_LEN,
+    first_overtime_amount=config.FIRST_OVERTIME_AMOUNT,
+    first_overtime_pay=config.FIRST_OVERTIME_PAY,
+    second_overtime_pay=config.SECOND_OVERTIME_PAY,
+    week_working_hours=config.WEEK_WORKING_HOURS,
+    daily_transport=config.STANDARD_TRANSPORT,
 )
 
 
@@ -42,7 +42,7 @@ def get_shift_len(start: datetime, end: datetime) -> float:
 def get_night_times(date: datetime, wage: SalarySettings,
                     prev_day: bool = False) -> Tuple[datetime, datetime]:
     """Returns the start and end times of night for the given date.
-    
+
     Args:
         date (datetime): The date to return night times for.
         wage (SalarySettings): The relevant salary calculation settings.
@@ -61,8 +61,7 @@ def get_night_times(date: datetime, wage: SalarySettings,
     else:
         sub = timedelta(0)
     return (datetime.combine(date - sub, wage.night_start),
-            datetime.combine(date + timedelta(1) - sub,
-                                      wage.night_end))
+            datetime.combine(date + timedelta(1) - sub, wage.night_end))
 
 
 def is_night_shift(start: datetime, end: datetime,
@@ -84,14 +83,14 @@ def is_night_shift(start: datetime, end: datetime,
     for boolean in (False, True):
         night_start, night_end = get_night_times(start, wage, boolean)
         if (get_total_synchronous_hours(start, end, night_start, night_end)
-            >= wage.first_overtime_amount):
+                >= wage.first_overtime_amount):
             return True
     return False
 
 
 def get_relevant_holiday_times(
-    start: datetime, end: datetime,
-    wage: SalarySettings) -> Tuple[datetime, datetime]:
+    start: datetime, end: datetime, wage: SalarySettings
+        ) -> Tuple[datetime, datetime]:
     """Returns start and end of holiday times that synchronize with the given
     times, based on the the supplied salary settings.
 
@@ -125,7 +124,7 @@ def get_relevant_holiday_times(
     try:
         return (datetime.combine(date, time(0)),
                 datetime.combine(date + timedelta(1),
-                                          time(0)))
+                                 time(0)))
     except NameError:
         return datetime.min, datetime.min
 
@@ -133,7 +132,7 @@ def get_relevant_holiday_times(
 def get_total_synchronous_hours(
     event_1_start: datetime, event_1_end: datetime,
     event_2_start: datetime, event_2_end: datetime
-    ) -> float:
+        ) -> float:
     """Returns the total amount of hours that are shared between both events.
 
     Args:
@@ -170,7 +169,7 @@ def get_total_synchronous_hours(
 def get_hours_during_holiday(
     shift_start: datetime, shift_end: datetime,
     wage: SalarySettings
-    ) -> float:
+        ) -> float:
     """Returns the total amount of hours of the shifts that are synchronous
     with an holiday.
 
@@ -189,7 +188,7 @@ def get_hours_during_holiday(
     holiday_start, holiday_end = get_relevant_holiday_times(
         shift_start, shift_end, wage)
     return get_total_synchronous_hours(shift_start, shift_end,
-                                 holiday_start, holiday_end)
+                                       holiday_start, holiday_end)
 
 
 def adjust_overtime(start: datetime, end: datetime,
@@ -216,7 +215,7 @@ def adjust_overtime(start: datetime, end: datetime,
     else:
         hour_basis = wage.regular_hour_basis
     shift_len = get_shift_len(start, end)
-    
+
     total_hours += get_hours_during_holiday(start, end, wage) / 2
 
     if shift_len > hour_basis:
@@ -254,7 +253,7 @@ def calc_shift_salary(start: datetime, end: datetime,
 
 
 def calc_weekly_overtime(shifts: Tuple[Event, ...],
-                       wage: SalarySettings) -> float:
+                         wage: SalarySettings) -> float:
     """Returns the weekly overtime amount for the supplied shifts.
 
     Weekly overtime is calculated only for hours exceeding the standard week
@@ -277,11 +276,11 @@ def calc_weekly_overtime(shifts: Tuple[Event, ...],
     if total_week_hours <= wage.week_working_hours:
         return 0.0
     else:
-        total_daily_overtime = sum(map(lambda shift: 
-            adjust_overtime(shift.start, shift.end, wage)[1], shifts))
-        overtime =  (total_week_hours
-                     - wage.week_working_hours
-                     - total_daily_overtime)
+        total_daily_overtime = sum(map(lambda shift: adjust_overtime(
+            shift.start, shift.end, wage)[1], shifts))
+        overtime = (total_week_hours
+                    - wage.week_working_hours
+                    - total_daily_overtime)
         if overtime > 0:
             return round(overtime * wage.wage, 2)
         return 0.0
@@ -290,18 +289,18 @@ def calc_weekly_overtime(shifts: Tuple[Event, ...],
 def get_event_by_category(*args, **kwargs):
     """Mock function for event by category search."""
     # Code revision required after categories feature is added
-    day_1 = Event(start = datetime(2021, 1, 10, 9),
-                  end = datetime(2021, 1, 10, 19))
-    day_2 = Event(start = datetime(2021, 1, 11, 9),
-                  end = datetime(2021, 1, 11, 17))
-    day_3 = Event(start = datetime(2021, 1, 12, 9),
-                  end = datetime(2021, 1, 12, 17))
-    day_4 = Event(start = datetime(2021, 1, 13, 9),
-                  end = datetime(2021, 1, 13, 18))
-    day_5 = Event(start = datetime(2021, 1, 14, 9),
-                  end = datetime(2021, 1, 14, 17))
-    day_6 = Event(start = datetime(2021, 1, 15, 9),
-                  end = datetime(2021, 1, 15, 14, 58))
+    day_1 = Event(start=datetime(2021, 1, 10, 9),
+                  end=datetime(2021, 1, 10, 19))
+    day_2 = Event(start=datetime(2021, 1, 11, 9),
+                  end=datetime(2021, 1, 11, 17))
+    day_3 = Event(start=datetime(2021, 1, 12, 9),
+                  end=datetime(2021, 1, 12, 17))
+    day_4 = Event(start=datetime(2021, 1, 13, 9),
+                  end=datetime(2021, 1, 13, 18))
+    day_5 = Event(start=datetime(2021, 1, 14, 9),
+                  end=datetime(2021, 1, 14, 17))
+    day_6 = Event(start=datetime(2021, 1, 15, 9),
+                  end=datetime(2021, 1, 15, 14, 58))
 
     return (day_1, day_2, day_3, day_4, day_5, day_6)
 
@@ -323,7 +322,7 @@ def get_month_times(year: int, month: int) -> Tuple[datetime, datetime]:
     month_start = datetime(year, month, 1)
     try:
         month_end = datetime(year, month + 1, 1)
-    except:
+    except ValueError:
         month_end = datetime(year + 1, 1, 1)
     return month_start, month_end
 
@@ -379,7 +378,7 @@ def get_monthly_overtime(
     monthly_overtime = []
     for week_start, week_end in weeks:
         weekly_shifts = tuple(shift for shift in shifts
-                                if week_start <= shift.start <= week_end)
+                              if week_start <= shift.start <= week_end)
         monthly_overtime.append(calc_weekly_overtime(weekly_shifts, wage))
     return sum(monthly_overtime)
 
@@ -403,7 +402,7 @@ def calc_transport(shifts_amount: int, daily_transport: float) -> float:
 def calc_salary(
     year: int, month: int, wage: SalarySettings, overtime: bool,
     bonus: config.NUMERIC = 0, deduction: config.NUMERIC = 0,
-    ) -> Dict[str, config.NUMERIC]:
+        ) -> Dict[str, config.NUMERIC]:
     """Returns all details and calculation for the given year and month based
     on the provided settings, including specified additions or deductions.
 
@@ -469,9 +468,9 @@ def get_settings(user_id: int, category_id: int) -> Optional[SalarySettings]:
                                category_id if exists, None otherwise.
     """
     session = SessionLocal()
-    settings = session.query(SalarySettings).filter(
-        and_(SalarySettings.user_id == user_id,
-        SalarySettings.category_id == category_id)).first()
+    settings = session.query(SalarySettings).filter(and_(
+        SalarySettings.user_id == user_id, SalarySettings.category_id
+        == category_id)).first()
     session.close()
     return settings
 

@@ -19,6 +19,7 @@ router = APIRouter(
     dependencies=[Depends(get_db)],
 )
 
+
 def get_current_user() -> User:
     """Mock function for current user information retrival."""
     # Code revision required after user login feature is added
@@ -181,7 +182,7 @@ async def pick_settings(request: Request) -> Response:
 @router.post('/edit/{category_id}')
 @router.get('/edit/{category_id}')
 async def edit_settings(request: Request, category_id: int,
-                          session=Depends(get_db)) -> Response:
+                        session=Depends(get_db)) -> Response:
     """Renders a salary settings edit page for setting corresponding to
     logged-in user and `category_id`, redirects to month choice pre calculation
     display page upon submition, or to category salary settings edit choice
