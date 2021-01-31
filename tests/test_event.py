@@ -58,7 +58,7 @@ class TestEvent:
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     def test_eventedit_post_correct(self, client, user):
-        response = client.post("/event/edit",
+        response = client.post(client.app.url_path_for('create_new_event'),
                                data=CORRECT_EVENT_FORM_DATA)
         assert response.ok
         assert response.status_code == HTTP_302_FOUND
