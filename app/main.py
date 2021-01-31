@@ -32,10 +32,9 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-app.include_router(calendar.router)
 load_quotes.load_daily_quotes(next(get_db()))
 
-
+app.include_router(calendar.router)
 app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
