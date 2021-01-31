@@ -51,7 +51,7 @@ telegram_bot.set_webhook()
 # TODO: I add the quote day to the home page
 # until the relavent calendar view will be developed.
 @app.get("/")
-@app.logger.catch()
+@logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
