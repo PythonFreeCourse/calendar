@@ -14,9 +14,6 @@ from app.routers import (
     )
 from app.telegram.bot import telegram_bot
 
-from datetime import datetime
-from sqlalchemy.orm import Session
-
 
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:
