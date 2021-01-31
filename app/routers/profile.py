@@ -1,14 +1,15 @@
+from starlette.status import HTTP_302_FOUND
+from starlette.responses import RedirectResponse
+from PIL import Image
+from fastapi import APIRouter, Depends, File, Request, UploadFile
+from app.internal.on_this_day_events import get_on_this_day_events
 import io
 
 from app import config
 from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
-from app.internal.on_this_day_events import get_on_this_day_events
-from fastapi import APIRouter, Depends, File, Request, UploadFile
-from PIL import Image
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
+
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -25,7 +26,8 @@ def get_placeholder_user():
         username='new_user',
         email='my@email.po',
         password='1a2s3d4f5g6',
-        full_name='My Name'
+        full_name='My Name',
+        telegram_id=''
     )
 
 
@@ -36,14 +38,12 @@ async def profile(
         new_user=Depends(get_placeholder_user)):
 
     # Get relevant data from database
-    upcouming_events = range(5)
+    upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
     if not user:
         session.add(new_user)
         session.commit()
         user = session.query(User).filter_by(id=1).first()
-
-    session.close()
 
     # Get on this day data from wiki
     on_this_day_data = get_on_this_day_events()
@@ -51,7 +51,7 @@ async def profile(
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
-        "events": upcouming_events,
+        "events": upcoming_events,
         "on_this_day_data": on_this_day_data
     })
 
@@ -68,11 +68,8 @@ async def update_user_fullname(
     user.full_name = new_fullname
     session.commit()
 
-    session.close()
-
     url = router.url_path_for("profile")
-    response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-    return response
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/update_user_email")
@@ -86,8 +83,6 @@ async def update_user_email(
     # Update database
     user.email = new_email
     session.commit()
-
-    session.close()
 
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -105,8 +100,6 @@ async def update_profile(
     user.description = new_description
     session.commit()
 
-    session.close()
-
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
@@ -122,12 +115,25 @@ async def upload_user_photo(
         # Save to database
         user.avatar = await process_image(pic, user)
         session.commit()
-
     finally:
-        session.close()
-
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.post("/update_telegram_id")
+async def update_telegram_id(
+        request: Request, session=Depends(get_db)):
+
+    user = session.query(User).filter_by(id=1).first()
+    data = await request.form()
+    new_telegram_id = data['telegram_id']
+
+    # Update database
+    user.telegram_id = new_telegram_id
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 async def process_image(image, user):
