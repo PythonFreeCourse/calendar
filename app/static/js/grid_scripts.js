@@ -20,28 +20,30 @@ document.addEventListener(
 )
 
 function loadWeek(lastDay) {
-    if (lastDay != last || last === 0) {
-        let path = '/calendar/month/' + lastDay;
-        last = lastDay;
-        fetch(path).then(function (response) {
-            return response.text();
-        }).then(function (html) {
-            let newDays = document.createElement('html');
-            newDays.innerHTML = html;
-            document.getElementById("calender-grid").append(newDays);
-            setToggle("day", "day-view", "day-view-visible");
-        });
+    if (!(lastDay != last || last === 0)) {
+        return false;
     }
+    let path = '/calendar/month/' + lastDay;
+    last = lastDay;
+    fetch(path).then(function (response) {
+        return response.text();
+    }).then(function (html) {
+        let newDays = document.createElement('html');
+        newDays.innerHTML = html;
+        document.getElementById("calender-grid").append(newDays);
+        setToggle("day", "day-view", "day-view-visible");
+    });
 }
+
 
 window.addEventListener(
     'scroll', function () {
-        const condition = window.scrollY + window.innerHeight + tolerance >= document.documentElement.scrollHeight;
+        let condition = window.scrollY + window.innerHeight + tolerance >= document.documentElement.scrollHeight;
         if (!condition) {
             return false
         }
-        const allDays = document.querySelectorAll('.day');
-        const lastDay = allDays[allDays.length - 1].id;
+        let allDays = document.querySelectorAll('.day');
+        let lastDay = allDays[allDays.length - 1].id;
         loadWeek(lastDay);
     }
 )
