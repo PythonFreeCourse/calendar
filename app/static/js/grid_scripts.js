@@ -20,7 +20,7 @@ document.addEventListener(
 )
 
 function loadWeek(lastDay) {
-    if (lastDay === last || last != 0) {
+    if (lastDay === last) {
         return false;
     }
     let path = '/calendar/month/' + lastDay;
@@ -39,7 +39,7 @@ function loadWeek(lastDay) {
 window.addEventListener(
     'scroll', function () {
         if (window.scrollY + window.innerHeight + tolerance < document.documentElement.scrollHeight) {
-            return false
+            return false;
         }
         let allDays = document.querySelectorAll('.day');
         let lastDay = allDays[allDays.length - 1].id;
