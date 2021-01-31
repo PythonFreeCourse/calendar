@@ -3,8 +3,10 @@ import re
 
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, File, Request, UploadFile
+from loguru import logger
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+from sqlalchemy.exc import SQLAlchemyError
 from PIL import Image
 
 from app import config
@@ -14,6 +16,9 @@ from app.dependencies import MEDIA_PATH, templates
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
+REGEX_EXTRACT_HOLIDAYS = re.compile(
+        r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
+        re.MULTILINE)
 
 router = APIRouter(
     prefix="/profile",
@@ -160,12 +165,12 @@ def import_holidays(request: Request):
 @router.post("/update_holidays")
 async def update_holidays(
         file: UploadFile = File(...), session=Depends(get_db)):
-    icsfile = await file.read()
+    icsfile = file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
     try:
         await save_holidays_to_db(holidays, session)
-    except Exception as ex:
-        print(ex)
+    except SQLAlchemyError as ex:
+        logger.error(ex)
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -179,12 +184,9 @@ def get_holidays_from_file(file, session):
     :param session:current connection
     :return:list of holidays events
     """
-    regex = re.compile(
-        r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
-        re.MULTILINE)
-    holidays_iter = regex.finditer(file)
+    parsed_holidays = REGEX_EXTRACT_HOLIDAYS.finditer(file)
     holidays = []
-    for holiday in holidays_iter:
+    for holiday in parsed_holidays:
         title = holiday.groupdict()['title'].strip()
         title_to_save = ''.join([i if ord(i) < 128 else '' for i in title])
         date = holiday.groupdict()['date'].strip()
@@ -205,19 +207,17 @@ async def save_holidays_to_db(holidays, session):
     :param holidays: list of holidays events
     :param session: current connection
     """
-    try:
-        session.add_all(holidays)
-        session.commit()
-        session.flush(holidays)
-        userevents = []
-        for holiday in holidays:
-            userevent = UserEvent(
-                user_id=holiday.owner_id,
-                event_id=holiday.id
-            )
-            userevents.append(userevent)
-        session.add_all(userevents)
-        session.commit()
+    session.add_all(holidays)
+    session.commit()
+    session.flush(holidays)
+    userevents = []
+    for holiday in holidays:
+        userevent = UserEvent(
+            user_id=holiday.owner_id,
+            event_id=holiday.id
+        )
+        userevents.append(userevent)
+    session.add_all(userevents)
+    session.commit()
 
-    except Exception as ex:
-        print(ex)
+
