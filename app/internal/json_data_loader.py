@@ -16,11 +16,10 @@ def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
     try:
         with open(path, 'r') as f:
             json_content_list = json.load(f)
-    except (IOError, ValueError) as err:
+    except (IOError, ValueError):
         file_name = os.path.basename(path)
-        logger.warning(
-            f"An error occurred during reading of json file: {file_name}", err
-            )
+        logger.exception(
+            f"An error occurred during reading of json file: {file_name}")
         return []
     return json_content_list
 
