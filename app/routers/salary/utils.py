@@ -56,10 +56,7 @@ def get_night_times(date: datetime, wage: SalarySettings,
     Raises:
         None
     """
-    if prev_day:
-        sub = timedelta(1)
-    else:
-        sub = timedelta(0)
+    sub = timedelta(1 if prev_day else 0)
     return (datetime.combine(date - sub, wage.night_start),
             datetime.combine(date + timedelta(1) - sub, wage.night_end))
 
@@ -166,35 +163,30 @@ def get_total_synchronous_hours(
         return 0.0
 
 
-def get_hours_during_holiday(
-    shift_start: datetime, shift_end: datetime,
-    wage: SalarySettings
-        ) -> float:
-    """Returns the total amount of hours of the shifts that are synchronous
-    with an holiday.
+def get_hour_basis(start: datetime, end: datetime,
+                   wage: SalarySettings) -> float:
+    """Returns the shift's base hours, not qualifying for overtime.
 
     Args:
-        shift_start (datetime): The shift's start time.
-        shift_end (datetime): The shift's end time.
+        start (datetime): The shift's start time.
+        end (datetime): The shift's end time.
         wage (SalarySettings): The relevant salary calculation settings.
 
     Returns:
-        float: Total amount of hours of the shifts that are synchronous
-               with an holiday.
+        float: Shift's hour basis.
 
     Raises:
         None
     """
-    holiday_start, holiday_end = get_relevant_holiday_times(
-        shift_start, shift_end, wage)
-    return get_total_synchronous_hours(shift_start, shift_end,
-                                       holiday_start, holiday_end)
+    if is_night_shift(start, end, wage):
+        return wage.night_hour_basis
+    return wage.regular_hour_basis
 
 
-def adjust_overtime(start: datetime, end: datetime,
-                    wage: SalarySettings) -> Tuple[float, float]:
-    """Returns a tuple of the adjusted total hours of the shift and the
-    overtime hours.
+def calc_overtime_hours(start: datetime, end: datetime,
+                        wage: SalarySettings) -> Tuple[float, float]:
+    """Returns a tuple of the total hours of the shift adjusted for overtime,
+    and the total overtime hours.
 
     Args:
         start (datetime): The shift's start time.
@@ -208,28 +200,61 @@ def adjust_overtime(start: datetime, end: datetime,
     Raises:
         None
     """
-    total_hours = 0.0
-    overtime = 0.0
-    if is_night_shift(start, end, wage):
-        hour_basis = wage.night_hour_basis
-    else:
-        hour_basis = wage.regular_hour_basis
     shift_len = get_shift_len(start, end)
+    hour_basis = get_hour_basis(start, end, wage)
+    if shift_len <= hour_basis:
+        return shift_len, 0.0
+    overtime = shift_len - hour_basis
+    temp = hour_basis
+    if overtime <= wage.first_overtime_amount:
+        return temp + overtime * wage.first_overtime_pay, overtime
+    return temp + ((overtime - wage.first_overtime_amount)
+                   * wage.second_overtime_pay
+                   + wage.first_overtime_amount
+                   * wage.first_overtime_pay), overtime
 
+
+def get_hours_during_holiday(start: datetime, end: datetime,
+                             wage: SalarySettings) -> float:
+    """Returns the total amount of hours of the shifts that are synchronous
+    with an holiday.
+
+    Args:
+        start (datetime): The shift's start time.
+        end (datetime): The shift's end time.
+        wage (SalarySettings): The relevant salary calculation settings.
+
+    Returns:
+        float: Total amount of hours of the shifts that are synchronous
+               with an holiday.
+
+    Raises:
+        None
+    """
+    holiday_start, holiday_end = get_relevant_holiday_times(
+        start, end, wage)
+    return get_total_synchronous_hours(start, end, holiday_start, holiday_end)
+
+
+def adjust_overtime(start: datetime, end: datetime,
+                    wage: SalarySettings) -> Tuple[float, float]:
+    """Returns a tuple of the total hours of the shift adjusted for overtime
+    and holidays, and the total overtime hours.
+
+    Args:
+        start (datetime): The shift's start time.
+        end (datetime): The shift's end time.
+        wage (SalarySettings): The relevant salary calculation settings.
+
+    Returns:
+        tuple(float, float): The adjusted total hours of the shift and the
+                             overtime hours.
+
+    Raises:
+        None
+    """
+    total_hours, overtime = calc_overtime_hours(start, end, wage)
     total_hours += get_hours_during_holiday(start, end, wage) / 2
-
-    if shift_len > hour_basis:
-        overtime += shift_len - hour_basis
-        total_hours += hour_basis
-        if overtime > wage.first_overtime_amount:
-            total_hours += ((overtime - wage.first_overtime_amount)
-                            * wage.second_overtime_pay
-                            + wage.first_overtime_amount
-                            * wage.first_overtime_pay)
-        else:
-            total_hours += overtime * wage.first_overtime_pay
-    else:
-        total_hours += shift_len
 
     return (total_hours, overtime)
 
@@ -275,15 +300,14 @@ def calc_weekly_overtime(shifts: Tuple[Event, ...],
                            for shift in shifts)
     if total_week_hours <= wage.week_working_hours:
         return 0.0
-    else:
-        total_daily_overtime = sum(map(lambda shift: adjust_overtime(
-            shift.start, shift.end, wage)[1], shifts))
-        overtime = (total_week_hours
-                    - wage.week_working_hours
-                    - total_daily_overtime)
-        if overtime > 0:
-            return round(overtime * wage.wage, 2)
-        return 0.0
+    total_daily_overtime = sum(map(lambda shift: adjust_overtime(
+        shift.start, shift.end, wage)[1], shifts))
+    overtime = (total_week_hours
+                - wage.week_working_hours
+                - total_daily_overtime)
+    if overtime > 0:
+        return round(overtime * wage.wage, 2)
+    return 0.0
 
 
 def get_event_by_category(*args, **kwargs):

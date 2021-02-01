@@ -52,17 +52,41 @@ SYNC_TIMES = [
      datetime(2020, 1, 4, 15), datetime(2020, 1, 4, 22), 0.0),
 ]
 
+HOUR_BASIS = [
+    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19),  # Regular shift
+     config.REGULAR_HOUR_BASIS),
+    (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4),  # Night shift
+     config.NIGHT_HOUR_BASIS),
+]
+
+OVERTIMES = [
+    # Short shift
+    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 14), (5, 0)),
+    # Regular shift
+    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19), (10.5, 2)),
+    # Short night shift
+    (datetime(2021, 1, 5, 1), datetime(2021, 1, 5, 6), (5, 0)),
+    # Night shift
+    (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4), (11, 3)),
+]
+
 HOLIDAY_HOURS = [
     (datetime(2020, 1, 3, 15), datetime(2020, 1, 4, 1), 1.0),
     (datetime(2020, 1, 4, 15, 30), datetime(2020, 1, 5, 1), 8.5),
     (datetime(2020, 1, 5, 15), datetime(2020, 1, 6, 1), 0.0),
 ]
 
-OVERTIMES = [
+HOLIDAY_OVERTIMES = [
+    # Short shift
+    (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 14), (5, 0)),
     # Regular shift
     (datetime(2021, 1, 4, 9), datetime(2021, 1, 4, 19), (10.5, 2)),
+    # Short night shift
+    (datetime(2021, 1, 5, 1), datetime(2021, 1, 5, 6), (5, 0)),
     # Night shift
     (datetime(2021, 1, 4, 18), datetime(2021, 1, 5, 4), (11, 3)),
+    # Short off-day shift
+    (datetime(2021, 1, 2, 9), datetime(2021, 1, 2, 14), (7.5, 0)),
     # Off-day shift
     (datetime(2021, 1, 2, 9), datetime(2021, 1, 2, 19), (15.5, 2)),
     # Night off-day shift
@@ -216,6 +240,19 @@ def test_get_total_synchronous_hours(event_1_start: datetime,
         event_1_start, event_1_end, event_2_start, event_2_end) == total
 
 
+@pytest.mark.parametrize('start, end, basis', HOUR_BASIS)
+def test_get_hour_basis(wage: SalarySettings, start: datetime,
+                        end: datetime, basis: float) -> None:
+    assert utils.get_hour_basis(start, end, wage) == basis
+
+
+@pytest.mark.parametrize('start, end, overtimes', OVERTIMES)
+def test_calc_overtime_hours(
+    wage: SalarySettings, start: datetime, end: datetime,
+        overtimes: Tuple[float, float]) -> None:
+    assert utils.calc_overtime_hours(start, end, wage) == overtimes
+
+
 @pytest.mark.parametrize('shift_start, shift_end, total', HOLIDAY_HOURS)
 def test_get_hours_during_holiday(wage: SalarySettings, shift_start: datetime,
                                   shift_end: datetime, total: float) -> None:
@@ -225,7 +262,7 @@ def test_get_hours_during_holiday(wage: SalarySettings, shift_start: datetime,
         shift_start, shift_end, wage) == total
 
 
-@pytest.mark.parametrize('start, end, overtimes', OVERTIMES)
+@pytest.mark.parametrize('start, end, overtimes', HOLIDAY_OVERTIMES)
 def test_adjust_overtime(wage: SalarySettings, start: datetime, end: datetime,
                          overtimes: Tuple[float, float]) -> None:
     assert utils.adjust_overtime(start, end, wage) == overtimes
