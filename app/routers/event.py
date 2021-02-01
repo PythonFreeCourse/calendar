@@ -86,8 +86,9 @@ def by_id(db: Session, event_id: int) -> Event:
             f'db instance type received: {type(db)}')
         logger.critical(error_message)
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=error_message)
-    
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
+
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
@@ -119,7 +120,7 @@ def check_change_dates_allowed(
     allowed = 1
     try:
         if is_end_date_before_start_date(event.get('start', old_event.start),
-                                        event.get('end', old_event.end)):
+                                            event.get('end', old_event.end)):
             allowed = 0
     except TypeError:
         allowed = 0
@@ -155,7 +156,7 @@ def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
         # Update database
         db.query(Event).filter(Event.id == event_id).update(
             event_to_update, synchronize_session=False)
-        
+
         db.commit()
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
