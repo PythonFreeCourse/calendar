@@ -119,8 +119,9 @@ def check_change_dates_allowed(
         old_event: Event, event: Dict[str, Any]):
     allowed = 1
     try:
-        if is_end_date_before_start_date(event.get('start', old_event.start),
-                                            event.get('end', old_event.end)):
+        if is_end_date_before_start_date(
+            event.get('start', old_event.start),
+            event.get('end', old_event.end)):
             allowed = 0
     except TypeError:
         allowed = 0
