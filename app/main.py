@@ -24,13 +24,12 @@ def create_tables(engine, psql_environment):
 
 create_tables(engine, PSQL_ENVIRONMENT)
 
-# This MUST come before the app.routers import.
+# This MUST come before the app.routers imports.
 set_ui_language()
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
-
 
 from app.routers import (
     agenda, dayview, email, event, invitation, profile, search, telegram,

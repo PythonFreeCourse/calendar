@@ -8,6 +8,7 @@ class TestApp:
     def test_get_db(self):
         assert isinstance(next(get_db()), Session)
 
+    @staticmethod
     def test_home(client):
         response = client.get("/")
         assert response.ok
