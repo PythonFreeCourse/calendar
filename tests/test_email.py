@@ -5,7 +5,8 @@ from app.internal.email import (
     mail,
     send_email_invitation,
     send_email_file,
-    send
+    send,
+    verify_email_pattern
 )
 from fastapi import BackgroundTasks, status
 
@@ -237,3 +238,8 @@ def test_send(session, bad_user, event):
                     user_to_send=1,
                     title="Test",
                     background_tasks=background_task)
+
+
+@pytest.mark.parametrize("email", ["test#mail.com", "test_mail.com", "test@mail-com"])
+def test_verify_email_pattern(email):
+    assert not verify_email_pattern(email)
