@@ -157,7 +157,11 @@ def test_send_mail_valid_email(client, configured_smtpd):
     ("", "other_person", "other@mail.com"),
     ("us_person", "", "other@mail.com"),
 ])
-def test_send_mail_bad_invitation(client, configured_smtpd, sender_name, recipient_name, recipient_mail):
+def test_send_mail_bad_invitation(client,
+                                  configured_smtpd,
+                                  sender_name,
+                                  recipient_name,
+                                  recipient_mail):
     with mail.record_messages() as outbox:
         response = client.post("/email/invitation/", json={
             "sender_name": sender_name,
@@ -176,16 +180,26 @@ def test_send_mail_bad_invitation(client, configured_smtpd, sender_name, recipie
     ("us_person", "", "other@mail.com"),
     ("us_person", "other_person", "other#mail.com"),
 ])
-def test_send_mail_bad_invitation_internal(client, configured_smtpd, sender_name, recipient_name, recipient_mail):
+def test_send_mail_bad_invitation_internal(client,
+                                           configured_smtpd,
+                                           sender_name,
+                                           recipient_name,
+                                           recipient_mail):
     background_task = BackgroundTasks()
-    assert not send_email_invitation(sender_name, recipient_name, recipient_mail, background_task)
+    assert not send_email_invitation(sender_name,
+                                     recipient_name,
+                                     recipient_mail,
+                                     background_task)
 
 
 @pytest.mark.parametrize("recipient_mail,file_path", [
     ("other@mail.com", "non_existing_file"),
     ("other#mail.com", __file__),
 ])
-def test_send_mail_bad_file_internal(client, configured_smtpd, recipient_mail, file_path):
+def test_send_mail_bad_file_internal(client,
+                                     configured_smtpd,
+                                     recipient_mail,
+                                     file_path):
     background_task = BackgroundTasks()
     assert not send_email_file(file_path, recipient_mail, background_task)
 
