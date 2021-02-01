@@ -93,10 +93,16 @@ def test_get_user_language(user, session):
                                   "Bonjour, mon ami",
                                   "Hello my friend"]
                          )
-def test_translate_text_for_user(text, user, session):
+def test_translate_text_for_good_user(text, user, session):
     user_id = user.id
     answer = translate_text_for_user(text, session, user_id)
     assert answer == "Hello my friend"
+
+
+def test_translate_text_for_bed_user(user, session):
+    user_id = user.id
+    answer = translate_text_for_user("Привет мой друг", session, user_id + 1)
+    assert answer == "Привет мой друг"
 
 
 def test_detect_text_language():
@@ -140,3 +146,9 @@ def test_translate_text_with_with_incorrect_lang(
         original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
+
+
+def test_get_user_language_for_bed_user(user, session):
+    user_id = user.id + 1
+    answer = _get_user_language(user_id, session=session)
+    assert not answer
