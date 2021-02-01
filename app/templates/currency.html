@@ -10,15 +10,15 @@
 </head>
 
 <body>
-    <div id="show_currency" style="display: none;">
+    <div id="showCurrency" style="display: none;">
         <p style="margin: 1rem;">
             <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button"
-                aria-expanded="false" aria-controls="multiCollapseExample1" id="currency_button">Currency</a>
+                aria-expanded="false" aria-controls="multiCollapseExample1" id="currencyButton">Currency</a>
         </p>
         <div class="row" style="margin: 1rem; width: 14rem;">
             <div class="col">
                 <div class="collapse multi-collapse" id="multiCollapseExample1">
-                    <ul class="list-group list-group-flush" id="currency_view">
+                    <ul class="list-group list-group-flush" id="currencyView">
                         <!-- JS currency content -->
                     </ul>
                 </div>
@@ -28,7 +28,7 @@
     <script type="text/javascript" src="{{ url_for('static', path='/currency.js')}}"></script>
     <script type="text/javascript">
         getCurrency("{{ base | safe }}", "{{ date | safe }}");
-        document.getElementById("currency_view").addEventListener("click", function (e) {
+        document.getElementById("currencyView").addEventListener("click", function (e) {
             if (e.target && e.target.nodeName == "A") {
                 getCurrency(e.target.id, "{{ date | safe }}");
             }

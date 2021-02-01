@@ -1,7 +1,7 @@
 function getCurrency(baseCurrency, dateToday) {
-    const showCurrencyElement = document.getElementById("show_currency")
-    const currencyViewElement = document.getElementById("currency_view");
-    const currencyButtonElement = document.getElementById("currency_button");
+    const showCurrencyElement = document.getElementById("showCurrency")
+    const currencyViewElement = document.getElementById("currencyView");
+    const currencyButtonElement = document.getElementById("currencyButton");
     currencyViewElement.innerHTML = "";
 
     function getResponse(yourUrl) {
@@ -19,7 +19,7 @@ function getCurrency(baseCurrency, dateToday) {
     if (showCurrencyElement.style.display == 'none') {
         showCurrencyElement.style.display = 'block';
     }
-    
+
     var listItem = document.createElement("li");
     listItem.className = "list-group-item title_size_small";
     const baseItem = document.createElement("strong");
