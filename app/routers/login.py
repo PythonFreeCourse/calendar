@@ -3,11 +3,12 @@ from app.dependencies import templates
 from app.database.database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
 from app.internal.security.ouath2 import authenticate_user
-from app.internal.security.ouath2 import LoginUser, create_jwt_token, check_jwt_token, oauth_schema
+from app.internal.security.ouath2 import LoginUser, create_jwt_token, check_jwt_token, oauth_schema, current_user, get_cookie, logged_in_user
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from app.internal.security.schema import  Token
 from starlette.status import HTTP_401_UNAUTHORIZED
+from app.database.models import User
 
 
 router = APIRouter(
@@ -27,9 +28,7 @@ async def login_user_form(request: Request) -> templates:
     })
 
 
-async def current_user():
-    print(Request.cookies['Authorization'])
-    return await check_jwt_token(Request.cookies['Authorization'])
+
 
 @router.post('/login')
 async def login(
@@ -49,10 +48,6 @@ async def login(
             )
 
     jwt_token = create_jwt_token(user)
-    # print(jwt_token)
-    # response = RedirectResponse(
-    #     url='/profile', status_code=HTTP_302_FOUND)
-    # response.headers["Authorization"] = jwt_token
     response = RedirectResponse(url="/protected", status_code=HTTP_302_FOUND) 
     response.set_cookie(
         "Authorization",
@@ -60,42 +55,27 @@ async def login(
         httponly=True,
     )
     return response
-# @router.post('/login')
-# async def login(request: Request, response: Response, form: OAuth2PasswordRequestForm = Depends()):
-#     form_dict = {'username': form.username, 'hashed_password': form.password}
-#     user = LoginUser(**form_dict)
-#     authenticated_user = authenticate_user(user)
-#     if not user or not authenticate_user(user):
-#         raise  HTTPException(status_code=HTTP_401_UNAUTHORIZED)
-#     jwt_token = create_jwt_token(authenticated_user)
-#     # response.headers["Authorization"] = "Bearer " + jwt_token
-#     # user = authenticate_user()
-#     # return jwt_token
-#     jwt_token = create_jwt_token(user)
-#     print(jwt_token)
-#     response = RedirectResponse(
-#         url='/profile', status_code=HTTP_302_FOUND)
-#     response.headers["authorization"] = jwt_token
-#     return response
-    
-    
-#     response.set_cookie(key="access_token",value=f"Bearer {jwt_token}", httponly=True)
-#     return templates.TemplateResponse("home.html", {
-#         "request": request,
-#         "message": "User created",
-#         "status_code": 201})
 
-# request: Request, jwt: str = Depends(get_current_user)
-# ('/protected', dependencies = [Depends(current_user)])
+
+@router.get('/logout')
+async def login(request: Request):
+    response = RedirectResponse(url="/login", status_code=HTTP_302_FOUND) 
+    response.delete_cookie("Authorization")
+    # raise HTTPException(status_code=HTTP_401_UNAUTHORIZED)
+    return response
+
+
 @router.get('/protected')
-async def protected_route(request: Request):
-    # print(dir(request))
-    # print(request.cookies['Authorization'])
-    print("AUTHORIZE")
-    print(await check_jwt_token(request.cookies['Authorization']))
-    # print (type(request.headers['cookie']))
-    # print (request.headers['cookie'])
+async def protected_route(request: Request, user: User = Depends(current_user)):
     return templates.TemplateResponse("home.html", {
         "request": request,
-        "message": "protected"
+        "message": user.username
+    })
+
+@router.get('/user')
+async def user_route(request: Request, current_user: User = Depends(logged_in_user)):
+    print(current_user)
+    return templates.TemplateResponse("home.html", {
+        "request": request,
+        "message": "user.username"
     })

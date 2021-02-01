@@ -24,6 +24,14 @@ app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(login.router)
 
+from starlette.status import HTTP_401_UNAUTHORIZED
+@app.exception_handler(HTTP_401_UNAUTHORIZED)
+async def exception_handler(request: Request, exc: HTTP_401_UNAUTHORIZED) -> Response:
+    response = RedirectResponse(url='/login')
+    response.delete_cookie('Authorization')
+    return response
+    return RedirectResponse(url='/login')
+
 # @app.middleware("http")
 # async def add_middleware_here(request: Request, response: Response):
 #     if str(request.url).__contains__("/login"):
