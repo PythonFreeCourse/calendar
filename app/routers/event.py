@@ -51,8 +51,9 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     event = create_event(session, title, start, end, owner_id, content,
                          location)
-    return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            , status_code=HTTP_302_FOUND)
+    return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event.id),
+                            status_code=HTTP_302_FOUND)
 
 
 @router.get("/{event_id}")
