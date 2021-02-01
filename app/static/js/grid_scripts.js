@@ -1,31 +1,30 @@
-const tolerance = 1;
-let last = 0;
-let lastIndex = 0;
-
 function setToggle(elementClass, targetElement, classToAdd) {
     const allDays = document.getElementsByClassName(elementClass);
-    for (let i = lastIndex; i < allDays.length; ++i) {
+    for (let i = window['lastIndex']; i < allDays.length; ++i) {
         allDays[i].addEventListener("click", function () {
             const target = document.getElementById(targetElement);
             target.classList.toggle(classToAdd);
         })
     }
-    lastIndex += allDays.length - lastIndex;
+    window['lastIndex'] += allDays.length - window['lastIndex'];
 }
+
 
 document.addEventListener(
     'DOMContentLoaded', function () {
+        window['lastIndex'] = 0;
+        window['last'] = 0;
         setToggle("day", "day-view", "day-view-visible");
     }
 )
 
 function loadWeek(lastDay) {
-    if (lastDay === last) {
+    if (lastDay === window['last']) {
         return false;
     }
     const path = '/calendar/month/' + lastDay;
     const newDays = document.createElement('html');
-    last = lastDay;
+    window['last'] = lastDay;
     fetch(path).then(function (response) {
         return response.text();
     }).then(function (html) {
@@ -39,6 +38,7 @@ function loadWeek(lastDay) {
 
 window.addEventListener(
     'scroll', function () {
+        const tolerance = 1;
         if (window.scrollY + window.innerHeight + tolerance < document.documentElement.scrollHeight) {
             return false;
         }
