@@ -211,6 +211,7 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
             filter(Event.id == event_id).
             all()])
 
+
 def check_date_validation(start_time, end_time) -> bool:
     """Check if the start_date is smaller then the end_time"""
 
