@@ -1,6 +1,6 @@
 import pytest
 
-from app.internal.email import mail
+from app.internal.email import mail, send_email_invitation, send_email_file
 from fastapi import BackgroundTasks, status
 
 
@@ -153,15 +153,43 @@ def test_send_mail_valid_email(client, configured_smtpd):
         assert outbox
 
 
-def test_send_mail_bad_invitation(client, configured_smtpd):
+@pytest.mark.parametrize("sender_name,recipient_name,recipient_mail", [
+    ("", "other_person", "other@mail.com"),
+    ("us_person", "", "other@mail.com"),
+])
+def test_send_mail_bad_invitation(client, configured_smtpd, sender_name, recipient_name, recipient_mail):
     with mail.record_messages() as outbox:
         response = client.post("/email/invitation/", json={
-            "sender_name": "",
-            "recipient_name": "string",
-            "recipient_mail": "test@mail.com"
+            "sender_name": sender_name,
+            "recipient_name": recipient_name,
+            "recipient_mail": recipient_mail
         }
                                )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert response.json() == {
              "detail": "Couldn't send the email!"}
         assert not outbox
+
+
+@pytest.mark.parametrize("sender_name,recipient_name,recipient_mail", [
+    ("", "other_person", "other@mail.com"),
+    ("us_person", "", "other@mail.com"),
+    ("us_person", "other_person", "other#mail.com"),
+])
+def test_send_mail_bad_invitation_internal(client, configured_smtpd, sender_name, recipient_name, recipient_mail):
+    background_task = BackgroundTasks()
+    assert not send_email_invitation(sender_name, recipient_name, recipient_mail, background_task)
+
+
+@pytest.mark.parametrize("recipient_mail,file_path", [
+    ("other@mail.com", "non_existing_file"),
+    ("other#mail.com", __file__),
+])
+def test_send_mail_bad_file_internal(client, configured_smtpd, recipient_mail, file_path):
+    background_task = BackgroundTasks()
+    assert not send_email_file(file_path, recipient_mail, background_task)
+
+
+def test_send_mail_good_file_internal(client, configured_smtpd):
+    background_task = BackgroundTasks()
+    assert send_email_file(__file__, "good@mail.com", background_task)
