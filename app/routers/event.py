@@ -132,7 +132,7 @@ def update_event(event_id: int, event: Dict, db: Session
         # TODO: Send emails to recipients.
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
-        logger.error(str(e))
+        logger.exception(str(e))
         return None
 
 
@@ -186,7 +186,7 @@ def _delete_event(db: Session, event: Event):
         db.commit()
 
     except (SQLAlchemyError, AttributeError) as e:
-        logger.error(str(e))
+        logger.exception(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Deletion failed")
@@ -200,7 +200,7 @@ def delete_event(event_id: int,
     try:
         event = by_id(db, event_id)
     except AttributeError as e:
-        logger.error(str(e) + "Could not connect to database")
+        logger.exception(str(e) + "Could not connect to database")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Could not connect to database")
     if not event:
