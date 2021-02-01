@@ -17,7 +17,7 @@ JWT_MIN_EXP = 3
 pwd_context = CryptContext(schemes=["bcrypt"])
 oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
 
-def get_db_user_by_username(username: str):
+async def get_db_user_by_username(username: str):
     session = SessionLocal()
     return session.query(User).filter_by(username = username).first()
 
@@ -33,8 +33,8 @@ def verify_password(plain_password, hashed_password):
         return False
 
 # Authenticate username and password
-def authenticate_user(user: LoginUser):
-    db_user = get_db_user_by_username(username = user.username)
+async def authenticate_user(user: LoginUser):
+    db_user = await get_db_user_by_username(username = user.username)
     if db_user:
         if verify_password(user.hashed_password, db_user.password):
             return LoginUser(username=user.username, hashed_password=db_user.password)
@@ -57,13 +57,14 @@ async def check_jwt_token(token: str = Depends(oauth_schema), logged_in=False, p
         jwt_hashed_password = jwt_payload.get("hashed_password")
         jwt_expiration = jwt_payload.get("exp")
         # if time.time() < jwt_expiration:
-        db_user = get_db_user_by_username(username=jwt_username)
+        db_user = await get_db_user_by_username(username=jwt_username)
         if db_user and db_user.password == jwt_hashed_password:
             return db_user
         else:
             return HTTPException(status_code=HTTP_401_UNAUTHORIZED, headers=path, detail="Your token is incorrect. Please log in again")
     except Exception as e:
         if logged_in:
+            print("ff")
             return None
         if type(e).__name__ == 'ExpiredSignatureError':
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, headers=path, detail="Your token has expired. Please log in again")

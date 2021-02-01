@@ -19,4 +19,5 @@ async def current_user(request: Request):
     else:
         return None
     user = await check_jwt_token(jwt, logged_in=True)
+    print (user)
     return  user

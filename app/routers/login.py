@@ -41,7 +41,7 @@ async def login(
     form_dict = {'username': form.username, 'hashed_password': form.password}
     user = LoginUser(**form_dict)
     if user:
-        user = authenticate_user(user)
+        user = await authenticate_user(user)
     if not user:
         return templates.TemplateResponse("login.html", {
             "request": request,
@@ -81,7 +81,10 @@ async def protected_route(request: Request, user: User = Depends(current_user_re
 
 @router.get('/user')
 async def user_route(request: Request, current_user: User = Depends(current_user)):
-    print(current_user.username)
+    if current_user:
+        print(current_user.username)
+    else:
+        print(None)
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "user.username"
