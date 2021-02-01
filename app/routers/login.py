@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Request
 from app.dependencies import templates
 from fastapi.security import OAuth2PasswordRequestForm
 from app.internal.security.ouath2 import authenticate_user
@@ -35,7 +35,6 @@ async def login_user_form(request: Request) -> templates:
 @router.post('/login')
 async def login(
         request: Request,
-        response: Response,
         form: OAuth2PasswordRequestForm = Depends()):
     url = "/"
     form_dict = {'username': form.username, 'hashed_password': form.password}

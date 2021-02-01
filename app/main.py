@@ -24,19 +24,10 @@ app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(login.router)
 
-
+from app.internal.security.ouath2 import my_exception_handler
 from starlette.status import HTTP_401_UNAUTHORIZED
-@app.exception_handler(HTTP_401_UNAUTHORIZED)
-async def exception_handler(request: Request, exc: HTTP_401_UNAUTHORIZED) -> Response:
-    response = RedirectResponse(url='/login')
-    if exc.headers:
-        response.set_cookie(
-            "next_url", value=exc.headers, httponly=True)
-    if exc.detail:
-        response.set_cookie(
-            "message", value=exc.detail, httponly=True)
-    response.delete_cookie('Authorization')
-    return response
+
+app.add_exception_handler(HTTP_401_UNAUTHORIZED, my_exception_handler)
 
 
 @app.get("/")

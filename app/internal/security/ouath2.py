@@ -11,11 +11,13 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 from app.config import JWT_ALGORITHM, JWT_SECRET_KEY
 from starlette.requests import Request
 
+from starlette.responses import RedirectResponse
+
 
 JWT_MIN_EXP = 3
-
 pwd_context = CryptContext(schemes=["bcrypt"])
 oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
+
 
 async def get_db_user_by_username(username: str):
     session = SessionLocal()
@@ -72,7 +74,6 @@ async def check_jwt_token(token: str = Depends(oauth_schema), logged_in=False, p
             raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, headers=path, detail="Your token is incorrect. Please log in again")
         
 
-
 ######
 async def get_cookie(request: Request):
     if 'Authorization' in request.cookies:
@@ -80,20 +81,14 @@ async def get_cookie(request: Request):
     raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, headers=request.url.path, detail="Please log in to enter this page")
 
 
-# async def current_user_required(request: Request, jwt: str = Depends(get_cookie)):
-#     user = await check_jwt_token(jwt, path=request.url.path)
-#     # print(request.url)
-#     if user:
-#         return user
-#     else:
-#         return None
-
-# async def current_user(request: Request):
-#     if 'Authorization' in request.cookies:
-#         jwt = request.cookies['Authorization']
-#     else:
-#         return None
-#     user = await check_jwt_token(jwt, logged_in=True)
-#     return  user
-    
-    
+# @exception_handler(HTTP_401_UNAUTHORIZED)
+async def my_exception_handler(request: Request, exc: HTTP_401_UNAUTHORIZED) -> RedirectResponse:
+    response = RedirectResponse(url='/login')
+    if exc.headers:
+        response.set_cookie(
+            "next_url", value=exc.headers, httponly=True)
+    if exc.detail:
+        response.set_cookie(
+            "message", value=exc.detail, httponly=True)
+    response.delete_cookie('Authorization')
+    return response
