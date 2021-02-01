@@ -6,6 +6,9 @@ from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 from starlette.status import HTTP_302_FOUND
 
+from app.database.models import Event
+from app.routers.event import get_event_by_id, update_event
+
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
@@ -33,9 +36,6 @@ WRONG_EVENT_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public'
 }
-
-from app.database.models import Event
-from app.routers.event import get_event_by_id, update_event
 
 INVALID_UPDATE_OPTIONS = [
     {}, {"test": "test"}, {"start": "20.01.2020"},
