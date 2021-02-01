@@ -8,11 +8,14 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
 from app.dependencies import logger, templates
+from app.internal.event import validate_zoom_link
 from app.internal.utils import create_model
+from app.routers.user import create_user
 
 router = APIRouter(
     prefix="/event",
@@ -25,6 +28,31 @@ router = APIRouter(
 async def eventedit(request: Request):
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request})
+
+
+@router.post("/edit")
+async def create_new_event(request: Request, session=Depends(get_db)):
+    data = await request.form()
+    title = data['title']
+    content = data['description']
+    start = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
+                              '%Y-%m-%d %H:%M')
+    end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
+                            '%Y-%m-%d %H:%M')
+    user = session.query(User).filter_by(id=1).first()
+    user = user if user else create_user("u", "p", "e@mail.com", session)
+    owner_id = user.id
+    location_type = data['location_type']
+    is_zoom = location_type == 'vc_url'
+    location = data['location']
+
+    if is_zoom:
+        validate_zoom_link(location)
+
+    event = create_event(session, title, start, end, owner_id, content,
+                         location)
+    return RedirectResponse(router.url_path_for('eventview', event_id=event.id),
+                            status_code=HTTP_302_FOUND)
 
 
 @router.get("/view/{event_id}")

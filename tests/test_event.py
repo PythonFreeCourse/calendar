@@ -4,6 +4,35 @@ from fastapi import HTTPException
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
+from starlette.status import HTTP_302_FOUND
+
+CORRECT_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public'
+}
+
+WRONG_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'not a zoom link',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public'
+}
 
 from app.database.models import Event
 from app.routers.event import get_event_by_id, update_event
@@ -36,6 +65,21 @@ def test_eventview_with_id(event_test_client, session, event):
 def test_eventview_without_id(event_test_client):
     response = event_test_client.get("/event/view")
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+
+def test_eventedit_post_correct(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == HTTP_302_FOUND
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
+def test_eventedit_post_wrong(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=WRONG_EVENT_FORM_DATA)
+    assert response.json()['detail'] == 'VC type with no valid zoom link'
 
 
 @pytest.mark.parametrize("data", INVALID_UPDATE_OPTIONS)

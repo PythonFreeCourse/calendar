@@ -5,8 +5,7 @@ from sqlalchemy.orm import Session
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
-from app.dependencies import (
-    logger, MEDIA_PATH, STATIC_PATH, templates)
+from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal.quotes import daily_quotes, load_quotes
 from app.routers import (
     agenda, dayview, email, event, invitation, profile, search, telegram,
@@ -51,7 +50,7 @@ telegram_bot.set_webhook()
 # TODO: I add the quote day to the home page
 # until the relavent calendar view will be developed.
 @app.get("/")
-@app.logger.catch()
+@logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
