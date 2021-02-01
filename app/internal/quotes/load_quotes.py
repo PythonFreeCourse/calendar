@@ -36,6 +36,6 @@ def is_quotes_table_empty(session: Session) -> bool:
 
 def load_daily_quotes(session: Session) -> None:
     """This function loads the daily quotes to the db,
-    if they weren't already loaden"""
+    if they weren't already loaded"""
     if is_quotes_table_empty(session):
         add_quotes_to_db(session)
