@@ -41,7 +41,7 @@ uvicorn app.main:app --reload
 ```
 
 #Cypress:
-Front end testing tool built for the modern web.
+Front end testing tool.
 
 Every test created with testLevel configuration, the defualt level we run our test is 5.
 Basic tests will spicified with lower testLevel than advanced tests.
