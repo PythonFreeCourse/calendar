@@ -7,6 +7,34 @@ from app.routers.event import (by_id, delete_event, is_change_dates_allowed,
 from fastapi import HTTPException
 from starlette import status
 
+CORRECT_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public'
+}
+
+WRONG_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'not a zoom link',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public'
+}
+
 INVALID_UPDATE_OPTIONS = [
     {}, {"test": "test"},
     {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
@@ -15,7 +43,6 @@ INVALID_UPDATE_OPTIONS = [
 
 
 class TestEvent:
-
     def test_eventedit(self, client):
         response = client.get("/event/edit")
         assert response.ok
@@ -29,6 +56,21 @@ class TestEvent:
     def test_eventview_without_id(self, client):
         response = client.get("/event/view")
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+
+    def test_eventedit_post_correct(self, event_test_client, user):
+        response = event_test_client.post(
+            event_test_client.app.url_path_for(
+                'create_new_event'), data=CORRECT_EVENT_FORM_DATA)
+        assert response.ok
+        assert response.status_code == status.HTTP_302_FOUND
+        assert (event_test_client.app.url_path_for(
+            'eventview', id=1).strip('1') in response.headers['location'])
+
+    def test_eventedit_post_wrong(self, event_test_client, user):
+        response = event_test_client.post(
+            event_test_client.app.url_path_for(
+                'create_new_event'), data=WRONG_EVENT_FORM_DATA)
+        assert response.json()['detail'] == 'VC type with no valid zoom link'
 
     @pytest.mark.parametrize("data", INVALID_UPDATE_OPTIONS)
     def test_invalid_update(self, event, data, session):
