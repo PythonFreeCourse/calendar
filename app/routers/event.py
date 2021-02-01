@@ -2,6 +2,7 @@ from datetime import datetime
 from operator import attrgetter
 from typing import Any, Dict, List, Optional
 
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -10,12 +11,14 @@ from starlette import status
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
+
 from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
 from app.dependencies import logger, templates
 from app.internal.event import validate_zoom_link
 from app.internal.utils import create_model
 from app.routers.user import create_user
+
 
 router = APIRouter(
     prefix="/event",
