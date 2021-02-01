@@ -52,7 +52,7 @@ STATIC_ABS_PATH = os.path.abspath("static")
 # LOGGER
 LOG_PATH = "./var/log"
 LOG_FILENAME = "calendar.log"
-LOG_LEVEL = "debug"
+LOG_LEVEL = "error"
 LOG_ROTATION_INTERVAL = "20 days"
 LOG_RETENTION_INTERVAL = "1 month"
 LOG_FORMAT = ("<level>{level: <8}</level>"

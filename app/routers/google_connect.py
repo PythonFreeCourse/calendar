@@ -36,7 +36,6 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
         credentials = refresh_token(credentials, session, user)
 
     elif not status:
-        # first sync
         if is_client_secret_not_none():  # if there is no client_secrets.json
             logger.error(
                 'Google Sync is not available - missing client_secret.json')
@@ -52,19 +51,20 @@ async def google_sync(session=Depends(get_db)) -> RedirectResponse:
 
     events = get_current_year_events(credentials, user, session)
     push_events_to_db(events, user, session)
-    session.close()
 
     url = profile_router.url_path_for("profile")
     return RedirectResponse(url=url)
 
 
-def clean_up_old_credentials_from_db(session: SessionLocal) -> None:
+def clean_up_old_credentials_from_db(
+                                session: SessionLocal = Depends()) -> None:
     session.query(OAuthCredentials).filter_by(user_id=None).delete()
     session.commit()
 
 
 def get_credentials_from_consent_screen(user: User,
-                                        session: SessionLocal) -> Credentials:
+                                        session: SessionLocal = Depends()
+                                        ) -> Credentials:
     flow = InstalledAppFlow.from_client_secrets_file(
         client_secrets_file=CLIENT_SECRET_FILE,
         scopes=SCOPES
@@ -85,11 +85,11 @@ def get_credentials_from_consent_screen(user: User,
 
     session.add(oauth_credentials)
     session.commit()
-
+    print('end')
     return credentials
 
 
-def get_active_user(session: SessionLocal) -> User:
+def get_active_user(session: SessionLocal = Depends()) -> User:
     # TODO - get connected/current user
     user = session.query(User).filter_by(id=1).first()
     return user
@@ -100,7 +100,8 @@ def is_client_secret_not_none():
 
 
 def get_current_year_events(
-        credentials: Credentials, user: User, session: SessionLocal) -> list:
+        credentials: Credentials, user: User,
+        session: SessionLocal = Depends()) -> list:
     '''Getting user events from google calendar'''
 
     currrnt_year = datetime.now().year
@@ -120,7 +121,8 @@ def get_current_year_events(
     return events
 
 
-def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
+def push_events_to_db(events: list, user: User,
+                      session: SessionLocal = Depends()) -> bool:
     '''Adding google events to db'''
     db_cleanup(user, session)
 
@@ -170,7 +172,7 @@ def push_events_to_db(events: list, user: User, session: SessionLocal) -> bool:
     return True
 
 
-def db_cleanup(user: User, session: SessionLocal) -> bool:
+def db_cleanup(user: User, session: SessionLocal = Depends()) -> bool:
     '''removing all user google events so the next time will be syncronized'''
 
     for user_event in user.events:
@@ -207,8 +209,10 @@ def get_credentials_from_db(user: User) -> tuple:
 
 
 def refresh_token(credentials: Credentials,
-                  session: SessionLocal, user: User) -> Credentials:
+                  user: User, session: SessionLocal = Depends()
+                  ) -> Credentials:
 
+    refreshed_credentials = credentials
     if credentials.expired:
         credentials.refresh(google_request())
         refreshed_credentials = OAuthCredentials(
@@ -223,6 +227,5 @@ def refresh_token(credentials: Credentials,
 
         session.add(refreshed_credentials)
         session.commit()
-    else:
-        refreshed_credentials = credentials
+
     return refreshed_credentials

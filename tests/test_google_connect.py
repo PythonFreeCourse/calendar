@@ -1,14 +1,15 @@
 from datetime import datetime
+import pytest
+from loguru import logger
 
 import app.routers.google_connect as google_connect
-import pytest
 from app.routers.event import create_event
 from app.database.models import OAuthCredentials
+from app.routers.user import create_user
+
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import HttpMock
-from app.routers.user import create_user
-from loguru import logger
 
 
 @pytest.fixture
@@ -177,14 +178,14 @@ def test_refresh_token(mocker, session, user, credentials):
     def safe_expired():
         return False
 
-    assert google_connect.refresh_token(credentials, session, user)
+    assert google_connect.refresh_token(credentials, user, session)
 
     mocker.patch(
         'google.oauth2.credentials.Credentials.expired',
         return_value=safe_expired
     )
 
-    assert google_connect.refresh_token(credentials, session, user)
+    assert google_connect.refresh_token(credentials, user, session)
 
 
 @pytest.mark.usefixtures("session", "user", "credentials")
@@ -250,8 +251,12 @@ def test_google_sync(mocker, google_connect_test_client,
         'app.routers.google_connect.push_events_to_db',
         return_value=True
     )
+    mocker.patch(
+        'app.routers.google_connect.refresh_token',
+        return_value=credentials
+    )
 
-    connect = google_connect_test_client.get('google/sync')
+    connect = google_connect_test_client.get('/google/sync')
     assert connect.ok
 
 
