@@ -107,14 +107,19 @@ def is_date_before(start_date: datetime, end_date: datetime) -> bool:
     return start_date < end_date
 
 
-def is_change_dates_allowed(
-        old_event: Event, event: Dict[str, Any]) -> bool:
+def check_change_dates_allowed(
+        old_event: Event, event: Dict[str, Any]):
+    allowed = 1
     try:
-        return is_date_before(
+        if not is_date_before(
             event.get('start', old_event.start),
             event.get('end', old_event.end))
+            allowed = 0
     except TypeError:
-        return False
+        allowed = 0
+    if allowed == 0
+        raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid times")
 
 
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
@@ -157,8 +162,8 @@ def update_event(event_id: int, event: Dict, db: Session
                             detail="Could not connect to database")
 
     try:
-        forbidden = not is_change_dates_allowed(old_event, event_to_update)
-        if not event_to_update or forbidden:
+        check_change_dates_allowed(old_event, event_to_update)
+        if not event_to_update:
             return None
 
         # Update database
@@ -170,7 +175,8 @@ def update_event(event_id: int, event: Dict, db: Session
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
-        raise e
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                                    detail="Internal server error")
 
 
 def create_event(db, title, start, end, owner_id, content=None, location=None):
