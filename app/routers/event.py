@@ -2,18 +2,19 @@ from datetime import datetime
 from operator import attrgetter
 from typing import Any, Dict, List, Optional
 
-from app.database.database import get_db
-from app.database.models import Event, User, UserEvent
-from app.dependencies import templates
-from app.internal.event import validate_zoom_link
-from app.internal.utils import create_model
-from app.routers.user import create_user
 from fastapi import APIRouter, Depends, HTTPException, Request
 from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
+
+from app.database.database import get_db
+from app.database.models import Event, User, UserEvent
+from app.dependencies import templates
+from app.internal.event import validate_zoom_link
+from app.internal.utils import create_model
+from app.routers.user import create_user
 
 router = APIRouter(
     prefix="/event",
@@ -93,7 +94,7 @@ def is_change_dates_allowed(
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     """validate dictionary values by dictionary of types"""
     errors = []
-    for key in to_check.keys():
+    for key in to_check:
         if types[key] and not isinstance(to_check[key], types[key]):
             errors.append(
                 f"{key} is '{type(to_check[key]).__name__}' and it should be"
@@ -108,7 +109,7 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
                                         ) -> Dict[str, Any]:
     """Remove all keys that are not allowed to update"""
 
-    return {i: event[i] for i in UPDATE_EVENTS_FIELDS.keys() if i in event}
+    return {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
 
 
 def update_event(event_id: int, event: Dict, db: Session
