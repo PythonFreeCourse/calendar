@@ -1,7 +1,11 @@
 import pytest
+from sqlalchemy.orm import Session
 
-from app.internal.email import mail, send_email_invitation, send_email_file
+from app.internal.email import mail, send_email_invitation, send_email_file, send
 from fastapi import BackgroundTasks, status
+
+from app.database.models import User
+from tests.utils import create_model, delete_instance
 
 
 def test_email_send(client, user, event, smtpd):
@@ -207,3 +211,24 @@ def test_send_mail_bad_file_internal(client,
 def test_send_mail_good_file_internal(client, configured_smtpd):
     background_task = BackgroundTasks()
     assert send_email_file(__file__, "good@mail.com", background_task)
+
+
+@pytest.fixture
+def bad_user(session: Session) -> User:
+    test_user = create_model(
+        session, User,
+        username='test_username',
+        password='test_password',
+        email='test.email#gmail.com',
+    )
+    yield test_user
+    delete_instance(session, test_user)
+
+
+def test_send(session, bad_user, event):
+    background_task = BackgroundTasks()
+    assert not send(session=session,
+                    event_used=1,
+                    user_to_send=1,
+                    title="Test",
+                    background_tasks=background_task)
