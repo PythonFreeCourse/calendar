@@ -8,6 +8,7 @@ from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
+from loguru import logger
 
 
 def insert_on_this_day_data(session: Session) -> Dict:
@@ -28,13 +29,14 @@ def insert_on_this_day_data(session: Session) -> Dict:
 
 def get_on_this_day_events(session: Session) -> Dict:
     try:
-        data = session.query(WikipediaEvents).\
-            filter(func.date(WikipediaEvents.date_inserted) == date.today()).\
-            one()
+        data = (session.query(WikipediaEvents).
+                filter(
+                    func.date(WikipediaEvents.date_inserted) == date.today()).
+                one())
 
     except NoResultFound:
         data = insert_on_this_day_data(session)
     except (SQLAlchemyError, AttributeError) as e:
-        print('err', e)
+        logger.error(f'on this day failedwith error: {e}')
         data = {'events': [], 'wikipedia': 'https://en.wikipedia.org/'}
     return data
