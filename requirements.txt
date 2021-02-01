@@ -60,6 +60,7 @@ PyYAML==5.3.1
 redis==3.5.3
 regex==2020.11.13
 requests==2.25.1
+requests-mock==1.8.0
 responses==0.12.1
 rfc3986==1.4.0
 six==1.15.0
