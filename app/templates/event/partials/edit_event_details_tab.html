@@ -1,5 +1,31 @@
+<script src="{{ url_for('static', path='/voice.js') }}"></script>
 <div class="form_row">
-    <input type="text" name="title" placeholder="Event Title" required>
+    <input id="say" type="text" name="title" placeholder="Event Title" required>
+	<input type="button" id="speak" name="speak" value="Speak it!">
+  <div>
+    <!-- Voices gets its own row for being so wide! -->
+    <div class="field" id="voices">
+      <label for="voice">Voice</label>
+      <select id="voice" name="voice"></select>
+    </div>
+  </div>
+  <div class="panel">
+    
+    <div class="field">
+      <label for="volume">Volume</label>
+      <input  type="range" id="volume" name="volume" min="0" max="1" step="0.01" value="0.5">
+      <output for="volume"></output>
+    </div>
+    <div class="field">
+      <label for="pitch">Pitch</label>
+      <input type="range" id="pitch" name="pitch" min="0" max="2" step="0.01" value="1"><!-- default 1 -->
+      <output for="pitch"></output>
+    </div>
+    <div class="field">
+      <label for="rate">Rate</label>
+      <input type="range" id="rate" name="rate" min="0.1" max="10" step="0.1" value="1">
+      <output for="rate"></output>
+    </div>
 </div>
 
 <div class="form_row">
@@ -22,7 +48,10 @@
 </div>
 
 <div class="form_row textarea">
-    <textarea name="description" placeholder="Description"></textarea>
+    <textarea id="say" name="description" placeholder="Description"></textarea>
+  <div>
+</div>
+
 </div>
 
 <div class="form_row">
