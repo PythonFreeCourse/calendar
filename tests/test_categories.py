@@ -22,9 +22,9 @@ class TestCategories:
                                json={"user_id": user.id, "name": "Foo",
                                      "color": "eecc11"})
         assert response.ok
-        assert {"user_id": user.id, "name": "Foo",
-                "color": "eecc11"}.items() <= response.json()[
-                   'category'].items()
+        assert {("user_id", user.id), ("name", "Foo"),
+                ("color", "eecc11")}.issubset(
+            set(response.json()['category'].items()))
 
     @staticmethod
     def test_creating_not_unique_category_failed(client, user, category):
@@ -47,27 +47,27 @@ class TestCategories:
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
         assert response.ok
-        assert response.json() == [
-            {"user_id": category.user_id, "color": "121212",
-             "name": "Guitar Lesson", "id": category.id}]
+        assert set(response.json()[0].items()) == {
+            ("user_id", category.user_id), ("color", "121212"),
+            ("name", "Guitar Lesson"), ("id", category.id)}
 
     @staticmethod
     def test_get_category_by_name(client, user, category):
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}")
         assert response.ok
-        assert response.json() == [
-            {"user_id": category.user_id, "color": "121212",
-             "name": "Guitar Lesson", "id": category.id}]
+        assert set(response.json()[0].items()) == {
+            ("user_id", category.user_id), ("color", "121212"),
+            ("name", "Guitar Lesson"), ("id", category.id)}
 
     @staticmethod
     def test_get_category_by_color(client, user, category):
         response = client.get(f"/categories/?user_id={category.user_id}&"
                               f"color={category.color}")
         assert response.ok
-        assert response.json() == [
-            {"user_id": category.user_id, "color": "121212",
-             "name": "Guitar Lesson", "id": category.id}]
+        assert set(response.json()[0].items()) == {
+            ("user_id", category.user_id), ("color", "121212"),
+            ("name", "Guitar Lesson"), ("id", category.id)}
 
     @staticmethod
     def test_get_category_bad_request(client):

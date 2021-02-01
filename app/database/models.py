@@ -6,10 +6,12 @@ from typing import Dict, Any
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
                         Integer, String, event, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
 
 from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
+from app.dependencies import logger
 
 
 class UserEvent(Base):
@@ -95,7 +97,8 @@ class Category(Base):
             db_session.flush()
             db_session.commit()
             db_session.refresh(category)
-        except Exception as e:
+        except (SQLAlchemyError, IntegrityError) as e:
+            logger.error(f"Failed to create category: {e}")
             raise e
         else:
             return category
