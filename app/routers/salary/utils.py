@@ -144,23 +144,48 @@ def get_total_synchronous_hours(
     Raises:
         None
     """
-    if event_2_start <= event_1_start <= event_2_end:
-        if event_1_end <= event_2_end:
-            start = event_1_start
-            end = event_1_end
-        else:
-            start = event_1_start
-            end = event_2_end
-    elif event_2_start <= event_1_end <= event_2_end:
-        start = event_2_start
-        end = event_1_end
-    elif event_1_start <= event_2_start and event_1_end >= event_2_end:
-        start = event_1_start
-        end = event_1_end
-    try:
-        return get_shift_len(start, end)
-    except NameError:
+    latest_start = max(event_1_start, event_2_start)
+    earliest_end = min(event_1_end, event_2_end)
+    if latest_start > earliest_end:
         return 0.0
+    return (earliest_end - latest_start).seconds / config.HOURS_SECONDS_RATIO
+
+
+# def get_total_synchronous_hours(
+#     event_1_start: datetime, event_1_end: datetime,
+#     event_2_start: datetime, event_2_end: datetime
+#         ) -> float:
+#     """Returns the total amount of hours that are shared between both events.
+
+#     Args:
+#         event_1_start (datetime): The first event's start time.
+#         event_1_end (datetime): The first event's end time.
+#         event_2_start (datetime): The second event's start time.
+#         event_2_end (datetime): The second event's end time.
+
+#     Returns:
+#         float: Total amount of hours that are shared between both events.
+
+#     Raises:
+#         None
+#     """
+#     if event_2_start <= event_1_start <= event_2_end:
+#         if event_1_end <= event_2_end:
+#             start = event_1_start
+#             end = event_1_end
+#         else:
+#             start = event_1_start
+#             end = event_2_end
+#     elif event_2_start <= event_1_end <= event_2_end:
+#         start = event_2_start
+#         end = event_1_end
+#     elif event_1_start <= event_2_start and event_1_end >= event_2_end:
+#         start = event_1_start
+#         end = event_1_end
+#     try:
+#         return get_shift_len(start, end)
+#     except NameError:
+#         return 0.0
 
 
 def get_hour_basis(start: datetime, end: datetime,
