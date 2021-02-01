@@ -174,7 +174,7 @@
                     <img class="card-img-top profile-image rounded-circle mx-auto d-block"
                      src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
                     <div class="card-body">
-                        <h6 class="card-title text-center mb-1">{{ user.full_name }}</h6>
+                        <h6 class="card-title text-center mb-1" id="user_fullName">{{ user.full_name }}</h6>
                         <p class="card-text text-center mt-0">
                             <a class="nav-link text-secondary" href="#">
                                 <i class="fa fa-spin fa-cog" aria-hidden="true"></i>
@@ -183,7 +183,7 @@
                         </p>
                         <hr>
                         <p class="card-text text-center">
-                            <small>
+                            <small id="description">
                                 {{ user.description }}
                             </small>
                         </p>

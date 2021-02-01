@@ -1,0 +1,15 @@
+{
+    "baseUrl": "http://localhost:8000",
+    "viewportWidth": 1920,
+    "viewportHeight": 1080,
+    "pageLoadTimeout": 30000,
+    "requestTimeout": 10000,
+    "responseTimeout": 35000,
+    "defaultCommandTimeout": 20000,
+    "retries": 1,
+    "env": {
+        "user": "_user_qa",
+        "password": "TheBestPassword123",
+        "level": 1
+      }
+}
