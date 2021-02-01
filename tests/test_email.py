@@ -1,7 +1,12 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from app.internal.email import mail, send_email_invitation, send_email_file, send
+from app.internal.email import (
+    mail,
+    send_email_invitation,
+    send_email_file,
+    send
+)
 from fastapi import BackgroundTasks, status
 
 from app.database.models import User
