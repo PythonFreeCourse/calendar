@@ -2,6 +2,9 @@
 {% block content %}
     <div class="container">
         <h3>Login</h3>
+        {% if message %}
+            <div class="alert" style="color: red;">{{ message }}</div>
+        {% endif %}
         <form method="post">
             <div class="row">
                 <label for="username" class="col-sm-2 col-form-label">Username</label>
