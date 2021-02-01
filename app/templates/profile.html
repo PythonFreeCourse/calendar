@@ -172,22 +172,12 @@
                 <div class="card-body">
                     <p class="card-title">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 daily horoscope
                             </button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <button onclick="daily_horoscope('aries')" class="dropdown-item" type="button">Aries</button>
-                                <button onclick="daily_horoscope('taurus')" class="dropdown-item" type="button">Taurus</button>
-                                <button onclick="daily_horoscope('gemini')" class="dropdown-item" type="button">Gemini</button>
-                                <button onclick="daily_horoscope('cancer')" class="dropdown-item" type="button">Cancer</button>
-                                <button onclick="daily_horoscope('leo')" class="dropdown-item" type="button">Leo</button>
-                                <button onclick="daily_horoscope('virgo')" class="dropdown-item" type="button">Virgo</button>
-                                <button onclick="daily_horoscope('libra')" class="dropdown-item" type="button">Libra</button>
-                                <button onclick="daily_horoscope('scorpio')" class="dropdown-item" type="button">Scorpio</button>
-                                <button onclick="daily_horoscope('sagittarius')" class="dropdown-item" type="button">Sagittarius</button>
-                                <button onclick="daily_horoscope('capricorn')" class="dropdown-item" type="button">Capricorn</button>
-                                <button onclick="daily_horoscope('aquarius')" class="dropdown-item" type="button">Aquarius</button>
-                                <button onclick="daily_horoscope('aquarius')" class="dropdown-item" type="button">Pisces</button>
+                            <div class="dropdown-menu dropdown-menu-right" id='signs'>
+                                {% for sign in signs %}
+                                <button class="dropdown-item sign" type="button" id="sign" name="{{sign}}">{{sign}}</button> {% endfor %}
                             </div>
                         </div>
 
