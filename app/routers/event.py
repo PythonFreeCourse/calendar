@@ -60,11 +60,11 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     try:
-        event = get_event_by_id(db, event_id)
+        event = by_id(db, event_id)
     except NoResultFound:
-        raise HTTPException(status_code=404, detail="Event not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Event not found")
     except MultipleResultsFound:
-        raise HTTPException(status_code=500, detail="Multiple events found")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Multiple events found")
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
