@@ -131,6 +131,12 @@ async def update_telegram_id(
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
+@router.get("/import_holidays")
+def import_holidays(request: Request):
+
+    return templates.TemplateResponse("import_holidays.html", {
+        "request": request,
+    })
 
 async def process_image(image, user):
     img = Image.open(io.BytesIO(image))
@@ -159,7 +165,7 @@ async def update_holidays(
     try:
         save_holidays_to_db(holidays, session)
     except SQLAlchemyError as ex:
-        logger.error(ex)
+        logger.exception(ex)
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -167,7 +173,7 @@ async def update_holidays(
 
 def get_holidays_from_file(file, session):
     """
-    this function using regex to extract holiday title
+    This function using regex to extract holiday title
     and date from standrd ics file
     :param file:standard ics file
     :param session:current connection
@@ -176,20 +182,27 @@ def get_holidays_from_file(file, session):
     parsed_holidays = REGEX_EXTRACT_HOLIDAYS.finditer(file)
     holidays = []
     for holiday in parsed_holidays:
-        valid_ascii_chars_range = 128
-        title = holiday.groupdict()['title'].strip()
-        title_to_save = ''.join([i if ord(i) < valid_ascii_chars_range
-                                 else '' for i in title])
-        date = holiday.groupdict()['date'].strip()
-        holiday = Event(
-            title=title_to_save,
-            start=datetime.strptime(date, '%Y%m%d'),
-            end=datetime.strptime(date, '%Y%m%d') + timedelta(days=1),
-            content='holiday',
-            owner_id=session.query(User).filter_by(id=1).first().id
-        )
+        holiday = create_holiday_event(
+            holiday, session.query(User).filter_by(id=1).first().id)
         holidays.append(holiday)
     return holidays
+
+
+def create_holiday_event(holiday, owner_id):
+    valid_ascii_chars_range = 128
+    title = holiday.groupdict()['title'].strip()
+    title_to_save = ''.join([i if ord(i) < valid_ascii_chars_range
+                             else '' for i in title])
+    date = holiday.groupdict()['date'].strip()
+    format_string = '%Y%m%d'
+    holiday = Event(
+        title=title_to_save,
+        start=datetime.strptime(date, format_string),
+        end=datetime.strptime(date, format_string) + timedelta(days=1),
+        content='holiday',
+        owner_id=owner_id
+    )
+    return holiday
 
 
 def save_holidays_to_db(holidays, session):
