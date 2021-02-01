@@ -31,7 +31,7 @@ ERROR_RESPONSE_FROM_MOCK = {"error": {"message": "Error Text"}}
 
 
 @pytest.mark.asyncio
-def test_get_astronomical_data(httpx_mock, assert_all_responses_were_requested):
+def test_get_astronomical_data(httpx_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
     httpx_mock.add_response(method="GET", json=RESPONSE_FROM_MOCK)
     output = get_astronomical_data(requested_date, "tel aviv")
