@@ -29,7 +29,7 @@ RESPONSE_FROM_MOCK = {"location": {
 }
 ERROR_RESPONSE_FROM_MOCK = {"error": {"message": "Error Text"}}
 
-#, assert_all_responses_were_requested
+
 @pytest.mark.asyncio
 def test_get_astronomical_data(httpx_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
