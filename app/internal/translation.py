@@ -6,7 +6,8 @@ from textblob import TextBlob, download_corpora
 from textblob.exceptions import NotTranslated
 
 from app.database.database import SessionLocal
-from app.database.models import User
+from loguru import logger
+from app.routers.user import get_users
 
 download_corpora.download_all()
 
@@ -19,8 +20,8 @@ def translate_text(text: str,
     Translate text to the target language
     optionally given the original language
     """
-    if len(text) <= 0:
-        return "No text to translate"
+    if not text.strip():
+        return ""
     if original_lang is None:
         original_lang = _detect_text_language(text)
     else:
@@ -50,11 +51,10 @@ def _get_user_language(user_id: int, session: SessionLocal) -> str:
     Gets a user-id and returns the language he speaks
     Uses the DB"""
     try:
-        user = (
-            session.query(User).filter(User.id == user_id).first()
-        )
+        user = get_users(session, id=user_id)[0]
         language_user = user.language
     except SQLAlchemyError:
+        logger.exception("User of user preferred language was not found in the database.")
         return ""
     else:
         return language_user
@@ -74,4 +74,8 @@ def translate_text_for_user(text: str,
 
 
 def _lang_full_to_short(full_lang: str) -> str:
+    """
+    Gets the full language name and
+    converts it to a two-letter language name
+    """
     return languages.get(name=full_lang.capitalize()).alpha2

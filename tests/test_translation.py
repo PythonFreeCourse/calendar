@@ -69,12 +69,12 @@ def test_translate_text_with_same_original_target_lang_without_original_lang(
 
 def test_translate_text_without_text_with_original_target_lang():
     answer = translate_text("", "english", "russian")
-    assert answer == "No text to translate"
+    assert answer == ""
 
 
 def test_translate_text_without_text_without_original_lang():
     answer = translate_text("", "english")
-    assert answer == "No text to translate"
+    assert answer == ""
 
 
 def test_lang_short_to_full():
@@ -126,3 +126,17 @@ def test_translate_text_with_text_impossible_to_translate(
 def test_translate_text_with_symbols(text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert "@ Hello # my $ friend!" == answer
+
+
+@pytest.mark.parametrize("text, target_lang, original_lang",
+                         [("Привет мой друг", "italian", "spanish"),
+                          ("Hola mi amigo", "english", "russian"),
+                          ("Bonjour, mon ami", "russian", "german"),
+                          ("Ciao amico", "french", "german")
+                          ])
+def test_translate_text_with_with_incorrect_lang(
+        text,
+        target_lang,
+        original_lang):
+    answer = translate_text(text, target_lang, original_lang)
+    assert answer == text
