@@ -39,8 +39,9 @@ class TestLanguage:
     def test_gettext_html(language_code, translation, is_valid):
         languages.set_ui_language(language_code)
 
-        templates.env.from_string('{{ gettext("test python translation") }}')
-        text = templates.render()
+        template = templates.env.from_string(
+            '{{ gettext("test python translation") }}')
+        text = template.render()
         assert ((is_valid and translation in text)
                 or (not is_valid and translation in text))
 
