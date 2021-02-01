@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
-from app.internal.quotes import load_quotes, daily_quotes
+from app.internal.quotes import daily_quotes, load_quotes
 from app.routers import (agenda, dayview, email, event, invitation, profile,
                          search, telegram, whatsapp)
 from app.routers.salary import routes as salary
@@ -30,6 +30,7 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 load_quotes.load_daily_quotes(next(get_db()))
 
+app.logger = logger
 
 app.include_router(profile.router)
 app.include_router(event.router)
