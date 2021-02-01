@@ -59,12 +59,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 @router.get("/{event_id}")
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
-    try:
-        event = by_id(db, event_id)
-    except NoResultFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Event not found")
-    except MultipleResultsFound:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Multiple events found")
+    event = by_id(db, event_id)
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
@@ -86,38 +81,43 @@ UPDATE_EVENTS_FIELDS = {
 def by_id(db: Session, event_id: int) -> Event:
     """Get a single event by id"""
     if not isinstance(db, Session):
-        raise AttributeError(
-            f'Could not connect to database. '
-            f'db instance type received: {type(db)}')
+        error_message = (
+                 f'Could not connect to database. '
+                 f'db instance type received: {type(db)}')
+        logger.critical(error_message)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error_message)
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
-        raise NoResultFound(f"Event ID does not exist. ID: {event_id}")
+        error_message = f"Event ID does not exist. ID: {event_id}"
+        logger.exception(error_message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=error_message)
     except MultipleResultsFound:
         error_message = (
             f'Multiple results found when getting event. Expected only one. '
             f'ID: {event_id}')
         logger.critical(error_message)
-        raise MultipleResultsFound(error_message)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=error_message)
     return event
 
-def is_date_before(start_date: datetime, end_date: datetime) -> bool:
-    """Check if the start date is earlier than the end date"""
 
-    return start_date < end_date
+def is_end_date_before_start_date(start_date: datetime, end_date: datetime) -> bool:
+    """Check if the start date is earlier than the end date"""
+    print("start", start_date)
+    print("end", end_date)
+    return start_date > end_date
 
 
 def check_change_dates_allowed(
         old_event: Event, event: Dict[str, Any]):
     allowed = 1
     try:
-        if not is_date_before(
-            event.get('start', old_event.start),
-            event.get('end', old_event.end))
+        if is_end_date_before_start_date(event.get('start', old_event.start),
+        event.get('end', old_event.end) ):
             allowed = 0
     except TypeError:
         allowed = 0
-    if allowed == 0
+    if allowed == 0:
         raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid times")
 
@@ -143,40 +143,31 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
     return {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
 
 
-def update_event(event_id: int, event: Dict, db: Session
-                 ) -> Optional[Event]:
-    # TODO Check if the user is the owner of the event.
-
-    event_to_update = get_event_with_editable_fields_only(event)
-    is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS)
+def _update_event(db:Session, event_id:int, event_to_update:Dict) -> Event:
     try:
-        old_event = by_id(db, event_id)
-    except NoResultFound as e:
-        logger.exception(str(e) + "Event not found")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Event not found")
-    except MultipleResultsFound as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Multiple events found")
-    except AttributeError as e:
-        logger.exception(str(e) + "Could not connect to database")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail="Could not connect to database")
-
-    try:
-        check_change_dates_allowed(old_event, event_to_update)
-        if not event_to_update:
-            return None
-
         # Update database
         db.query(Event).filter(Event.id == event_id).update(
-            event_to_update, synchronize_session=False)
+                event_to_update, synchronize_session=False)
         db.commit()
-
-        # TODO: Send emails to recipients.
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                                     detail="Internal server error")
+
+
+def update_event(event_id: int, event: Dict, db: Session
+                 ) -> Optional[Event]:
+    # TODO Check if the user is the owner of the event.
+    old_event = by_id(db, event_id)
+    event_to_update = get_event_with_editable_fields_only(event)
+    is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS)
+    check_change_dates_allowed(old_event, event_to_update)
+    if not event_to_update:
+        return None
+    event_updated = _update_event(db, event_id, event_to_update)
+    # TODO: Send emails to recipients.
+    return event_updated
 
 
 def create_event(db, title, start, end, owner_id, content=None, location=None):
@@ -240,17 +231,7 @@ def delete_event(event_id: int,
                  db: Session = Depends(get_db)):
 
     # TODO: Check if the user is the owner of the event.
-    try:
-        event = by_id(db, event_id)
-    except NoResultFound as e:
-        logger.exception(str(e) + "Event not found")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Event not found")
-    except MultipleResultsFound as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Multiple events found")
-    except AttributeError as e:
-        logger.exception(str(e) + "Could not connect to database")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail="Could not connect to database")
+    event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
     _delete_event(db, event)
     if participants and event.start > datetime.now():
