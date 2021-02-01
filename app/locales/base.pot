@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-01-26 21:30+0200\n"
+"POT-Creation-Date: 2021-02-01 10:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,22 @@ msgstr ""
 
 #: app/templates/agenda.html:13
 msgid "to"
+msgstr ""
+
+#: app/templates/agenda.html:15
+msgid "Get Agenda"
+msgstr ""
+
+#: app/templates/agenda.html:20
+msgid "Today"
+msgstr ""
+
+#: app/templates/agenda.html:23
+msgid "Next week"
+msgstr ""
+
+#: app/templates/agenda.html:26
+msgid "Next month"
 msgstr ""
 
 #: app/templates/agenda.html:33
@@ -61,64 +77,57 @@ msgstr ""
 msgid "Agenda"
 msgstr ""
 
-#: app/templates/profile.html:53
+#: app/templates/profile.html:59
 msgid "Update name"
 msgstr ""
 
-#: app/templates/profile.html:60 app/templates/profile.html:82
-#: app/templates/profile.html:103 app/templates/profile.html:127
+#: app/templates/profile.html:66 app/templates/profile.html:88
+#: app/templates/profile.html:109 app/templates/profile.html:133
 msgid "Save changes"
 msgstr ""
 
-#: app/templates/profile.html:74
+#: app/templates/profile.html:80
 msgid "Update email"
 msgstr ""
 
-#: app/templates/profile.html:95
+#: app/templates/profile.html:101
 msgid "Update description"
 msgstr ""
 
-#: app/templates/profile.html:118
+#: app/templates/profile.html:124
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:144
+#: app/templates/profile.html:176
 msgid "Settings"
 msgstr ""
 
-#: app/templates/profile.html:161
-msgid "Features"
-msgstr ""
-
-#: app/templates/profile.html:165
-msgid "Export my calendar"
-msgstr ""
-
-#: app/templates/profile.html:168 app/templates/profile.html:171
+#: app/templates/profile.html:207
 msgid "Your feature"
 msgstr ""
 
-#: app/templates/profile.html:192
+#: app/templates/profile.html:228
 msgid "Upcoming event on (date)"
 msgstr ""
 
-#: app/templates/profile.html:203
+#: app/templates/profile.html:239
 msgid "The Event (event)"
 msgstr ""
 
-#: app/templates/profile.html:206
+#: app/templates/profile.html:242
 msgid "Last updated (time) ago"
 msgstr ""
 
-#: app/templates/profile.html:223
+#: app/templates/profile.html:259
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:232 app/templates/profile.html:241
+#: app/templates/profile.html:268 app/templates/profile.html:277
 msgid "Your Card"
 msgstr ""
 
-#: tests/test_language.py:39
+#. i18n: String used in testing. Do not change.
+#: tests/test_language.py:32
 msgid "test python translation"
 msgstr ""
 
