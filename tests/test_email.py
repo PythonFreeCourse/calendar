@@ -151,3 +151,17 @@ def test_send_mail_valid_email(client, configured_smtpd):
                                )
         assert response.ok
         assert outbox
+
+
+def test_send_mail_bad_invitation(client, configured_smtpd):
+    with mail.record_messages() as outbox:
+        response = client.post("/email/invitation/", json={
+            "sender_name": "",
+            "recipient_name": "string",
+            "recipient_mail": "test@mail.com"
+        }
+                               )
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.json() == {
+             "detail": "Couldn't send the email!"}
+        assert not outbox

@@ -75,6 +75,12 @@ def send_email_invitation(sender_name: str,
     if not verify_email_pattern(recipient_mail):
         return False
 
+    if not recipient_name:
+        return False
+
+    if not sender_name:
+        return False
+
     template = templates.get_template("invite_mail.html")
     html = template.render(recipient=recipient_name, sender=sender_name,
                            site_name=CALENDAR_SITE_NAME,
