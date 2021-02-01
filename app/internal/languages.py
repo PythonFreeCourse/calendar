@@ -35,7 +35,7 @@ def set_ui_language(language: str = None) -> None:
 
     language_dir = _get_language_directory()
 
-    if language not in _get_supported_languages(language_dir):
+    if language not in list(_get_supported_languages(language_dir)):
         language = config.WEBSITE_LANGUAGE
 
     translations = gettext.translation(TRANSLATION_FILE,
