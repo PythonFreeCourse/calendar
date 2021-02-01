@@ -1,6 +1,6 @@
+from app.database.models import WikipediaEvents
 from app.internal.on_this_day_events import (get_on_this_day_events,
                                              insert_on_this_day_data)
-from app.database.models import WikipediaEvents
 
 
 def test_insert_on_this_day_data(session):
@@ -28,4 +28,3 @@ def test_get_on_this_day_events_exists(session):
     assert fake_data.events[0] == 'fake'
     assert fake_data.wikipedia == 'www.fake.com'
     assert fake_data.date_ == 'not a date string'
-
