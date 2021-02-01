@@ -54,17 +54,12 @@ def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
     event_details = [event.title, event.content, event.location, event.start,
                      event.end, event.color]
-    response = event_test_client.get(f"/event/view/{event_id}")
+    response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"View Event" in response.content
     for event_detail in event_details:
         assert str(event_detail).encode('utf-8') in response.content, \
             f'{event_detail} not in view event page'
-
-
-def test_eventview_without_id(event_test_client):
-    response = event_test_client.get("/event/view")
-    assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
 
 def test_eventedit_post_correct(client, user):

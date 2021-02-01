@@ -55,7 +55,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                             status_code=HTTP_302_FOUND)
 
 
-@router.get("/view/{event_id}")
+@router.get("/{event_id}")
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     try:
