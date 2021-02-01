@@ -1,0 +1,31 @@
+from app.internal.on_this_day_events import (get_on_this_day_events,
+                                             insert_on_this_day_data)
+from app.database.models import WikipediaEvents
+
+
+def test_insert_on_this_day_data(session):
+    is_exists_data = session.query(WikipediaEvents).all()
+    assert not is_exists_data
+    insert_on_this_day_data(session)
+    is_exists_data = session.query(WikipediaEvents).all()
+    assert is_exists_data is not None
+
+
+def test_get_on_this_day_events(session):
+    data = get_on_this_day_events(session)
+    assert type(data) == dict
+    assert type(data.get('events')) == list
+    assert type(data.get('wikipedia')) == str
+
+
+def test_get_on_this_day_events_exists(session):
+    fake_object = WikipediaEvents(
+        events=['fake'], wikipedia="www.fake.com", date_="not a date string")
+    session.add(fake_object)
+    session.commit()
+    fake_data = get_on_this_day_events(session)
+    print(fake_data.events)
+    assert fake_data.events[0] == 'fake'
+    assert fake_data.wikipedia == 'www.fake.com'
+    assert fake_data.date_ == 'not a date string'
+
