@@ -55,13 +55,6 @@ def get_holiday_categories() -> Dict[int, str]:
     }
 
 
-# def get_user_salary_categories(user_id: int) -> Dict[int, str]:
-#     # Code revision required after categories feature is added
-#     return {key: value
-#             for key, value in get_user_categories().items()
-#             if utils.get_settings(user_id, key)}
-
-
 def get_salary_categories(user_id: int,
                           existing: bool = True) -> Dict[int, str]:
     """Returns a dict of all categories the user has created salary settings
@@ -85,7 +78,11 @@ def get_salary_categories(user_id: int,
     categories = {}
     for key, value in get_user_categories().items():
         settings = utils.get_settings(user_id, key)
-        if all((existing, settings)) or not any((existing, settings)):
+        if settings:
+            is_settings = True
+        else:
+            is_settings = False
+        if existing == is_settings:
             categories[key] = value
     return categories
 
@@ -106,8 +103,8 @@ def salary_home() -> Response:
 async def create_settings(request: Request,
                           session=Depends(get_db)) -> Response:
     """Renders a salary settings creation page with all available user related
-    categories and default settings. Redirects to alary view page upon
-    creation."""
+    categories and default settings. Creates salary settings according to form
+    and redirects to salary view page upon submition."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     # Code revision required after holiday times feature is added
@@ -157,7 +154,7 @@ async def create_settings(request: Request,
 async def pick_settings(request: Request) -> Response:
     """Renders a category salary settings edit choice page, redirects to the
     relevant salary settings edit page upon submition, or to settings creation
-    page if none exist prior."""
+    page if none exist."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     form = await request.form()
@@ -184,8 +181,9 @@ async def pick_settings(request: Request) -> Response:
 async def edit_settings(request: Request, category_id: int,
                         session=Depends(get_db)) -> Response:
     """Renders a salary settings edit page for setting corresponding to
-    logged-in user and `category_id`, redirects to month choice pre calculation
-    display page upon submition, or to category salary settings edit choice
+    logged-in user and `category_id`. Edits the salary settings according to
+    form and redirects to month choice pre calculation display page upon
+    submition. Redirects to category salary settings edit choice
     page if settings don't exist."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
@@ -237,9 +235,9 @@ async def edit_settings(request: Request, category_id: int,
 @router.post('/view')
 @router.get('/view')
 async def pick_category(request: Request) -> Response:
-    """Render a category salary calculation view choice page, redirects to the
+    """Renders a category salary calculation view choice page, redirects to the
     relevant salary calculation view page upon submition, or to settings
-    creation page if non salary settings exist prior."""
+    creation page if no salary settings exist."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     form = await request.form()
@@ -263,11 +261,10 @@ async def pick_category(request: Request) -> Response:
 @router.post('/view/{category_id}')
 @router.get('/view/{category_id}')
 async def view_salary(request: Request, category_id: int) -> Response:
-    """Render month choice pre calculation display page. Overtime, additions &
+    """Renders month choice pre calculation display page. Overtime, additions &
     deductions to be calculated can be provided. Displays calculation details
-    upon submition. Redirects to '/salary' if salary settings don't exist for
-    logged-in user and `category_id`.
-    """
+    upon submition. Redirects to category salary calculation view choice page
+    if salary settings don't exist for logged-in user and `category_id`."""
     # Code revision required after user login feature is added
     # Code revision required after categories feature is added
     form = await request.form()

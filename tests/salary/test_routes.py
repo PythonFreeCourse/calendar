@@ -110,7 +110,7 @@ def test_get_salary_categories_new(wage: SalarySettings) -> None:
 def test_pages_respond_ok(salary_test_client: TestClient,
                           wage: SalarySettings, path: str) -> None:
     response = salary_test_client.get(path)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.ok
 
 
 @mock.patch('app.routers.salary.utils.SessionLocal',
@@ -120,7 +120,7 @@ def test_pages_respond_ok(salary_test_client: TestClient,
 def test_home_page_redirects_to_new(
         salary_test_client: TestClient) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
-    assert response.status_code == status.HTTP_200_OK
+    assert response.ok
     assert conftest.MESSAGES['create_settings'] in response.text
 
 
@@ -132,7 +132,7 @@ def test_home_page_redirects_to_new(
 def test_home_page_redirects_to_view(salary_test_client: TestClient,
                                      wage: SalarySettings) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
-    assert response.status_code == status.HTTP_200_OK
+    assert response.ok
     assert conftest.MESSAGES['pick_category'] in response.text
 
 
@@ -163,7 +163,7 @@ def test_create_settings(salary_test_client: TestClient,
         }
     response = salary_test_client.post(
         conftest.ROUTES['new'], data=data, allow_redirects=True)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.ok
     assert conftest.MESSAGES['view_salary'] in response.text
     settings = utils.get_settings(salary_user.id, category_id)
     assert settings
@@ -219,7 +219,7 @@ def test_edit_settings(salary_test_client: TestClient,
         'daily_transport': wage.daily_transport,
     }
     response = salary_test_client.post(route, data=data, allow_redirects=True)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.ok
     assert conftest.MESSAGES['view_salary'] in response.text
     assert settings != utils.get_settings(wage.user_id, wage.category_id)
 
@@ -240,19 +240,6 @@ def test_invalid_category_redirect(
     assert message in response.text
 
 
-# @pytest.mark.parametrize('path, message', INVALIDS)
-# @mock.patch.multiple('app.routers.salary.routes',
-#                      SessionLocal=TestingSessionLocal,
-#                      get_current_user=get_current_user)
-# @mock.patch('app.routers.salary.utils.SessionLocal',
-#             new=TestingSessionLocal)
-# def test_invalid_page_redirects(salary_test_client: TestClient,
-#                                 wage: SalarySettings, path: str,
-#                                 message: str) -> None:
-#     response = salary_test_client.get(path)
-#     assert message in response.text
-
-
 @mock.patch.multiple('app.routers.salary.routes',
                      SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
@@ -269,5 +256,5 @@ def test_view_salary(salary_test_client: TestClient,
         'overtime': True
     }
     response = salary_test_client.post(route, data=data)
-    assert response.status_code == status.HTTP_200_OK
+    assert response.ok
     assert conftest.MESSAGES['salary_calc'] in response.text

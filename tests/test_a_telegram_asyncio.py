@@ -249,7 +249,6 @@ class TestBotClient:
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
-        print(response.text)
         assert b'Welcome to Pylander telegram client!' in response.content
 
     @staticmethod
