@@ -54,7 +54,6 @@ def session():
 
 
 @pytest.fixture
-=======
 def sqlite_engine():
     SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
     sqlite_test_engine = create_engine(
