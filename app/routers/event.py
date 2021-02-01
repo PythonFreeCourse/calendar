@@ -74,7 +74,7 @@ async def eventview(request: Request, event_id: int,
 
 
 @router.delete("/{event_id}")
-def delete_event(event_id: int,
+def delete_event(request: Request, event_id: int,
                  db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the event.
     try:
@@ -86,9 +86,14 @@ def delete_event(event_id: int,
 
     participants = get_participants_emails_by_event(db, event_id)
 
-    db.delete(event)
-    db.query(UserEvent).filter_by(event_id=event_id).delete()
-    db.commit()
+    try:
+        db.delete(event)
+        db.query(UserEvent).filter_by(event_id=event_id).delete()
+        db.commit()
+    except (SQLAlchemyError, TypeError):
+        return templates.TemplateResponse(
+            "event/eventview.html", {"request": request, "event_id": event_id},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     if participants and event.start > datetime.now():
         pass
