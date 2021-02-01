@@ -5,13 +5,12 @@ from sqlalchemy.orm import Session
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
-from app.dependencies import (
-    MEDIA_PATH, STATIC_PATH, templates, logger)
-from app.internal.quotes import load_quotes, daily_quotes
+from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
+from app.internal.quotes import daily_quotes, load_quotes
 from app.routers import (
-    agenda, dayview, email, event, invitation,
-    profile, search, telegram, google_connect, whatsapp)
-
+    agenda, dayview, email, event, invitation, profile, search, telegram,
+    whatsapp, google_connect
+)
 from app.telegram.bot import telegram_bot
 
 
@@ -33,6 +32,7 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 load_quotes.load_daily_quotes(next(get_db()))
 
+app.logger = logger
 
 app.include_router(profile.router)
 app.include_router(event.router)
