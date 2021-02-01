@@ -1,7 +1,6 @@
 import re
 
 from fastapi import HTTPException
-
 from starlette.status import HTTP_400_BAD_REQUEST
 
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')

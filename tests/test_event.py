@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 from fastapi import HTTPException
+from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 
 from app.database.models import Event
@@ -43,35 +44,38 @@ INVALID_UPDATE_OPTIONS = [
 ]
 
 
-class TestEvent:
-    def test_eventedit(self, client):
-        response = client.get("/event/edit")
-        assert response.ok
-        assert b"Edit Event" in response.content
+def test_eventedit(event_test_client):
+    response = event_test_client.get("/event/edit")
+    assert response.ok
+    assert b"Edit Event" in response.content
 
-    def test_eventview_with_id(self, client):
-        response = client.get("/event/view/1")
-        assert response.ok
-        assert b"View Event" in response.content
 
-    def test_eventview_without_id(self, client):
-        response = client.get("/event/view")
-        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+def test_eventview_with_id(event_test_client, session, event):
+    event_id = event.id
+    event_details = [event.title, event.content, event.location, event.start,
+                     event.end, event.color]
+    response = event_test_client.get(f"/event/{event_id}")
+    assert response.ok
+    assert b"View Event" in response.content
+    for event_detail in event_details:
+        assert str(event_detail).encode('utf-8') in response.content, \
+            f'{event_detail} not in view event page'
 
-    def test_eventedit_post_correct(self, event_test_client, user):
-        response = event_test_client.post(
-            event_test_client.app.url_path_for(
-                'create_new_event'), data=CORRECT_EVENT_FORM_DATA)
-        assert response.ok
-        assert response.status_code == status.HTTP_302_FOUND
-        assert (event_test_client.app.url_path_for(
-            'eventview', id=1).strip('1') in response.headers['location'])
 
-    def test_eventedit_post_wrong(self, event_test_client, user):
-        response = event_test_client.post(
-            event_test_client.app.url_path_for(
-                'create_new_event'), data=WRONG_EVENT_FORM_DATA)
-        assert response.json()['detail'] == 'VC type with no valid zoom link'
+def test_eventedit_post_correct(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == HTTP_302_FOUND
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
+def test_eventedit_post_wrong(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=WRONG_EVENT_FORM_DATA)
+    assert response.json()['detail'] == 'VC type with no valid zoom link'
+
 
     @pytest.mark.parametrize("data", INVALID_UPDATE_OPTIONS)
     def test_invalid_update(self, event, data, session):
@@ -99,19 +103,22 @@ class TestEvent:
             event_id=event.id, event=data, db=session).title
 
     def test_update_db_close(self, event):
-        data = {"title": "Problem connecting to db", }
-        assert update_event(event_id=event.id,
-                            event=data, db=None) is None
+    data = {"title": "Problem connecting to db", }
+    with pytest.raises(AttributeError):
+        update_event(event_id=event.id, event=data, db=None)
 
-    def test_update_event_does_not_exist(self, event, session):
-        data = {
-            "content": "An update test for an event does not exist"
-        }
-        assert update_event(
-            event_id=500, event=data, db=session) is None
 
-    def test_repr(self, event):
-        assert event.__repr__() == f'<Event {event.id}>'
+def test_update_event_does_not_exist(self, event, session):
+    data = {
+        "content": "An update test for an event does not exist"
+    }
+    with pytest.raises(HTTPException):
+        response = update_event(event_id=500, event=data, db=session)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_repr(event):
+    assert event.__repr__() == f'<Event {event.id}>'
 
     def test_no_connection_to_db_in_delete(self, event):
         with pytest.raises(HTTPException):

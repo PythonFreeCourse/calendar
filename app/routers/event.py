@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse
 
@@ -50,14 +51,27 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     event = create_event(session, title, start, end, owner_id, content,
                          location)
-    return RedirectResponse(router.url_path_for('eventview', id=event.id),
+    return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event.id),
                             status_code=status.HTTP_302_FOUND)
 
 
-@router.get("/view/{id}")
-async def eventview(request: Request, id: int):
+@router.get("/{event_id}")
+async def eventview(request: Request, event_id: int,
+                    db: Session = Depends(get_db)):
+    try:
+        event = get_event_by_id(db, event_id)
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Event not found")
+    except MultipleResultsFound:
+        raise HTTPException(status_code=500, detail="Multiple events found")
+    start_format = '%A, %d/%m/%Y %H:%M'
+    end_format = ('%H:%M' if event.start.date() == event.end.date()
+                  else start_format)
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event_id": id})
+                                      {"request": request, "event": event,
+                                       "start_format": start_format,
+                                       "end_format": end_format})
 
 
 UPDATE_EVENTS_FIELDS = {
@@ -70,10 +84,22 @@ UPDATE_EVENTS_FIELDS = {
 
 
 def by_id(db: Session, event_id: int) -> Event:
-    """Select event by id"""
-
-    return db.query(Event).filter(Event.id == event_id).first()
-
+    """Get a single event by id"""
+    if not isinstance(db, Session):
+        raise AttributeError(
+            f'Could not connect to database. '
+            f'db instance type received: {type(db)}')
+    try:
+        event = db.query(Event).filter_by(id=event_id).one()
+    except NoResultFound:
+        raise NoResultFound(f"Event ID does not exist. ID: {event_id}")
+    except MultipleResultsFound:
+        error_message = (
+            f'Multiple results found when getting event. Expected only one. '
+            f'ID: {event_id}')
+        logger.critical(error_message)
+        raise MultipleResultsFound(error_message)
+    return event
 
 def is_date_before(start_date: datetime, end_date: datetime) -> bool:
     """Check if the start date is earlier than the end date"""
@@ -120,8 +146,19 @@ def update_event(event_id: int, event: Dict, db: Session
     is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS)
     try:
         old_event = by_id(db, event_id)
+    except NoResultFound as e:
+        logger.exception(str(e) + "Event not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Event not found")
+    except MultipleResultsFound as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Multiple events found")
+    except AttributeError as e:
+        logger.exception(str(e) + "Could not connect to database")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail="Could not connect to database")
+
+    try:
         forbidden = not is_change_dates_allowed(old_event, event_to_update)
-        if not event_to_update or old_event is None or forbidden:
+        if not event_to_update or forbidden:
             return None
 
         # Update database
@@ -133,7 +170,7 @@ def update_event(event_id: int, event: Dict, db: Session
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
-        return None
+        raise e
 
 
 def create_event(db, title, start, end, owner_id, content=None, location=None):
@@ -199,13 +236,15 @@ def delete_event(event_id: int,
     # TODO: Check if the user is the owner of the event.
     try:
         event = by_id(db, event_id)
+    except NoResultFound as e:
+        logger.exception(str(e) + "Event not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Event not found")
+    except MultipleResultsFound as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Multiple events found")
     except AttributeError as e:
         logger.exception(str(e) + "Could not connect to database")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Could not connect to database")
-    if not event:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="The event was not found")
     participants = get_participants_emails_by_event(db, event_id)
     _delete_event(db, event)
     if participants and event.start > datetime.now():
