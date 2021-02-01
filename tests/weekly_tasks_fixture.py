@@ -16,6 +16,28 @@ def weekly_task():
 
 
 @pytest.fixture
+def weekly_task2():
+    return WeeklyTask(
+        title="Test Task 2",
+        days="Sun, Sat",
+        content="my content2",
+        is_important=False,
+        the_time="12:00"
+    )
+
+
+@pytest.fixture
+def weekly_task3():
+    return WeeklyTask(
+        title="Test Task 2",
+        days="Sat",
+        content="my content3",
+        is_important=False,
+        the_time="12:00"
+    )
+
+
+@pytest.fixture
 def input_weekly_task():
     return {
         'title': 'Test Task 1',

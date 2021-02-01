@@ -8,7 +8,8 @@ from app.database.database import get_db
 from app.database.models import User, WeeklyTask
 from app.dependencies import templates
 from app.internal.weekly_tasks import (
-    make_or_change_weekly_task, remove_weekly_task)
+    remove_weekly_task, get_w_t_from_input,
+    make_weekly_task, change_weekly_task)
 
 
 router = APIRouter(
@@ -38,7 +39,7 @@ def get_user(demo_user, session):
 
 
 @router.get("/")
-async def weekly_tasks_manager(
+def weekly_tasks_manager(
         request: Request,
         session=Depends(get_db),
         demo_user=Depends(get_placeholder_user)):
@@ -60,8 +61,7 @@ async def weekly_tasks_manager(
 
 
 @router.get("/add")
-async def weekly_task_add(
-        request: Request):
+def weekly_task_add(request: Request):
 
     return templates.TemplateResponse("add_edit_weekly_task.html", {
         "request": request,
@@ -70,8 +70,8 @@ async def weekly_task_add(
     })
 
 
-@router.post("/remove")
-async def weekly_task_remove(
+@router.post("/delete")
+def weekly_task_remove(
         session=Depends(get_db),
         remove_id: int = Form(...)):
 
@@ -82,7 +82,7 @@ async def weekly_task_remove(
 
 
 @router.post("/edit")
-async def weekly_task_edit(
+def weekly_task_edit(
         request: Request,
         session=Depends(get_db),
         edit_id: int = Form(...)):
@@ -96,7 +96,7 @@ async def weekly_task_edit(
 
 
 @router.post("/make-change")
-async def weekly_task_make_change(
+def weekly_task_make_change(
         request: Request,
         session=Depends(get_db),
         demo_user=Depends(get_placeholder_user),
@@ -127,19 +127,26 @@ async def weekly_task_make_change(
     days_list = [day for day, is_true in days_dict.items() if is_true]
     days = ", ".join(days_list)
 
-    made_change, weekly_task = make_or_change_weekly_task(
-        user, session,
-        mode, weekly_task_id,
+    weekly_task = get_w_t_from_input(
+        user,
         title, days,
-        content, is_important,
-        the_time,
+        content, the_time,
+        is_important,
+        weekly_task_id=weekly_task_id
     )
 
+    made_change = False
     massage = None
     if mode == "add":
         massage = "could not add The Weekly Task"
-    else:
+        made_change = make_weekly_task(
+            user, session, weekly_task
+        )
+    else:  # mode == "edit"
         massage = "These changes could not be made to the Weekly Task"
+        made_change = change_weekly_task(
+            user, session, weekly_task
+        )
 
     if not made_change:
         return templates.TemplateResponse("add_edit_weekly_task.html", {
@@ -148,6 +155,5 @@ async def weekly_task_make_change(
             "weekly_task": weekly_task,
             "mode": mode
         })
-    session.close()
     url = router.url_path_for("weekly_tasks_manager")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)

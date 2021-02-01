@@ -1,42 +1,37 @@
 from datetime import date, datetime, time
-from typing import Tuple
 
 from app.database.models import User, Task, WeeklyTask
 from sqlalchemy.orm.session import Session
 
 
 def check_inputs(days: str, the_time: time, title: str) -> bool:
-    """Checks inputs, used by the make_or_change_weekly_task function"""
-    if not days or days == "" or not the_time or not title or title == "":
+    """Checks inputs, used by the get_w_t_from_input function"""
+    if not days or not the_time or not title:
         return False
     return True
 
 
-def make_or_change_weekly_task(
-    user: User, session: Session,
-    mode: str, weekly_task_id: int,
+def get_w_t_from_input(
+    user: User,
     title: str, days: str,
-    content: str, is_important: bool, the_time: time
-) -> Tuple[bool, WeeklyTask]:
-    """This function is being used to add a Weekly Task to the user
-        or to edit an existing Weekly Task the user have.
+    content: str, the_time: time,
+    is_important: bool,
+    weekly_task_id: int = 0
+) -> WeeklyTask:
+    """This function is being used to make a Weekly Task model
+        from the inputs.
 
     Args:
-        user (User): The user who wants to add or edit the Weekly Task.
-        session (Session): The session to redirect to the database.
-        mode (str): Determines whether in Add or Edit mode.
-        weekly_task_id (int): In edit mode, represents the
-            weekly task being edited.
+        user (User): The user who wants to make or edit a Weekly Task.
         title (str): Title of the Weekly Task.
         days (str): Return days of the Weekly Task.
         content (str): Content of the Weekly Task.
-        is_important (bool): If the task is important.
         the_time (time): Return time of the Weekly Task.
+        is_important (bool): If the task is important.
+        weekly_task_id (int): The id of the weekly task, zero if not mentioned.
 
     Returns:
-        Tuple: Boolean variable which shows if the change has been
-            made to the db, and the model WeeklyTask which the
-            function made so far.
+        WeeklyTask: the model WeeklyTask which the function managed to make.
     """
     weekly_task = WeeklyTask(
         title=title,
@@ -45,49 +40,82 @@ def make_or_change_weekly_task(
         owner_id=user.id
     )
 
-    if weekly_task_id:
+    if weekly_task_id != 0:
         weekly_task.id = weekly_task_id
 
     inputs_ok = check_inputs(days, the_time, title)
     if not inputs_ok:
-        return False, weekly_task
-
+        return weekly_task
     weekly_task.days = days
     weekly_task.the_time = the_time.strftime("%H:%M")
+    return weekly_task
 
-    if mode == "add":
-        user_titles = (
-            user_weekly_task.title
-            for user_weekly_task in user.weekly_tasks
-            )
-        if title in user_titles:
-            return False, weekly_task
-        session.add(weekly_task)
-        session.commit()
-        return True, weekly_task
 
-    else:  # if mode == "edit"
-        w_task_query = session.query(WeeklyTask)
-        old_weekly_task = w_task_query.filter_by(id=weekly_task.id).first()
+def make_weekly_task(
+    user: User, session: Session,
+    weekly_task: WeeklyTask
+) -> bool:
+    """This function is being used to add a Weekly Task to the user.
 
-        user_titles = (
-            user_weekly_task.title for user_weekly_task in user.weekly_tasks
-            if user_weekly_task.title != old_weekly_task.title
-        )
+        Args:
+            user (User): The user who wants to add the Weekly Task.
+            session (Session): The session to redirect to the database.
+            weekly_task (WeeklyTask): The Weekly Task that the user will add.
 
-        if title in user_titles:
-            return False, weekly_task
+        Returns:
+            bool: Shows if the weekly_task has been added to the db.
+        """
+    if weekly_task.days is None or weekly_task.the_time is None:
+        return False
+    user_titles = (
+        user_weekly_task.title
+        for user_weekly_task in user.weekly_tasks
+    )
+    if weekly_task.title in user_titles:
+        return False
+    session.add(weekly_task)
+    session.commit()
+    return True
 
-        if old_weekly_task.owner_id != weekly_task.owner_id:
-            return False, weekly_task
 
-        old_weekly_task.title = weekly_task.title
-        old_weekly_task.days = weekly_task.days
-        old_weekly_task.content = weekly_task.content
-        old_weekly_task.is_important = weekly_task.is_important
-        old_weekly_task.the_time = weekly_task.the_time
-        session.commit()
-        return True, weekly_task
+def change_weekly_task(
+    user: User, session: Session,
+    weekly_task: WeeklyTask
+) -> bool:
+    """This function is being used to edit a Weekly Task the user have.
+
+        Args:
+            user (User): The user who wants to edit the Weekly Task.
+            session (Session): The session to redirect to the database.
+            weekly_task (WeeklyTask): The Weekly Task that the of the user,
+                with the edited values.
+
+        Returns:
+            bool: Shows if the weekly_task has been edited in the db.
+        """
+    if weekly_task.days is None or weekly_task.the_time is None:
+        return False
+    w_task_query = session.query(WeeklyTask)
+    old_weekly_task = w_task_query.filter_by(id=weekly_task.id).first()
+
+    user_titles = (
+        user_weekly_task.title for user_weekly_task in user.weekly_tasks
+        if user_weekly_task.title != old_weekly_task.title
+    )
+
+    if weekly_task.title in user_titles:
+        return False
+
+    if weekly_task.owner_id != user.id:
+        return False
+
+    old_weekly_task.title = weekly_task.title
+    old_weekly_task.days = weekly_task.days
+    old_weekly_task.content = weekly_task.content
+    old_weekly_task.is_important = weekly_task.is_important
+    old_weekly_task.the_time = weekly_task.the_time
+    session.commit()
+    return True
 
 
 def make_task(task: Task, user: User, session: Session) -> bool:
@@ -96,11 +124,11 @@ def make_task(task: Task, user: User, session: Session) -> bool:
     task_by_time = user_tasks_query.filter_by(date_time=task.date_time)
     task_by_title_and_time = task_by_time.filter_by(title=task.title)
     task_exist = task_by_title_and_time.first()
-    if not task_exist:
-        session.add(task)
-        session.commit()
-        return True
-    return False
+    if task_exist:
+        return False
+    session.add(task)
+    session.commit()
+    return True
 
 
 def generate_tasks(session: Session, user: User):
@@ -131,8 +159,8 @@ def remove_weekly_task(weekly_task_id: int, session: Session) -> bool:
     """Removes a weekly task from the db based on the weekly task id"""
     weekly_task_query = session.query(WeeklyTask)
     weekly_task = weekly_task_query.filter_by(id=weekly_task_id).first()
-    if weekly_task:
-        session.query(WeeklyTask).filter_by(id=weekly_task_id).delete()
-        session.commit()
-        return True
-    return False
+    if not weekly_task:
+        return False
+    session.query(WeeklyTask).filter_by(id=weekly_task_id).delete()
+    session.commit()
+    return True
