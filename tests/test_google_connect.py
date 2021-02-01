@@ -281,7 +281,7 @@ def test_google_sync_second_path(mocker, google_connect_test_client,
     assert connect.ok
 
 
-@pytest.mark.usefixtures("user", "session", "google_events_mock",
+@pytest.mark.usefixtures("session", "google_events_mock",
                          "credentials", "google_connect_test_client")
 def test_google_sync_third_path(mocker, google_connect_test_client,
                                 session, credentials, google_events_mock):
@@ -352,3 +352,22 @@ def test_get_active_user(session):
                 email='new_test.email@gmail.com')
 
     assert google_connect.get_active_user(session=session)
+
+
+@pytest.mark.usefixtures("session")
+def test_create_google_event(session):
+    user = create_user(session=session,
+                       username='new_test_username',
+                       password='new_test_password',
+                       email='new_test.email@gmail.com')
+
+    event = google_connect.create_google_event(
+            'title',
+            datetime(2021, 1, 1, 15, 15),
+            datetime(2021, 1, 1, 15, 30),
+            user,
+            'location',
+            session
+            )
+
+    assert event.title == 'title'

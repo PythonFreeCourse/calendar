@@ -159,17 +159,22 @@ def push_events_to_db(events: list, user: User,
             # This case handles if Google Event has a location attached
             location = event['location']
 
-        create_event(
-            # creating an event obj and pushing it into the db
-            db=session,
-            title=title,
-            start=start,
-            end=end,
-            owner_id=user.id,
-            location=location,
-            is_google_event=True
-        )
+        create_google_event(title, start, end, user, location, session)
     return True
+
+
+def create_google_event(title: str, start: datetime, end: datetime, user: User,
+                        location: str, session: SessionLocal = Depends()):
+    return create_event(
+        # creating an event obj and pushing it into the db
+        db=session,
+        title=title,
+        start=start,
+        end=end,
+        owner_id=user.id,
+        location=location,
+        is_google_event=True
+    )
 
 
 def db_cleanup(user: User, session: SessionLocal = Depends()) -> bool:
