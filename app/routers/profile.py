@@ -44,14 +44,14 @@ async def profile(
         session.commit()
         user = session.query(User).filter_by(id=1).first()
 
-    sings = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
+    signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
              'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
              'Capricorn', 'Aquarius', 'Pisces']
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
         "events": upcoming_events,
-        "signs": sings,
+        "signs": signs,
     })
 
 
