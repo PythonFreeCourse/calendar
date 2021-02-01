@@ -16,7 +16,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": _("Not found")}},  # noqa F821
+    responses={404: {"description": _("Not found")}},
 )
 
 
@@ -26,8 +26,8 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
-        language_id=1
-        telegram_id='',
+        language_id=1,
+        telegram_id=''
     )
 
 
