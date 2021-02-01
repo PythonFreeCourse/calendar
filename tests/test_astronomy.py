@@ -4,9 +4,8 @@ import requests
 import responses
 
 from app.internal.astronomy import get_astronomical_data
+from app.internal.astronomy import ASTRONOMY_URL
 
-
-ASTRONOMY_URL = "http://api.weatherapi.com/v1/astronomy.json"
 RESPONSE_FROM_MOCK = {"location": {
         "name": "Tel Aviv-Yafo",
         "region": "Tel Aviv",
@@ -31,9 +30,10 @@ RESPONSE_FROM_MOCK = {"location": {
 ERROR_RESPONSE_FROM_MOCK = {"error": {"message": "Error Text"}}
 
 
-def test_get_astronomical_data(requests_mock):
+@pytest.mark.asyncio
+def test_get_astronomical_data(httpx_mock, assert_all_responses_were_requested):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
-    requests_mock.get(ASTRONOMY_URL, json=RESPONSE_FROM_MOCK)
+    httpx_mock.add_response(method="GET", json=RESPONSE_FROM_MOCK)
     output = get_astronomical_data(requested_date, "tel aviv")
     assert output['Success']
 
