@@ -54,7 +54,9 @@ def _get_user_language(user_id: int, session: SessionLocal) -> str:
         user = get_users(session, id=user_id)[0]
         language_user = user.language
     except SQLAlchemyError:
-        logger.exception("User of user preferred language was not found in the database.")
+        logger.exception(
+            "User of user preferred language was not found in the database."
+        )
         return ""
     else:
         return language_user
