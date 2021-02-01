@@ -240,6 +240,8 @@ def test_send(session, bad_user, event):
                     background_tasks=background_task)
 
 
-@pytest.mark.parametrize("email", ["test#mail.com", "test_mail.com", "test@mail-com"])
+@pytest.mark.parametrize("email", ["test#mail.com",
+                                   "test_mail.com",
+                                   "test@mail-com"])
 def test_verify_email_pattern(email):
     assert not verify_email_pattern(email)
