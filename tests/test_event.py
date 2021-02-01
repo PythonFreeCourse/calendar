@@ -2,7 +2,6 @@ from datetime import datetime
 
 import pytest
 from fastapi import HTTPException
-from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 
 from app.database.models import Event
@@ -43,7 +42,8 @@ NONE_UPDATE_OPTIONS = [
 ]
 
 INVALID_FIELD_UPDATE = [
-    {"start": "20.01.2020"}, {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
+    {"start": "20.01.2020"},
+    {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
     {"start": datetime(2030, 2, 2)}, {"end": datetime(1990, 1, 1)},
 ]
 
@@ -87,7 +87,7 @@ def test_invalid_update(event, data, session):
                         event=data, db=session) is None
 
 
-@pytest.mark.parametrize("data", INVALID_FIELD_UPDATE )
+@pytest.mark.parametrize("data", INVALID_FIELD_UPDATE)
 def test_invalid_fields(event, data, session):
     with pytest.raises(HTTPException):
         response = update_event(event_id=event.id, event=data, db=session)
@@ -98,8 +98,8 @@ def test_not_check_change_dates_allowed(event):
     data = {"start": "20.01.2020"}
     with pytest.raises(HTTPException):
         assert (
-        check_change_dates_allowed(event, data).status_code ==
-        status.HTTP_400_BAD_REQUEST
+            check_change_dates_allowed(event, data).status_code ==
+            status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -118,8 +118,8 @@ def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
         assert (
-        update_event(event_id=event.id, event=data, db=None).status_code ==
-        status.HTTP_500_INTERNAL_SERVER_ERROR
+            update_event(event_id=event.id, event=data, db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -129,7 +129,7 @@ def test_update_event_does_not_exist(event, session):
     }
     with pytest.raises(HTTPException):
         response = update_event(event_id=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        event=data, db=session)
+                                event=data, db=session)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -137,14 +137,17 @@ def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
         assert (
-        _update_event(
-        event_id=event.id, event_to_update=data, db=None).status_code ==
-        status.HTTP_500_INTERNAL_SERVER_ERROR
+            _update_event(
+                event_id=event.id,
+                event_to_update=data,
+                db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 def test_repr(event):
     assert event.__repr__() == f'<Event {event.id}>'
+
 
 def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
@@ -167,7 +170,8 @@ def test_successful_deletion(event_test_client, session, event):
     response = event_test_client.delete("/event/1")
     assert response.ok
     with pytest.raises(HTTPException):
-        assert "Event ID does not exist. ID: 1" in by_id(db=session, event_id=1).content
+        assert "Event ID does not exist. ID: 1" in by_id(
+            db=session, event_id=1).content
 
 
 def test_deleting_an_event_does_not_exist(event_test_client, event):
