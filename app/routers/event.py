@@ -94,11 +94,11 @@ def is_change_dates_allowed(
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     """validate dictionary values by dictionary of types"""
     errors = []
-    for key in to_check:
-        if types[key] and not isinstance(to_check[key], types[key]):
+    for field_name, field_type in to_check.items():
+        if types[field_name] and not isinstance(field_type, types[field_name]):
             errors.append(
-                f"{key} is '{type(to_check[key]).__name__}' and it should be"
-                + f"from type '{types[key].__name__}'")
+                f"{field_name} is '{type(field_type).__name__}' and"
+                + f"it should be from type '{types[field_name].__name__}'")
             logger.warning(errors)
     if errors:
         raise HTTPException(
@@ -175,6 +175,23 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
             all()]
 
 
+def _delete_event(db: Session, event: Event):
+    try:
+        # Delete event
+        db.delete(event)
+
+        # Delete user_event
+        db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
+
+        db.commit()
+
+    except (SQLAlchemyError, AttributeError) as e:
+        logger.error(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Deletion failed")
+
+
 @router.delete("/{event_id}")
 def delete_event(event_id: int,
                  db: Session = Depends(get_db)):
@@ -190,20 +207,7 @@ def delete_event(event_id: int,
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="The event was not found")
     participants = get_participants_emails_by_event(db, event_id)
-    try:
-        # Delete event
-        db.delete(event)
-
-        # Delete user_event
-        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
-
-        db.commit()
-
-    except (SQLAlchemyError, AttributeError) as e:
-        logger.error(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Deletion failed")
+    _delete_event(db, event)
     if participants and event.start > datetime.now():
         pass
         # TODO: Send them a cancellation notice

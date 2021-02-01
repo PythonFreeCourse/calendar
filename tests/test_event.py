@@ -1,11 +1,12 @@
 from datetime import datetime
 
 import pytest
-from app.database.models import Event
-from app.routers.event import (by_id, delete_event, is_change_dates_allowed,
-                               update_event)
 from fastapi import HTTPException
 from starlette import status
+
+from app.database.models import Event
+from app.routers.event import (_delete_event, by_id, delete_event,
+                               is_change_dates_allowed, update_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -112,17 +113,26 @@ class TestEvent:
     def test_repr(self, event):
         assert event.__repr__() == f'<Event {event.id}>'
 
+    def test_no_connection_to_db_in_delete(self, event):
+        with pytest.raises(HTTPException):
+            response = delete_event(event_id=1, db=None)
+            assert (
+                response.status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def test_no_connection_to_db_in_internal_deletion(self, event):
+        with pytest.raises(HTTPException):
+            assert (
+                _delete_event(event=event, db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     def test_successful_deletion(self, event_test_client, session, event):
         response = event_test_client.delete("/event/1")
         assert response.ok
         assert by_id(db=session, event_id=1) is None
 
-    def test_delete_failed(self, event_test_client, event):
+    def test_deleting_an_event_does_not_exist(self, event_test_client, event):
         response = event_test_client.delete("/event/2")
         assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    def test_no_connection_to_db(self, event):
-        with pytest.raises(HTTPException):
-            response = delete_event(event_id=1, db=None)
-            assert response.status_code == status.\
-                HTTP_500_INTERNAL_SERVER_ERROR
