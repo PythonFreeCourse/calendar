@@ -22,6 +22,19 @@ class UserEvent(Base):
         return f'<UserEvent ({self.participants}, {self.events})>'
 
 
+class UserFeature(Base):
+    __tablename__ = "user_feature"
+
+    id = Column(Integer, primary_key=True, index=True)
+    feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
+    user_id = Column('User_id', Integer, ForeignKey('users.id'))
+
+    # features = relationship("Feature", back_populates="users")
+    # users = relationship("User", back_populates="features")
+
+    is_enable = Column(Boolean)
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -37,8 +50,23 @@ class User(Base):
 
     events = relationship("UserEvent", back_populates="participants")
 
+    features = relationship("Feature", secondary=UserFeature.__tablename__,
+                            backref="users")
+
     def __repr__(self):
         return f'<User {self.id}>'
+
+
+class Feature(Base):
+    __tablename__ = "features"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    route = Column(String, nullable=False)
+    
+    users = relationship("User", secondary=UserFeature.__tablename__,
+                         backref="features")
+
 
 
 class Event(Base):

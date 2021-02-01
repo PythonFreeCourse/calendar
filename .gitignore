@@ -143,3 +143,5 @@ dmypy.json
 app/.vscode/
 
 app/routers/stam
+
+bin
