@@ -127,6 +127,6 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db), view=
 
 @router.get('/create-testuser')
 async def create_test_user(request: Request, db_session=Depends(get_db)):
-    start = datetime(year=2021, month=2, day=1, hour=13, minute=13)
-    end = datetime(year=2021, month=2, day=3, hour=15, minute=46)
+    start = datetime(year=2021, month=3, day=6, hour=5, minute=15)
+    end = datetime(year=2021, month=3, day=7, hour=6, minute=45)
     create_event(db=db_session, title='test2', start=start, end=end, owner_id=1)

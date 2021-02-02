@@ -8,6 +8,7 @@
 
 .day {
     border-left: 1px solid var(--borders);
+    width: 100%;
 }
 
 #week-view {
@@ -37,3 +38,4 @@
     margin-left: -2;
     overflow: hidden;
 }
+
