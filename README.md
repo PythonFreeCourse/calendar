@@ -1,7 +1,7 @@
 # PyLander
 
-<p align="center">
-  <img title="Apache-2.0" src="https://img.shields.io/github/license/PythonFreeCourse/calendar.svg">
+<p style="text-align:center">
+  <img title="Apache-2.0" alt="License Apache-2.0 icon" src="https://img.shields.io/github/license/PythonFreeCourse/calendar.svg">
 </p>
 
 👋 Welcome to Open Source Calendar built with Python. 🐍
@@ -40,7 +40,7 @@ cp app/config.py.example app/configuration.py
 uvicorn app.main:app --reload
 ```
 
-#Cypress:
+### Cypress:
 Front end testing tool.
 
 Every test created with testLevel configuration, the defualt level we run our test is 5.
@@ -59,6 +59,11 @@ Basic tests will spicified with lower testLevel than advanced tests.
     - Run a specific test file without watching:
         1. Run on terminal: ```npx cypress run --spec cypress/integration/path/to/file```
     - Run tests with change level env config to 10: ```npx cypress run --env level=10```
+### Running tests
+```shell
+python -m pytest --cov-report term-missing --cov=app tests
+```
 
 ## Contributing
 View [contributing guidelines](https://github.com/PythonFreeCourse/calendar/blob/master/CONTRIBUTING.md).
+

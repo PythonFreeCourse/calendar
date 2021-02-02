@@ -23,23 +23,12 @@ router = APIRouter(
 
 def get_placeholder_user():
     return User(
-        id=1,
         username='new_user',
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
-        telegram_id=''
-    )
-
-
-def get_placeholder_event():
-    return Event(
-        id=1,
-        title="new_event",
-        content="content_of_the_event",
-        start=datetime.date(2007, 5, 26),
-        end=datetime.date(2007, 5, 27),
-        owner_id=1
+        telegram_id='',
+        language='english',
     )
 
 
@@ -113,35 +102,6 @@ async def update_profile(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
-async def get_current_user():
-    return get_placeholder_user()
-
-
-@router.post("/delete_user")
-async def delete_user(
-        request: Request, session=Depends(get_db), current_user: User = Depends(get_current_user)):
-    
-    data = await request.form()
-    username_confirmation = data['username_confirmation']
-
-    if username_confirmation == current_user.username:
-        # Delete all the events of the user
-        session.query(Event).filter_by(owner_id=current_user.id).delete()
-        session.commit()
-        
-        # Delete the user
-        session.query(User).filter_by(username=current_user.username).delete()
-        session.commit()
-        session.close()
-
-        # Redirect to the home page after the deletion
-        url = '/'
-        return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-    else:
-        url = router.url_path_for("profile")
-        return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-
-
 @router.post("/upload_user_photo")
 async def upload_user_photo(
         file: UploadFile = File(...), session=Depends(get_db)):
@@ -153,6 +113,7 @@ async def upload_user_photo(
         # Save to database
         user.avatar = await process_image(pic, user)
         session.commit()
+
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -188,6 +149,6 @@ async def process_image(image, user):
 def get_image_crop_area(width, height):
     if width > height:
         delta = (width - height) // 2
-        return (delta, 0, width - delta, height)
+        return delta, 0, width - delta, height
     delta = (height - width) // 2
-    return (0, delta, width, width + delta)
+    return 0, delta, width, width + delta
