@@ -60,4 +60,7 @@ body {
     border: none;
     background-color:whitesmoke;
 }
-  
+
+.btn-danger {
+    margin: auto;
+}
