@@ -1,13 +1,14 @@
-from datetime import datetime as dt
+from datetime import datetime
 from operator import attrgetter
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
+from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
 
 from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
@@ -34,10 +35,10 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
-                        '%Y-%m-%d %H:%M')
-    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
-                      '%Y-%m-%d %H:%M')
+    start = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
+                              '%Y-%m-%d %H:%M')
+    end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
+                            '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
     user = user if user else create_user("u", "p", "e@mail.com", session)
     owner_id = user.id
@@ -50,64 +51,134 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     event = create_event(session, title, start, end, owner_id, content,
                          location)
-    return RedirectResponse(router.url_path_for('eventview', id=event.id),
-                            status_code=HTTP_302_FOUND)
+    return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event.id),
+                            status_code=status.HTTP_302_FOUND)
 
 
-@router.get("/view/{id}")
-async def eventview(request: Request, id: int):
+@router.get("/{event_id}")
+async def eventview(request: Request, event_id: int,
+                    db: Session = Depends(get_db)):
+    event = by_id(db, event_id)
+    start_format = '%A, %d/%m/%Y %H:%M'
+    end_format = ('%H:%M' if event.start.date() == event.end.date()
+                  else start_format)
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event_id": id})
+                                      {"request": request, "event": event,
+                                       "start_format": start_format,
+                                       "end_format": end_format})
+
+
+UPDATE_EVENTS_FIELDS = {
+    'title': str,
+    'start': datetime,
+    'end': datetime,
+    'content': (str, type(None)),
+    'location': (str, type(None))
+}
 
 
 def by_id(db: Session, event_id: int) -> Event:
-    """Select event by id"""
+    """Get a single event by id"""
+    if not isinstance(db, Session):
+        error_message = (
+            f'Could not connect to database. '
+            f'db instance type received: {type(db)}')
+        logger.critical(error_message)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
 
-    return db.query(Event).filter(Event.id == event_id).first()
+    try:
+        event = db.query(Event).filter_by(id=event_id).one()
+    except NoResultFound:
+        error_message = f"Event ID does not exist. ID: {event_id}"
+        logger.exception(error_message)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=error_message)
+    except MultipleResultsFound:
+        error_message = (
+            f'Multiple results found when getting event. Expected only one. '
+            f'ID: {event_id}')
+        logger.critical(error_message)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
+    return event
 
 
-def is_date_before(start_date: dt, end_date: dt) -> bool:
+def is_end_date_before_start_date(
+                            start_date: datetime, end_date: datetime) -> bool:
     """Check if the start date is earlier than the end date"""
 
-    return start_date < end_date
+    return start_date > end_date
 
 
-def is_it_possible_to_change_dates(
-        db: Session, old_event: Event, event: Dict[str, Any]) -> bool:
-    return is_date_before(
-        event.get('start', old_event.start),
-        event.get('end', old_event.end))
+def check_change_dates_allowed(
+        old_event: Event, event: Dict[str, Any]):
+    allowed = 1
+    try:
+        start_date = event.get('start', old_event.start)
+        end_date = event.get('end', old_event.end)
+        if is_end_date_before_start_date(start_date, end_date):
+            allowed = 0
+    except TypeError:
+        allowed = 0
+    if allowed == 0:
+        raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid times")
 
 
-def get_items_that_can_be_updated(event: Dict[str, Any]) -> Dict[str, Any]:
-    """Extract only that keys to update"""
+def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
+    """validate dictionary values by dictionary of types"""
+    errors = []
+    for field_name, field_type in to_check.items():
+        if types[field_name] and not isinstance(field_type, types[field_name]):
+            errors.append(
+                f"{field_name} is '{type(field_type).__name__}' and"
+                + f"it should be from type '{types[field_name].__name__}'")
+            logger.warning(errors)
+    if errors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
 
-    return {i: event[i] for i in (
-        'title', 'start', 'end', 'content', 'location') if i in event}
+
+def get_event_with_editable_fields_only(event: Dict[str, Any]
+                                        ) -> Dict[str, Any]:
+    """Remove all keys that are not allowed to update"""
+
+    return {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+
+
+def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
+    try:
+        # Update database
+        db.query(Event).filter(Event.id == event_id).update(
+            event_to_update, synchronize_session=False)
+
+        db.commit()
+        return by_id(db, event_id)
+    except (AttributeError, SQLAlchemyError) as e:
+        logger.exception(str(e))
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error")
 
 
 def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
     # TODO Check if the user is the owner of the event.
-
-    event_to_update = get_items_that_can_be_updated(event)
+    old_event = by_id(db, event_id)
+    event_to_update = get_event_with_editable_fields_only(event)
+    is_fields_types_valid(event_to_update, UPDATE_EVENTS_FIELDS)
+    check_change_dates_allowed(old_event, event_to_update)
     if not event_to_update:
         return None
-    try:
-        old_event = by_id(db=db, event_id=event_id)
-        if old_event is None or not is_it_possible_to_change_dates(
-                db, old_event, event_to_update):
-            return None
-
-        # Update database
-        db.query(Event).filter(Event.id == event_id).update(
-            event_to_update, synchronize_session=False)
-        db.commit()
-
-        # TODO: Send emails to recipients.
-    except (AttributeError, SQLAlchemyError, TypeError):
-        return None
-    return by_id(db=db, event_id=event_id)
+    event_updated = _update_event(db, event_id, event_to_update)
+    # TODO: Send emails to recipients.
+    return event_updated
 
 
 def create_event(db, title, start, end, owner_id, content=None, location=None):
@@ -149,28 +220,32 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
             all()]
 
 
-@router.delete("/{event_id}")
-def delete_event(request: Request,
-                 event_id: int,
-                 db: Session = Depends(get_db)):
-
-    # TODO: Check if the user is the owner of the event.
-    event = by_id(db, event_id)
-    participants = get_participants_emails_by_event(db, event_id)
+def _delete_event(db: Session, event: Event):
     try:
         # Delete event
         db.delete(event)
 
         # Delete user_event
-        db.query(UserEvent).filter(UserEvent.event_id == event_id).delete()
+        db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
 
         db.commit()
 
-    except (SQLAlchemyError, TypeError):
-        return templates.TemplateResponse(
-            "event/eventview.html", {"request": request, "event_id": event_id},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if participants and event.start > dt.now():
+    except (SQLAlchemyError, AttributeError) as e:
+        logger.exception(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Deletion failed")
+
+
+@router.delete("/{event_id}")
+def delete_event(event_id: int,
+                 db: Session = Depends(get_db)):
+
+    # TODO: Check if the user is the owner of the event.
+    event = by_id(db, event_id)
+    participants = get_participants_emails_by_event(db, event_id)
+    _delete_event(db, event)
+    if participants and event.start > datetime.now():
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
