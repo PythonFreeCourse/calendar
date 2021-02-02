@@ -1,8 +1,8 @@
+from starlette.templating import Jinja2Templates
 import os
 
 from fastapi_mail import ConnectionConfig
 from pydantic import BaseSettings
-from starlette.templating import Jinja2Templates
 
 
 class Settings(BaseSettings):
@@ -30,6 +30,7 @@ AVATAR_SIZE = (120, 120)
 # API-KEYS
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 CLIENT_SECRET_FILE = os.environ.get('CLIENT_SECRET')
+
 
 # EXPORT
 ICAL_VERSION = '2.0'
