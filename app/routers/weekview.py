@@ -5,9 +5,9 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 
 from app.database.database import get_db
-from app.database.models import Event
+from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH
-from app.routers.dayview import dayview, DivAttributes
+from app.routers.dayview import dayview, get_events_and_attributes
 
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
@@ -32,7 +32,6 @@ async def get_day_view_template(req: Request,
     view = 'week'
     template = await dayview(request=req,
                              date=day.strftime('%Y-%m-%d'),
-                             #db_session=session,
                              view=view)
     print(template)
     return template
@@ -40,22 +39,15 @@ async def get_day_view_template(req: Request,
 
 @router.get('/week/{sunday}')
 async def weekview(request: Request, sunday: str, db_session=Depends(get_db)):
+    user = db_session.query(User).filter_by(username='test1').first()
     sunday = datetime.strptime(sunday, '%Y-%m-%d')
     week_days = get_week_dates(sunday)
-    '''week = [(day, await get_day_view_template(
-        req=request, day=day, session=db_session)
-        ) for day in week_days]'''
-    start = datetime(year=2021, month=2, day=1, hour=13, minute=13)
-    end = datetime(year=2021, month=2, day=1, hour=15, minute=46)
-    events = [Event(title='test2', content='test',
-                 start=start, end=end, owner_id=1, color='pink')]
-    week = [(day, await get_day_view_template(
-        req=request, day=day)
-        ) for day in week_days]
+    week = [(day, await dayview(request=request,
+             date=day.strftime('%Y-%m-%d'), view='week', db_session=db_session),
+             get_events_and_attributes(day=day, session=db_session, user_id=user.id)
+            ) for day in week_days]
     day = sunday
-    events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     return templates.TemplateResponse("weekview.html", {
         "request": request,
         "week": week,
-        "weekly_events": events_n_attrs
         })

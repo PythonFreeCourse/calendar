@@ -7,6 +7,8 @@ from sqlalchemy import and_, or_
 
 from app.database.database import get_db
 from app.database.models import Event, User
+from app.routers.user import get_all_user_events, create_user
+from app.routers.event import create_event
 from app.dependencies import TEMPLATES_PATH
 
 
@@ -93,31 +95,38 @@ class DivAttributes:
         return (start_multiday, end_multiday)
 
 
+def get_events_and_attributes(day: datetime, session, user_id: int):
+    events = get_all_user_events(session, user_id)
+    day_end = day + timedelta(hours=24)
+    daily_events = []
+    for event in events:
+        if ((event.start >= day and event.start < day_end) or
+           (event.end >= day and event.end < day_end) or
+           (event.start < day_end and day_end < event.end)):
+            daily_events.append(event)
+    return [(event, DivAttributes(event, day)) for event in daily_events]
+
+
 @router.get('/day/{date}')
-#async def dayview(request: Request, date: str, db_session=Depends(get_db), view='day'):
-async def dayview(request: Request, date: str, view='day'):
+async def dayview(request: Request, date: str, db_session=Depends(get_db), view='day'):
     # TODO: add a login session
-    #user = db_session.query(User).filter_by(username='test1').first()
+    user = db_session.query(User).filter_by(username='test1').first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
-        print(day)
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
-    day_end = day + timedelta(hours=24)
-    '''events = db_session.query(Event).filter(
-        Event.owner_id == user.id).filter(
-            or_(and_(Event.start >= day, Event.start < day_end),
-                and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))'''
-    start = datetime(year=2021, month=2, day=1, hour=13, minute=13)
-    end = datetime(year=2021, month=2, day=1, hour=15, minute=46)
-    events = [Event(title='test2', content='test',
-                 start=start, end=end, owner_id=1, color='pink')]
-    events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
+    events_n_attrs = get_events_and_attributes(day=day, session=db_session, user_id=user.id)
+    month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
-        "month": day.strftime("%B").upper(),
+        "month": month,
         "day": day.day,
         "view": view
         })
+
+@router.get('/create-testuser')
+async def create_test_user(request: Request, db_session=Depends(get_db)):
+    start = datetime(year=2021, month=2, day=1, hour=13, minute=13)
+    end = datetime(year=2021, month=2, day=3, hour=15, minute=46)
+    create_event(db=db_session, title='test2', start=start, end=end, owner_id=1)
