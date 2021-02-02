@@ -1,4 +1,3 @@
-import datetime
 import io
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile
@@ -8,7 +7,7 @@ from PIL import Image
 
 from app import config
 from app.database.database import get_db
-from app.database.models import User, Event
+from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
@@ -36,8 +35,7 @@ def get_placeholder_user():
 async def profile(
         request: Request,
         session=Depends(get_db),
-        new_user=Depends(get_placeholder_user),
-        new_event=Depends(get_placeholder_event)):
+        new_user=Depends(get_placeholder_user)):
 
     # Get relevant data from database
     upcoming_events = range(5)
