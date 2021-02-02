@@ -272,7 +272,7 @@ def get_location_coordinates(address: str) -> Tuple[float, float, str]:
     try:
         location = geolocator.geocode(address)
         if location is not None:
-            acc_address = location.raw["display_name"]
+            acc_address = str(location.raw["display_name"])
             return location.latitude, location.longitude, acc_address
     except GeocoderTimedOut as e:
         logger.exception(str(e))
