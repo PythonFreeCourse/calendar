@@ -52,18 +52,16 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     is_zoom = location_type == 'vc_url'
     location = data['location']
 
+    latitude, longitude = None, None
+
     if is_zoom:
-            validate_zoom_link(location)
+        validate_zoom_link(location)
     else:
-        latitude, longitude, accurate_loc = get_location_coordinates(location)
-        if accurate_loc is not None:
-            location = accurate_loc
-            event = create_event(session, title, start, end, owner_id, content,
-                        location, latitude, longitude)
+        latitude, longitude, location = get_location_coordinates(location)
 
     event = create_event(session, title, start, end, owner_id, content,
-                        location)
-
+                        location, latitude, longitude)
+            
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event.id),
                             status_code=status.HTTP_302_FOUND)
@@ -194,7 +192,7 @@ def update_event(event_id: int, event: Dict, db: Session
     return event_updated
 
 
-def create_event(db, title, start, end, owner_id, content=None, location=None):
+def create_event(db, title, start, end, owner_id, content=None, location=None, latitude=None, longitude=None):
     """Creates an event and an association."""
 
     event = create_model(
@@ -205,6 +203,8 @@ def create_event(db, title, start, end, owner_id, content=None, location=None):
         content=content,
         owner_id=owner_id,
         location=location,
+        latitude=latitude,
+        longitude=longitude
     )
     create_model(
         db, UserEvent,
