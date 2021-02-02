@@ -1,11 +1,11 @@
+from fastapi.testclient import TestClient
 import pytest
+
 from app import main
 from app.database.database import Base
 from app.database.models import User
 from app.main import app
 from app.routers import agenda, event, invitation, profile
-from fastapi.testclient import TestClient
-
 from tests.conftest import get_test_db, test_engine
 
 
@@ -38,6 +38,11 @@ def invitation_test_client():
 @pytest.fixture(scope="session")
 def home_test_client():
     yield from create_test_client(main.get_db)
+
+
+@pytest.fixture(scope="session")
+def event_test_client():
+    yield from create_test_client(event.get_db)
 
 
 @pytest.fixture(scope="session")
@@ -76,15 +81,3 @@ def get_test_placeholder_user():
         full_name='FakeName',
         telegram_id='666666'
     )
-
-
-@pytest.fixture(scope="session")
-def event_test_client():
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[event.get_db] = get_test_db
-
-    with TestClient(app) as client:
-        yield client
-
-    app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
