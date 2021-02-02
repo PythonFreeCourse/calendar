@@ -1,7 +1,6 @@
 dev.db
 test.db
 config.py
-.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -145,3 +144,5 @@ app/.vscode/
 app/routers/stam
 
 bin
+# PyCharm
+.idea
