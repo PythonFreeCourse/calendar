@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 from os import listdir
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 from app.database.database import get_db
@@ -19,37 +19,17 @@ DEFAULT_SFX = "click 1.wav"
 DEFAULT_SFX_VOL = 0.5
 CHOSEN_SFX = Path(SOUNDS_PATH)
 CHOSEN_SFX_VOL = None
-AUDIO_SETTINGS_PATH = "/audio-settings"
 
 router = APIRouter(
-    prefix="/audio-settings",
-    tags=["audio-settings"],
+    prefix="/audio",
+    tags=["audio"],
     responses={404: {"description": "Not found"}},
 )
-
-router2 = APIRouter(
-    prefix="/start_audio",
-    tags=["start_audio"],
-    responses={404: {"description": "Not found"}},
-)
-
-router3 = APIRouter(
-    prefix="/stop_audio",
-    tags=["stop_audio"],
-    responses={404: {"description": "Not found"}},
-)
-
-router4 = APIRouter(
-    prefix="/free_achievement",
-    tags=["free_achievement"],
-    responses={404: {"description": "Not found"}},
-)
-
 
 # routes:
 
 
-@router.get("/")
+@router.get("/settings")
 def audio_settings(
     request: Request, session: Session = Depends(get_db)
         ) -> templates.TemplateResponse:
@@ -76,7 +56,7 @@ def audio_settings(
     })
 
 
-@router.post("/")
+@router.post("/settings")
 async def get_choices(
     session: Session = Depends(get_db),
     new_user: User = Depends(get_placeholder_user),
@@ -120,7 +100,7 @@ async def get_choices(
     return RedirectResponse("/", status_code=HTTP_302_FOUND)
 
 
-@router2.get("/")
+@router.get("/start")
 async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
     """Starts audio according to audio settings.
 
@@ -209,14 +189,17 @@ def get_tracks(
         returns the playlist of music tracks, as well as sound effect choice.
     """
     playlist = []
-    sfx_choice = None
-    tracks = session.query(UserAudioTracks).filter_by(user_id=user_id)
+    chosen_track_ids = session.query(
+        UserAudioTracks.track_id).filter_by(user_id=user_id)
+    tracks = session.query(
+        AudioTracks).filter(
+            AudioTracks.id.in_(chosen_track_ids)).filter_by(is_music=1)
+    sfx = session.query(
+        AudioTracks).filter(
+            AudioTracks.id.in_(chosen_track_ids)).filter_by(is_music=0).first()
     for track in tracks:
-        track = session.query(AudioTracks).filter_by(id=track.track_id).first()
-        if not track.is_music:
-            sfx_choice = track.title + ".wav"
-        else:
-            playlist.append(track.title + ".mp3")
+        playlist.append(track.title + ".mp3")
+    sfx_choice = sfx.title + ".wav" if sfx else None
 
     return playlist, sfx_choice
 

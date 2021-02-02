@@ -73,7 +73,7 @@ def get_test_placeholder_user2():
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def audio_test_client():
     Base.metadata.create_all(bind=test_engine)
     app.dependency_overrides[audio.get_db] = get_test_db
@@ -81,6 +81,7 @@ def audio_test_client():
         audio.get_placeholder_user] = get_test_placeholder_user2
     with TestClient(app) as client:
         yield client
+    Base.metadata.drop_all(bind=test_engine)
 
 
 @pytest.fixture(scope="session")
