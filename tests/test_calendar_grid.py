@@ -105,7 +105,7 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_set_id():
-        assert DAY.set_id() == '03-May1988'
+        assert DAY.set_id() == '03-May-1988'
 
     @staticmethod
     def test_display_str():
