@@ -131,19 +131,24 @@ def make_task(task: Task, user: User, session: Session) -> bool:
     return True
 
 
-def generate_tasks(session: Session, user: User):
-    """Generates tasks for the week
-    based on all the weekly tasks the user have"""
+def get_datetime(day, the_time):
+    """Getting the datetime of days in the current week,
+    used by the generate_tasks function"""
     current_date = date.today()
     current_week_num = current_date.strftime("%W")
     current_year = current_date.strftime("%Y")
+    date_string = f"{day} {the_time} {current_week_num} {current_year}"
+    return datetime.strptime(date_string, "%a %H:%M %W %Y")
 
+
+def generate_tasks(session: Session, user: User):
+    """Generates tasks for the week
+    based on all the weekly tasks the user have"""
     for weekly_task in user.weekly_tasks:
         the_time = weekly_task.the_time
         days = weekly_task.days.split(", ")
         for day in days:
-            date_string = f"{day} {the_time} {current_week_num} {current_year}"
-            date_time = datetime.strptime(date_string, "%a %H:%M %W %Y")
+            date_time = get_datetime(day, the_time)
             task = Task(
                 title=weekly_task.title,
                 content=weekly_task.content,
@@ -152,7 +157,8 @@ def generate_tasks(session: Session, user: User):
                 date_time=date_time,
                 owner_id=user.id
             )
-            make_task(task, user, session)
+            yield make_task(task, user, session)
+    yield False
 
 
 def remove_weekly_task(weekly_task_id: int, session: Session) -> bool:
