@@ -110,7 +110,7 @@ def get_events_and_attributes(day: datetime, session, user_id: int):
 @router.get('/day/{date}')
 async def dayview(request: Request, date: str, db_session=Depends(get_db), view='day'):
     # TODO: add a login session
-    user = db_session.query(User).filter_by(username='test1').first()
+    user = db_session.query(User).filter_by(username='test_username').first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:

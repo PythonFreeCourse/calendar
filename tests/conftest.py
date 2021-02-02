@@ -7,6 +7,7 @@ from app.database.database import Base
 pytest_plugins = [
     'tests.user_fixture',
     'tests.event_fixture',
+    'tests.dayview_fixture',
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',

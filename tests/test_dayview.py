@@ -5,54 +5,20 @@ import pytest
 
 from app.database.models import Event, User
 from app.routers.dayview import DivAttributes
+from app.routers.event import create_event
 
 
-# TODO add user session login
-@pytest.fixture
-def user():
-    return User(username='test1', email='user@email.com',
-                password='1a2b3c4e5f', full_name='test me')
-
-
-@pytest.fixture
-def event1():
-    start = datetime(year=2021, month=2, day=1, hour=7, minute=5)
-    end = datetime(year=2021, month=2, day=1, hour=9, minute=15)
-    return Event(title='test1', content='test',
-                 start=start, end=end, owner_id=1)
-
-
-@pytest.fixture
-def event2():
-    start = datetime(year=2021, month=2, day=1, hour=13, minute=13)
-    end = datetime(year=2021, month=2, day=1, hour=15, minute=46)
-    return Event(title='test2', content='test',
-                 start=start, end=end, owner_id=1, color='blue')
-
-
-@pytest.fixture
-def event3():
-    start = datetime(year=2021, month=2, day=3, hour=7, minute=5)
-    end = datetime(year=2021, month=2, day=3, hour=9, minute=15)
-    return Event(title='test3', content='test',
-                 start=start, end=end, owner_id=1)
-
-
-@pytest.fixture
-def event_with_no_minutes_modified():
-    start = datetime(year=2021, month=2, day=3, hour=7)
-    end = datetime(year=2021, month=2, day=3, hour=8)
-    return Event(title='test_no_modify', content='test',
-                 start=start, end=end, owner_id=1)
-
-
-@pytest.fixture
-def multiday_event():
-    start = datetime(year=2021, month=2, day=1, hour=13)
-    end = datetime(year=2021, month=2, day=3, hour=13)
-    return Event(title='test_multiday', content='test',
-                 start=start, end=end, owner_id=1, color='blue')
-
+def create_dayview_event(events, session, user):
+    for event in events:
+        create_event(
+            db=session,
+            title='test',
+            start=event.start,
+            end=event.end,
+            owner_id=user.id,
+            color=event.color
+        )
+        
 
 def test_minutes_position_calculation(event_with_no_minutes_modified):
     div_attr = DivAttributes(event_with_no_minutes_modified)
@@ -85,8 +51,7 @@ def test_div_attributes_with_costume_color(event2):
 
 
 def test_dayview_html(event1, event2, event3, session, user, client):
-    session.add_all([user, event1, event2, event3])
-    session.commit()
+    create_dayview_event([event1, event2, event3], session=session, user=user)
     response = client.get("/day/2021-2-1")
     soup = BeautifulSoup(response.content, 'html.parser')
     assert 'FEBRUARY' in str(soup.find("div", {"id": "toptab"}))
@@ -100,7 +65,7 @@ def test_dayview_html(event1, event2, event3, session, user, client):
                                                ("2021-2-3", '1 / 57')])
 def test_dayview_html_with_multiday_event(multiday_event, session,
                                           user, client, day, grid_position):
-    session.add_all([user, multiday_event])
+    create_dayview_event([multiday_event], session=session, user=user)
     session.commit()
     response = client.get(f"/day/{day}")
     soup = BeautifulSoup(response.content, 'html.parser')
