@@ -119,6 +119,7 @@ env.bak/
 venv.bak/
 Scripts
 pyvenv.cfg
+.history
 
 # Spyder project settings
 .spyderproject
@@ -137,10 +138,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-<<<<<<< Updated upstream
-=======
-Scripts/*
-pyvenv.cfg
-.gitignore
-
->>>>>>> Stashed changes
