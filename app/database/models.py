@@ -1,11 +1,12 @@
 from datetime import datetime
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
                         Integer, String, event)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship
+
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 
 
 class UserEvent(Base):
