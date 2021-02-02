@@ -1,3 +1,4 @@
+from app.internal.comment import display_comments
 from datetime import datetime
 from operator import attrgetter
 from typing import Any, Dict, List, Optional
@@ -60,11 +61,13 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
+    comments = display_comments(event)
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
+                                       "comments": comments,
                                        "start_format": start_format,
                                        "end_format": end_format})
 

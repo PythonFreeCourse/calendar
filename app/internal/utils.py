@@ -1,6 +1,8 @@
+from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.database.models import Base
+from app.database import SessionLocal
+from app.database.models import Base, User
 
 
 def save(item, session: Session) -> bool:
@@ -20,3 +22,8 @@ def create_model(session: Session, model_class, **kw):
     instance = model_class(**kw)
     save(instance, session)
     return instance
+
+
+def get_user(user_id: int) -> Optional[User]:
+    session = SessionLocal()
+    return session.query(User).filter_by(id=user_id).first()
