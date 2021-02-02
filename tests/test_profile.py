@@ -7,7 +7,6 @@ import pytest
 from app import config
 from app.dependencies import MEDIA_PATH
 from app.routers.profile import get_image_crop_area, get_placeholder_user
-from starlette.status import HTTP_302_FOUND
 
 
 CROP_RESULTS = [
