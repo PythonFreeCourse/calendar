@@ -1,3 +1,4 @@
+from os import name
 from fastapi import APIRouter, Request, Depends
 from app.database.database import get_db, SessionLocal
 from app.database.models import User, UserFeature, Feature
@@ -12,9 +13,17 @@ router = APIRouter(
 
 
 @router.get('/')
-def panel_index(request: Request, session: Depends(get_db)):
+def panel_index(request: Request, session: SessionLocal = Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
-    feature = create_feature(db=session, name='google', route='/profile')
+    feature = create_feature(db=session, name='google1', route='/profile1',
+                             user=user, is_enable=False)
+    session.commit()
+    session.query(UserFeature).filter_by(feature_id=8).delete()
+    session.commit()
+    return user.features
+    obj = session.query(Feature).all()
+
+    return {"hello": "world", "feature": obj}
 
 
 def create_feature(db, name, route, user, is_enable):
@@ -24,7 +33,6 @@ def create_feature(db, name, route, user, is_enable):
         db, Feature,
         name=name,
         route=route,
-        owner=user
     )
     create_model(
         db, UserFeature,

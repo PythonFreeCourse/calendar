@@ -27,7 +27,7 @@ class UserFeature(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
-    user_id = Column('User_id', Integer, ForeignKey('users.id'))
+    user_id = Column('user_id', Integer, ForeignKey('users.id'))
 
     # features = relationship("Feature", back_populates="users")
     # users = relationship("User", back_populates="features")
@@ -50,8 +50,7 @@ class User(Base):
 
     events = relationship("UserEvent", back_populates="participants")
 
-    features = relationship("Feature", secondary=UserFeature.__tablename__,
-                            backref="users")
+    features = relationship("Feature", secondary=UserFeature.__tablename__)
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -63,10 +62,8 @@ class Feature(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     route = Column(String, nullable=False)
-    
-    users = relationship("User", secondary=UserFeature.__tablename__,
-                         backref="features")
 
+    users = relationship("User", secondary=UserFeature.__tablename__)
 
 
 class Event(Base):
