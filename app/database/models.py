@@ -13,9 +13,6 @@ from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
 from app.dependencies import logger
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
-
 
 class UserEvent(Base):
     __tablename__ = "user_event"
