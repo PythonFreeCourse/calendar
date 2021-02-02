@@ -69,5 +69,5 @@ def get_astronomical_data(requested_date: datetime.datetime, location: str)\
     """
     formatted_date = requested_date.strftime('%Y-%m-%d')
     loop = asyncio.get_event_loop()
-    return loop.run_until_complete(get_data_from_api(formatted_date,
-                                                     location))
+    output = loop.run_until_complete(get_data_from_api(formatted_date, location))
+    return output
