@@ -25,7 +25,7 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_calendar_extends(client):
-        response = client.get(f"/calendar/month/{DAY.display()}")
+        response = client.get(f"/calendar/month/{DAY.set_id()}")
         assert response.ok
         assert b"08" in response.content
 
@@ -102,6 +102,10 @@ class TestCalendarGrid:
     @staticmethod
     def test_display_day():
         assert DAY.display() == '03 MAY 88'
+
+    @staticmethod
+    def test_set_id():
+        assert DAY.set_id() == '03-May1988'
 
     @staticmethod
     def test_display_str():
