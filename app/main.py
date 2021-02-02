@@ -4,24 +4,14 @@ from sqlalchemy.orm import Session
 
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
-<<<<<<< HEAD
-from app.database.database import engine
-from app.dependencies import (
-    MEDIA_PATH, STATIC_PATH, templates)
-from app.routers import agenda, event, profile, email, settings
-
+from app.database.database import engine, get_db
+from app.dependencies import MEDIA_PATH, STATIC_PATH, logger, templates
+from app.internal.quotes import daily_quotes, load_quotes
+from app.routers import (agenda, dayview, email, event, invitation, profile,
+                         search, settings, telegram, whatsapp)
+from app.telegram.bot import telegram_bot
 
 models.Base.metadata.create_all(bind=engine)
-
-=======
-from app.database.database import engine, get_db
-from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
-from app.internal.quotes import daily_quotes, load_quotes
-from app.routers import (
-    agenda, dayview, email, event, invitation, profile, search, telegram,
-    whatsapp
-)
-from app.telegram.bot import telegram_bot
 
 
 def create_tables(engine, psql_environment):
@@ -36,7 +26,6 @@ def create_tables(engine, psql_environment):
 
 
 create_tables(engine, PSQL_ENVIRONMENT)
->>>>>>> a908f4d43983868565154bd5b072e0a50e284334
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
