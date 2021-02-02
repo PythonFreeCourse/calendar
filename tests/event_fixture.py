@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 from app.database.models import Event, User
 from app.routers.event import create_event
 
-
 today_date = datetime.today().replace(hour=0, minute=0, second=0)
 
 
