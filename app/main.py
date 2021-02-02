@@ -51,15 +51,12 @@ app.include_router(agenda.router)
 app.include_router(telegram.router)
 app.include_router(dayview.router)
 app.include_router(email.router)
-<<<<<<< HEAD
 app.include_router(settings.router)
-=======
 app.include_router(invitation.router)
 app.include_router(whatsapp.router)
 app.include_router(search.router)
 
 telegram_bot.set_webhook()
->>>>>>> a908f4d43983868565154bd5b072e0a50e284334
 
 
 # TODO: I add the quote day to the home page
