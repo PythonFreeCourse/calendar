@@ -61,6 +61,8 @@ class Event(Base):
     color = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
+    invitees = Column(String)
+    color = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
 
     owner = relationship("User")
