@@ -79,6 +79,10 @@ p {
   margin: 0;
 }
 
+.card-body {
+  overflow: auto;
+}
+
 .profile-modal-header {
   border: none;
   background-color: whitesmoke;
