@@ -55,7 +55,9 @@ def get_celebs(today: str) -> Optional[Dict]:
         jobs = list(filter(None, [job.strip() for job in jobs]))[:12]
 
         return {key: dict(
-            zip(['image', 'imdb_profile', 'job'],
-            value)) for key, value in zip(names, zip(images, links, jobs))}
+            zip(
+                ['image', 'imdb_profile', 'job'],
+                value
+                )) for key, value in zip(names, zip(images, links, jobs))}
 
     return None
