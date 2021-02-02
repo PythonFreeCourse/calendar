@@ -14,16 +14,19 @@ jobs:
     steps:
 
       - name: Create base.pot file
-        run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot
+        run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot -c i18n
 
       - name: Move to /app directory
         run: cd app
 
-      - name: Update 'en' language base.po file
-        run: pybabel update -l en -i locales/base.pot -d locales -D base
+      - name: Update all language base.po files
+        run: pybabel update -i locales/base.pot -d locales -D base
 
-      - name: Update 'he' language base.po file
-        run: pybabel update -l he -i locales/base.pot -d locales -D base
+      - name: Update all .mo files
+        run: pybabel compile -d locales -D base
 
-      - name: Update .mo files
-        run: pybabel update -i locales/base.pot -d locales
+      # https://github.com/stefanzweifel/git-auto-commit-action
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply automatic translateable string changes
