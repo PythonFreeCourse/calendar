@@ -1,7 +1,6 @@
 dev.db
 test.db
 config.py
-.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -146,3 +145,6 @@ app/routers/stam
 
 # Cypress
 tests/tests-ui/node_modules/
+
+# PyCharm
+.idea

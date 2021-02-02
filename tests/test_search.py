@@ -1,10 +1,11 @@
 from datetime import datetime
 
 import pytest
+from fastapi import status
+
 from app.config import PSQL_ENVIRONMENT
 from app.database.models import Event, User
 from app.internal.search import get_results_by_keywords, get_stripped_keywords
-from fastapi import status
 
 
 class TestSearch:
