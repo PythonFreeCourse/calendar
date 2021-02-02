@@ -52,6 +52,8 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    latitude = Column(String)
+    longitude = Column(String)
 
     owner = relationship("User")
     owner_id = Column(Integer, ForeignKey("users.id"))

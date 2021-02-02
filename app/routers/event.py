@@ -1,8 +1,10 @@
 from datetime import datetime
 from operator import attrgetter
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut
 from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -16,6 +18,10 @@ from app.dependencies import templates
 from app.internal.event import validate_zoom_link
 from app.internal.utils import create_model
 from app.routers.user import create_user
+
+
+LOCATION_TIMEOUT = 6
+
 
 router = APIRouter(
     prefix="/event",
@@ -47,10 +53,17 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     location = data['location']
 
     if is_zoom:
-        validate_zoom_link(location)
+            validate_zoom_link(location)
+    else:
+        latitude, longitude, accurate_loc = get_location_coordinates(location)
+        if accurate_loc is not None:
+            location = accurate_loc
+            event = create_event(session, title, start, end, owner_id, content,
+                        location, latitude, longitude)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location)
+                        location)
+
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event.id),
                             status_code=status.HTTP_302_FOUND)
@@ -251,3 +264,17 @@ def delete_event(event_id: int,
         # if the deletion is successful
     return RedirectResponse(
         url="/calendar", status_code=status.HTTP_200_OK)
+
+
+def get_location_coordinates(address: str) -> Tuple[float, float, str]:
+    """Return location coordinates and accurate address of the specified location."""
+    geolocator = Nominatim(user_agent="GeoFinder", timeout=LOCATION_TIMEOUT)
+    try:
+        location = geolocator.geocode(address)
+        if location is not None:
+            acc_address = location.raw["display_name"]
+            return location.latitude, location.longitude, acc_address
+    except GeocoderTimedOut as e:
+        logger.exception(str(e))
+    return None, None, None
+    
