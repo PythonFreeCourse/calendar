@@ -137,3 +137,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+<<<<<<< Updated upstream
+=======
+Scripts/*
+pyvenv.cfg
+.gitignore
+
+>>>>>>> Stashed changes

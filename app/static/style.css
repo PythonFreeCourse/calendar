@@ -26,6 +26,7 @@ body {
 
 .no-border {
     border: none;
+<<<<<<< Updated upstream
 }
 
 .profile-modal-fadeIn {
@@ -61,3 +62,6 @@ body {
     background-color:whitesmoke;
 }
   
+=======
+}
+>>>>>>> Stashed changes
