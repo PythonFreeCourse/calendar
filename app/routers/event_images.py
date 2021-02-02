@@ -1,11 +1,11 @@
-from app import config
+import re
 from functools import lru_cache
-from nltk.tokenize import word_tokenize
 from typing import Optional
+
+from nltk.tokenize import word_tokenize
 from word_forms.lemmatizer import lemmatize
 
-import re
-
+from app import config
 
 FLAIRS_EXTENSION = '.jpg'
 FLAIRS_REL_PATH = f'{config.STATIC_ABS_PATH}\\event_flairs'
