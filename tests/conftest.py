@@ -1,9 +1,9 @@
 import pytest
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 
 pytest_plugins = [
     'tests.user_fixture',
