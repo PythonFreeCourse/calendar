@@ -10,7 +10,6 @@ from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH
 from app.internal import zodiac
 
-
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 
