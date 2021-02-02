@@ -9,7 +9,6 @@ from app.database.database import get_db
 from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH
 
-
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 
