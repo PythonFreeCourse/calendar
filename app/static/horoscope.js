@@ -1,8 +1,8 @@
 async function daily_horoscope(singName) {
     sign = singName.toLowerCase();
-    var x = 'https://aztro.sameerkumar.website/?sign=' + sign + '&day=today'
+    const signData = 'https://aztro.sameerkumar.website/?sign=' + sign + '&day=today'
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", x, true);
+    xhr.open("POST", signData, true);
     xhr.onload = function() {
         let obj = JSON.parse(this.responseText);
         let daily = document.getElementById('daily_horoscope');
