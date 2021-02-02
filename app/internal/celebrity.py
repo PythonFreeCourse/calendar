@@ -4,7 +4,7 @@ import datetime
 from typing import Optional, Dict
 
 
-BASE_URL = f'https://www.imdb.com/search/name/?birth_monthday='
+BASE_URL = 'https://www.imdb.com/search/name/?birth_monthday='
 
 
 def get_today_month_and_day() -> str:
@@ -16,11 +16,11 @@ def get_today_month_and_day() -> str:
 def get_content(today: str) -> Optional[bytes]:
     """Get IMDB HTML page content by today's birthdays"""
 
-    url = BASE_URL + f'{today}'
+    url = BASE_URL + today
 
     try:
         page = requests.get(url)
-    except requests.ConnectionError as e:
+    except requests.ConnectionError:
         # TODO: write error to log file
         return None
     else:
@@ -38,7 +38,7 @@ def get_celebs(today: str) -> Optional[Dict]:
     Returns:
         dict: A dictionary containing celebrities who celeberate
               their birthday's today.
-    
+
     Information provided in dict:
         celebrity names, images, imdb profile links and jobs"""
 
@@ -47,13 +47,15 @@ def get_celebs(today: str) -> Optional[Dict]:
     if page:
         tree = html.fromstring(page)
         names = tree.xpath('//h3[@class="lister-item-header"]/a/text()')[:12]
-        names = (name[1:-1] for name in names)
-        images = tree.xpath('//div[@class="lister-item-image"]/a/img/@src')[:12]
+        names = (name[1:-1].strip() for name in names)
+        images = tree.xpath(
+            '//div[@class="lister-item-image"]/a/img/@src')[:12]
         links = tree.xpath('//div[@class="lister-item-image"]/a/@href')[:12]
         jobs = tree.xpath('//p[@class="text-muted text-small"]/text()')
         jobs = list(filter(None, [job.strip() for job in jobs]))[:12]
-        
-        return {key: dict(zip(['image', 'imdb_profile', 'job'], value))
-            for key, value in zip(names, zip(images, links, jobs))}
-    
+
+        return {key: dict(
+            zip(['image', 'imdb_profile', 'job'],
+            value)) for key, value in zip(names, zip(images, links, jobs))}
+
     return None

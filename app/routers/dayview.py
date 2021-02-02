@@ -110,4 +110,3 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
         "month": day.strftime("%B").upper(),
         "day": day.day
         })
-    

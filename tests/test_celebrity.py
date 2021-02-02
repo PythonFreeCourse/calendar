@@ -15,7 +15,7 @@ try:
     with open(URL, 'rb') as f:
         CONTENT = f.read()
 except FileNotFoundError:
-    URL = f'https://www.imdb.com/search/name/?birth_monthday=01-28'
+    URL = 'https://www.imdb.com/search/name/?birth_monthday=01-28'
     CONTENT = requests.get(URL).content
 
 
@@ -65,7 +65,7 @@ def requests_error_mock(monkeypatch):
 
     def mock_requests_error(url):
         return MockResponse()
-    
+
     monkeypatch.setattr(requests, 'get', mock_requests_error)
 
 
