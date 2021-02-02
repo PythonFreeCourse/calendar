@@ -31,6 +31,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     full_name = Column(String)
+    language = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
