@@ -11,7 +11,6 @@ from app.database.database import get_db
 from app.database.models import Invitation
 from app.routers.share import accept
 
-
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(
