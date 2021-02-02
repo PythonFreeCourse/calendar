@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="index.css"
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button class="open-button" onclick="openForm()">Go to a specific date</button>
+    <div class="form-popup" id="myForm">
+        <form action="/action_page.php" class="form-container">
+      
+          <label for="email"><b>Enter the date in the following format: dd.mm.yyyy:</b></label>
+          <input type="text" placeholder="Enter date" name="email" required>
+
+      
+          <button type="submit" class="btn">Submit</button>
+          <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+        </form>
+    </div>
+
+
+    <script src="popup.js"></script>
+</body>
+</html>
