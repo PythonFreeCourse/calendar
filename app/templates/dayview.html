@@ -56,6 +56,7 @@
                 {% endfor %}
             </div>
             <div class="actiongrid">
+                
                 {% for event, attr in events %}
                     <div class="d-flex flex-row justify-content-around align-items-end action-continer" style="grid-row: {{attr.grid_position}};">
                         <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
