@@ -9,7 +9,7 @@ from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.routers import (
     agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    event, invitation, profile, search, telegram, whatsapp, fourOfour
 )
 from app.telegram.bot import telegram_bot
 
@@ -46,6 +46,7 @@ routers_to_include = [
     search.router,
     telegram.router,
     whatsapp.router,
+    fourOfour.router,
 ]
 
 for router in routers_to_include:
@@ -60,7 +61,7 @@ telegram_bot.set_webhook()
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "message": "Hello, World!",
         "quote": quote
