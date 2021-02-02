@@ -1,8 +1,8 @@
 from datetime import datetime, date
 
-from app.internal import agenda_events
 import pytest
 
+from app.internal import agenda_events
 from app.internal.agenda_events import get_events_per_dates
 
 

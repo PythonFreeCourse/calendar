@@ -4,6 +4,7 @@ import os
 from fastapi.templating import Jinja2Templates
 
 from app import config
+from app.internal.logger_customizer import LoggerCustomizer
 
 
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -12,6 +13,14 @@ STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
 SOUNDS_PATH = os.path.join(APP_PATH, "static/tracks/")
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
+
+# Configure logger
+logger = LoggerCustomizer.make_logger(config.LOG_PATH,
+                                      config.LOG_FILENAME,
+                                      config.LOG_LEVEL,
+                                      config.LOG_ROTATION_INTERVAL,
+                                      config.LOG_RETENTION_INTERVAL,
+                                      config.LOG_FORMAT)
 
 
 @lru_cache()
