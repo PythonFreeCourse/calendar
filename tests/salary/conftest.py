@@ -14,7 +14,7 @@ MESSAGES = {
     'create_settings': 'Already created your settings?',
     'pick_settings': 'Edit Settings',
     'edit_settings': 'Settings don\'t need editing?',
-    'pick_category': 'Calculate Salary',
+    'pick_category': 'View Salary',
     'view_salary': 'Need to alter your settings?',
     'salary_calc': 'Total Salary:',
 }

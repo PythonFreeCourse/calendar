@@ -7,7 +7,6 @@ from requests.sessions import Session
 
 from app.database.models import Event, SalarySettings
 from app.routers.salary import config, utils
-from tests.conftest import TestingSessionLocal
 
 
 NIGHT_TIMES = [
@@ -175,6 +174,25 @@ SALARIES = [
 TIMES = [
     ('13:30', time(13, 30)),
     ('15:42:00', time(15, 42))
+]
+
+UPDATES = [
+    ({
+        'wage': '35',
+        'off_day': '6',
+        'holiday_category_id': '7',
+        'regular_hour_basis': '19',
+        'night_hour_basis': '6.5',
+        'night_start': '13:00',
+        'night_end': '14:30:00',
+        'night_min_len': '20:42',
+        'first_overtime_amount': '4',
+        'first_overtime_pay': '1',
+        'second_overtime_pay': '2',
+        'week_working_hours': '80',
+        'daily_transport': '20',
+    }, True),
+    ({}, False)
 ]
 
 
@@ -347,14 +365,18 @@ def test_calc_salary(
     assert utils.calc_salary(2021, 1, wage, overtime, 0, deduction) == salary
 
 
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_get_settings(salary_session: Session,
                       wage: SalarySettings) -> None:
-    assert utils.get_settings(wage.user_id,
+    assert utils.get_settings(salary_session, wage.user_id,
                               wage.category_id) is not None
 
 
 @pytest.mark.parametrize('string, formatted_time', TIMES)
 def test_get_time_from_string(string: str, formatted_time: time) -> None:
     assert utils.get_time_from_string(string) == formatted_time
+
+
+@pytest.mark.parametrize('form, boolean', UPDATES)
+def test_update_settings(salary_session: Session, wage: SalarySettings,
+                         form: Dict[str, str], boolean: bool) -> None:
+    assert utils.update_settings(salary_session, wage, form) == boolean

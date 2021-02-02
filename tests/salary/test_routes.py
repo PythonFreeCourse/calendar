@@ -8,7 +8,6 @@ from starlette.testclient import TestClient
 from app.database.models import SalarySettings, User
 from app.internal.utils import delete_instance
 from app.routers.salary import routes, utils
-from tests.conftest import TestingSessionLocal
 from tests.salary import conftest
 from tests.salary.test_utils import get_event_by_category
 
@@ -43,18 +42,15 @@ INVALID = [
 ]
 
 
-def get_current_user() -> User:
-    session = TestingSessionLocal()
-    user = session.query(User).filter_by(id=2).first()
+def get_current_user(salary_session: Session) -> User:
+    user = salary_session.query(User).filter_by(id=2).first()
     return user
 
 
-@mock.patch('app.routers.salary.routes.SessionLocal',
-            new=TestingSessionLocal)
 def test_get_current_user(salary_session: Session) -> None:
     # Code revision required after user login feature is added
     assert salary_session.query(User).filter_by(id=1).first() is None
-    routes.get_current_user()
+    routes.get_current_user(salary_session)
     assert salary_session.query(User).filter_by(id=1).first() is not None
 
 
@@ -80,43 +76,35 @@ def test_get_holiday_categories() -> None:
     assert routes.get_holiday_categories() == holidays
 
 
-def test_get_salary_categories_empty(salary_user: User) -> None:
+def test_get_salary_categories_empty(salary_session: Session,
+                                     salary_user: User) -> None:
     # Code revision required after categories feature is added
-    assert routes.get_salary_categories(salary_user.id) == {}
+    assert routes.get_salary_categories(salary_session, salary_user.id) == {}
 
 
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
-def test_get_salary_categories(wage: SalarySettings) -> None:
+def test_get_salary_categories(salary_session: Session,
+                               wage: SalarySettings) -> None:
     # Code revision required after categories feature is added
-    assert wage.category_id in routes.get_salary_categories(
-        wage.user_id, True)
+    assert wage.category_id in routes.get_salary_categories(salary_session,
+                                                            wage.user_id, True)
 
 
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
-def test_get_salary_categories_new(wage: SalarySettings) -> None:
+def test_get_salary_categories_new(salary_session: Session,
+                                   wage: SalarySettings) -> None:
     # Code revision required after categories feature is added
     assert wage.category_id not in routes.get_salary_categories(
-        wage.user_id, False)
+        salary_session, wage.user_id, False)
 
 
 @pytest.mark.parametrize('path', PATHS)
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_pages_respond_ok(salary_test_client: TestClient,
                           wage: SalarySettings, path: str) -> None:
     response = salary_test_client.get(path)
     assert response.ok
 
 
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
-@mock.patch('app.routers.salary.routes.SessionLocal',
-            new=TestingSessionLocal)
 def test_home_page_redirects_to_new(
         salary_test_client: TestClient) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
@@ -125,10 +113,7 @@ def test_home_page_redirects_to_new(
 
 
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_home_page_redirects_to_view(salary_test_client: TestClient,
                                      wage: SalarySettings) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
@@ -137,14 +122,12 @@ def test_home_page_redirects_to_view(salary_test_client: TestClient,
 
 
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_create_settings(salary_test_client: TestClient,
                          salary_session: Session, salary_user: User) -> None:
     category_id = conftest.CATEGORY_ID
-    assert utils.get_settings(salary_user.id, category_id) is None
+    assert utils.get_settings(salary_session, salary_user.id,
+                              category_id) is None
     data = {
         'category_id': category_id,
         'wage': utils.DEFAULT_SETTINGS.wage,
@@ -165,14 +148,12 @@ def test_create_settings(salary_test_client: TestClient,
         conftest.ROUTES['new'], data=data, allow_redirects=True)
     assert response.ok
     assert conftest.MESSAGES['view_salary'] in response.text
-    settings = utils.get_settings(salary_user.id, category_id)
+    settings = utils.get_settings(salary_session, salary_user.id, category_id)
     assert settings
     delete_instance(salary_session, settings)
 
 
 @pytest.mark.parametrize('path', EMPTY_PICKS)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_empty_category_pick_redirects_to_new(salary_test_client: TestClient,
                                               path: str) -> None:
     response = salary_test_client.get(path)
@@ -182,10 +163,7 @@ def test_empty_category_pick_redirects_to_new(salary_test_client: TestClient,
 
 @pytest.mark.parametrize('path, message', CATEGORY_PICK)
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_pick_category(salary_test_client: TestClient, wage: SalarySettings,
                        path: str, message: str) -> None:
     data = {'category_id': wage.category_id}
@@ -194,14 +172,11 @@ def test_pick_category(salary_test_client: TestClient, wage: SalarySettings,
 
 
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
-def test_edit_settings(salary_test_client: TestClient,
+def test_edit_settings(salary_test_client: TestClient, salary_session: Session,
                        wage: SalarySettings) -> None:
     category_id = wage.category_id
-    settings = utils.get_settings(wage.user_id, category_id)
+    settings = utils.get_settings(salary_session, wage.user_id, category_id)
     route = conftest.ROUTES['edit'] + '/' + str(category_id)
     data = {
         'wage': wage.wage + 1,
@@ -221,15 +196,13 @@ def test_edit_settings(salary_test_client: TestClient,
     response = salary_test_client.post(route, data=data, allow_redirects=True)
     assert response.ok
     assert conftest.MESSAGES['view_salary'] in response.text
-    assert settings != utils.get_settings(wage.user_id, wage.category_id)
+    assert settings != utils.get_settings(salary_session, wage.user_id,
+                                          wage.category_id)
 
 
 @pytest.mark.parametrize('path, message', INVALID)
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
-@mock.patch('app.routers.salary.utils.SessionLocal',
-            new=TestingSessionLocal)
 def test_invalid_category_redirect(
     salary_test_client: TestClient, wage: SalarySettings, path: str,
         message: str) -> None:
@@ -241,10 +214,8 @@ def test_invalid_category_redirect(
 
 
 @mock.patch.multiple('app.routers.salary.routes',
-                     SessionLocal=TestingSessionLocal,
                      get_current_user=get_current_user)
 @mock.patch.multiple('app.routers.salary.utils',
-                     SessionLocal=TestingSessionLocal,
                      get_event_by_category=get_event_by_category)
 def test_view_salary(salary_test_client: TestClient,
                      wage: SalarySettings) -> None:

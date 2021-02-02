@@ -1,8 +1,9 @@
+from app.internal.utils import save
+from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.elements import and_
 from datetime import datetime, time, timedelta
 from typing import Dict, Iterator, Optional, Tuple
 
-from app.database import SessionLocal
 from app.database.models import Event, SalarySettings
 from app.routers.salary import config
 
@@ -149,43 +150,6 @@ def get_total_synchronous_hours(
     if latest_start > earliest_end:
         return 0.0
     return (earliest_end - latest_start).seconds / config.HOURS_SECONDS_RATIO
-
-
-# def get_total_synchronous_hours(
-#     event_1_start: datetime, event_1_end: datetime,
-#     event_2_start: datetime, event_2_end: datetime
-#         ) -> float:
-#     """Returns the total amount of hours that are shared between both events.
-
-#     Args:
-#         event_1_start (datetime): The first event's start time.
-#         event_1_end (datetime): The first event's end time.
-#         event_2_start (datetime): The second event's start time.
-#         event_2_end (datetime): The second event's end time.
-
-#     Returns:
-#         float: Total amount of hours that are shared between both events.
-
-#     Raises:
-#         None
-#     """
-#     if event_2_start <= event_1_start <= event_2_end:
-#         if event_1_end <= event_2_end:
-#             start = event_1_start
-#             end = event_1_end
-#         else:
-#             start = event_1_start
-#             end = event_2_end
-#     elif event_2_start <= event_1_end <= event_2_end:
-#         start = event_2_start
-#         end = event_1_end
-#     elif event_1_start <= event_2_start and event_1_end >= event_2_end:
-#         start = event_1_start
-#         end = event_1_end
-#     try:
-#         return get_shift_len(start, end)
-#     except NameError:
-#         return 0.0
 
 
 def get_hour_basis(start: datetime, end: datetime,
@@ -504,11 +468,13 @@ def calc_salary(
         }
 
 
-def get_settings(user_id: int, category_id: int) -> Optional[SalarySettings]:
+def get_settings(session: Session, user_id: int,
+                 category_id: int) -> Optional[SalarySettings]:
     """Returns settings for `user_id` and `category_id` if exists, None
     otherwise.
 
     Args:
+        session (Session): DB session.
         user_id (int): Id of the relevant user.
         category_id (int): Id for the relevant category.
 
@@ -516,7 +482,6 @@ def get_settings(user_id: int, category_id: int) -> Optional[SalarySettings]:
         SalarySettings | None: Settings for the provided user_id and
                                category_id if exists, None otherwise.
     """
-    session = SessionLocal()
     settings = session.query(SalarySettings).filter(and_(
         SalarySettings.user_id == user_id, SalarySettings.category_id
         == category_id)).first()
@@ -541,3 +506,39 @@ def get_time_from_string(string: str) -> time:
         return datetime.strptime(string, config.HOUR_FORMAT).time()
     except ValueError:
         return datetime.strptime(string, config.ALT_HOUR_FORMAT).time()
+
+
+def update_settings(session: Session, wage: SalarySettings,
+                    form: Dict[str, str]) -> bool:
+    """Update salary settings instance according to info in `form`.
+
+    Args:
+        session (Session): DB session.
+        wage (SalarySettings): Settings to be updated.
+        form (dict(str: str)): Info to update.
+
+    Returns:
+        bool: True if successful, False otherwise.
+
+    Raises:
+        None
+    """
+    try:
+        wage.wage = form['wage']
+        wage.off_day = form['off_day']
+        wage.holiday_category_id = form['holiday_category_id']
+        wage.regular_hour_basis = form['regular_hour_basis']
+        wage.night_hour_basis = form['night_hour_basis']
+        wage.night_start = get_time_from_string(form['night_start'])
+        wage.night_end = get_time_from_string(form['night_end'])
+        wage.night_min_len = get_time_from_string(form['night_min_len'])
+        wage.first_overtime_amount = form['first_overtime_amount']
+        wage.first_overtime_pay = form['first_overtime_pay']
+        wage.second_overtime_pay = form['second_overtime_pay']
+        wage.week_working_hours = form['week_working_hours']
+        wage.daily_transport = form['daily_transport']
+
+        save(session, wage)
+        return True
+    except KeyError:
+        return False
