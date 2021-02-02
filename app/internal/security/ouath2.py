@@ -81,14 +81,9 @@ async def get_cookie(request: Request):
     raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, headers=request.url.path, detail="Please log in to enter this page")
 
 
-# @exception_handler(HTTP_401_UNAUTHORIZED)
 async def my_exception_handler(request: Request, exc: HTTP_401_UNAUTHORIZED) -> RedirectResponse:
-    response = RedirectResponse(url='/login')
-    if exc.headers:
-        response.set_cookie(
-            "next_url", value=exc.headers, httponly=True)
-    if exc.detail:
-        response.set_cookie(
-            "message", value=exc.detail, httponly=True)
+    paramas = f"?next={exc.headers}&message={exc.detail}"
+    url = f"/login{paramas}"
+    response = RedirectResponse(url=url)
     response.delete_cookie('Authorization')
     return response

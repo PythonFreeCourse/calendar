@@ -7,6 +7,7 @@ from app.internal.security.dependancies import current_user_required, current_us
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from app.database.models import User
+from typing import Optional
 
 
 router = APIRouter(
@@ -18,16 +19,12 @@ router = APIRouter(
 
 
 @router.get("/login")
-async def login_user_form(request: Request) -> templates:
+async def login_user_form(request: Request, message: Optional[str] = "") -> templates:
     '''
     rendering register route get method
     '''
-    message = ""
-    if 'message' in request.cookies:
-        message = request.cookies['message']
     return templates.TemplateResponse("login.html", {
         "request": request,
-        "errors": None,
         "message": message
     })
 
@@ -35,8 +32,8 @@ async def login_user_form(request: Request) -> templates:
 @router.post('/login')
 async def login(
         request: Request,
-        form: OAuth2PasswordRequestForm = Depends()):
-    url = "/"
+        form: OAuth2PasswordRequestForm = Depends(),
+        next: Optional[str] = "/"):
     form_dict = {'username': form.username, 'hashed_password': form.password}
     user = LoginUser(**form_dict)
     if user:
@@ -44,23 +41,16 @@ async def login(
     if not user:
         return templates.TemplateResponse("login.html", {
             "request": request,
-            "errors": None,
             "message": 'Please check your credentials'
         })
 
-    ### check url
-    if 'next_url' in request.cookies:
-        url = request.cookies['next_url']
-
     jwt_token = create_jwt_token(user)
-    response = RedirectResponse(url=url, status_code=HTTP_302_FOUND) 
+    response = RedirectResponse(next, status_code=HTTP_302_FOUND) 
     response.set_cookie(
         "Authorization",
         value=jwt_token,
         httponly=True,
     )
-    response.delete_cookie('next_url')
-    response.delete_cookie('message')
     return response
 
 
