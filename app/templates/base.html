@@ -12,7 +12,9 @@
     <link href="https://unpkg.com/tailwindcss@1.9.5/dist/tailwind.min.css" rel="stylesheet">
     <link rel="icon" href="{{ url_for('static', path='/images/icons/calendar-outline.svg') }}" />
     <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet">
-
+    <script type="module" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.js"></script>
+    
     <title>PyLendar {% block title %}{% endblock %}</title>
     {% endblock %}
 </head>
@@ -28,8 +30,7 @@
                 </button>
                 <div class="navbar-brand">
                     <a href="{{ url_for('home') }}" aria-label="Home">
-                        <img class="h-8 w-auto sm:h-10"
-                            src="{{ url_for('static', path='/images/icons/calendar-outline.svg') }}" alt="Logo">
+                        <ion-icon name="calendar-outline"></ion-icon>
                     </a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbarToggler">
