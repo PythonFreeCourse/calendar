@@ -250,7 +250,6 @@ def add_new_event(values: dict, db) -> Optional[Event]:
         except (AssertionError, AttributeError, TypeError) as e:
             logger.exception(e)
             return None
-            all()]
 
 
 def _delete_event(db: Session, event: Event):
