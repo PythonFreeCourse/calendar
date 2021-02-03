@@ -8,7 +8,6 @@ from sqlalchemy import and_, or_
 from app.database.models import Event, User
 from app.dependencies import get_db, TEMPLATES_PATH
 
-
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 

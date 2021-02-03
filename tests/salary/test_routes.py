@@ -47,13 +47,6 @@ def get_current_user(salary_session: Session) -> User:
     return user
 
 
-def test_get_current_user(salary_session: Session) -> None:
-    # Code revision required after user login feature is added
-    assert salary_session.query(User).filter_by(id=1).first() is None
-    routes.get_current_user(salary_session)
-    assert salary_session.query(User).filter_by(id=1).first() is not None
-
-
 def test_get_user_categories() -> None:
     # Code revision required after categories feature is added
     categories = {
@@ -97,8 +90,6 @@ def test_get_salary_categories_new(salary_session: Session,
 
 
 @pytest.mark.parametrize('path', PATHS)
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
 def test_pages_respond_ok(salary_test_client: TestClient,
                           wage: SalarySettings, path: str) -> None:
     response = salary_test_client.get(path)
@@ -112,8 +103,8 @@ def test_home_page_redirects_to_new(
     assert conftest.MESSAGES['create_settings'] in response.text
 
 
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
+@mock.patch('app.routers.salary.routes.get_current_user',
+            new=get_current_user)
 def test_home_page_redirects_to_view(salary_test_client: TestClient,
                                      wage: SalarySettings) -> None:
     response = salary_test_client.get(conftest.ROUTES['home'])
@@ -121,8 +112,8 @@ def test_home_page_redirects_to_view(salary_test_client: TestClient,
     assert conftest.MESSAGES['pick_category'] in response.text
 
 
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
+@mock.patch('app.routers.salary.routes.get_current_user',
+            new=get_current_user)
 def test_create_settings(salary_test_client: TestClient,
                          salary_session: Session, salary_user: User) -> None:
     category_id = conftest.CATEGORY_ID
@@ -162,8 +153,8 @@ def test_empty_category_pick_redirects_to_new(salary_test_client: TestClient,
 
 
 @pytest.mark.parametrize('path, message', CATEGORY_PICK)
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
+@mock.patch('app.routers.salary.routes.get_current_user',
+            new=get_current_user)
 def test_pick_category(salary_test_client: TestClient, wage: SalarySettings,
                        path: str, message: str) -> None:
     data = {'category_id': wage.category_id}
@@ -171,8 +162,8 @@ def test_pick_category(salary_test_client: TestClient, wage: SalarySettings,
     assert message in response.text
 
 
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
+@mock.patch('app.routers.salary.routes.get_current_user',
+            new=get_current_user)
 def test_edit_settings(salary_test_client: TestClient, salary_session: Session,
                        wage: SalarySettings) -> None:
     category_id = wage.category_id
@@ -201,8 +192,8 @@ def test_edit_settings(salary_test_client: TestClient, salary_session: Session,
 
 
 @pytest.mark.parametrize('path, message', INVALID)
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
+@mock.patch('app.routers.salary.routes.get_current_user',
+            new=get_current_user)
 def test_invalid_category_redirect(
     salary_test_client: TestClient, wage: SalarySettings, path: str,
         message: str) -> None:
@@ -213,10 +204,10 @@ def test_invalid_category_redirect(
     assert message in response.text
 
 
-@mock.patch.multiple('app.routers.salary.routes',
-                     get_current_user=get_current_user)
-@mock.patch.multiple('app.routers.salary.utils',
-                     get_event_by_category=get_event_by_category)
+@mock.patch('app.routers.salary.routes.get_current_user',
+            new=get_current_user)
+@mock.patch('app.routers.salary.utils.get_event_by_category',
+            new=get_event_by_category)
 def test_view_salary(salary_test_client: TestClient,
                      wage: SalarySettings) -> None:
     route = (conftest.ROUTES['view'] + '/' + str(wage.category_id))

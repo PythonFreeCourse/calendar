@@ -6,11 +6,10 @@ from fastapi.param_functions import Depends
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse, Response
 
-from app.database.models import SalarySettings, User
+from app.database.models import SalarySettings
 from app.dependencies import get_db, templates
-from app.internal.utils import create_model, save
+from app.internal.utils import create_model, get_current_user
 from app.routers.salary import utils
-from app.routers.profile import get_placeholder_user
 
 
 router = APIRouter(
@@ -18,18 +17,6 @@ router = APIRouter(
     tags=['salary'],
     dependencies=[Depends(get_db)],
 )
-
-
-def get_current_user(session: Session) -> User:
-    """Mock function for current user information retrival."""
-    # Code revision required after user login feature is added
-    new_user = get_placeholder_user()
-    user = session.query(User).first()
-    if not user:
-        save(session, new_user)
-        user = session.query(User).first()
-
-    return user
 
 
 def get_user_categories() -> Dict[int, str]:

@@ -368,7 +368,7 @@ def test_calc_salary(
 def test_get_settings(salary_session: Session,
                       wage: SalarySettings) -> None:
     assert utils.get_settings(salary_session, wage.user_id,
-                              wage.category_id) is not None
+                              wage.category_id)
 
 
 @pytest.mark.parametrize('string, formatted_time', TIMES)

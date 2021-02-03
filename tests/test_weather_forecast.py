@@ -6,7 +6,6 @@ import responses
 
 from app.internal.weather_forecast import get_weather_data
 
-
 HISTORY_URL = "https://visual-crossing-weather.p.rapidapi.com/history"
 FORECAST_URL = "https://visual-crossing-weather.p.rapidapi.com/forecast"
 RESPONSE_FROM_MOCK = {"locations": {"Tel Aviv": {"values": [
