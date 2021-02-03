@@ -1,7 +1,7 @@
 # PyLander
 
-<p align="center">
-  <img title="Apache-2.0" src="https://img.shields.io/github/license/PythonFreeCourse/calendar.svg">
+<p style="text-align:center">
+  <img title="Apache-2.0" alt="License Apache-2.0 icon" src="https://img.shields.io/github/license/PythonFreeCourse/calendar.svg">
 </p>
 
 👋 Welcome to Open Source Calendar built with Python. 🐍
@@ -39,5 +39,11 @@ cp app/config.py.example app/configuration.py
 # Edit the variables' values.
 uvicorn app.main:app --reload
 ```
+### Running tests
+```shell
+python -m pytest --cov-report term-missing --cov=app tests
+```
+
 ## Contributing
 View [contributing guidelines](https://github.com/PythonFreeCourse/calendar/blob/master/CONTRIBUTING.md).
+
