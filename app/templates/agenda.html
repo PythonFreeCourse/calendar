@@ -44,7 +44,7 @@
     {% for events_date, events_list in events.items() %}
     <div class="shown_dates">{{ events_date.strftime("%d/%m/%Y") }}</div>
         {% for event in events_list %}
-        <div class="event_line"> {{ event[0].start.time().strftime("%H:%M") }} - {{ event[0].title }} , duration: {{ event[1] }}</div>
+        <div class="event_line"> {{ event[0].start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event[0].id }}">{{ event[0].title }}</a> , duration: {{ event[1] }}</div>
         {% endfor %}
     {% endfor %}
 </div>

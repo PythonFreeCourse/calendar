@@ -1,7 +1,6 @@
 dev.db
 test.db
 config.py
-.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -138,9 +137,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
 # VScode
 .vscode/
 app/.vscode/
 
-app/routers/stam
+# PyCharm
+.idea
