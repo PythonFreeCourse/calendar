@@ -6,7 +6,7 @@ from starlette.requests import Request
 
 
 async def current_user_required(
-        request: Request, jwt: str  =Depends(get_cookie)) -> Union[User, bool]:
+        request: Request, jwt: str = Depends(get_cookie)) -> Union[User, bool]:
     '''A dependency function protecting routes for only logged in user'''
     user = await check_jwt_token(jwt, path=request.url.path)
     if user:

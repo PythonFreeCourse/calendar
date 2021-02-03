@@ -32,7 +32,7 @@ async def login_user_form(
 @router.post('/login')
 async def login(
         request: Request,
-        form: OAuth2PasswordRequestForm=Depends(),
+        form: OAuth2PasswordRequestForm = Depends(),
         next: Optional[str] = "/") -> RedirectResponse:
     '''rendering login route post method.'''
     form_dict = {'username': form.username, 'hashed_password': form.password}
@@ -51,7 +51,7 @@ async def login(
         })
     # creating HTTPONLY cookie with jwt-token out of user unique data
     jwt_token = create_jwt_token(user)
-    response = RedirectResponse(next, status_code = HTTP_302_FOUND)
+    response = RedirectResponse(next, status_code=HTTP_302_FOUND)
     response.set_cookie(
         "Authorization",
         value=jwt_token,
@@ -63,7 +63,7 @@ async def login(
 # Not for production
 @router.get('/logout')
 async def logout(request: Request):
-    response = RedirectResponse(url="/logout", status_code = HTTP_302_FOUND)
+    response = RedirectResponse(url="/logout", status_code=HTTP_302_FOUND)
     response.delete_cookie("Authorization")
     return response
 
