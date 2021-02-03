@@ -1,8 +1,7 @@
-from os import name
 from fastapi import APIRouter, Request, Depends
 from app.database.database import get_db, SessionLocal
 from app.database.models import User, UserFeature, Feature
-from app.database.models import Base
+from app.internal.utils import create_model
 
 
 router = APIRouter(
@@ -15,19 +14,38 @@ router = APIRouter(
 @router.get('/')
 def panel_index(request: Request, session: SessionLocal = Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
-    feature = create_feature(db=session, name='google1', route='/profile1',
-                             user=user, is_enable=False)
+    feature = create_feature(db=session, name='google2', route='/profile2',
+                             user=user, is_enable=True)
+
+    return {'all': user.features, "feature": feature}
+    # return {"hello": "world", "req": request}
+
+
+def delete_feature(feature: Feature, session: SessionLocal = Depends(get_db)):
+    session.query(UserFeature).filter_by(feature_id=feature.id).delete()
+    session.query(Feature).filter_by(id=feature.id).delete()
     session.commit()
-    session.query(UserFeature).filter_by(feature_id=8).delete()
-    session.commit()
-    return user.features
-    obj = session.query(Feature).all()
-
-    return {"hello": "world", "feature": obj}
 
 
-def create_feature(db, name, route, user, is_enable):
-    """Creates an event and an association."""
+def cleanup_existing_features():
+    pass
+
+
+def is_feature_enabled(route: str, user: User, 
+                       session: SessionLocal = Depends(get_db)):
+
+    feature = session.query(Feature).filter_by(route=route).first()
+    user_pref = session.query(UserFeature).filter_by(
+                feature_id=feature.id, user_id=user.id).first()
+
+    if user_pref.is_enabled:
+        return True
+    return False
+
+
+def create_feature(db: SessionLocal, name: str, route: str,
+                   user: User, is_enable: bool):
+    """Creates a feature and an association."""
 
     feature = create_model(
         db, Feature,
@@ -41,22 +59,3 @@ def create_feature(db, name, route, user, is_enable):
         is_enable=is_enable
     )
     return feature
-
-
-def save(item, session: SessionLocal) -> bool:
-    """Commits an instance to the db.
-    source: app.database.database.Base"""
-
-    if issubclass(item.__class__, Base):
-        session.add(item)
-        session.commit()
-        return True
-    return False
-
-
-def create_model(session: SessionLocal, model_class, **kw):
-    """Creates and saves a db model."""
-
-    instance = model_class(**kw)
-    save(instance, session)
-    return instance

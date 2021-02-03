@@ -30,8 +30,6 @@ class UserFeature(Base):
     feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
     user_id = Column('user_id', Integer, ForeignKey('users.id'))
 
-    # features = relationship("Feature", back_populates="users")
-    # users = relationship("User", back_populates="features")
 
     is_enable = Column(Boolean)
 
@@ -64,6 +62,7 @@ class Feature(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     route = Column(String, nullable=False)
+    creator = Column(String, nullable=True)
 
     users = relationship("User", secondary=UserFeature.__tablename__)
 

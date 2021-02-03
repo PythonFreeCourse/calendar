@@ -47,9 +47,20 @@ app.include_router(feature_panel.router)
 
 telegram_bot.set_webhook()
 
+import time
 
 # TODO: I add the quote day to the home page
 # until the relavent calendar view will be developed.
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    feature_panel.is_feature_enabled(request.url)
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+
+
 @app.get("/")
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
