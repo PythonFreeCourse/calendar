@@ -7,8 +7,6 @@ from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.internal import user
-
 
 router = APIRouter(
     prefix="",
@@ -17,10 +15,9 @@ router = APIRouter(
 )
 
 
-
 async def render_registration_error(
-    db :Session, new_user: UserCreate) -> dict:
-    '''After registering new user fails, defines relevant errors''' 
+        db: Session, new_user: UserCreate) -> dict:
+    '''After registering new user fails, defines relevant errors'''
     db.rollback()
     errors = {}
     db_user_email = user.get_by_mail(db, email=new_user.email)
@@ -44,7 +41,7 @@ async def register_user_form(request: Request) -> templates:
 
 @router.post("/register")
 async def register(
-                request: Request, db: Session = Depends(get_db)) -> templates:
+                request: Request, db: Session=Depends(get_db)) -> templates:
     '''rendering register route post method.'''
     form = await request.form()
     form_dict = dict(form)
@@ -83,7 +80,8 @@ async def register(
         "message": "User created",
         "status_code": 201})
 
-### NOT for production
+
+# NOT for production
 @router.get("/delete")
 def delete_user(db: Session = Depends(get_db)):
     user.delete_by_mail(db=db, email="")

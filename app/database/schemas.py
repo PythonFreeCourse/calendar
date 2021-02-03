@@ -33,7 +33,10 @@ class UserCreate(UserBase):
     password: str
     confirm_password: str
 
-    '''Calling to field_not_empty validaion function for each required field.'''
+    '''
+    Calling to field_not_empty validaion function,
+    for each required field.
+    '''
     _fields_not_empty_username = validator(
         'username', allow_reuse=True)(fields_not_empty)
     _fields_not_empty_full_name = validator(

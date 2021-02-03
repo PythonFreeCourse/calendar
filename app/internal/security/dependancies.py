@@ -6,7 +6,7 @@ from app.internal.security.ouath2 import get_cookie, check_jwt_token, User
 
 
 async def current_user_required(
-    request: Request, jwt: str = Depends(get_cookie)) -> Union[User, bool]:
+        request: Request, jwt: str=Depends(get_cookie)) -> Union[User, bool]:
     '''A dependency function protecting routes for only logged in user'''
     user = await check_jwt_token(jwt, path=request.url.path)
     if user:
@@ -24,4 +24,4 @@ async def current_user(request: Request) -> Union[User, bool]:
     else:
         return None
     user = await check_jwt_token(jwt, logged_in=True)
-    return  user
+    return user

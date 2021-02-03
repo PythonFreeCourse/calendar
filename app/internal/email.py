@@ -138,8 +138,8 @@ def send_email_file(file_path: str,
 async def send_internal(subject: str,
                         recipients: List[str],
                         body: str,
-                        subtype: Optional[str] = None,
-                        file_attachments: Optional[List[str]] = None):
+                        subtype: Optional[str]=None,
+                        file_attachments: Optional[List[str]]=None):
     if file_attachments is None:
         file_attachments = []
 

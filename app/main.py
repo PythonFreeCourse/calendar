@@ -7,14 +7,13 @@ from app.internal.quotes import daily_quotes, load_quotes
 from app.internal.security.ouath2 import my_exception_handler
 from app.routers import (
     agenda, categories, dayview, email,
-    event, invitation, login, profile, 
+    event, invitation, login, profile,
     register, search, telegram, whatsapp)
 from app.telegram.bot import telegram_bot
 from fastapi import Depends, FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
 from sqlalchemy.orm import Session
-
 
 
 def create_tables(engine, psql_environment):
@@ -40,9 +39,6 @@ app.include_router(register.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(login.router)
-
-
-
 
 app.add_exception_handler(HTTP_401_UNAUTHORIZED, my_exception_handler)
 load_quotes.load_daily_quotes(next(get_db()))
@@ -74,7 +70,7 @@ telegram_bot.set_webhook()
 # until the relevant calendar view will be developed.
 @app.get("/")
 @logger.catch()
-async def home(request: Request, db: Session = Depends(get_db)):
+async def home(request: Request, db: Session=Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
         "request": request,
