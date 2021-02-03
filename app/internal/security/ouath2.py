@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Union
 
-from app.config import JWT_ALGORITHM, JWT_SECRET_KEY
+from app.config import JWT_ALGORITHM, JWT_KEY
 from passlib.context import CryptContext
 from app.database.database import SessionLocal
 from app.database.models import User
@@ -56,7 +56,7 @@ def create_jwt_token(user: LoginUser) -> str:
         "hashed_password": user.hashed_password,
         "exp": expiration}
     jwt_token = jwt.encode(
-        jwt_payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+        jwt_payload, JWT_KEY, algorithm=JWT_ALGORITHM)
     return jwt_token
 
 
@@ -70,7 +70,7 @@ async def check_jwt_token(
     '''
     try:
         jwt_payload = jwt.decode(
-            token, JWT_SECRET_KEY, algorithms=JWT_ALGORITHM)
+            token, JWT_KEY, algorithms=JWT_ALGORITHM)
         jwt_username = jwt_payload.get("sub")
         jwt_hashed_password = jwt_payload.get("hashed_password")
         db_user = await get_db_user_by_username(username=jwt_username)

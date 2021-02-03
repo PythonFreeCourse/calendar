@@ -63,7 +63,7 @@ async def login(
 # Not for production
 @router.get('/logout')
 async def logout(request: Request):
-    response = RedirectResponse(url="/logout", status_code=HTTP_302_FOUND)
+    response = RedirectResponse(url="/login", status_code=HTTP_302_FOUND)
     response.delete_cookie("Authorization")
     return response
 
