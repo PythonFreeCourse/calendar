@@ -51,7 +51,8 @@ DATABASE_CONNECTION_STRING = "sqlite:///calendar.db"
 
 # security
 JWT_SECRET_KEY = "c06857128217c661de43d746ecdb"
-+ "e9f1dbc3b3685957fab64512456f639b1881"JWT_ALGORITHM = "HS256"
++ "e9f1dbc3b3685957fab64512456f639b1881"
+JWT_ALGORITHM = "HS256"
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
 # application name
