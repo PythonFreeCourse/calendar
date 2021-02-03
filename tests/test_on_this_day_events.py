@@ -13,9 +13,9 @@ def test_insert_on_this_day_data(session):
 
 def test_get_on_this_day_events(session):
     data = get_on_this_day_events(session)
-    assert type(data) == dict
-    assert type(data.get('events')) == list
-    assert type(data.get('wikipedia')) == str
+    assert isinstance(data, dict)
+    assert isinstance(data.get('events'), list)
+    assert isinstance(data.get('wikipedia'), str)
 
 
 def test_get_on_this_day_events_exists(session):
@@ -24,7 +24,6 @@ def test_get_on_this_day_events_exists(session):
     session.add(fake_object)
     session.commit()
     fake_data = get_on_this_day_events(session)
-    print(fake_data.events)
     assert fake_data.events[0] == 'fake'
     assert fake_data.wikipedia == 'www.fake.com'
     assert fake_data.date_ == 'not a date string'

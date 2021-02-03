@@ -3,12 +3,13 @@ from datetime import date, datetime
 from typing import Dict
 
 import requests
-from app.database.models import WikipediaEvents
+from loguru import logger
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
-from loguru import logger
+
+from app.database.models import WikipediaEvents
 
 
 def insert_on_this_day_data(session: Session) -> Dict:
