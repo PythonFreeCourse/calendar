@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event)
+                        func, Integer, String, event)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import relationship
 
@@ -39,6 +39,11 @@ class User(Base):
 
     events = relationship("UserEvent", back_populates="participants")
 
+    speedy_meetings_enabled = Column(Boolean, default=False)
+
+    def has_speedy_meetings_enabled(self) -> bool:
+        return self.speedy_meetings_enabled
+
     def __repr__(self):
         return f'<User {self.id}>'
 
@@ -46,10 +51,14 @@ class User(Base):
 class Event(Base):
     __tablename__ = "events"
 
+    DEFAULT_DURATION = 60
+    SHORT_MEETING = 0.75
+
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
+    default_end = Column(Integer, default=func.get_default_end_time())
     content = Column(String)
     location = Column(String)
 
@@ -58,6 +67,14 @@ class Event(Base):
     color = Column(String, nullable=True)
 
     participants = relationship("UserEvent", back_populates="events")
+
+    def get_event_duration(self):
+        if self.owner.has_speedy_meetings_enabled():
+            return self.DEFAULT_DURATION * self.SHORT_MEETING
+        return self.DEFAULT_DURATION
+
+    def get_default_end_time(self):
+        return self.start + self.get_event_duration()
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
