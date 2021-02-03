@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, Any
 
-from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
+from sqlalchemy import (DDL, Boolean, Column, DateTime, Date, ForeignKey, Index,
                         Integer, String, event, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -157,3 +157,13 @@ class Quote(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+
+
+class OutOfOffice(Base):
+    __tablename__ = "out_of_office"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+    status = Column(String, nullable=False)

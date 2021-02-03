@@ -12,6 +12,7 @@ from app.routers import (
     telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
+import uvicorn
 
 
 def create_tables(engine, psql_environment):
@@ -44,7 +45,7 @@ routers_to_include = [
     profile.router,
     search.router,
     telegram.router,
-    whatsapp.router,
+    whatsapp.router
 ]
 
 for router in routers_to_include:
@@ -64,3 +65,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
         "message": "Hello, World!",
         "quote": quote
     })
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
