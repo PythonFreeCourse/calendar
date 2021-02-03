@@ -31,8 +31,9 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-from app.routers import (agenda, categories, dayview, email, event,  # noqa: E402
-                         invitation, profile, search, telegram, whatsapp)
+from app.routers import (agenda, categories, dayview, email,  # noqa: E402
+                         event, invitation, profile, search,
+                         telegram, whatsapp)
 
 load_quotes.load_daily_quotes(next(get_db()))
 

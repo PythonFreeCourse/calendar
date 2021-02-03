@@ -11,10 +11,6 @@ from app.database.models import Invitation
 from app.dependencies import templates
 from app.routers.share import accept
 
-
-templates = Jinja2Templates(directory="app/templates")
-
-
 router = APIRouter(
     prefix="/invitations",
     tags=["invitation"],
