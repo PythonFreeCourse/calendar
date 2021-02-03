@@ -1,13 +1,19 @@
-from datetime import datetime
+from __future__ import annotations
 
-from sqlalchemy import (Boolean, Column, DateTime, DDL, event, Float,
-                        ForeignKey, Index, Integer, String, Time)
+from datetime import datetime
+from typing import Dict, Any
+
+from sqlalchemy import (
+    Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
+    String, Time, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
+from app.dependencies import logger
 import app.routers.salary.config as SalaryConfig
 
 
@@ -51,8 +57,10 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
-    owner_id = Column(Integer, ForeignKey("users.id"))
     color = Column(String, nullable=True)
+
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
 
     owner = relationship("User", back_populates="owned_events")
     participants = relationship(
@@ -66,7 +74,7 @@ class Event(Base):
             'events_tsv_idx',
             'events_tsv',
             postgresql_using='gin'),
-            )
+        )
 
     def __repr__(self):
         return f'<Event {self.id}>'
@@ -86,6 +94,39 @@ class UserEvent(Base):
         return f'<UserEvent ({self.participants}, {self.events})>'
 
 
+class Category(Base):
+    __tablename__ = "categories"
+
+    __table_args__ = (
+        UniqueConstraint('user_id', 'name', 'color'),
+    )
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    color = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    @staticmethod
+    def create(db_session: Session, name: str, color: str,
+               user_id: int) -> Category:
+        try:
+            category = Category(name=name, color=color, user_id=user_id)
+            db_session.add(category)
+            db_session.flush()
+            db_session.commit()
+            db_session.refresh(category)
+        except (SQLAlchemyError, IntegrityError) as e:
+            logger.error(f"Failed to create category: {e}")
+            raise e
+        else:
+            return category
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def __repr__(self) -> str:
+        return f'<Category {self.id} {self.name} {self.color}>'
+
+
 class PSQLEnvironmentError(Exception):
     pass
 
@@ -103,7 +144,7 @@ if PSQL_ENVIRONMENT:
         Event.__table__,
         'after_create',
         trigger_snippet.execute_if(dialect='postgresql')
-        )
+    )
 
 
 class Invitation(Base):
