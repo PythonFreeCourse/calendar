@@ -8,8 +8,8 @@ from app.database.database import engine, get_db
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal.quotes import daily_quotes, load_quotes
 from app.routers import (
-    agenda, dayview, email, event, invitation, profile, search, telegram,
-    whatsapp
+    agenda, categories, dayview, email, event, invitation, profile, search,
+    telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
@@ -34,21 +34,27 @@ load_quotes.load_daily_quotes(next(get_db()))
 
 app.logger = logger
 
-app.include_router(profile.router)
-app.include_router(event.router)
-app.include_router(agenda.router)
-app.include_router(telegram.router)
-app.include_router(dayview.router)
-app.include_router(email.router)
-app.include_router(invitation.router)
-app.include_router(whatsapp.router)
-app.include_router(search.router)
+routers_to_include = [
+    agenda.router,
+    categories.router,
+    dayview.router,
+    email.router,
+    event.router,
+    invitation.router,
+    profile.router,
+    search.router,
+    telegram.router,
+    whatsapp.router,
+]
+
+for router in routers_to_include:
+    app.include_router(router)
 
 telegram_bot.set_webhook()
 
 
 # TODO: I add the quote day to the home page
-# until the relavent calendar view will be developed.
+# until the relevant calendar view will be developed.
 @app.get("/")
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
