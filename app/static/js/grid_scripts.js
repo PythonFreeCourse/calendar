@@ -25,7 +25,7 @@ function loadWeek(lastDay, index) {
         return response.text();
     }).then(function (html) {
         const newDiv = document.createElement("div");
-        newDays.innerHTML = html
+        newDays.innerHTML = html;
         newDiv.appendChild(newDays);
         document.getElementById("calender-grid").append(newDays);
         setToggle("day", "day-view", "day-view-visible", index);
