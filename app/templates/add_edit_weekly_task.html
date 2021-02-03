@@ -23,63 +23,30 @@
         </div>
     {% endif %}
 
-    <!-- set all the 'checked' if weekly task exists -->
+    <!-- set all the weekly task values -->
     {% if weekly_task %}
-
-        <!-- set all days -->
-        {% if weekly_task.days %}
-            {% if "Sun" in weekly_task.days %}
-                {% set c_sun = "checked" %}
-            {% endif %}
-
-            {% if "Mon" in weekly_task.days %}
-                {% set c_mon = "checked" %}
-            {% endif %}
-
-            {% if "Tue" in weekly_task.days %}
-                {% set c_tue = "checked" %}
-            {% endif %}
-
-            {% if "Wed" in weekly_task.days %}
-                {% set c_wed = "checked" %}
-            {% endif %}
-
-            {% if "Thu" in weekly_task.days %}
-                {% set c_thu = "checked" %}
-            {% endif %}
-
-            {% if "Fri" in weekly_task.days %}
-                {% set c_fri = "checked" %}
-            {% endif %}
-
-            {% if "Sat" in weekly_task.days %}
-                {% set c_sat = "checked" %}
-            {% endif %}
-        {% endif %}
-        <!-- End days set -->
-
         {% if weekly_task.is_important %}
             {% set is_important = "checked" %}
         {% endif %}
+
+        <!-- Set title -->
+        {% if weekly_task.title == None %}
+            {% set title = "" %}
+        {% else %}
+            {% set title = weekly_task.title %}
+        {% endif %}
+        <!-- End Set title -->
+
+        <!-- Set content -->
+        {% if weekly_task.content == None %}
+            {% set content = "" %}
+        {% else %}
+            {% set content = weekly_task.content %}
+        {% endif %}
+        <!-- End Set content -->
     {% endif %}
     <!-- end set -->
 
-    <!-- Set title -->
-    {% if weekly_task.title == None %}
-        {% set title = "" %}
-    {% else %}
-        {% set title = weekly_task.title %}
-    {% endif %}
-    <!-- End Set title -->
-
-    <!-- Set content -->
-    {% if weekly_task.content == None %}
-        {% set content = "" %}
-    {% else %}
-        {% set content = weekly_task.content %}
-    {% endif %}
-    <!-- End Set content -->
-    
 
     <!-- Weekly Tasks inputs -->
     <form class="container mt-5" action="{{ url_for('weekly_task_make_change') }}" method="post">
@@ -94,34 +61,14 @@
         <label for="days" class="form-label">Repeat Days:</label>
         <div id="days">
             <ul class="list-group">
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="sun" {{ c_sun }}>
-                    Sunday
-                </li>
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="mon" {{ c_mon }}>
-                    Monday
-                </li>
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="tue" {{ c_tue }}>
-                    Tuesday
-                </li>
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="wed" {{ c_wed }}>
-                    Wednesday
-                </li>
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="thu" {{ c_thu }}>
-                    Thursday
-                </li>
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="fri" {{ c_fri }}>
-                    Friday
-                </li>
-                <li class="list-group-item">
-                    <input class="form-check-input me-1" type="checkbox" value="True" name="sat" {{ c_sat }}>
-                    Saturday
-                </li>
+                {% for day_full_name, day, is_checked in checked_days %}
+
+                    <li class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="True" name="{{ day }}" {{ is_checked }}>
+                        {{ day_full_name }}
+                    </li>
+
+                {% endfor %}
             </ul>
         </div>
 

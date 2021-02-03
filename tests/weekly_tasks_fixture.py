@@ -83,7 +83,6 @@ def get_weekly_task_id(
     while True:
         get_title_from_db = w_t_from_db_gen(
             my_session, title=w_t.title)
-        print(w_t.title)
         w_task_from_db = next(get_title_from_db)
         w_task_id = w_task_from_db.id
         yield w_task_id

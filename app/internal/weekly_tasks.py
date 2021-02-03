@@ -1,4 +1,5 @@
 from datetime import date, datetime, time
+from typing import Iterator
 
 from app.database.models import User, Task, WeeklyTask
 from sqlalchemy.orm.session import Session
@@ -6,9 +7,7 @@ from sqlalchemy.orm.session import Session
 
 def check_inputs(days: str, the_time: time, title: str) -> bool:
     """Checks inputs, used by the get_w_t_from_input function"""
-    if not days or not the_time or not title:
-        return False
-    return True
+    return days and the_time and title
 
 
 def get_w_t_from_input(
@@ -51,7 +50,7 @@ def get_w_t_from_input(
     return weekly_task
 
 
-def make_weekly_task(
+def create_weekly_task(
     user: User, session: Session,
     weekly_task: WeeklyTask
 ) -> bool:
@@ -118,7 +117,7 @@ def change_weekly_task(
     return True
 
 
-def make_task(task: Task, user: User, session: Session) -> bool:
+def create_task(task: Task, user: User, session: Session) -> bool:
     """Make a task, used by the generate_tasks function"""
     user_tasks_query = session.query(Task).filter_by(owner_id=user.id)
     task_by_time = user_tasks_query.filter_by(date_time=task.date_time)
@@ -131,7 +130,7 @@ def make_task(task: Task, user: User, session: Session) -> bool:
     return True
 
 
-def get_datetime(day, the_time):
+def get_datetime(day: str, the_time: str) -> datetime:
     """Getting the datetime of days in the current week,
     used by the generate_tasks function"""
     current_date = date.today()
@@ -141,7 +140,7 @@ def get_datetime(day, the_time):
     return datetime.strptime(date_string, "%a %H:%M %W %Y")
 
 
-def generate_tasks(session: Session, user: User):
+def generate_tasks(session: Session, user: User) -> Iterator[bool]:
     """Generates tasks for the week
     based on all the weekly tasks the user have"""
     for weekly_task in user.weekly_tasks:
@@ -157,7 +156,7 @@ def generate_tasks(session: Session, user: User):
                 date_time=date_time,
                 owner_id=user.id
             )
-            yield make_task(task, user, session)
+            yield create_task(task, user, session)
     yield False
 
 

@@ -3,8 +3,8 @@ from datetime import datetime
 from app.database.models import Task
 from app.routers.weekly_tasks import get_placeholder_user
 from app.internal.weekly_tasks import (
-    check_inputs, generate_tasks, make_task, remove_weekly_task,
-    get_w_t_from_input, make_weekly_task, change_weekly_task
+    check_inputs, generate_tasks, create_task, remove_weekly_task,
+    get_w_t_from_input, create_weekly_task, change_weekly_task
 )
 
 
@@ -183,7 +183,7 @@ def test_internal_weekly_tasks_check_inputs(
     assert ok
 
 
-def test_internal_weekly_tasks_make_task(user, session):
+def test_internal_weekly_tasks_create_task(user, session):
     date_time = datetime(2021, 1, 21, 3, 19)
     task = Task(
         title="task1",
@@ -193,22 +193,22 @@ def test_internal_weekly_tasks_make_task(user, session):
         date_time=date_time,
         owner_id=user.id
     )
-    made = make_task(task, user, session)
+    made = create_task(task, user, session)
     assert made
-    made = make_task(task, user, session)
+    made = create_task(task, user, session)
     assert not made
     made_task = user.tasks[0]
     assert made_task.date_time == date_time
 
 
-def test_internal_make_weekly_task(
+def test_internal_create_weekly_task(
     user,
     session,
     weekly_task
 ):
     # When successful on making the weekly task
     weekly_task.owner_id = user.id
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
@@ -221,7 +221,7 @@ def test_internal_make_weekly_task(
     assert user_w_t.the_time == weekly_task.the_time
 
     # When trying to add weekly task with the same title
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
@@ -229,7 +229,7 @@ def test_internal_make_weekly_task(
 
     # when there is no title
     weekly_task.title = None
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
@@ -249,7 +249,7 @@ def test_internal_change_weekly_task(
 ):
     # making w_t for edit testing
     weekly_task.owner_id = user.id
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
@@ -257,7 +257,7 @@ def test_internal_change_weekly_task(
 
     # making another w_t for edit testing
     weekly_task2.owner_id = user.id
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task2
     )
@@ -305,7 +305,7 @@ def test_internal_weekly_task_change_permission(
 ):
     # making the weekly task
     weekly_task.owner_id = user.id
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
@@ -367,7 +367,7 @@ def test_internal_remove_weekly_task(
     weekly_task
 ):
     weekly_task.owner_id = user.id
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
@@ -393,7 +393,7 @@ def test_internal_weekly_tasks_generate_tasks(
     weekly_task
 ):
     weekly_task.owner_id = user.id
-    made = make_weekly_task(
+    made = create_weekly_task(
         user, session,
         weekly_task
     )
