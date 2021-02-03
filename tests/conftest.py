@@ -1,8 +1,10 @@
 import pytest
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 
 
 pytest_plugins = [
@@ -13,6 +15,7 @@ pytest_plugins = [
     'tests.client_fixture',
     'tests.asyncio_fixture',
     'tests.logger_fixture',
+    'tests.category_fixture',
     'smtpdfix',
     'tests.quotes_fixture'
 ]
@@ -49,6 +52,7 @@ def session():
     Base.metadata.create_all(bind=test_engine)
     session = get_test_db()
     yield session
+    session.rollback()
     session.close()
     Base.metadata.drop_all(bind=test_engine)
 
