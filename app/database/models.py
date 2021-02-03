@@ -12,8 +12,6 @@ from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from app.dependencies import logger
 
 
