@@ -1,11 +1,11 @@
 // Event listeners
-var set_checked_ids = [
+const set_checked_ids = [
   "Music On",
   "Music Off",
   "Sound Effects On",
   "Sound Effects Off",
 ];
-var other_ids_and_their_funcs = [
+const other_ids_and_their_funcs = [
   ["activate", set_default],
   ["on", start_audio],
   ["off", stop_audio],
@@ -24,7 +24,7 @@ other_ids_and_their_funcs.forEach((val) => {
  * @param {string} element_id - the id attribute of the html element. One of: Music On/off, Sound Effects On/Off.
  */
 function add_set_checked_listener(element_id) {
-  var elem = document.getElementById(element_id);
+  let elem = document.getElementById(element_id);
   if (elem) {
     elem.addEventListener("click", function () {
       set_checked(element_id);
@@ -41,7 +41,7 @@ function add_set_checked_listener(element_id) {
  * One of: Music On/off, Sound Effects On/Off.
  */
 function add_other_listeners(element_id, func) {
-  var elem = document.getElementById(element_id);
+  let elem = document.getElementById(element_id);
   if (elem) {
     elem.addEventListener("click", func);
   }
@@ -82,7 +82,7 @@ function set_default() {
  */
 function set_disabled_or_enabled(name, is_class, to_set) {
   if (is_class) {
-    var elements = document.getElementsByClassName(name);
+    let elements = document.getElementsByClassName(name);
     for (let element of elements) {
       element.disabled = to_set;
     }
@@ -99,8 +99,8 @@ function set_disabled_or_enabled(name, is_class, to_set) {
  * @param {string} audio_id_off - the id corresponding to the Off option of the element, for Music as well as sfx.
  */
 function set_default_for_audio_type(audio_id_on, audio_id_off) {
-  var is_on = document.getElementById(audio_id_on).checked;
-  var is_off = document.getElementById(audio_id_off).checked;
+  let is_on = document.getElementById(audio_id_on).checked;
+  let is_off = document.getElementById(audio_id_off).checked;
   if (!is_on && !is_off) {
     document.getElementById(audio_id_off).checked = true;
   }
