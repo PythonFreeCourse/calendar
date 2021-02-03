@@ -1,16 +1,7 @@
-from datetime import datetime
-
 import pytest
 
-from fastapi import HTTPException
-from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
-from requests.adapters import ConnectTimeoutError
-from starlette import status
+from app.routers.event import get_location_coordinates
 
-from app.database.models import Event
-from app.routers.event import (_delete_event, by_id, delete_event,
-                               check_change_dates_allowed, get_location_coordinates,
-                               update_event, _update_event)
 
 class TestGeolocation:
 
@@ -54,38 +45,42 @@ class TestGeolocation:
         "https://us02web.zoom.us/j/376584566"
     ]
 
-
     @staticmethod
     @pytest.mark.parametrize("location", CORRECT_LOCATIONS)
     def test_get_location_coordinates_correct(location):
         assert any(get_location_coordinates(location))
 
-    
     @staticmethod
     @pytest.mark.parametrize("location", WRONG_LOCATIONS)
     def test_get_location_coordinates_wrong(location):
         assert not all(get_location_coordinates(location))
 
-
     @staticmethod
     def test_event_location_correct(event_test_client, user):
-        response = event_test_client.post("event/edit",
-                            data=TestGeolocation.CORRECT_LOCATION_EVENT)
+        response = event_test_client.post(
+            "event/edit",
+            data=TestGeolocation.CORRECT_LOCATION_EVENT
+        )
         assert response.ok
         url = event_test_client.app.url_path_for('eventview', event_id=1)
         response = event_test_client.get(url)
-        location = get_location_coordinates(TestGeolocation.CORRECT_LOCATION_EVENT['location'])
+        location = get_location_coordinates(
+            TestGeolocation.CORRECT_LOCATION_EVENT['location']
+        )
         location_name = location[2].split()[0]
         assert bytes(location_name, "utf-8") in response.content
 
-
     @staticmethod
     def test_event_location_wrong(event_test_client, user):
-        response = event_test_client.post("event/edit",
-                            data=TestGeolocation.WRONG_LOCATION_EVENT)
+        response = event_test_client.post(
+            "event/edit",
+            data=TestGeolocation.WRONG_LOCATION_EVENT
+        )
         assert response.ok
         url = event_test_client.app.url_path_for('eventview', event_id=1)
         response = event_test_client.get(url)
-        location = get_location_coordinates(TestGeolocation.CORRECT_LOCATION_EVENT['location'])
+        location = get_location_coordinates(
+            TestGeolocation.CORRECT_LOCATION_EVENT['location']
+        )
         location_name = location[2].split()[0]
         assert not bytes(location_name, "utf-8") in response.content
