@@ -3,17 +3,14 @@ from fastapi import Depends, Form, Query
 from pydantic import BaseModel, validator
 
 
+
 class LoginUser(BaseModel):
+    '''
+    Validating fields types
+    Returns a User object for signing in.
+    '''
     username: str
     hashed_password: str
 
     class Config:
         orm_mode = True
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-# class Jwt_User(Login_User):
-#     is_active: Optional[bool] = False
