@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
 from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -20,7 +20,7 @@ from app.internal.utils import create_model
 from app.routers.user import create_user
 
 
-LOCATION_TIMEOUT = 6
+LOCATION_TIMEOUT = 20
 
 
 router = APIRouter(
@@ -46,7 +46,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
                             '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
-    user = user if user else create_user("u", "p", "e@mail.com", session)
+    user = user if user else create_user("u", "p", "e@mail.com", "english", session)
     owner_id = user.id
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
@@ -266,15 +266,15 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def get_location_coordinates(address: str) -> Tuple[float, float, str]:
+def get_location_coordinates(address: str, timeout: float = LOCATION_TIMEOUT) -> Tuple[float, float, str]:
     """Return location coordinates and accurate address of the specified location."""
-    geolocator = Nominatim(user_agent="GeoFinder", timeout=LOCATION_TIMEOUT)
+    geolocator = Nominatim(user_agent="calendar", timeout=timeout)
     try:
         location = geolocator.geocode(address)
         if location is not None:
             acc_address = str(location.raw["display_name"])
             return location.latitude, location.longitude, acc_address
-    except GeocoderTimedOut as e:
+    except (GeocoderTimedOut, GeocoderUnavailable) as e:
         logger.exception(str(e))
     return None, None, None
     

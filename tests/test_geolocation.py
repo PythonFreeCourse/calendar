@@ -3,6 +3,8 @@ from datetime import datetime
 import pytest
 
 from fastapi import HTTPException
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
+from requests.adapters import ConnectTimeoutError
 from starlette import status
 
 from app.database.models import Event
@@ -66,14 +68,24 @@ class TestGeolocation:
 
 
     @staticmethod
-    def test_event_location_correct(client, user):
-        response = client.post(client.app.url_path_for('create_new_event'),
+    def test_event_location_correct(event_test_client, user):
+        response = event_test_client.post("event/edit",
                             data=TestGeolocation.CORRECT_LOCATION_EVENT)
         assert response.ok
-        url = client.app.url_path_for('eventview', event_id=1)
-        response = client.get(url)
+        url = event_test_client.app.url_path_for('eventview', event_id=1)
+        response = event_test_client.get(url)
         location = get_location_coordinates(TestGeolocation.CORRECT_LOCATION_EVENT['location'])
-        print(type(location))
-        # assert client.app.url_path_for('eventview', event_id=1)
-        print(response.content)
-        assert bytes(location[2], "utf-8") in response.content
+        location_name = location[2].split()[0]
+        assert bytes(location_name, "utf-8") in response.content
+
+
+    @staticmethod
+    def test_event_location_wrong(event_test_client, user):
+        response = event_test_client.post("event/edit",
+                            data=TestGeolocation.WRONG_LOCATION_EVENT)
+        assert response.ok
+        url = event_test_client.app.url_path_for('eventview', event_id=1)
+        response = event_test_client.get(url)
+        location = get_location_coordinates(TestGeolocation.CORRECT_LOCATION_EVENT['location'])
+        location_name = location[2].split()[0]
+        assert not bytes(location_name, "utf-8") in response.content
