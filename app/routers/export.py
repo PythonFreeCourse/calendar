@@ -1,14 +1,60 @@
-from datetime import datetime
-from typing import List
+from datetime import datetime, date
+from io import BytesIO
+from typing import List, Union
 
-from icalendar import Calendar, Event, vCalAddress, vText
 import pytz
+from fastapi import APIRouter, Depends
+from icalendar import Calendar, Event as IcalEvent, vCalAddress, vText
+from sqlalchemy.orm import Session
+from starlette.responses import StreamingResponse
 
 from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
-from app.database.models import Event as UserEvent
+from app.database.database import get_db
+from app.database.models import Event
+from app.internal.agenda_events import filter_dates, filter_start_dates, filter_end_dates
+from app.routers.event import get_attendees_email
+from app.routers.user import get_all_user_events
+
+router = APIRouter(
+    prefix="/export",
+    tags=["export"],
+    responses={404: {"description": "Not found"}},
+)
 
 
-def generate_id(event: UserEvent) -> bytes:
+@router.get("/")
+def export(
+    start_date: Union[date, str],  # date or an empty string
+    end_date: Union[date, str],
+    db: Session = Depends(get_db),
+):
+    user_id = 2
+    events = _get_events(start_date, end_date, user_id, db)
+    file = BytesIO(export_calendar(db, events))
+    return StreamingResponse(
+        content=file,
+        media_type="text/calendar",
+        headers={
+            # change filename to "pylendar.ics"
+            "Content-Disposition": "attachment;filename=pylendar.ics"
+        })
+
+
+def _get_events(start_date, end_date, user_id, db):
+    events = get_all_user_events(db, user_id)
+    if start_date and end_date:
+        filtered_events = filter_dates(end=end_date, start=start_date, events=events)
+    elif start_date:
+        filtered_events = filter_start_dates(start=start_date, events=events)
+    elif end_date:
+        filtered_events = filter_end_dates(end=end_date, events=events)
+    else:
+        filtered_events = events
+
+    return filtered_events
+
+
+def generate_id(event: Event) -> bytes:
     """Creates an unique id."""
 
     return (
@@ -46,7 +92,7 @@ def create_ical_event(user_event):
     """Creates an ical event,
     and adds the event information"""
 
-    ievent = Event()
+    ievent = IcalEvent()
     data = [
         ('organizer', add_attendee(user_event.owner.email, organizer=True)),
         ('uid', generate_id(user_event)),
@@ -91,13 +137,30 @@ def add_attendees(ievent, attendees: list):
     return ievent
 
 
-def event_to_ical(user_event: UserEvent, attendees: List[str]) -> bytes:
+def event_to_ical(user_event: Event, attendees: List[str]) -> bytes:
     """Returns an ical event, given an
-    "UserEvent" instance and a list of email."""
+    "Event" instance and a list of email."""
 
     ical = create_ical_calendar()
     ievent = create_ical_event(user_event)
     ievent = add_attendees(ievent, attendees)
     ical.add_component(ievent)
+
+    return ical.to_ical()
+
+
+def export_calendar(session: Session, events: List[Event]) -> bytes:
+    """Returns an icalendar, given an list of
+    "Event" instances and a list of email."""
+
+    ical = create_ical_calendar()
+    for event in events:
+        ievent = create_ical_event(event)
+
+        attendees = get_attendees_email(session, event)
+        attendees.remove((event.owner.email,))
+
+        ievent = add_attendees(ievent, attendees)
+        ical.add_component(ievent)
 
     return ical.to_ical()

@@ -2,7 +2,7 @@ from datetime import datetime
 from operator import attrgetter
 from typing import Dict, List, Optional, Any
 
-from app.database.models import Event, UserEvent
+from app.database.models import Event, UserEvent, User
 from app.dependencies import templates
 from app.internal.utils import create_model
 from fastapi import APIRouter, Request
@@ -56,7 +56,6 @@ def get_items_that_can_be_updated(event: Dict[str, Any]) -> Dict[str, Any]:
 
 def update_event(event_id: int, event: Dict, db: Session
                  ) -> Optional[Event]:
-
     # TODO Check if the user is the owner of the event.
 
     event_to_update = get_items_that_can_be_updated(event)
@@ -104,3 +103,10 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
     temp = events.copy()
     return sorted(temp, key=attrgetter('start'))
+
+
+def get_attendees_email(session: Session, event: Event):
+    return (session.query(User.email).join(UserEvent)
+            .filter(UserEvent.events == event).all())
+    # return (session.query(User.email).join(UserEvent)
+    #         .filter(UserEvent.events == event).all())

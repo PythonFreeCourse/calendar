@@ -7,7 +7,7 @@ from app.database.database import engine
 from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
 from app.routers import (agenda, dayview, email, event, invitation, profile,
-                         search)
+                         search, export)
 
 
 def create_tables(engine, psql_environment):
@@ -33,6 +33,7 @@ app.include_router(dayview.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(search.router)
+app.include_router(export.router)
 
 
 @app.get("/")

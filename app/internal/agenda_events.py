@@ -59,11 +59,36 @@ def get_time_delta_string(start: date, end: date) -> str:
 
 
 def filter_dates(
-        events: List[Event], start: Optional[date],
-        end: Optional[date]) -> Iterator[Event]:
+        events: List[Event], start: date,
+        end: date) -> Iterator[Event]:
+    """filter events by a time frame."""
+
+    yield from (
+        filter_start_dates(
+            filter_end_dates(events, end),
+            start)
+    )
+
+
+def filter_start_dates(
+        events: Iterator[Event],
+        start: date,
+) -> Iterator[Event]:
     """filter events by a time frame."""
 
     yield from (
         event for event in events
-        if start <= event.start.date() <= end
+        if start <= event.start.date()
+    )
+
+
+def filter_end_dates(
+        events: List[Event],
+        end: date
+) -> Iterator[Event]:
+    """filter events by a time frame."""
+
+    yield from (
+        event for event in events
+        if event.start.date() <= end
     )
