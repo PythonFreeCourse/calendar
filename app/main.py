@@ -10,7 +10,7 @@ from app.routers import (
     event, invitation, login, profile,
     register, search, telegram, whatsapp)
 from app.telegram.bot import telegram_bot
-from fastapi import Depends, FastAPI, Request, Response
+from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
 from sqlalchemy.orm import Session
@@ -70,7 +70,7 @@ telegram_bot.set_webhook()
 # until the relevant calendar view will be developed.
 @app.get("/")
 @logger.catch()
-async def home(request: Request, db: Session=Depends(get_db)):
+async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
         "request": request,

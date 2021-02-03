@@ -37,7 +37,7 @@ def is_file_size_valid(file: str, max_size: int = MAX_FILE_SIZE_MB) -> bool:
 
 def is_file_extension_valid(file: str,
                             extension: Union[str, Tuple[str, ...]]
-                            =VALID_FILE_EXTENSION) -> bool:
+                            = VALID_FILE_EXTENSION) -> bool:
     return file.lower().endswith(extension)
 
 

@@ -41,7 +41,8 @@ async def register_user_form(request: Request) -> templates:
 
 @router.post("/register")
 async def register(
-                request: Request, db: Session=Depends(get_db)) -> templates:
+                request: Request, db:
+                Session = Depends(get_db)) -> templates:
     '''rendering register route post method.'''
     form = await request.form()
     form_dict = dict(form)

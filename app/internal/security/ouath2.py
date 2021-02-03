@@ -1,17 +1,17 @@
-from typing import Union
-from passlib.context import CryptContext
-from .schema import LoginUser
-from app.database.models import User
-from fastapi import APIRouter, Depends, HTTPException
-from app.dependencies import templates
-from app.database.database import SessionLocal
-from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta
-import jwt
-from starlette.status import HTTP_401_UNAUTHORIZED
+from typing import Union
+
 from app.config import JWT_ALGORITHM, JWT_SECRET_KEY
+from passlib.context import CryptContext
+from app.database.database import SessionLocal
+from app.database.models import User
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+import jwt
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
+from starlette.status import HTTP_401_UNAUTHORIZED
+from .schema import LoginUser
 
 
 JWT_MIN_EXP = 3
@@ -34,7 +34,7 @@ def verify_password(plain_password, hashed_password) -> bool:
     '''Verifying password and hashed password are equal'''
     try:
         return pwd_context.verify(plain_password, hashed_password)
-    except Exception as e:
+    except Exception:
         return False
 
 
@@ -61,8 +61,8 @@ def create_jwt_token(user: LoginUser) -> str:
 
 
 async def check_jwt_token(
-    token: str=Depends(oauth_schema),
-        logged_in: bool=False, path: bool=None) -> Union[User, bool]:
+    token: str = Depends(oauth_schema),
+        logged_in: bool = False, path: bool = None) -> Union[User, bool]:
     '''
     Check whether JWT token is correct. Returns User object if yes.
     Returns None or raises HTTPException,
@@ -73,7 +73,6 @@ async def check_jwt_token(
             token, JWT_SECRET_KEY, algorithms=JWT_ALGORITHM)
         jwt_username = jwt_payload.get("sub")
         jwt_hashed_password = jwt_payload.get("hashed_password")
-        jwt_expiration = jwt_payload.get("exp")
         db_user = await get_db_user_by_username(username=jwt_username)
         if db_user and db_user.password == jwt_hashed_password:
             return db_user
@@ -95,7 +94,7 @@ async def check_jwt_token(
                 status_code=HTTP_401_UNAUTHORIZED,
                 headers=path,
                 detail="Your token is incorrect. Please log in again")
-        
+
 
 async def get_cookie(request: Request) -> str:
     '''

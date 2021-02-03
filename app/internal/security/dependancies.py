@@ -1,12 +1,12 @@
 from typing import Union
-from starlette.requests import Request
-from fastapi import Depends
-from starlette.status import HTTP_401_UNAUTHORIZED
+
 from app.internal.security.ouath2 import get_cookie, check_jwt_token, User
+from fastapi import Depends
+from starlette.requests import Request
 
 
 async def current_user_required(
-        request: Request, jwt: str=Depends(get_cookie)) -> Union[User, bool]:
+        request: Request, jwt: str  =Depends(get_cookie)) -> Union[User, bool]:
     '''A dependency function protecting routes for only logged in user'''
     user = await check_jwt_token(jwt, path=request.url.path)
     if user:

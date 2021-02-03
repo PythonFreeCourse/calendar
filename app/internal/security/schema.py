@@ -1,7 +1,4 @@
-from typing import List, Optional, Union
-from fastapi import Depends, Form, Query
-from pydantic import BaseModel, validator
-
+from pydantic import BaseModel
 
 
 class LoginUser(BaseModel):

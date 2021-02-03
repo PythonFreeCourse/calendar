@@ -1,5 +1,4 @@
 from app.database import models, schemas
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from app.internal.security.ouath2 import pwd_context
 
