@@ -116,6 +116,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+Scripts/*
+pyvenv.cfg
 
 # Spyder project settings
 .spyderproject
@@ -138,3 +140,9 @@ dmypy.json
 
 # register stuff
 run.txt
+# VScode
+.vscode/
+app/.vscode/
+
+# PyCharm
+.idea
