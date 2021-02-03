@@ -69,21 +69,18 @@ def _get_language_directory() -> str:
     return language_dir
 
 
-def _get_supported_languages(language_dir: str = None) -> \
-        Generator[str, Any, None]:
+def _get_supported_languages(language_dir: str = _get_language_directory()) \
+        -> Generator[str, Any, None]:
     """Get and return a generator of supported translation languages codes.
 
     Args:
         language_dir (str, optional): the path of the language directory.
-            Defaults to None.
+            Defaults to the return value of _get_language_directory().
 
     Returns:
         Generator[str, Any, None]: a generator expression of supported
             translation languages codes.
     """
-
-    if not language_dir:
-        language_dir = _get_language_directory()
 
     return (language.name for language in
             [Path(f.path) for f in os.scandir(language_dir) if f.is_dir()])
