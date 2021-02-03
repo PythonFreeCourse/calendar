@@ -1,5 +1,4 @@
 import json
-from os import listdir
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -43,10 +42,8 @@ def audio_settings(
         templates.TemplateResponse: renders the audio.html page
         with the relevant information.
     """
-    song_names = [Path(file).stem for file in listdir(
-        SOUNDS_PATH) if Path(file).suffix == ".mp3"]
-    sfx_names = [Path(file).stem for file in listdir(
-        SOUNDS_PATH) if Path(file).suffix == ".wav"]
+    song_names = [path.stem for path in Path(SOUNDS_PATH).glob("**/*.mp3")]
+    sfx_names = [path.stem for path in Path(SOUNDS_PATH).glob("**/*.wav")]
     init_audio_tracks(session, song_names, sfx_names)
 
     return templates.TemplateResponse("audio_settings.html", {
@@ -60,10 +57,10 @@ def audio_settings(
 async def get_choices(
     session: Session = Depends(get_db),
     new_user: User = Depends(get_placeholder_user),
-    music_on_off: str = Form(...),
+    music_on: bool = Form(...),
     music_choices: Optional[List[str]] = Form(None),
     music_vol: Optional[int] = Form(None),
-    sfx_on_off: str = Form(...),
+    sfx_on: bool = Form(...),
     sfx_choice: Optional[str] = Form(None),
     sfx_vol: Optional[int] = Form(None)
         ) -> RedirectResponse:
@@ -92,8 +89,8 @@ async def get_choices(
         RedirectResponse: redirect the user to home.html.
     """
     user_choices = (
-        {"music_on": music_on_off, "music_vol": music_vol,
-         "sfxs_on": sfx_on_off, "sfxs_vol": sfx_vol})
+        {"music_on": music_on, "music_vol": music_vol,
+         "sfxs_on": sfx_on, "sfxs_vol": sfx_vol})
     save_audio_settings(
         session, new_user, music_choices, sfx_choice, user_choices)
 
@@ -113,10 +110,10 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
     (music_on, playlist, music_vol,
         sfxs_on, sfx_choice, sfxs_vol) = get_audio_settings(session)
     if music_on is not None:
-        playlist, music_vol = handle_disabled_enabled(
-            music_on, playlist, music_vol)
-        sfx_choice, sfxs_vol = handle_disabled_enabled(
-            sfxs_on, sfx_choice, sfxs_vol)
+        music_vol = handle_vol(
+            music_on, music_vol)
+        sfxs_vol = handle_vol(
+            sfxs_on, sfxs_vol)
 
     if not playlist:
         playlist = DEFAULT_MUSIC
@@ -205,13 +202,8 @@ def get_tracks(
 
 
 def get_audio_settings(
-    session: Session,
-    user_id: int = 1
-        ) -> (
-            Tuple[Optional[List[str]],
-                  Optional[int],
-                  Optional[str],
-                  Optional[int]]):
+    session: Session, user_id: int = 1
+) -> Tuple[Optional[List[str]], Optional[int], Optional[str], Optional[int]]:
     """Retrieves audio settings from the database.
 
     Args:
@@ -235,34 +227,27 @@ def get_audio_settings(
     return music_on, playlist, music_vol, sfxs_on, sfx_choice, sfxs_vol
 
 
-def handle_disabled_enabled(
-    audio_on_off: str,
-    choices: Optional[List[str]],
-    vol: Optional[int]
-        ) -> Tuple[Optional[List[str]], Optional[int]]:
-    """Helper function that sets irrelevant options
-    to None in case the user chose to disable
-    music/sfx. These options are the choices for the track and the volume.
-    In case the user chose to enable music/sfx,
-    we normalize the volume and return it, as well as the choices he made.
+def handle_vol(
+    is_audio_on: bool,
+    vol: Optional[int],
+        ) -> Optional[int]:
+    """Helper function that normalizes the volume and returns it,
+    if audio is on.
 
     Args:
-        audio_on_off (str): On if the user chose to enable, Off otherwise.
-        choices (Optional[List[str]]): A list of tracks or None if disabled.
+        is_audio_on (bool): True if the user chose to enable, False otherwise.
         vol (Optional[int]): a number in the range (0, 1),
         indicating the volume.
         example: 0.4 means 40% of the tracks' volume.
 
     Returns:
-        Tuple[Optional[List[str]], Optional[int]]: returns the chosen tracks,
-        as well as the volume, or None if disabled.
+        Optional[int]: returns the normalized volume, or None if audio
+        is disabled.
     """
-    if audio_on_off == "Off":
-        choices = None
-        vol = None
-    else:
+    if is_audio_on:
         vol /= 100
-    return choices, vol
+
+    return vol
 
 
 # Functions for saving users' choices in the db.

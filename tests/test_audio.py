@@ -19,7 +19,7 @@ def test_start_audio_default(audio_test_client):
 
 
 def test_choices_Off(audio_test_client):
-    data = {"music_on_off": "Off", "sfx_on_off": "Off"}
+    data = {"music_on": False, "sfx_on": False}
     response = audio_test_client.post(
         url=GET_CHOICES_URL, data=data)
     assert response.ok
@@ -27,10 +27,10 @@ def test_choices_Off(audio_test_client):
 
 def test_choices_On(audio_test_client):
     data = {
-        "music_on_off": "On",
+        "music_on": True,
         "music_choices": ["GASTRONOMICA.mp3"],
         "music_vol": 50,
-        "sfx_on_off": "On",
+        "sfx_on": True,
         "sfx_choice": "click_1.wav",
         "sfx_vol": 50
     }
@@ -41,10 +41,10 @@ def test_choices_On(audio_test_client):
 
 def test_start_audio(audio_test_client):
     data = {
-        "music_on_off": "On",
+        "music_on": True,
         "music_choices": ["GASTRONOMICA.mp3"],
         "music_vol": 50,
-        "sfx_on_off": "On",
+        "sfx_on": True,
         "sfx_choice": "click_1.wav",
         "sfx_vol": 50
     }

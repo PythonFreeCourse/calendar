@@ -4,9 +4,9 @@
     <form action="{{ url_for('get_choices') }}" style="width: 200px; margin: autio" method="post" id="form1">
         <div class="from-check">
             <label>Music:</label>
-            <input type="radio" id="Music On" name="music_on_off" value="On" class="form-check-input" />
+            <input type="radio" id="Music On" name="music_on" value="True" class="form-check-input" />
             <label for="Music On" class="form-check-label">On</label>
-            <input type="radio" id="Music Off" name="music_on_off" value="Off" checked class="form-check-input" />
+            <input type="radio" id="Music Off" name="music_on" value="False" checked class="form-check-input" />
             <label for="Music Off" class="form-check-label">Off</label>
         </div>
         <br>
@@ -21,9 +21,9 @@
         <br><br>
         <div class="from-check">
             <label>Sound Effects:</label>
-            <input type="radio" id="Sound Effects On" name="sfx_on_off" value="On" class="form-check-input" />
+            <input type="radio" id="Sound Effects On" name="sfx_on" value="True" class="form-check-input" />
             <label for="Sound Effects On" class="form-check-label">On</label>
-            <input type="radio" id="Sound Effects Off" name="sfx_on_off" value="Off" checked class="form-check-input" />
+            <input type="radio" id="Sound Effects Off" name="sfx_on" value="False" checked class="form-check-input" />
             <label for="Sound Effects Off" class="form-check-label">Off</label>
         </div>
         <br>

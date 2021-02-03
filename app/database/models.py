@@ -117,9 +117,9 @@ class AudioSettings(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    music_on = Column(String, nullable=False)
+    music_on = Column(Boolean, nullable=False)
     music_vol = Column(Integer)
-    sfxs_on = Column(String, nullable=False)
+    sfxs_on = Column(Boolean, nullable=False)
     sfxs_vol = Column(Integer)
 
 
