@@ -275,7 +275,7 @@ def get_location_coordinates(
         ) -> Tuple[float, float, str]:
     """Return location coordinates and accurate
     address of the specified location."""
-    geolocator = Nominatim(user_agent="calendar", timeout=timeout)
+    geolocator = Nominatim(user_agent="calendar")
     try:
         location = geolocator.geocode(address)
         if location is not None:
