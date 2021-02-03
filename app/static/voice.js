@@ -1,17 +1,17 @@
 window.addEventListener("load",(event) => {
  
-  let synth = window.speechSynthesis;
+  const synth = window.speechSynthesis;
   let voices = [];
-  let voiceSelect = document.querySelector("#voice");
+  const voiceSelect = document.getElementById(voice);
 
   
   function listVoices(){
     voices = synth.getVoices();
-    let selectedIndex = voiceSelect.selectedIndex < 0 ? 0 : voiceSelect.selectedIndex;
+    const selectedIndex = voiceSelect.selectedIndex < 0 ? 0 : voiceSelect.selectedIndex;
     
     voiceSelect.innerHTML = '';
-    for(let voice of voices) {
-      var option = document.createElement('option');
+    for(const voice of voices) {
+      const option = document.createElement('option');
       option.textContent = `${voice.name} (${voice.lang})`;
       if(voice.default) {
         option.textContent += ' -- DEFAULT';
@@ -29,28 +29,28 @@ window.addEventListener("load",(event) => {
     synth.onvoiceschanged = listVoices;
   }
   
-  let controls = ["volume","pitch","rate"];
-  let actions = ["load","input"];
+  const controls = ["volume","pitch","rate"];
+  const actions = ["load","input"];
   function setOutput(ctrl){
-    let range = document.querySelector(ctrl);
+    const range = document.getElementById(ctrl);
     range.nextElementSibling.textContent = range.value;
   }
-  for(let control of controls){
-    for(let action of actions){
+  for(const control of controls){
+    for(const action of actions){
       setOutput(`#${control}`);
-      document.querySelector(`#${control}`).addEventListener(action, (event) => {
+      document.getElementById(control).addEventListener(action, (event) => {
         setOutput(`#${control}`);
       });  
     }
   }
   
   
-  document.querySelector("#speak").addEventListener("click", (event) => {
+  document.getElementById(speak).addEventListener("click", (event) => {
     event.preventDefault();
-    let say = document.querySelector("#say").value;
-    let sayThis = new SpeechSynthesisUtterance(say);
+    const say = document.getElementById(say).value;
+    const sayThis = new SpeechSynthesisUtterance(say);
     
-    let vox = voiceSelect.selectedOptions[0].getAttribute('data-name');
+    const vox = voiceSelect.selectedOptions[0].dataset.name;
     for(voice of voices){
       if(voice.name === vox) {
         sayThis.voice = voice;
@@ -58,8 +58,8 @@ window.addEventListener("load",(event) => {
       }
     }
     
-    sayThis.pitch = document.querySelector("#pitch").value;
-    sayThis.rate = document.querySelector("#rate").value;
+    sayThis.pitch = document.getElementById(pitch).value;
+    sayThis.rate = document.getElementById(rate).value;
     synth.speak(sayThis);
   });
   
