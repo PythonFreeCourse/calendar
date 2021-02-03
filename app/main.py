@@ -8,8 +8,8 @@ from app.database.database import engine, get_db
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal.quotes import daily_quotes, load_quotes
 from app.routers import (
-    agenda, calendar, categories, dayview, email, event, invitation, profile, search,
-    telegram, whatsapp
+    agenda, calendar, categories, dayview, email,
+    event, invitation, profile, search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
