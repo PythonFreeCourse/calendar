@@ -1,8 +1,8 @@
 function setToggle(elementClass, targetElement, classToAdd, lastIndex) {
     const allDays = document.getElementsByClassName(elementClass);
+    const target = document.getElementById(targetElement);
     for (let i = lastIndex; i < allDays.length; ++i) {
         allDays[i].addEventListener("click", function () {
-            const target = document.getElementById(targetElement);
             target.classList.toggle(classToAdd);
         })
     }
@@ -18,11 +18,10 @@ function loadWeek(lastDay, index) {
     if (lastDay.dataset.last === "false") {
         return false;
     }
-    lastDay.dataset.last = false;
     const path = '/calendar/month/' + lastDay.id;
-    alert(path);
     const newDays = document.createElement('html');
     fetch(path).then(function (response) {
+        lastDay.dataset.last = false;
         return response.text();
     }).then(function (html) {
         const newDiv = document.createElement("div");
@@ -35,11 +34,11 @@ function loadWeek(lastDay, index) {
 
 window.addEventListener(
     'scroll', function () {
-        const tolerance = 100;
+        const tolerance = 1;
         if (window.scrollY + window.innerHeight + tolerance < document.documentElement.scrollHeight) {
             return false;
         }
-        const allDays = document.querySelectorAll('.day');
+        const allDays = document.getElementsByClassName('day');
         const lastDay = allDays[allDays.length - 1];
         loadWeek(lastDay, allDays.length);
     }
