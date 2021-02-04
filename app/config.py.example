@@ -79,5 +79,5 @@ LOG_FORMAT = ("<level>{level: <8}</level>"
               " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
               " - <level>{message}</level>")
 
-# EXERCISE FILE PATH
+# EXERCISE_FILE_PATH
 EXERCISE_FILE = "images/exercises/Exercise_{num}.png"
