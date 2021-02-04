@@ -14,20 +14,19 @@ document.addEventListener(
     }
 )
 
+
 function loadWeek(lastDay, index) {
     if (lastDay.dataset.last === "false") {
         return false;
     }
     const path = '/calendar/month/' + lastDay.id;
-    const newDays = document.createElement('html');
+    const newDays = document.createElement("div");
     fetch(path).then(function (response) {
         lastDay.dataset.last = false;
         return response.text();
     }).then(function (html) {
-        const newDiv = document.createElement("div");
         newDays.innerHTML = html;
-        newDiv.appendChild(newDays);
-        document.getElementById("calender-grid").append(newDays);
+        document.getElementById("calender-grid").append(newDays.firstElementChild);
         setToggle("day", "day-view", "day-view-visible", index);
     });
 }
