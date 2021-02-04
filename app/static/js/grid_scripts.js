@@ -18,9 +18,9 @@ function loadWeek(lastDay, index) {
     if (lastDay.dataset.last === "false") {
         return false;
     }
+    lastDay.dataset.last = false;
     const path = '/calendar/month/' + lastDay.id;
     fetch(path).then(function (response) {
-        lastDay.dataset.last = false;
         return response.text();
     }).then(function (html) {
         document.getElementById("calender-grid").insertAdjacentHTML('beforeEnd', html);
