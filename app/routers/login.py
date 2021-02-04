@@ -26,4 +26,4 @@ async def login_user_form(request: Request) -> templates:
 async def protected_route(
         user: User = Depends(fastapi_users.get_current_active_user)):
     return user.username
-    return f"Hello, Protected"
+    return "Hello, Protected"

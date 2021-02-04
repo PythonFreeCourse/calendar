@@ -12,7 +12,7 @@ from app.routers import (
     event, invitation, login, profile, register,
     search, telegram, whatsapp)
 from app.telegram.bot import telegram_bot
-from fastapi import FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request, status, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -67,7 +67,7 @@ app.include_router(
         jwt_authentication), prefix="/auth/cookie", tags=["auth"])
 app.include_router(
     fastapi_users.get_register_router(
-        on_after_register),prefix="/auth", tags=["auth"])
+        on_after_register), prefix="/auth", tags=["auth"])
 app.include_router(
     fastapi_users.get_users_router(
         requires_verification=True), prefix="/users", tags=["users"])
