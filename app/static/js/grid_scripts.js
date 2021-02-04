@@ -14,19 +14,16 @@ document.addEventListener(
     }
 )
 
-
 function loadWeek(lastDay, index) {
     if (lastDay.dataset.last === "false") {
         return false;
     }
     const path = '/calendar/month/' + lastDay.id;
-    const newDays = document.createElement("div");
     fetch(path).then(function (response) {
         lastDay.dataset.last = false;
         return response.text();
     }).then(function (html) {
-        newDays.innerHTML = html;
-        document.getElementById("calender-grid").append(newDays.firstElementChild);
+        document.getElementById("calender-grid").insertAdjacentHTML('beforeEnd', html);
         setToggle("day", "day-view", "day-view-visible", index);
     });
 }
