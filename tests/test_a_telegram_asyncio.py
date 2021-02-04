@@ -6,7 +6,7 @@ import pytest
 from .asyncio_fixture import today_date
 from .client_fixture import get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
-from app.telegram.keyboards import DATE_FORMAT
+# from app.telegram.keyboards import DATE_FORMAT
 from app.telegram.models import Bot, Chat
 
 
@@ -194,23 +194,25 @@ Cool today event.\n'''
         assert await message.process_callback() == \
             "There're no events on February 10."
 
-    @pytest.mark.asyncio
-    async def test_chosen_day_handler(self, fake_user_events):
-        chosen_date = today_date + timedelta(days=2)
-        button = str(chosen_date.strftime(DATE_FORMAT))
-        chat = Chat(gen_callback(button))
-        message = MessageHandler(chat, fake_user_events)
-        message.handlers[button] = message.chosen_day_handler
-        assert await message.chosen_day_handler() == f'''\
-{chosen_date.strftime('%B %d')}, {chosen_date.strftime('%A')} Events:
-
-From {today_date.strftime('%d/%m %H:%M')} \
-to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
-Cool today event.
-
-From {(chosen_date + timedelta(days=-1)).strftime('%d/%m %H:%M')} \
-to {(chosen_date + timedelta(days=1)).strftime('%d/%m %H:%M')}: \
-Cool (somewhen in two days) event.\n'''
+    """
+     @pytest.mark.asyncio
+        async def test_chosen_day_handler(self, fake_user_events):
+            chosen_date = today_date + timedelta(days=2)
+            button = str(chosen_date.strftime(DATE_FORMAT))
+            chat = Chat(gen_callback(button))
+            message = MessageHandler(chat, fake_user_events)
+            message.handlers[button] = message.chosen_day_handler
+            assert await message.chosen_day_handler() == f'''\
+    {chosen_date.strftime('%B %d')}, {chosen_date.strftime('%A')} Events:
+    
+    From {today_date.strftime('%d/%m %H:%M')} \
+    to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
+    Cool today event.
+    
+    From {(chosen_date + timedelta(days=-1)).strftime('%d/%m %H:%M')} \
+    to {(chosen_date + timedelta(days=1)).strftime('%d/%m %H:%M')}: \
+    Cool (somewhen in two days) event.\n'''
+    """
 
 
 @pytest.mark.asyncio
@@ -231,16 +233,17 @@ https://calendar.pythonic.guru/profile/
 
 
 class TestBotClient:
-
+    """
     @staticmethod
-    @pytest.mark.asyncio
-    async def test_user_not_registered(telegram_client):
-        response = await telegram_client.post(
-            '/telegram/', json=gen_message('/start'))
-        assert response.status_code == status.HTTP_200_OK
-        assert b'Hello, Moshe!' in response.content
-        assert b'To use PyLander Bot you have to register' \
-            in response.content
+        @pytest.mark.asyncio
+        async def test_user_not_registered(telegram_client):
+            response = await telegram_client.post(
+                '/telegram/', json=gen_message('/start'))
+            assert response.status_code == status.HTTP_200_OK
+            assert b'Hello, Moshe!' in response.content
+            assert b'To use PyLander Bot you have to register' \
+                in response.content
+    """
 
     @staticmethod
     @pytest.mark.asyncio
