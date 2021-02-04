@@ -204,11 +204,9 @@ Cool today event.\n'''
             message.handlers[button] = message.chosen_day_handler
             assert await message.chosen_day_handler() == f'''\
     {chosen_date.strftime('%B %d')}, {chosen_date.strftime('%A')} Events:
-    
     From {today_date.strftime('%d/%m %H:%M')} \
     to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
-    Cool today event.
-    
+    Cool today event.   
     From {(chosen_date + timedelta(days=-1)).strftime('%d/%m %H:%M')} \
     to {(chosen_date + timedelta(days=1)).strftime('%d/%m %H:%M')}: \
     Cool (somewhen in two days) event.\n'''
