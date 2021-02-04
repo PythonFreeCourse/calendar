@@ -1,3 +1,4 @@
+import calendar
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -72,3 +73,8 @@ def sqlite_engine():
     session = TestingSession()
     session.close()
     Base.metadata.drop_all(bind=sqlite_test_engine)
+
+
+@pytest.fixture
+def Calendar():
+    return calendar.Calendar(0)
