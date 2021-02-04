@@ -83,21 +83,21 @@ def is_date_in_range(date: Union[str, datetime.datetime],
     return now_year - valid_dates < check_date.year < now_year + valid_dates
 
 
-def is_start_day_before_end_date(start: datetime.datetime,
-                                 end: datetime.datetime) -> bool:
+def is_start_day_before_end_date(start: Union[datetime.datetime, str],
+                                 end: Union[datetime.datetime, str]) -> bool:
     if isinstance(start, str):
         start = change_string_to_date(start)
         end = change_string_to_date(end)
     return start <= end
 
 
-def is_event_valid_duration(start: datetime.datetime,
-                            end: datetime.datetime,
+def is_event_valid_duration(start: Union[datetime.datetime, str],
+                            end: Union[datetime.datetime, str],
                             max_duration: int = EVENT_DURATION_LIMIT) -> bool:
     if isinstance(start, str):
         start = change_string_to_date(start)
         end = change_string_to_date(end)
-    return (end - start).days <= max_duration
+    return (end - start).days < max_duration
 
 
 def is_event_text_valid(row: str) -> bool:

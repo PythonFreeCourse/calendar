@@ -104,9 +104,9 @@ is_event_valid_duration_tests = [
     (datetime.datetime(1991, 12, 1),
      datetime.datetime(1991, 12, 2), None, True),
     (datetime.datetime(1991, 12, 1, 10, 30),
-     datetime.datetime(1991, 12, 4, 10, 29), None, True),
+     datetime.datetime(1991, 12, 3, 10, 29), None, True),
     (datetime.datetime(1991, 12, 1, 10, 30),
-     datetime.datetime(1991, 12, 4, 10, 30), None, False),
+     datetime.datetime(1991, 12, 3, 10, 30), None, False),
     (datetime.datetime(1991, 12, 1, 10, 30),
      datetime.datetime(1991, 12, 5, 10, 30), 5, True)
 ]
