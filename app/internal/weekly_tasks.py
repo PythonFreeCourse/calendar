@@ -1,16 +1,18 @@
 from datetime import date, datetime, time
 from typing import Iterator
+from fastapi import Depends
 
+from app.database.database import get_db
 from app.database.models import User, Task, WeeklyTask
 from sqlalchemy.orm.session import Session
 
 
 def check_inputs(days: str, the_time: time, title: str) -> bool:
-    """Checks inputs, used by the get_w_t_from_input function"""
+    """Checks inputs, used by the weekly_task_from_input function"""
     return days and the_time and title
 
 
-def get_w_t_from_input(
+def weekly_task_from_input(
     user: User,
     title: str, days: str,
     content: str, the_time: time,
@@ -51,8 +53,9 @@ def get_w_t_from_input(
 
 
 def create_weekly_task(
-    user: User, session: Session,
-    weekly_task: WeeklyTask
+    user: User,
+    weekly_task: WeeklyTask,
+    session: Session = Depends(get_db)
 ) -> bool:
     """This function is being used to add a Weekly Task to the user.
 
@@ -78,8 +81,9 @@ def create_weekly_task(
 
 
 def change_weekly_task(
-    user: User, session: Session,
-    weekly_task: WeeklyTask
+    user: User,
+    weekly_task: WeeklyTask,
+    session: Session = Depends(get_db)
 ) -> bool:
     """This function is being used to edit a Weekly Task the user have.
 
@@ -117,7 +121,10 @@ def change_weekly_task(
     return True
 
 
-def create_task(task: Task, user: User, session: Session) -> bool:
+def create_task(
+    task: Task, user: User,
+    session: Session = Depends(get_db)
+) -> bool:
     """Make a task, used by the generate_tasks function"""
     user_tasks_query = session.query(Task).filter_by(owner_id=user.id)
     task_by_time = user_tasks_query.filter_by(date_time=task.date_time)
@@ -140,7 +147,9 @@ def get_datetime(day: str, the_time: str) -> datetime:
     return datetime.strptime(date_string, "%a %H:%M %W %Y")
 
 
-def generate_tasks(session: Session, user: User) -> Iterator[bool]:
+def generate_tasks(
+    user: User, session: Session = Depends(get_db)
+) -> Iterator[bool]:
     """Generates tasks for the week
     based on all the weekly tasks the user have"""
     for weekly_task in user.weekly_tasks:
@@ -160,7 +169,10 @@ def generate_tasks(session: Session, user: User) -> Iterator[bool]:
     yield False
 
 
-def remove_weekly_task(weekly_task_id: int, session: Session) -> bool:
+def remove_weekly_task(
+    weekly_task_id: int,
+    session: Session = Depends(get_db)
+) -> bool:
     """Removes a weekly task from the db based on the weekly task id"""
     weekly_task_query = session.query(WeeklyTask)
     weekly_task = weekly_task_query.filter_by(id=weekly_task_id).first()

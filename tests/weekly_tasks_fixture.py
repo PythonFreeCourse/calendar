@@ -8,7 +8,7 @@ from app.database.models import WeeklyTask
 def weekly_task():
     return WeeklyTask(
         title="Test Task 1",
-        days="Sun, Mon, Sat",
+        days="Mon, Sat, Sun",
         content="my content",
         is_important=True,
         the_time="11:00"
@@ -19,7 +19,7 @@ def weekly_task():
 def weekly_task2():
     return WeeklyTask(
         title="Test Task 2",
-        days="Sun, Sat",
+        days="Sat, Sun",
         content="my content2",
         is_important=False,
         the_time="12:00"
@@ -71,21 +71,24 @@ def get_from_db(my_session, title=None):
 
 
 @pytest.fixture
-def w_tasks_from_db_gen():
+def weekly_task_from_db_gen():
     return get_from_db
 
 
 def get_weekly_task_id(
-    w_t_from_db_gen,
+    from_db_gen,
     my_session,
-    w_t
+    title
 ):
     while True:
-        get_title_from_db = w_t_from_db_gen(
-            my_session, title=w_t.title)
+        get_title_from_db = from_db_gen(
+            my_session, title=title)
         w_task_from_db = next(get_title_from_db)
-        w_task_id = w_task_from_db.id
-        yield w_task_id
+        if w_task_from_db:
+            w_task_id = w_task_from_db.id
+            yield w_task_id
+        else:
+            yield None
 
 
 @pytest.fixture

@@ -5,7 +5,7 @@ from app import main
 from app.database.database import Base
 from app.database.models import User
 from app.main import app
-from app.routers import agenda, event, invitation, profile
+from app.routers import agenda, event, invitation, profile, weekly_tasks
 from tests.conftest import get_test_db, test_engine
 
 
@@ -62,9 +62,9 @@ def profile_test_client():
 @pytest.fixture(scope="session")
 def weekly_tasks_test_client():
     Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[profile.get_db] = get_test_db
+    app.dependency_overrides[weekly_tasks.get_db] = get_test_db
     app.dependency_overrides[
-        profile.get_placeholder_user] = get_test_placeholder_user
+        weekly_tasks.get_placeholder_user] = get_test_placeholder_user
 
     with TestClient(app) as client:
         yield client

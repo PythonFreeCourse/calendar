@@ -1,6 +1,9 @@
+import calendar
 import datetime
 
+from typing import List, Tuple
 from fastapi import APIRouter, Depends, Request, Form
+from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
@@ -8,7 +11,7 @@ from app.database.database import get_db
 from app.database.models import User, WeeklyTask
 from app.dependencies import templates
 from app.internal.weekly_tasks import (
-    remove_weekly_task, get_w_t_from_input,
+    remove_weekly_task, weekly_task_from_input,
     create_weekly_task, change_weekly_task)
 
 
@@ -19,7 +22,7 @@ router = APIRouter(
 )
 
 
-def get_placeholder_user():
+def get_placeholder_user() -> User:
     user = User(
         username='demo_user',
         email='demo@email.po',
@@ -29,48 +32,52 @@ def get_placeholder_user():
     return user
 
 
-def get_user(demo_user, session):
-    user = session.query(User).filter_by(username=demo_user.username).first()
+def get_user(
+    demo_user: User,
+    session: Session = Depends(get_db)
+) -> User:
+    demo_username = demo_user.username
+    user = session.query(User).filter_by(username=demo_username).first()
     if not user:
         session.add(demo_user)
         session.commit()
-        user = session.query(User).filter_by(id=1).first()
+        user_query = session.query(User)
+        user = user_query.filter_by(username=demo_username).first()
     return user
 
 
-def get_checked_days(days=""):
+def get_checked_days(days: str = "") -> List[Tuple[str, str, str]]:
+    """Produces the input checked_days for the template add_edit_weekly_task"""
     days_list = days.split(", ")
-    day_names = {
-        'Sun': 'Sunday',
-        'Mon': 'Monday',
-        'Tue': 'Tuesday',
-        'Wed': 'Wednesday',
-        'Thu': 'Thursday',
-        'Fri': 'Friday',
-        'Sat': 'Saturday'
-    }
     checked_days = []
-    for day, day_full_name in day_names.items():
+    for day_full_name in calendar.day_name:
+        day = day_full_name[:3]
+        day_lower = day.lower()
         if day in days_list:
-            day = day.lower()
-            checked_days.append((day_full_name, day, "checked"))
+            checked_days.append((day_full_name, day_lower, "checked"))
         else:
-            day = day.lower()
-            checked_days.append((day_full_name, day, ""))
+            checked_days.append((day_full_name, day_lower, ""))
     return checked_days
 
 
-def get_days(sun, mon, tue, wed, thu, fri, sat):
+def get_days_string(
+    sun: bool, mon: bool,
+    tue: bool, wed: bool,
+    thu: bool, fri: bool,
+    sat: bool
+) -> str:
+    """Produces a string of all the days that were checked,
+    For use in the model weekly tasks."""
     days_dict = {
-        "Sun": sun,
         "Mon": mon,
         "Tue": tue,
         "Wed": wed,
         "Thu": thu,
         "Fri": fri,
-        "Sat": sat
+        "Sat": sat,
+        "Sun": sun
     }
-    days_list = [day for day, is_true in days_dict.items() if is_true]
+    days_list = [day for day, is_checked in days_dict.items() if is_checked]
     days = ", ".join(days_list)
     return days
 
@@ -84,11 +91,11 @@ def weekly_tasks_manager(
     user = get_user(demo_user, session)
 
     # TODO: Move the below function to a compatible location
-    # Need to run regularly whenever there are no tasks on the week
+    # Need to run regularly whenever there are tasks on the week
     # Or will run on the background after the user left the
     # weekly-tasks manager page
     # function:
-    # generate_tasks(session, user)  # imported from app.internal.weekly_tasks
+    # generate_tasks(user, session)  # imported from app.internal.weekly_tasks
     # session.close()
 
     return templates.TemplateResponse("weekly_tasks_manager.html", {
@@ -156,11 +163,11 @@ def weekly_task_make_change(
         mode: str = Form(...)):
 
     user = get_user(demo_user, session)
-    days = get_days(
+    days = get_days_string(
         sun, mon, tue, wed, thu, fri, sat
     )
 
-    weekly_task = get_w_t_from_input(
+    weekly_task = weekly_task_from_input(
         user,
         title, days,
         content, the_time,
@@ -173,12 +180,12 @@ def weekly_task_make_change(
     if mode == "add":
         massage = "could not add The Weekly Task"
         made_change = create_weekly_task(
-            user, session, weekly_task
+            user, weekly_task, session
         )
     else:  # mode == "edit"
         massage = "These changes could not be made to the Weekly Task"
         made_change = change_weekly_task(
-            user, session, weekly_task
+            user, weekly_task, session
         )
 
     if not made_change:
