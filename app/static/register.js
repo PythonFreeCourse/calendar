@@ -1,9 +1,7 @@
 const registerForm = document.querySelector("#registerForm")
 const errorBox = document.querySelector("#errorBox")
 
-// const userExistError = document.querySelector("#user_exist")
 const passwordLengthError = document.querySelector("#password_length")
-// const confirmPasswordError = document.querySelector("#confirmPasswordError")
 
 function validateFields(user){
     if (user.password !== user.confirm_password){
@@ -64,12 +62,9 @@ registerForm.addEventListener("submit", submitSignUp)
 
 async function postRegister(user) {
     try {
-        // Create request to api service
         const req = await fetch('http://127.0.0.1:8000/auth/register', {
             method: 'POST',
             headers: { 'Content-Type':'application/json' },
-            
-            // format the data
             body: JSON.stringify( user ),
         });
         
@@ -82,18 +77,9 @@ async function postRegister(user) {
             localStorage.setItem('okRegisterMessage', `${user.username}, you successfully registered!`)
             window.location.href = "http://127.0.0.1:8000/login";
         }
-        // Log success message
-        // console.log(res);                
+            
     } catch(err) {
         
         console.error(`ERROR: ${err}`);
     }
 }
-
-// Call your function
-// post() // with your parameter of Course
-
-
-
-
-// console.log(registerForm)
