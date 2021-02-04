@@ -1,18 +1,37 @@
-$(document).ready(function () {
-    $('#summernote').summernote({
-        codeviewFilter: false,
-        codeviewIframeFilter: true,
-        height: 100,
-        toolbar: [
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['style', ['style']],
-            ['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-            ['color', ['color']],
-            ['para', ['ol', 'ul', 'paragraph', 'height']],
-            ['table', ['table']],
-            ['insert', ['link']],
-            ['view', ['undo', 'redo', 'fullscreen', 'codeview']]
-        ]
+let timerInterval
+const { colorSyntax } = toastui.Editor.plugin;
+const editor = new toastui.Editor({
+    el: document.querySelector('#editorSection'),
+    initialEditType: 'wysiwyg',
+    previewStyle: 'vertical',
+    height: 'auto',
+    plugins: [colorSyntax]
+
+});
+document.getElementById("but").addEventListener("click", function() {
+    fetch(`${window.origin}`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ "datahtml": editor.getHtml(), 'datamd': editor.getMarkdown() })
+    }).then(response => {
+        if (editor.getMarkdown().length >= 1)
+            Swal.fire({
+                title: 'Working on it!',
+                html: 'Data is being transfered to the server!',
+                timer: 1000,
+                timerProgressBar: true,
+                didOpen: () => {
+                    Swal.showLoading()
+                    timerInterval = setInterval(() => {
+                        const content = Swal.getContent()
+                    }, 1)
+                },
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            })
     });
+
+
+
 });
