@@ -28,7 +28,8 @@ def get_placeholder_user():
         password='1a2s3d4f5g6',
         full_name='My Name',
         telegram_id='',
-        is_active_exercise = False
+        is_active_exercise = False,
+        language='english',
     )
 
 
@@ -144,6 +145,7 @@ async def upload_user_photo(
         # Save to database
         user.avatar = await process_image(pic, user)
         session.commit()
+
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -179,6 +181,6 @@ async def process_image(image, user):
 def get_image_crop_area(width, height):
     if width > height:
         delta = (width - height) // 2
-        return (delta, 0, width - delta, height)
+        return delta, 0, width - delta, height
     delta = (height - width) // 2
-    return (0, delta, width, width + delta)
+    return 0, delta, width, width + delta
