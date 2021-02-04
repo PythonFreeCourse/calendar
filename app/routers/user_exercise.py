@@ -39,7 +39,8 @@ def get_user_exercise(session: Session, **param) -> list:
 
 
 def update_user_exercise(user: User, session: Session) -> UserExercise:
-    user_exercise = session.query(UserExercise).filter_by(user_id=user.id).first()
+    user_exercise = session.query(UserExercise).filter_by(user_id=user.id)\
+        .first()
     # Update database
     user_exercise.start_date = datetime.now()
     session.commit()
