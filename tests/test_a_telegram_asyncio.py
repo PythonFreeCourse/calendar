@@ -206,7 +206,7 @@ Cool today event.\n'''
     {chosen_date.strftime('%B %d')}, {chosen_date.strftime('%A')} Events:
     From {today_date.strftime('%d/%m %H:%M')} \
     to {(today_date + timedelta(days=2)).strftime('%d/%m %H:%M')}: \
-    Cool today event.   
+    Cool today event.
     From {(chosen_date + timedelta(days=-1)).strftime('%d/%m %H:%M')} \
     to {(chosen_date + timedelta(days=1)).strftime('%d/%m %H:%M')}: \
     Cool (somewhen in two days) event.\n'''
