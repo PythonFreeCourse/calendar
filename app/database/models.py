@@ -4,18 +4,18 @@ from datetime import datetime
 from typing import Dict, Any
 
 from app.config import PSQL_ENVIRONMENT, DEVELOPMENT_DATABASE_STRING
-from app.database.database import Base, SQLALCHEMY_DATABASE_URL
+from app.database.database import Base
 from app.dependencies import logger
 from app.internal.security.security_schemas import UserDB
 import databases
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index, 
+from sqlalchemy import (DDL, Column, DateTime, ForeignKey, Index,
                         Integer, String, event, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
 
-#config.DEVELOPMENT_DATABASE_STRING
+
 database = databases.Database(DEVELOPMENT_DATABASE_STRING)
 
 

@@ -12,7 +12,7 @@ from app.routers import (
     event, invitation, login, profile, register,
     search, telegram, whatsapp)
 from app.telegram.bot import telegram_bot
-from fastapi import Depends, FastAPI, Request, status, Depends
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
