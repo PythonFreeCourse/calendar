@@ -51,8 +51,8 @@ def yesterday_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
         title='event 3',
-        start=today_date - timedelta(hours=8),
-        end=today_date,
+        start=today_date - timedelta(days=1, hours=8),
+        end=today_date - timedelta(days=1),
         content='test event',
         owner_id=sender.id,
     )
@@ -88,7 +88,7 @@ def old_event(sender: User, session: Session) -> Event:
         db=session,
         title='event 6',
         start=today_date - timedelta(days=5),
-        end=today_date,
+        end=today_date - timedelta(days=1),
         content='test event',
         owner_id=sender.id,
     )

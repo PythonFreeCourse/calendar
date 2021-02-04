@@ -64,9 +64,12 @@ def filter_dates(
     """filter events by a time frame."""
 
     yield from (
-        filter_start_dates(
-            filter_end_dates(events, end),
-            start)
+        event for event in events
+        if (
+            start <= event.start.date() <= end
+            or start <= event.end.date() <= end
+            or (start >= event.start.date() and end <= event.end.date())
+        )
     )
 
 
@@ -90,5 +93,5 @@ def filter_end_dates(
 
     yield from (
         event for event in events
-        if event.start.date() <= end
+        if event.end.date() <= end
     )
