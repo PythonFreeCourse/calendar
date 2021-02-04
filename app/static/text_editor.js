@@ -5,7 +5,29 @@ const editor = new toastui.Editor({
     initialEditType: 'wysiwyg',
     previewStyle: 'vertical',
     height: 'auto',
-    plugins: [colorSyntax]
+    plugins: [colorSyntax],
+    useDefaultHTMLSanitizer: true,
+    toolbarItems: [
+        'heading',
+        'bold',
+        'italic',
+        'strike',
+        'divider',
+        'hr',
+        'quote',
+        'divider',
+        'ul',
+        'ol',
+        'task',
+        'indent',
+        'outdent',
+        'divider',
+        'table',
+        'link',
+        'divider',
+        'code',
+        'codeblock'
+    ]
 
 });
 document.getElementById("but").addEventListener("click", function() {
