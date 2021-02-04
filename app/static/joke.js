@@ -1,5 +1,5 @@
-function getDailyJoke() {
-  fetch('/getjoke')
+function makejoke() {
+  fetch('/joke')
     .then(response => response.json())
-    .then(data => alert(data.value.joke));
+    .then(data => alert(data.text));
 }

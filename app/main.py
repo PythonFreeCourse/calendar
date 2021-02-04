@@ -5,16 +5,14 @@ from sqlalchemy.orm import Session
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
-from app.dependencies import (
-    MEDIA_PATH, STATIC_PATH, templates)
-from app.internal.quotes import load_quotes, daily_quotes
+from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
+from app.internal.quotes import daily_quotes, load_quotes
+from app.internal import load_jokes
 from app.routers import (
-    agenda, dayview, email, event, invitation, profile, search, telegram,
-    whatsapp, getjoke
+    agenda, categories, dayview, email, event, invitation, profile, search, telegram,
+    whatsapp, joke,
     )
 from app.telegram.bot import telegram_bot
-from app.internal.logger_customizer import LoggerCustomizer
-from app import config
 
 
 def create_tables(engine, psql_environment):
@@ -34,34 +32,34 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 load_quotes.load_daily_quotes(next(get_db()))
+load_jokes.load_daily_jokes(next(get_db()))
 
-# Configure logger
-logger = LoggerCustomizer.make_logger(config.LOG_PATH,
-                                      config.LOG_FILENAME,
-                                      config.LOG_LEVEL,
-                                      config.LOG_ROTATION_INTERVAL,
-                                      config.LOG_RETENTION_INTERVAL,
-                                      config.LOG_FORMAT)
 app.logger = logger
 
-app.include_router(profile.router)
-app.include_router(event.router)
-app.include_router(agenda.router)
-app.include_router(telegram.router)
-app.include_router(dayview.router)
-app.include_router(email.router)
-app.include_router(invitation.router)
-app.include_router(whatsapp.router)
-app.include_router(getjoke.router)
-app.include_router(search.router)
+routers_to_include = [
+    agenda.router,
+    categories.router,
+    dayview.router,
+    email.router,
+    event.router,
+    invitation.router,
+    profile.router,
+    search.router,
+    telegram.router,
+    whatsapp.router,
+    joke.router,
+]
+
+for router in routers_to_include:
+    app.include_router(router)
 
 telegram_bot.set_webhook()
 
 
 # TODO: I add the quote day to the home page
-# until the relavent calendar view will be developed.
+# until the relevant calendar view will be developed.
 @app.get("/")
-@app.logger.catch()
+@logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
