@@ -158,6 +158,7 @@ class Quote(Base):
     text = Column(String, nullable=False)
     author = Column(String)
 
+
 class Joke(Base):
     __tablename__ = "jokes"
 

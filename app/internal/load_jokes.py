@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 
 
 def get_jokes_from_json() -> List[Dict[str, Optional[str]]]:
-    """Reading all jokes from the a JSON file that have been copied from 'http://api.icndb.com/jokes'"""
+    """Reading all jokes from the a JSON file that have been """\
+        """copied from 'http://api.icndb.com/jokes'"""
     try:
         with open('app/resources/jokes.json', 'r') as f:
             jokes_list = json.load(f)
