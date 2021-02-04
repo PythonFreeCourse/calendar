@@ -34,11 +34,24 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
+    is_active_exercise = Column(Boolean, default=False)
 
     events = relationship("UserEvent", back_populates="participants")
 
     def __repr__(self):
         return f'<User {self.id}>'
+
+
+class UserExercise(Base):
+    """
+    Table name user exercise
+    Save when user start his exercise
+    """
+    __tablename__ = "user_exercise"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    start_date = Column(DateTime, nullable=False)
 
 
 class Event(Base):

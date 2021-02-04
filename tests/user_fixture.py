@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.orm import Session
-
-from app.database.models import User
+from datetime import datetime
+from app.database.models import User, UserExercise
 from tests.utils import create_model, delete_instance
 
 
@@ -15,6 +15,17 @@ def user(session: Session) -> User:
     )
     yield test_user
     delete_instance(session, test_user)
+
+
+@pytest.fixture
+def user_exercise(session: Session, user: User) -> UserExercise:
+    test_user_exercise = create_model(
+        session, UserExercise,
+        user_id=11,
+        start_date=datetime.now()
+    )
+    yield test_user_exercise
+    delete_instance(session, test_user_exercise)
 
 
 @pytest.fixture

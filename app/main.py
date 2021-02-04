@@ -9,7 +9,7 @@ from app.dependencies import (
     MEDIA_PATH, STATIC_PATH, templates)
 from app.internal.quotes import load_quotes, daily_quotes
 from app.routers import (
-    agenda, dayview, email, event, invitation, profile, search, telegram,
+    agenda, dayview, email, event, invitation, profile, search, telegram, exercise,
     whatsapp
     )
 from app.telegram.bot import telegram_bot
@@ -53,6 +53,7 @@ app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(whatsapp.router)
 app.include_router(search.router)
+app.include_router(exercise.router)
 
 telegram_bot.set_webhook()
 

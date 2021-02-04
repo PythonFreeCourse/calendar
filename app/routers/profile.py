@@ -9,6 +9,7 @@ from app import config
 from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
+from app.routers.user_exercise import create_user_exercise
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -26,7 +27,8 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
-        telegram_id=''
+        telegram_id='',
+        is_active_exercise = False
     )
 
 
@@ -50,6 +52,38 @@ async def profile(
         "events": upcoming_events,
     })
 
+@router.get("/start_exercise")
+async def start_exercise(session=Depends(get_db)):
+    user = session.query(User).filter_by(id=1).first()
+    is_active_exercise = True
+
+    # Update database
+    user.is_active_exercise = is_active_exercise
+    session.commit()
+
+    #create user exercise
+    print("create user exercise")
+    create_user_exercise(user,session)
+
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.get("/stop_exercise")
+async def stop_exercise(session=Depends(get_db)):
+    """
+    Stop exercise
+    """
+    user = session.query(User).filter_by(id=1).first()
+    is_active_exercise = False
+
+    # Update database
+    user.is_active_exercise = is_active_exercise
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 @router.post("/update_user_fullname")
 async def update_user_fullname(

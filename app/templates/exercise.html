@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Right side -->
+            <div class="col-5">
+                <!-- Exercise -->
+                {% if user.is_active_exercise %}
+                    <div style="font-family: 'Assistant', sans-serif;text-align: center;">
+                         <img src="{{ url_for('static', path=exercise) }}" alt="exercise image" style="width:270%;height:200%">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
