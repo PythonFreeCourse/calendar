@@ -141,7 +141,7 @@ class TestBotClient:
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
         assert b'Hello, Moshe!' in response.content
-        assert b'To use PyLander Bot you have to register' \
+        assert b'To use PyLender Bot you have to register' \
             in response.content
 
     @staticmethod
@@ -152,14 +152,7 @@ class TestBotClient:
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
-        assert b'Welcome to Pylander telegram client!' in response.content
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_telegram_router(telegram_client):
-        response = await telegram_client.get('/telegram')
-        assert response.status_code == status.HTTP_200_OK
-        assert b"Start using PyLander telegram bot!" in response.content
+        assert b'Welcome to PyLender telegram client!' in response.content
 
 
 class TestHandlers:
@@ -172,7 +165,7 @@ class TestHandlers:
 
         assert '/start' in message.handlers
         assert await message.process_callback() == '''Hello, Moshe!
-Welcome to Pylander telegram client!'''
+Welcome to PyLender telegram client!'''
 
     @pytest.mark.asyncio
     async def test_default_handlers(self):
@@ -327,7 +320,7 @@ async def test_reply_unknown_user():
     assert answer == '''
 Hello, Moshe!
 
-To use PyLander Bot you have to register
+To use PyLender Bot you have to register
 your Telegram Id in your profile page.
 
 Your Id is 666666
