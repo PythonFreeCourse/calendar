@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 
 from app.main import app
-from app.routers.event import add_new_event, check_date_validation
+from app.routers.event import add_new_event, is_date_before
 from app.database.database import get_db
 
 
