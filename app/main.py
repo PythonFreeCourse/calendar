@@ -10,7 +10,7 @@ from app.internal import daily_quotes, json_data_loader
 from app.internal.international_days import load_international_days
 from app.routers import (
     agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp, international_days
+    event, invitation, profile, search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
@@ -48,7 +48,6 @@ routers_to_include = [
     search.router,
     telegram.router,
     whatsapp.router,
-    international_days.router,
 ]
 
 for router in routers_to_include:

@@ -179,7 +179,7 @@ class Zodiac(Base):
 
 
 class InternationalDays(Base):
-    __tablename__= "international_days"
+    __tablename__ = "international_days"
 
     id = Column(Integer, primary_key=True, index=True)
     day = Column(String)
