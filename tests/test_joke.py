@@ -1,5 +1,6 @@
 from app.database.models import Joke
-from app.internal import jokes, load_jokes
+# from app.internal import jokes
+from app.internal import load_jokes
 
 
 def get_jokes_amount(session):
