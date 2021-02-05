@@ -7,4 +7,4 @@ def test_router_good(client):
     assert resp.ok
     resp = client.get(CURRENCY + CUSTOM_DATE)
     assert resp.ok
-    assert b'Currency</a>' in resp.content
+    assert b'Currency</button>' in resp.content
