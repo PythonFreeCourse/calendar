@@ -9,10 +9,12 @@ class TestUser:
             username='new_test_username',
             password='new_test_password',
             email='new_test.email@gmail.com',
+            language='english'
         )
         assert user.username == 'new_test_username'
         assert user.password == 'new_test_password'
         assert user.email == 'new_test.email@gmail.com'
+        assert user.language == 'english'
         session.delete(user)
         session.commit()
 
