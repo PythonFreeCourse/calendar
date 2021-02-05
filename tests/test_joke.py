@@ -1,5 +1,5 @@
 from app.database.models import Joke
-# from app.internal import jokes
+from app.internal import jokes
 from app.internal import load_jokes
 
 
