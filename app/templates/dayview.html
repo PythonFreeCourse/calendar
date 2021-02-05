@@ -18,6 +18,11 @@
                 <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Zodiac-sign: {{zodiac.name}}" target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}" alt="zodiac sign" width="14em" height="13em"></a>
             </div>
             {% endif %}
+            {% if international_day %}
+            <div>
+                {{ international_day.international_day }}
+            </div>
+            {% endif %}
         </div>
         <div class="schedule">
             <div class="container times bg-primeary position">
