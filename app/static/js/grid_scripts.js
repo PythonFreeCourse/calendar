@@ -11,6 +11,7 @@ function setToggle(elementClass, targetElement, classToAdd, lastIndex) {
 document.addEventListener(
     'DOMContentLoaded', function () {
         setToggle("day", "day-view", "day-view-visible", 0);
+        weekScroll();
     }
 )
 
@@ -28,14 +29,17 @@ function loadWeek(lastDay, index) {
     });
 }
 
-window.addEventListener(
-    'scroll', function () {
-        const tolerance = 1;
-        if (window.scrollY + window.innerHeight + tolerance < document.documentElement.scrollHeight) {
-            return false;
+function weekScroll() {
+    grid = document.getElementById("calender-grid");
+    grid.addEventListener(
+        'scroll', function () {
+            const tolerance = 1;
+            if (grid.scrollY + grid.innerHeight + tolerance < grid.scrollHeight) {
+                return false;
+            }
+            const allDays = document.getElementsByClassName('day');
+            const lastDay = allDays[allDays.length - 1];
+            loadWeek(lastDay, allDays.length);
         }
-        const allDays = document.getElementsByClassName('day');
-        const lastDay = allDays[allDays.length - 1];
-        loadWeek(lastDay, allDays.length);
-    }
-)
+    )
+}
