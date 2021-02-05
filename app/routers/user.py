@@ -59,3 +59,10 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
         session.query(Event).join(UserEvent)
         .filter(UserEvent.user_id == user_id).all()
     )
+
+
+def disable_user(session: Session, user_id: int):
+    # this functions changes user status to disabled.
+    User.disabled = True
+    session.commit()    
+
