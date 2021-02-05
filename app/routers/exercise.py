@@ -5,7 +5,6 @@ from app.dependencies import templates
 from app.routers.user_exercise import get_user_exercise
 from datetime import datetime
 from app import config
-from app.routers.profile import get_placeholder_user
 
 router = APIRouter(
     prefix="/exercise",
