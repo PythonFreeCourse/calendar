@@ -159,6 +159,25 @@ class Quote(Base):
     author = Column(String)
 
 
+class Zodiac(Base):
+    __tablename__ = "zodiac-signs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    start_month = Column(Integer, nullable=False)
+    start_day_in_month = Column(Integer, nullable=False)
+    end_month = Column(Integer, nullable=False)
+    end_day_in_month = Column(Integer, nullable=False)
+
+    def __repr__(self):
+        return (
+            f'<Zodiac '
+            f'{self.name} '
+            f'{self.start_day_in_month}/{self.start_month}-'
+            f'{self.end_day_in_month}/{self.end_month}>'
+        )
+
+
 class Joke(Base):
     __tablename__ = "jokes"
 
