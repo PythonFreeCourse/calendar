@@ -148,3 +148,5 @@ app/.vscode/
 
 # PyCharm
 .idea
+
+junit/
