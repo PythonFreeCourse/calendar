@@ -43,6 +43,13 @@ class TestCategories:
         assert event.category_id == category.id
 
     @staticmethod
+    def test_update_event_with_category(today_event, category):
+        assert today_event.category_id is None
+        today_event.category_id = category.id
+        assert today_event.category_id is not None
+        assert today_event.category_id == category.id
+
+    @staticmethod
     def test_get_user_categories(client, category):
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
