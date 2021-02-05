@@ -31,7 +31,7 @@ class TestUserExercise:
 
     def test_does_user_exercise_exist_success(self, user_exercise, session):
         assert does_user_exercise_exist(session=session,
-                                        userid=user_exercise.user_id)
+                                        user_id=user_exercise.user_id)
 
     def test_does_user_exercise_exist_failure(self, session):
-        assert not does_user_exercise_exist(session=session, userid=100)
+        assert not does_user_exercise_exist(session=session, user_id=100)

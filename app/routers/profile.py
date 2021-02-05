@@ -10,7 +10,7 @@ from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
 from app.routers.user_exercise import create_user_exercise
-
+from sqlalchemy.orm import Session
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 
@@ -55,7 +55,7 @@ async def profile(
 
 
 @router.get("/start_exercise")
-async def start_exercise(session=Depends(get_db)):
+async def start_exercise(session: Session = Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
 
     # Update database
@@ -63,7 +63,6 @@ async def start_exercise(session=Depends(get_db)):
     session.commit()
 
     # create user exercise
-    print("create user exercise")
     create_user_exercise(user, session)
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -73,6 +72,7 @@ async def start_exercise(session=Depends(get_db)):
 async def stop_exercise(session=Depends(get_db)):
     """
     Stop exercise
+    set is_active_exercise to False
     """
     user = session.query(User).filter_by(id=1).first()
 

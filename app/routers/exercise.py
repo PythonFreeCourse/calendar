@@ -5,6 +5,7 @@ from app.dependencies import templates
 from app.routers.user_exercise import get_user_exercise
 from datetime import datetime
 from app import config
+from sqlalchemy.orm import Session
 
 router = APIRouter(
     prefix="/exercise",
@@ -16,11 +17,11 @@ router = APIRouter(
 @router.get("/")
 async def exercise(
         request: Request,
-        session=Depends(get_db)
+        session: Session = Depends(get_db),
         ):
     """
     If is active exercise = True
-    Show user exercise for specific day
+    Show user exercise for a specific day if is_active_exercise is ture.
     """
     user = session.query(User).filter_by(id=1).first()
     if not user:
@@ -36,7 +37,7 @@ async def exercise(
         # Get exercise day
         date_time_now = datetime.now()
         delta = date_time_now - user_exercise[0].start_date
-        # All exercise split to 30 days
+        # All exercises split to 30 days
         day = (delta.days % 30) + 1
     else:
         day = 1

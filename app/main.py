@@ -41,12 +41,12 @@ routers_to_include = [
     dayview.router,
     email.router,
     event.router,
+    exercise.router,
     invitation.router,
     profile.router,
     search.router,
     telegram.router,
     whatsapp.router,
-    exercise.router,
 ]
 
 for router in routers_to_include:

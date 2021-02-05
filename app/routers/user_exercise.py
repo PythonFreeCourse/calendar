@@ -20,25 +20,24 @@ def create_user_exercise(user: User, session: Session) -> UserExercise:
     return user_exercise
 
 
-def does_user_exercise_exist(session: Session, userid: int) -> bool:
+def does_user_exercise_exist(session: Session, user_id: int) -> bool:
     """
-      Checking if user exercise with user id is exist
+      Check if a user exercise for user id exists.
     """
-    if get_user_exercise(session=session, user_id=userid):
+    if get_user_exercise(session=session, user_id=user_id):
         return True
     else:
         return False
 
 
 def get_user_exercise(session: Session, **param) -> list:
-    """Returns user exercise filter by user id."""
-
+    """Returns user exercise filter by param."""
     try:
-        exercise = list(session.query(UserExercise).filter_by(**param))
+        user_exercise = list(session.query(UserExercise).filter_by(**param))
     except SQLAlchemyError:
         return []
     else:
-        return exercise
+        return user_exercise
 
 
 def update_user_exercise(user: User, session: Session) -> UserExercise:
