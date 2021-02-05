@@ -38,7 +38,7 @@ class TestApp:
 
     @staticmethod
     def test_bad_check_validation():
-        assert not check_date_validation(
+        assert not is_date_before(
             TestApp.date_test_data[0],
             'd'
                                 )
