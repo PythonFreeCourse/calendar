@@ -1,4 +1,4 @@
-let timerInterval
+let timerInterval;
 const { colorSyntax } = toastui.Editor.plugin;
 const editor = new toastui.Editor({
     el: document.querySelector('#editorSection'),
