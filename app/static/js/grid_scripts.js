@@ -28,6 +28,10 @@ function loadWeek(lastDay, index) {
     });
 }
 
+function updateMonthNavigation() {
+    return true;
+}
+
 window.addEventListener(
     'scroll', function () {
         const tolerance = 1;
@@ -37,5 +41,6 @@ window.addEventListener(
         const allDays = document.getElementsByClassName('day');
         const lastDay = allDays[allDays.length - 1];
         loadWeek(lastDay, allDays.length);
+        updateMonthNavigation();
     }
 )
