@@ -12,8 +12,8 @@ def test_joke(client):
     assert resp.json
 
 
-def test_get_a_joke(session, joke):
-    assert jokes.get_a_joke(session).text == joke.text
+# def test_get_a_joke(session, joke):
+#    assert jokes.get_a_joke(session).text == joke.text
 
 
 def test_load_daily_jokes(session):
