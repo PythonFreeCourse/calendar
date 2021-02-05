@@ -9,7 +9,7 @@ def create_user_exercise(user: User, session: Session) -> UserExercise:
     """
     Create and save new user exercise
     """
-    if not does_user_exercise_exist(session=session, userid=user.id):
+    if not does_user_exercise_exist(session=session, user_id=user.id):
         user_exercise = UserExercise(
             user_id=user.id,
             start_date=datetime.now()
