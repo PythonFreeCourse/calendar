@@ -1,4 +1,4 @@
-<div class="event_info_row title" style="border-bottom: 4px solid '{{event.color}}'">
+<div class="event_info_row title_color_{{event.color}}" >
     <div class="event_info_row_start">
         <h1>{{event.title}}</h1>
     </div>
@@ -26,7 +26,7 @@
 </div>
 
 {% if event.latitude is not none and event.longitude is not none %}
-    <div style="width: 100%">
+    <div class="google_maps_object">
         <iframe
             width="600"
             height="400"

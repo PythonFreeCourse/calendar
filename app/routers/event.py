@@ -53,16 +53,19 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
+    color = data['color']
 
     latitude, longitude = None, None
 
     if is_zoom:
         validate_zoom_link(location)
     else:
-        latitude, longitude, location = get_location_coordinates(location)
+        location_details = get_location_coordinates(location)
+        if location_details is not None:
+            latitude, longitude, location = location_details
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, latitude, longitude)
+                         location, latitude, longitude, color)
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event.id),
                             status_code=status.HTTP_302_FOUND)
@@ -195,7 +198,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
 def create_event(db, title, start, end, owner_id,
                  content=None, location=None,
-                 latitude=None, longitude=None):
+                 latitude=None, longitude=None, color='blue'):
     """Creates an event and an association."""
 
     event = create_model(
@@ -207,7 +210,8 @@ def create_event(db, title, start, end, owner_id,
         owner_id=owner_id,
         location=location,
         latitude=latitude,
-        longitude=longitude
+        longitude=longitude,
+        color=color
     )
     create_model(
         db, UserEvent,
@@ -272,15 +276,15 @@ def delete_event(event_id: int,
 def get_location_coordinates(
         address: str,
         timeout: float = LOCATION_TIMEOUT
-        ) -> Tuple[float, float, str]:
+        ) -> Optional[Tuple[float, float, str]]:
     """Return location coordinates and accurate
     address of the specified location."""
-    geolocator = Nominatim(user_agent="calendar")
+    geolocator = Nominatim(user_agent="calendar", timeout=timeout)
     try:
         location = geolocator.geocode(address)
         if location is not None:
-            acc_address = str(location.raw["display_name"])
+            acc_address = location.raw["display_name"]
             return location.latitude, location.longitude, acc_address
     except (GeocoderTimedOut, GeocoderUnavailable) as e:
         logger.exception(str(e))
-    return None, None, None
+    return None

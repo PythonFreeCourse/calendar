@@ -53,7 +53,7 @@ class TestGeolocation:
     @staticmethod
     @pytest.mark.parametrize("location", WRONG_LOCATIONS)
     def test_get_location_coordinates_wrong(location):
-        assert not all(get_location_coordinates(location))
+        assert get_location_coordinates(location) is None
 
     @staticmethod
     def test_event_location_correct(event_test_client, user):
