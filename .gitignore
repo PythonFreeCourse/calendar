@@ -13,6 +13,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+Scripts/
+include/
 develop-eggs/
 dist/
 downloads/
@@ -30,6 +32,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+pyvenv.cfg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -88,6 +92,9 @@ ipython_config.py
 # pyenv
 .python-version
 
+# pycharm
+.idea/
+
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
 #   However, in case of collaboration, if having platform-specific dependencies or dependencies
@@ -113,6 +120,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.vscode/
+Scripts/*
+pyvenv.cfg
 
 # Spyder project settings
 .spyderproject
@@ -131,3 +141,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# VScode
+.vscode/
+app/.vscode/
+
+# PyCharm
+.idea
