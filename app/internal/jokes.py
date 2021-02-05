@@ -4,6 +4,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
 
-def have_a_joke(session: Session):
+def get_a_joke(session: Session):
     joke = session.query(Joke).order_by(func.random()).first()
     return joke

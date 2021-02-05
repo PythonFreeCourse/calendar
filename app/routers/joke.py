@@ -9,5 +9,4 @@ router = APIRouter()
 
 @router.get("/joke")
 async def joke(request: Request, db: Session = Depends(get_db)):
-    joke = jokes.have_a_joke(db)
-    return joke
+    return jokes.get_a_joke(db)
