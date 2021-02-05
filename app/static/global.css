@@ -1,0 +1,21 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: "Assistant", "Ariel", sans-serif;
+    font-weight: 400;
+    font-size: 62.5%;  /*16px / 10px = 62.5% -> 1rem = 10px*/
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    background-color: #F7F7F7;
+    color: #222831;
+    width: 100%;
+}
+
+html, body{
+    height: 100%;
+}
