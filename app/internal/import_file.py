@@ -59,7 +59,7 @@ def is_file_exist(file: str) -> bool:
 
 def change_string_to_date(date: str) -> Union[datetime.datetime, bool]:
     try:
-        if re.search(r":", date):
+        if ":" in date:
             date1 = datetime.datetime.strptime(date, DATE_FORMAT2)
         else:
             date1 = datetime.datetime.strptime(date, DATE_FORMAT)
@@ -76,7 +76,7 @@ def is_date_in_range(date: Union[str, datetime.datetime],
     now_year = datetime.datetime.now().year
     if isinstance(date, str):
         check_date = change_string_to_date(date)
-        if check_date is False:
+        if not check_date:
             return False
     else:
         check_date = date
