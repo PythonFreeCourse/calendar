@@ -17,18 +17,20 @@ router = APIRouter(
 @router.get("/")
 async def exercise(
         request: Request,
-        session=Depends(get_db),
-        new_user=Depends(get_placeholder_user)):
+        session=Depends(get_db)
+        ):
     """
     If is active exercise = True
     Show user exercise for specific day
     """
     user = session.query(User).filter_by(id=1).first()
     if not user:
-        # create default user
-        session.add(new_user)
-        session.commit()
-        user = session.query(User).filter_by(id=1).first()
+        # create empty default user
+        user = User(
+            username='',
+            password='',
+            email=''
+        )
     # Get user exercise
     user_exercise = get_user_exercise(session, user_id=user.id)
     if user_exercise:
@@ -40,7 +42,6 @@ async def exercise(
     else:
         day = 1
     exercise_day = str(config.EXERCISE_FILE.format(num=day))
-    # print(exercise_day)
     return templates.TemplateResponse("exercise.html", {
         "request": request,
         "user": user,

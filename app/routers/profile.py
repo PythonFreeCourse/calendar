@@ -57,10 +57,9 @@ async def profile(
 @router.get("/start_exercise")
 async def start_exercise(session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
-    is_active_exercise = True
 
     # Update database
-    user.is_active_exercise = is_active_exercise
+    user.is_active_exercise = True
     session.commit()
 
     # create user exercise
@@ -76,10 +75,9 @@ async def stop_exercise(session=Depends(get_db)):
     Stop exercise
     """
     user = session.query(User).filter_by(id=1).first()
-    is_active_exercise = False
 
     # Update database
-    user.is_active_exercise = is_active_exercise
+    user.is_active_exercise = False
     session.commit()
 
     url = router.url_path_for("profile")
