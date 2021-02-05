@@ -253,8 +253,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def check_date_validation(start_time: date, end_time: date
-                        ) -> bool:
+def check_date_validation(start_time: datetime, end_time: datetime) -> bool:
     """Check if the start_date is smaller then the end_time"""
 
     try:
@@ -263,8 +262,7 @@ def check_date_validation(start_time: date, end_time: date
         return False
 
 
-def add_new_event(values: dict, db
-                ) -> Optional[Event]:
+def add_new_event(values: dict, db) -> Optional[Event]:
     """Get User values and the DB Session insert the values
     to the DB and refresh it exception in case that the keys
     in the dict is not match to the fields in the DB
@@ -274,10 +272,11 @@ def add_new_event(values: dict, db
         return None
     try:
         new_event = create_model(db, Event, **values)
-        create_model(db, UserEvent,
-                    user_id=values['owner_id'],
-                    event_id=new_event.id
-                    )
+        create_model(
+            db, UserEvent,
+            user_id=values['owner_id'],
+            event_id=new_event.id
+        )
         return new_event
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
