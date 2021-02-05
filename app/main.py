@@ -8,10 +8,6 @@ from app.database.database import engine, get_db
 from app.dependencies import logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
-from app.routers import (
-    agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp,
-)
 from app.telegram.bot import telegram_bot
 
 
@@ -28,17 +24,20 @@ def create_tables(engine, psql_environment):
 
 create_tables(engine, PSQL_ENVIRONMENT)
 
-# This MUST come before the app.routers imports.
-set_ui_language()
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+# This MUST come before the app.routers imports.
+set_ui_language()
+
+from app.routers import (  # noqa: E402
+    agenda, calendar, categories, dayview, email,
+    event, invitation, profile, search, telegram, whatsapp,
+)
 
 json_data_loader.load_to_db(next(get_db()))
-
 
 routers_to_include = [
     agenda.router,
