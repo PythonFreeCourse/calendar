@@ -19,7 +19,6 @@ class TestApp:
             "location": "Fake City",
             "start": date_test_data[0],
             "end": date_test_data[1],
-            "vc_link": "https://fakevclink.com",
             "content": "Any Words",
             "owner_id": 123}
 
