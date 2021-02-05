@@ -4,7 +4,16 @@ from fastapi_mail import ConnectionConfig
 from pydantic import BaseSettings
 from starlette.templating import Jinja2Templates
 
-# general
+class Settings(BaseSettings):
+    app_name: str = "PyLander"
+    bot_api: str = "BOT_API"
+    webhook_url: str = "WEBHOOK_URL"
+
+    class Config:
+        env_file = ".env"
+
+
+# GENERAL
 DOMAIN = 'Our-Domain'
 
 class Settings(BaseSettings):

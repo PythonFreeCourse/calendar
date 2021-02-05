@@ -53,9 +53,6 @@ def test_eventedit(event_test_client):
     assert response.ok
     assert b"Edit Event" in response.content
 
-    def test_eventview_without_id(self, client):
-        response = client.get("/event/view")
-        assert response.status_code == HTTP_404_NOT_FOUND
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
