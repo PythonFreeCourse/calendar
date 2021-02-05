@@ -5,7 +5,7 @@ from app import main
 from app.database.database import Base
 from app.database.models import User
 from app.main import app
-from app.routers import agenda, event, joke, invitation, profile
+from app.routers import agenda, event, invitation, profile
 from tests.conftest import get_test_db, test_engine
 
 
