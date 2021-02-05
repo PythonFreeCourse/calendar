@@ -253,7 +253,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def check_date_validation(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: datetime, end_time: datetime) -> bool:
     """Check if the start_date is smaller then the end_time"""
 
     try:
@@ -268,7 +268,7 @@ def add_new_event(values: dict, db) -> Optional[Event]:
     in the dict is not match to the fields in the DB
     return the Event Class item"""
 
-    if not check_date_validation(values['start'], values['end']):
+    if not is_date_before(values['start'], values['end']):
         return None
     try:
         new_event = create_model(db, Event, **values)

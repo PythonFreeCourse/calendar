@@ -31,10 +31,10 @@ class TestApp:
         assert get_db() is not None
 
     @staticmethod
-    def check_date_validation():
+    def check_is_date_before():
         start = TestApp.date_test_data[0]
         end = TestApp.date_test_data[1]
-        assert check_date_validation(start, end)
+        assert is_date_before(start, end)
 
     @staticmethod
     def test_bad_check_validation():
