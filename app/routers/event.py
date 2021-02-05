@@ -217,38 +217,7 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
             join(UserEvent, UserEvent.event_id == Event.id).
             join(User, User.id == UserEvent.user_id).
             filter(Event.id == event_id).
-            all()])
-
-
-def check_date_validation(start_time: date, end_time: date
-                        ) -> bool:
-    """Check if the start_date is smaller then the end_time"""
-
-    try:
-        return start_time < end_time
-    except TypeError:
-        return False
-
-
-def add_new_event(values: dict, db
-                ) -> Optional[Event]:
-    """Get User values and the DB Session insert the values
-    to the DB and refresh it exception in case that the keys
-    in the dict is not match to the fields in the DB
-    return the Event Class item"""
-
-    if not check_date_validation(values['start'], values['end']):
-        return None
-    try:
-        new_event = create_model(db, Event, **values)
-        create_model(db, UserEvent,
-                    user_id=values['owner_id'],
-                    event_id=new_event.id
-                    )
-        return new_event
-    except (AssertionError, AttributeError, TypeError) as e:
-        logger.exception(e)
-        return None
+            all()]
 
 
 def _delete_event(db: Session, event: Event):
@@ -282,3 +251,34 @@ def delete_event(event_id: int,
         # if the deletion is successful
     return RedirectResponse(
         url="/calendar", status_code=status.HTTP_200_OK)
+
+
+def check_date_validation(start_time: date, end_time: date
+                        ) -> bool:
+    """Check if the start_date is smaller then the end_time"""
+
+    try:
+        return start_time < end_time
+    except TypeError:
+        return False
+
+
+def add_new_event(values: dict, db
+                ) -> Optional[Event]:
+    """Get User values and the DB Session insert the values
+    to the DB and refresh it exception in case that the keys
+    in the dict is not match to the fields in the DB
+    return the Event Class item"""
+
+    if not check_date_validation(values['start'], values['end']):
+        return None
+    try:
+        new_event = create_model(db, Event, **values)
+        create_model(db, UserEvent,
+                    user_id=values['owner_id'],
+                    event_id=new_event.id
+                    )
+        return new_event
+    except (AssertionError, AttributeError, TypeError) as e:
+        logger.exception(e)
+        return None
