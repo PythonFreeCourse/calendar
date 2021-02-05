@@ -107,7 +107,8 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
                 and_(Event.start < day_end, day_end < Event.end)))
     events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
-    inter_day = get_international_days.international_day_per_day(db_session, day)
+    inter_day = get_international_days.\
+        international_day_per_day(db_session, day)
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
