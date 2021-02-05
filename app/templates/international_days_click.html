@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="internationalStyles.css">
+    <title>International days</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+</head>
+<body>
+<h1>International days</h1>
+<!--I create this button click to check that everything is working
+My plan was the button will be in every day square to check which international day is today
+for adding the button I also made styles to the click so it is in the static package.-->
+<button type="button" onclick="hiddenDay()">Did You Know?</button>
+<h3 id="demo"></h3>
+<!--The function need views path to get the date of the day the she will return the fitting international day-->
+<script>
+    function hiddenDay() {
+        $.ajax({
+          url: "view_path",
+          data: {"date": "10-01-2021"},
+          success: function (data, status, xhr) {
+            console.log(data);
+            document.getElementById("demo").innerHTML = "In this day is " + data;
+          },
+          dataType: 'json'
+        });
+     }
+</script>
+</body>
+</html>
