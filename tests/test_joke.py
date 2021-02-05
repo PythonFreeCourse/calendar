@@ -1,5 +1,6 @@
 from app.internal import jokes
 
+
 def test_joke(client):
     resp = client.get('/joke')
     assert resp.ok
