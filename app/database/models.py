@@ -57,8 +57,8 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
-    latitude = Column(String)
-    longitude = Column(String)
+    latitude = Column(String, nullable=True)
+    longitude = Column(String, nullable=True)
     color = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))

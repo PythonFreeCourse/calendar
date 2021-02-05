@@ -1,10 +1,11 @@
 import pytest
 
 from app.routers.event import get_location_coordinates
+from app.database.models import Event
+from sqlalchemy.sql import func
 
 
 class TestGeolocation:
-
     CORRECT_LOCATION_EVENT = {
         'title': 'test title',
         'start_date': '2021-02-18',
@@ -26,7 +27,7 @@ class TestGeolocation:
         'end_date': '2021-02-18',
         'end_time': '20:00',
         'location_type': 'address',
-        'location': 'not a location',
+        'location': 'not a real location with coords',
         'description': 'test1',
         'color': 'red',
         'availability': 'busy',
@@ -48,39 +49,40 @@ class TestGeolocation:
     @staticmethod
     @pytest.mark.parametrize("location", CORRECT_LOCATIONS)
     def test_get_location_coordinates_correct(location):
-        assert any(get_location_coordinates(location))
+        assert all(get_location_coordinates(location))
 
     @staticmethod
     @pytest.mark.parametrize("location", WRONG_LOCATIONS)
     def test_get_location_coordinates_wrong(location):
-        assert get_location_coordinates(location) is None
+        assert not all(get_location_coordinates(location))
 
     @staticmethod
-    def test_event_location_correct(event_test_client, user):
+    def test_event_location_correct(event_test_client, session):
         response = event_test_client.post(
             "event/edit",
             data=TestGeolocation.CORRECT_LOCATION_EVENT
         )
         assert response.ok
-        url = event_test_client.app.url_path_for('eventview', event_id=1)
+        event_id = session.query(func.count(Event.id)).scalar()
+        url = event_test_client.app.url_path_for('eventview',
+                                                 event_id=event_id)
         response = event_test_client.get(url)
-        location = get_location_coordinates(
+        _, _, address = get_location_coordinates(
             TestGeolocation.CORRECT_LOCATION_EVENT['location']
         )
-        location_name = location[2].split()[0]
-        assert bytes(location_name, "utf-8") in response.content
+        address = address.split()[0]
+        assert bytes(address, "utf-8") in response.content
 
     @staticmethod
-    def test_event_location_wrong(event_test_client, user):
+    def test_event_location_wrong(event_test_client, session):
+        address = TestGeolocation.WRONG_LOCATION_EVENT['location']
         response = event_test_client.post(
             "event/edit",
             data=TestGeolocation.WRONG_LOCATION_EVENT
         )
         assert response.ok
-        url = event_test_client.app.url_path_for('eventview', event_id=1)
+        event_id = session.query(func.count(Event.id)).scalar()
+        url = event_test_client.app.url_path_for('eventview',
+                                                 event_id=event_id)
         response = event_test_client.get(url)
-        location = get_location_coordinates(
-            TestGeolocation.CORRECT_LOCATION_EVENT['location']
-        )
-        location_name = location[2].split()[0]
-        assert not bytes(location_name, "utf-8") in response.content
+        assert bytes(address, "utf-8") in response.content

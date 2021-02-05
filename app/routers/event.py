@@ -46,24 +46,18 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
                             '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
-    user = user if user else create_user(
-        "u", "p", "e@mail.com", "english", session
-    )
+    user = get_user_or_create_default(user, session)
     owner_id = user.id
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
-    color = data['color']
-
+    color = data['color'] if data['color'] else None
     latitude, longitude = None, None
 
     if is_zoom:
         validate_zoom_link(location)
     else:
-        location_details = get_location_coordinates(location)
-        if location_details is not None:
-            latitude, longitude, location = location_details
-
+        latitude, longitude, location = get_location_coordinates(location)
     event = create_event(session, title, start, end, owner_id, content,
                          location, latitude, longitude, color)
     return RedirectResponse(router.url_path_for('eventview',
@@ -121,6 +115,15 @@ def by_id(db: Session, event_id: int) -> Event:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=error_message)
     return event
+
+
+def get_user_or_create_default(user: User, session: Session) -> User:
+    """Check if the user is logged in, else create a fictive user
+    Returns:
+        User: User instance."""
+    if not user:
+        user = create_user("u", "p", "e@mail.com", "english", session)
+    return user
 
 
 def is_end_date_before_start_date(
@@ -276,15 +279,15 @@ def delete_event(event_id: int,
 def get_location_coordinates(
         address: str,
         timeout: float = LOCATION_TIMEOUT
-        ) -> Optional[Tuple[float, float, str]]:
+        ) -> Tuple[Optional[float], Optional[float], str]:
     """Return location coordinates and accurate
     address of the specified location."""
     geolocator = Nominatim(user_agent="calendar", timeout=timeout)
     try:
         location = geolocator.geocode(address)
         if location is not None:
-            acc_address = location.raw["display_name"]
-            return location.latitude, location.longitude, acc_address
+            accurate_address = location.raw["display_name"]
+            return location.latitude, location.longitude, accurate_address
     except (GeocoderTimedOut, GeocoderUnavailable) as e:
         logger.exception(str(e))
-    return None
+    return None, None, address
