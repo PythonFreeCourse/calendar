@@ -10,7 +10,7 @@ from app.internal.quotes import daily_quotes, load_quotes
 from app.internal import load_jokes
 from app.routers import (
     agenda, calendar, categories, dayview, email,
-    event, invitation, joke, profile, search, telegram, whatsapp
+    event, invitation, profile, search, telegram, whatsapp, joke
 )
 from app.telegram.bot import telegram_bot
 
