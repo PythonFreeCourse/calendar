@@ -14,8 +14,10 @@ from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
 from app.internal.event import validate_zoom_link
+from app.internal.emotion import get_emotion
 from app.internal.utils import create_model
 from app.routers.user import create_user
+
 
 router = APIRouter(
     prefix="/event",
@@ -192,6 +194,7 @@ def create_event(db, title, start, end, owner_id, content=None, location=None):
         content=content,
         owner_id=owner_id,
         location=location,
+        emotion=get_emotion(title, content)
     )
     create_model(
         db, UserEvent,
