@@ -35,7 +35,7 @@ uvicorn app.main:app --reload
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp app/config.py.example app/config.py
+cp app/config.py.example app/configuration.py
 # Edit the variables' values.
 uvicorn app.main:app --reload
 ```
