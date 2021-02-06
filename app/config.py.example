@@ -65,6 +65,17 @@ EVENT_HEADER_LIMIT = 50  # Max characters for event header.
 EVENT_CONTENT_LIMIT = 500  # Max characters for event characters.
 MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
 
+# EMOTION
+"""
+Emotion will appear if the level of significance is
+equal to or above this constraint
+"""
+LEVEL_OF_SIGNIFICANCE = 0.45
+# The weight of emotion based on the event title
+TITLE_WEIGHTS = 0.6
+# The weight of emotion based on the event content
+CONTENT_WEIGHTS = 1 - TITLE_WEIGHTS
+
 # PATHS
 STATIC_ABS_PATH = os.path.abspath("static")
 

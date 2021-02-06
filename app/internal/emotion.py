@@ -1,16 +1,10 @@
 import text2emotion as te
 from typing import List, Union
 
-
-"""
-Emotion will appear if the level of significance is
-equal to or above this constraint
-"""
-LEVEL_OF_SIGNIFICANCE = 0.45
-# The weight of emotion based on the event title
-TITLE_WEIGHTS = 0.6
-# The weight of emotion based on the event content
-CONTENT_WEIGHTS = 1 - TITLE_WEIGHTS
+from app.config import (
+    CONTENT_WEIGHTS,
+    LEVEL_OF_SIGNIFICANCE,
+    TITLE_WEIGHTS)
 
 
 EMOTIONS = [("Happy", "&#128515"),
