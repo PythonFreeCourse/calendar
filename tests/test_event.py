@@ -11,9 +11,10 @@ from sqlalchemy.orm import Session
 from app.main import app
 from app.database.models import Event
 from app.database.database import get_db
-from app.routers.event import (add_new_event, is_date_before, _delete_event, by_id, delete_event,
+from app.routers.event import (_delete_event, by_id, delete_event,
                                check_change_dates_allowed, update_event,
-                               _update_event)
+                               _update_event, add_new_event,
+                               is_date_before)
 
 
 CORRECT_EVENT_FORM_DATA = {
