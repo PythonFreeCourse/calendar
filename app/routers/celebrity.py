@@ -1,5 +1,5 @@
 from app.dependencies import templates
-from app.internal.celebrity import get_celebs, get_today_month_and_day
+from app.internal.celebrity import get_today_month_and_day
 from fastapi import APIRouter, Request
 
 
@@ -12,6 +12,5 @@ def search(request: Request):
 
     return templates.TemplateResponse("celebrity.html", {
         "request": request,
-        "celebrities": get_celebs(today),
         "date": today
     })

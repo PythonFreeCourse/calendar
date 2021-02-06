@@ -1,0 +1,15 @@
+.top-div {
+    display: block;
+    width: 180px;
+    margin: 0.2rem;
+    text-align: center;
+}
+
+.div-footer {
+    padding: 1px;
+    text-align: center;
+}
+
+.div-job {
+    display: inline;
+}

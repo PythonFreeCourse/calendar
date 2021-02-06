@@ -1,26 +1,22 @@
 {% extends "base.html" %}
 
-
 {% block content %}
 
 <div class="container mt-4">
     <div class="my-4">
         <h5>Celebrities born today ({{ date }}):</h5>
     </div>
-    {% if celebrities %}
     <div class="col-lg-12">
-        <div class="card-deck" style="flex-flow: row wrap; display: flex;">
-            {% for name, details in celebrities.items() %}
-            <div class="card" style="display: block; width: 180px; margin: 0.2rem;">
-                <img class="card-img-top" src="{{ details['image'] }}" alt="Card image cap">
-                <div class="card-footer" style="padding: 0; text-align: center;">
-                    <small class="text-muted"><a href="https://www.imdb.com{{ details['imdb_profile'] }}"
-                            title="{{ name }}" target="_blank">{{ name }}</a> | {{ details['job'] }}</small>
-                </div>
-            </div>
-            {% endfor %}
+        <div id="celebCards" class="card-deck" style="flex-flow: row wrap; display: flex;">
+            <div class="spinner-border" role="status">
+                <span class="sr-only"></span>
+              </div>
         </div>
     </div>
-    {% endif %}
 </div>
+<link rel="stylesheet" href="{{ url_for('static', path='/celebrity.css') }}">
+<script type="text/javascript" src="{{ url_for('static', path='/celebrity.js')}}"></script>
+<script>
+    getCelebs("{{ date | safe }}");
+</script>
 {% endblock %}
