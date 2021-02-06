@@ -42,6 +42,7 @@ class TestAgenda:
             next_month_event, old_event
     ):
         resp = agenda_test_client.get(TestAgenda.AGENDA_7_DAYS)
+        print(resp)
         today = date.today().strftime("%d/%m/%Y")
         assert resp.status_code == status.HTTP_200_OK
         assert bytes(today, 'utf-8') in resp.content
