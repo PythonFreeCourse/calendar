@@ -14,30 +14,30 @@ from tests.salary.test_utils import get_event_by_category
 
 PATHS = [
     (conftest.ROUTES['new']),
-    (conftest.ROUTES['edit']),
-    (conftest.ROUTES['edit'] + '/' + str(conftest.CATEGORY_ID)),
-    (conftest.ROUTES['view']),
-    (conftest.ROUTES['view'] + '/' + str(conftest.CATEGORY_ID)),
+    (conftest.ROUTES['edit_pick']),
+    (conftest.ROUTES['edit'](conftest.CATEGORY_ID)),
+    (conftest.ROUTES['view_pick']),
+    (conftest.ROUTES['view'](conftest.CATEGORY_ID)),
 ]
 
 EMPTY_PICKS = [
-    (conftest.ROUTES['edit']),
-    (conftest.ROUTES['view']),
+    (conftest.ROUTES['edit_pick']),
+    (conftest.ROUTES['view_pick']),
 ]
 
 CATEGORY_PICK = [
-    (conftest.ROUTES['edit'], conftest.MESSAGES['edit_settings']),
-    (conftest.ROUTES['view'], conftest.MESSAGES['view_salary']),
+    (conftest.ROUTES['edit_pick'], conftest.MESSAGES['edit_settings']),
+    (conftest.ROUTES['view_pick'], conftest.MESSAGES['view_salary']),
 ]
 
 INVALID = [
-    (conftest.ROUTES['edit'] + '/' + str(conftest.ALT_CATEGORY_ID),
+    (conftest.ROUTES['edit'](conftest.ALT_CATEGORY_ID),
      conftest.MESSAGES['pick_settings']),
-    (conftest.ROUTES['view'] + '/' + str(conftest.ALT_CATEGORY_ID),
+    (conftest.ROUTES['view'](conftest.ALT_CATEGORY_ID),
      conftest.MESSAGES['pick_category']),
-    (conftest.ROUTES['edit'] + '/' + str(conftest.INVALID_CATEGORY_ID),
+    (conftest.ROUTES['edit'](conftest.INVALID_CATEGORY_ID),
      conftest.MESSAGES['pick_settings']),
-    (conftest.ROUTES['view'] + '/' + str(conftest.INVALID_CATEGORY_ID),
+    (conftest.ROUTES['view'](conftest.INVALID_CATEGORY_ID),
      conftest.MESSAGES['pick_category']),
 ]
 
@@ -168,7 +168,7 @@ def test_edit_settings(salary_test_client: TestClient, salary_session: Session,
                        wage: SalarySettings) -> None:
     category_id = wage.category_id
     settings = utils.get_settings(salary_session, wage.user_id, category_id)
-    route = conftest.ROUTES['edit'] + '/' + str(category_id)
+    route = conftest.ROUTES['edit'](category_id)
     data = {
         'wage': wage.wage + 1,
         'off_day': wage.off_day,
@@ -210,7 +210,7 @@ def test_invalid_category_redirect(
             new=get_event_by_category)
 def test_view_salary(salary_test_client: TestClient,
                      wage: SalarySettings) -> None:
-    route = (conftest.ROUTES['view'] + '/' + str(wage.category_id))
+    route = (conftest.ROUTES['view'](wage.category_id))
     data = {
         'month': conftest.MONTH,
         'bonus': 1000,

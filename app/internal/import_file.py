@@ -6,6 +6,7 @@ import re
 from typing import Any, Dict, Generator, List, Tuple, Union
 
 from icalendar import Calendar
+from sqlalchemy.orm.session import Session
 
 from app.config import (
     EVENT_CONTENT_LIMIT,
@@ -16,7 +17,6 @@ from app.config import (
     MAX_FILE_SIZE_MB,
     VALID_FILE_EXTENSION
 )
-from app.database import SessionLocal
 from app.routers.event import create_event
 from loguru import logger
 
@@ -168,7 +168,7 @@ def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
 
 def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
                             user_id: int,
-                            session: SessionLocal) -> None:
+                            session: Session) -> None:
     """insert the events into Event table"""
     for event in events:
         title = event["Head"]
@@ -184,7 +184,7 @@ def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
                      owner_id=owner_id)
 
 
-def user_click_import(file: str, user_id: int, session: SessionLocal) -> bool:
+def user_click_import(file: str, user_id: int, session: Session) -> bool:
     """
     when user choose a file and click import, we are checking the file
     and if everything is ok we will insert the data to DB

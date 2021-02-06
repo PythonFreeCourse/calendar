@@ -7,6 +7,7 @@ from sqlalchemy.orm.session import Session
 from app.database.models import Base, SalarySettings, User
 from app.internal.utils import create_model, delete_instance
 from app.routers.salary import config
+from app.routers.salary.routes import router
 from tests.conftest import test_engine
 
 
@@ -20,10 +21,12 @@ MESSAGES = {
 }
 
 ROUTES = {
-    'home': '/salary',
-    'new': '/salary/new',
-    'edit': '/salary/edit',
-    'view': '/salary/view'
+    'home': router.url_path_for('salary_home'),
+    'new': router.url_path_for('create_settings'),
+    'edit_pick': router.url_path_for('pick_settings'),
+    'edit': lambda x: router.url_path_for('edit_settings', category_id=x),
+    'view_pick': router.url_path_for('pick_category'),
+    'view': lambda x: router.url_path_for('view_salary', category_id=x),
 }
 
 CATEGORY_ID = 1
