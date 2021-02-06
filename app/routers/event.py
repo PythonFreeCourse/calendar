@@ -262,7 +262,7 @@ def is_date_before(start_time: datetime, end_time: datetime) -> bool:
         return False
 
 
-def add_new_event(values: dict, db) -> Optional[Event]:
+def add_new_event(values: dict, db: Session) -> Optional[Event]:
     """Get User values and the DB Session insert the values
     to the DB and refresh it exception in case that the keys
     in the dict is not match to the fields in the DB
