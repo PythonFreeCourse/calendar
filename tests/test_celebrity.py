@@ -1,9 +1,7 @@
 import datetime
 
 import pytest
-import requests
 from app.internal.celebrity import get_today_month_and_day
-from fastapi import status
 
 
 CELEBRITY_PAGE = "/celebrity"
