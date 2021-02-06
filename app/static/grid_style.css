@@ -1,3 +1,7 @@
+html {
+    font-size: 62.5%;  /*16px / 10px = 62.5% -> 1rem = 10px*/
+}
+
 a {
     text-decoration: none;
     color: inherit;
