@@ -1,3 +1,4 @@
+import calendar
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -16,7 +17,8 @@ pytest_plugins = [
     'tests.logger_fixture',
     'tests.category_fixture',
     'smtpdfix',
-    'tests.quotes_fixture'
+    'tests.quotes_fixture',
+    'tests.zodiac_fixture'
 ]
 
 # When testing in a PostgreSQL environment please make sure that:
@@ -70,3 +72,8 @@ def sqlite_engine():
     session = TestingSession()
     session.close()
     Base.metadata.drop_all(bind=sqlite_test_engine)
+
+
+@pytest.fixture
+def Calendar():
+    return calendar.Calendar(0)

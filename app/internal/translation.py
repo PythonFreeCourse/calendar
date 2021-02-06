@@ -1,11 +1,10 @@
 from typing import Optional
 
 from iso639 import languages
+from loguru import logger
 from sqlalchemy.orm.session import Session
 from textblob import TextBlob, download_corpora
 from textblob.exceptions import NotTranslated
-
-from loguru import logger
 
 from app.routers.user import get_users
 

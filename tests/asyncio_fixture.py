@@ -20,7 +20,6 @@ async def telegram_client():
     Base.metadata.drop_all(bind=test_engine)
 
 
-session = get_test_db()
 today_date = datetime.today().replace(hour=0, minute=0, second=0)
 
 
@@ -35,7 +34,7 @@ def get_test_placeholder_user():
 
 
 @pytest.fixture
-def fake_user_events():
+def fake_user_events(session):
     Base.metadata.create_all(bind=test_engine)
     user = get_test_placeholder_user()
     session.add(user)
