@@ -1,3 +1,28 @@
+:root {
+    /* Texts */
+    --text_xs: 0.75rem; /* 12px */
+    --text_s: 1rem;     /* 16px */
+    --text_m: 1.25rem;  /* 20px */
+    --text_l: 1.50rem;  /* 24px */
+    --text_xl: 2rem;    /* 32px */
+
+    /* Spaces */
+    --distance_xs: 0.5rem; /* 6px */
+    --distance_s: 0.75rem; /* 12px */
+    --distance_m: 1.25rem; /* 20px */
+    --distance_l: 2rem;    /* 20px */
+    --distance_xl: 4rem;   /* 64px */
+
+    /* colors */
+    --primary: #F7F7F7;
+    --secondary: #222831;
+    --surface: #e9ecef;
+    --up_surface: #adb5bd;
+    --bold_primary: #FFDE4D;
+    --bold_secondary: #F24726;
+    --bold_tertiary: #0CA789;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -7,12 +32,12 @@
 html {
     font-family: "Assistant", "Ariel", sans-serif;
     font-weight: 400;
-    font-size: 62.5%;  /*16px / 10px = 62.5% -> 1rem = 10px*/
+    font-size: 100%;
     line-height: 1.7;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
-    background-color: #F7F7F7;
-    color: #222831;
+    background-color: var(--primary);
+    color: var(--secondary);
 }
 
 a {
@@ -24,7 +49,7 @@ a {
 /* -> Website Structure */
 .container {
     display: grid;
-    grid-template-columns: 4.8rem minmax(0, auto) 1fr;
+    grid-template-columns: 3rem minmax(0, auto) 1fr;
 }
 
 nav {
@@ -36,7 +61,7 @@ nav {
     position: sticky;
     display: flex;
     flex-direction: column;
-    top: 1rem;
+    top:var(--distance_s);
 }
 
 .fixed-features,
@@ -48,37 +73,37 @@ nav {
 .user-features {margin-top: 3rem;}
 
 .fixed-features div {
-    font-size: 3rem;
-    height: 4.4rem;
+    font-size: var(--text_xl);
+    height: 3rem;
 }
 
 .fixed-features div:hover {
-    color: #FFDE4D;
+    color: var(--bold_primary);
 }
 
 .user-features div {
-    height: 2.8rem;
-    width: 2.8rem;
-    font-size: 2rem;
-    margin: 1.2rem auto auto auto;
-    color: #F7F7F7;
-    background-color: #0CA789;
-    border-radius: 0.2rem;
+    height: 1.75rem;
+    width: 1.75rem;
+    font-size: var(--text_s);
+    margin: var(--distance_s) auto auto auto;
+    color: var(--primary);
+    background-color: var(--bold_tertiary);
+    border-radius: 0.125rem;
 }
 
 .user-features div:hover {
-    color: #222831;
-    background-color: #FFDE4D;
+    color: var(--secondary);
+    background-color: var(--bold_primary);
 }
 
 .user-features div:visited:active {
-    color: #222831;
-    background-color: #FFDE4D;
+    color: var(--secondary);
+    background-color: var(--bold_primary);
 }
 
 #open-features {
-    font-size: 2rem;
-    margin-top: 1rem;
+    font-size: var(--icon_l);
+    margin-top: var(--distance_s);
 }
 
 #feature-settings {
@@ -88,10 +113,10 @@ nav {
 }
 
 .settings-open {
-    width: 30rem;
+    width: 20rem;
 }
 
-img {fill: #F7F7F7;}
+img {fill: var(--primary);}
 
 header {
     z-index: 5;
@@ -99,8 +124,8 @@ header {
     top: 0;
     display: flex;
     grid-flow: row wrap;
-    margin: 0 1rem 0 1rem;
-    background-color: #F7F7F7;
+    margin: 0 var(--distance_s);
+    background-color: var(--primary);
 }
 
 header div {
@@ -109,7 +134,6 @@ header div {
 
 #logo-div {
     text-align: end;
-    padding-right: 2rem;
 }
 
 /* Main Element Grid */
@@ -129,13 +153,13 @@ main {
 .calender-days-titles {
     z-index: 4;
     position: sticky;
-    top: 6rem;
+    top: var(--distance_xl);
     align-self: flex-start;
     grid-column: 1/3;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin: 1rem 1rem 0 1rem;
-    background-color: #F7F7F7;
+    margin: var(--distance_s) var(--distance_s) 0 var(--distance_s);
+    background-color: var(--primary);
 }
 
 /* The Calendar Grid */
@@ -143,20 +167,20 @@ main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin: 0 1rem 0 1rem;
+    margin: 0 var(--distance_s);
 }
 
 .week {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: 12rem;
-    font-weight: 900;
-    font-size: 2rem;
+    grid-auto-rows: 4.5rem;
+    font-weight: 800;
+    font-size: var(--text_m);
 }
 
 .week:hover {
-    box-shadow: -5px 0px 0px 0px #FFDE4D;
+    box-shadow: -0.25rem 0 0 0 var(--bold_primary);
 }
 
 .day {
@@ -165,9 +189,9 @@ main {
     flex-direction: column;
     overflow: hidden;
 
-    font-size: 1.2rem;
-    padding: 0 1rem 0 1rem;
-    border: 1px solid #e9ecef;
+    font-size: var(--text_xs);
+    padding: 0 var(--distance_s);
+    border: 0.1rem solid var(--surface);
 
     overflow-y: auto;
     -ms-overflow-style: none;  /* IE and Edge */
@@ -178,20 +202,20 @@ main {
 
 .event {font-weight: 400;}
 
-.day:hover {border: 0.2rem solid #222831;}
+.day:hover {border: 0.1rem solid var(--secondary);}
 
-.day:hover .day-number{color: #F24726;}
+.day:hover .day-number{color: var(--bold_secondary);}
 
 .day:hover .add-small{display: block;}
 
 .day-number {
-    font-weight: 900;
-    font-size: 2rem;
+    font-weight: 800;
+    font-size: var(--text_m);
     text-align: left;
 }
 
 .day_current {
-    background-color: #FFDE4D;
+    background-color: var(--bold_primary);
     color: white;
 }
 
@@ -206,24 +230,46 @@ main {
 
 .add-small {
     display: none;
-    font-weight: 900;
-    font-size: 2rem;
-    padding-right: 0.5rem;
+    font-weight: 800;
+    font-size: var(--text_m);
+    padding-right: var(--distance_xs);
 }
 
 /* Dates Navigation */
-.dates-navigation {position: fixed;}
+#months-navigation {
+    display: flex;
+    flex-flow: column;
+    width: var(--distance_xl);
+    margin: 0 var(--distance_s);
+}
+
+#months-navigation * {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: var(--text_s);
+    margin-top: var(--distance_s);
+}
+
+#current-month-title {
+    font-weight: 800;
+}
+
+.sticky {
+    z-index: 4;
+    position: sticky;
+    top: var(--distance_xl);
+}
 
 /* Events - Rotation*/
 .month-event {
     position: relative;
-    perspective: 150rem;
-    -moz-perspective: 150rem;
-    height: 2.4rem;
+    perspective: 94rem;
+    -moz-perspective: 94rem;
+    height: 1.5rem;
 }
 
 .month-event div{
-    height: 2.4rem;
+    height: 1.5rem;
     width: 100%;
     transition: all 0.3s ease;
     position: absolute;
@@ -240,48 +286,60 @@ main {
 
 .daily {
     font-weight: 700;
-    border-radius: 0.4rem;
-    padding: 0 0.5rem 0 0.5rem;
+    border-radius: 0.25rem;
+    padding: 0 var(--distance_s);
 }
 
 /* Titles */
 .day-title {
     font-weight: 600;
-    font-size: 1.6rem;
+    font-size: var(--text_m);
 }
 
 .title {
-    font-weight: 900;
-    font-size: 2.4rem;
-    margin-bottom: -1rem;
+    font-weight: 800;
+    font-size: var(--text_xl);
+    margin-bottom: calc(var(--distance_s) * -1);
 }
 
 .sec-title {
     font-weight: 500;
-    font-size: 1.6rem;
+    font-size: var(--text_s);
 }
 
 /* Text Colors */
-.text-yellow {color: #FFDE4D;}
+.text-yellow {color: var(--bold_primary);}
 
-.text-gray {color: #adb5bd;}
+.text-gray {color: var(--up_surface);}
 
-.text-lightgray {color: #F7F7F7;}
+.text-lightgray {color: var(--primary);}
 
-.text-darkblue {color: #222831;}
+.text-darkblue {color: var(--secondary);}
 
 /* Borders */
-.border-dash-darkblue {border: 2px dashed  #222831;}
+.border-dash-darkblue {border: 0.125rem dashed  var(--secondary);}
 
-.border-darkblue {border: 2px solid  #222831;}
+.border-darkblue {border: 0.125rem solid  var(--secondary);}
 
-.underline-yellow {border-bottom: 4px solid  #FFDE4D;}
+.underline-yellow {border-bottom: 0.25rem solid  var(--bold_primary);}
 
 /* Background Color */
-.background-darkblue {background-color: #222831;}
+.background-darkblue {background-color: var(--secondary);}
 
-.background-red {background-color: #F24726;}
+.background-red {background-color: var(--bold_secondary);}
 
-.background-lightgray {background-color: #e9ecef;}
+.background-lightgray {background-color: var(--surface);}
 
-.background-yellow {background-color: #FFDE4D;}
+.background-yellow {background-color: var(--bold_primary);}
+
+/* Buttons */
+
+.button {
+    border-radius: 0.15rem;
+    font-size: var(--text_m);
+    padding: 0.15rem 0.25rem;
+}
+
+.button:hover {
+    font-weight: 700;
+}
