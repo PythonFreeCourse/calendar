@@ -43,9 +43,25 @@ class User(Base):
     is_active = Column(Boolean, default=False)
 
     events = relationship("UserEvent", back_populates="participants")
+    tasks = relationship(
+          "Task", cascade="all, delete", back_populates="owner")
 
     def __repr__(self):
         return f'<User {self.id}>'
+
+
+class UserTask(Base):
+    __tablename__ = "user_task"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+    event_id = Column('task_id', Integer, ForeignKey('tasks.id'))
+
+    tasks = relationship("Task", back_populates="participants")
+    participants = relationship("User", back_populates="tasks")
+
+    def __repr__(self):
+        return f'<UserTask ({self.participants}, {self.tasks})>'
 
 
 class Event(Base):
@@ -176,3 +192,18 @@ class Zodiac(Base):
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
         )
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    is_done = Column(Boolean, nullable=False)
+    is_important = Column(Boolean, nullable=False)
+    date = Column(DateTime, nullable = False)
+    time = Column(DateTime, nullable = False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="tasks")
