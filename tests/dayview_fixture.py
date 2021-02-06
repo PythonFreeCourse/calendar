@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database.models import Event, User
 
+
 @pytest.fixture
 def event1():
     start = datetime(year=2021, month=2, day=1, hour=7, minute=5)
@@ -66,3 +67,14 @@ def multiday_event():
     end = datetime(year=2021, month=2, day=3, hour=13)
     return Event(title='test_multiday', content='test',
                  start=start, end=end, owner_id=1, color='blue')
+
+@pytest.fixture
+def weekdays():
+    return [
+     'Sunday', 'Monday', 'Tuesday',
+     'Wednesday', 'Thursday', 'Friday', 'Saturday'
+    ]
+
+@pytest.fixture
+def sunday():
+    return datetime(day=3, month=1, year=2021)

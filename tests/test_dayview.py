@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 import pytest
 
-from app.database.models import Event, User
 from app.routers.dayview import DivAttributes
 from app.routers.event import create_event
 
@@ -18,7 +17,7 @@ def create_dayview_event(events, session, user):
             owner_id=user.id,
             color=event.color
         )
-        
+
 
 def test_minutes_position_calculation(event_with_no_minutes_modified):
     div_attr = DivAttributes(event_with_no_minutes_modified)
