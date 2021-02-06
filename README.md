@@ -12,3 +12,10 @@ pip install -r requirements.txt
 # Edit the variables' values.
 uvicorn app.main:app --reload
 ```
+
+
+## Development
+#### To install git hooks
+```shell
+pre-commit install
+```
