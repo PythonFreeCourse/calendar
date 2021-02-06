@@ -51,8 +51,8 @@ async def get_data_from_api(formatted_date: str, location: str)\
         return output
 
 
-async def get_astronomical_data(requested_date: datetime.datetime, location: str)\
-        -> Dict[str, int]:
+async def get_astronomical_data(requested_date: datetime.datetime,
+                                location: str) -> Dict[str, int]:
     """ get astronomical data (Sun & Moon) for date & location -
         main function.
     Args:
