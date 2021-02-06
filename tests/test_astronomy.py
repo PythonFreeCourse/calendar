@@ -1,7 +1,10 @@
 import datetime
+import httpx
 import pytest
 import requests
 import responses
+import respx
+
 
 from app.internal.astronomy import get_astronomical_data
 from app.internal.astronomy import ASTRONOMY_URL
@@ -31,33 +34,37 @@ ERROR_RESPONSE_FROM_MOCK = {"error": {"message": "Error Text"}}
 
 
 @pytest.mark.asyncio
-def test_get_astronomical_data(httpx_mock):
+async def test_get_astronomical_data(httpx_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
     httpx_mock.add_response(method="GET", json=RESPONSE_FROM_MOCK)
-    output = get_astronomical_data(requested_date, "tel aviv")
+    output = await get_astronomical_data(requested_date, "tel aviv")
     assert output['Success']
 
 
-def test_astronomical_data_error_from_api(requests_mock):
+@pytest.mark.asyncio
+@respx.mock
+async def test_astronomical_data_error_from_api():
     requested_date = datetime.datetime(day=4, month=4, year=2021)
-    requests_mock.get(ASTRONOMY_URL, json=ERROR_RESPONSE_FROM_MOCK)
-    output = get_astronomical_data(requested_date, "123")
+    route = respx.get(ASTRONOMY_URL)
+    route.return_value = httpx.Response(200, json=ERROR_RESPONSE_FROM_MOCK)
+    output = await get_astronomical_data(requested_date, "123")
     assert not output['Success']
 
 
-@responses.activate
-def test_astronomical_exception_from_api():
+@pytest.mark.asyncio
+@respx.mock
+async def test_astronomical_exception_from_api(httpx_mock):
     requested_date = datetime.datetime.now() + datetime.timedelta(days=3)
-    with pytest.raises(requests.exceptions.ConnectionError):
-        requests.get(ASTRONOMY_URL)
-    output = get_astronomical_data(requested_date, "456")
+    respx.get(ASTRONOMY_URL).mock(return_value=httpx.Response(500))
+    output = await get_astronomical_data(requested_date, "456")
     assert not output['Success']
 
 
 @responses.activate
-def test_astronomical_no_response_from_api():
+@pytest.mark.asyncio
+async def test_astronomical_no_response_from_api():
     requested_date = datetime.datetime(day=11, month=1, year=2020)
     responses.add(responses.GET, ASTRONOMY_URL, status=500)
     requests.get(ASTRONOMY_URL)
-    output = get_astronomical_data(requested_date, "789")
+    output = await get_astronomical_data(requested_date, "789")
     assert not output['Success']
