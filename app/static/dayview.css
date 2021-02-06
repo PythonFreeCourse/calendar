@@ -89,3 +89,16 @@ html {
 .action-continer:hover .action-icon {
     visibility: visible;
 }
+
+.zodiac-sign {
+    position: fixed;
+    right: 1.2em;
+    top: 1.6em;
+    padding-right: 0.4em;
+    padding-left: 0.4em;
+    padding-bottom: 0.2em;
+    border: solid 0.1px var(--primary);
+    background-color: var(--borders-variant);
+    border-radius:50px;
+    box-shadow: 1px 1px 2px #999;
+}
