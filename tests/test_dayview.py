@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from bs4 import BeautifulSoup
 import pytest
+from bs4 import BeautifulSoup
 
 from app.routers.dayview import DivAttributes
 from app.routers.event import create_event

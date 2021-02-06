@@ -8,7 +8,7 @@ from app.database.database import get_db
 from app.database.models import Event, User
 from app.routers.user import get_all_user_events
 from app.dependencies import TEMPLATES_PATH
-
+from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
@@ -115,6 +115,7 @@ async def dayview(
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
+    zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
     events_n_attrs = get_events_and_attributes(
         day=day, session=db_session, user_id=user.id
     )
@@ -124,5 +125,5 @@ async def dayview(
         "events": events_n_attrs,
         "month": month,
         "day": day.day,
+        "zodiac": zodiac_obj
         "view": view
-        })

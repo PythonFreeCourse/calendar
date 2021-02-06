@@ -1,7 +1,7 @@
+from app.routers.invitation import get_all_invitations
 from app.routers.share import (
     accept, send_in_app_invitation, sort_emails, send_email_invitation, share
 )
-from app.routers.invitation import get_all_invitations
 
 
 class TestShareEvent:
