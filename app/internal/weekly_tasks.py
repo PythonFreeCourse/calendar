@@ -166,7 +166,6 @@ def generate_tasks(
                 owner_id=user.id
             )
             yield create_task(task, user, session)
-    yield False
 
 
 def remove_weekly_task(
