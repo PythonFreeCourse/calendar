@@ -24,7 +24,7 @@ def test_get_week_dates(weekdays, sunday):
 
 
 def test_weekview_day_names(session, user, client, weekdays):
-    response = client.get(f"/week/2021-1-3")
+    response = client.get("/week/2021-1-3")
     soup = BeautifulSoup(response.content, 'html.parser')
     day_divs = soup.find_all("div", {"class": 'day-name'})
     for i in range(6):
@@ -32,7 +32,7 @@ def test_weekview_day_names(session, user, client, weekdays):
 
 
 def test_weekview_day_dates(session, user, client, sunday):
-    response = client.get(f"/week/2021-1-3")
+    response = client.get("/week/2021-1-3")
     soup = BeautifulSoup(response.content, 'html.parser')
     day_divs = soup.find_all("span", {"class": 'date-nums'})
     week_dates = get_week_dates(sunday)
