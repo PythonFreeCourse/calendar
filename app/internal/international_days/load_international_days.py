@@ -8,7 +8,7 @@ from app.database.models import InternationalDays
 
 def get_international_days_from_json() -> List[Dict[str, Optional[str]]]:
     try:
-        with open('app/resources/international_days(2).json', 'r') as datadays:
+        with open('app/resources/international_days.json', 'r') as datadays:
             international_days_list = json.load(datadays)["calender"]
     except (IOError, ValueError):
         return []
