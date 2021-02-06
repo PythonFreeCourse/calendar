@@ -125,5 +125,6 @@ async def dayview(
         "events": events_n_attrs,
         "month": month,
         "day": day.day,
-        "zodiac": zodiac_obj
+        "zodiac": zodiac_obj,
         "view": view
+    })
