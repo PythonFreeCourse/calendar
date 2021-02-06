@@ -1,26 +1,28 @@
-async function daily_horoscope(singName) {
-    sign = singName.toLowerCase();
-    const signData = 'https://aztro.sameerkumar.website/?sign=' + sign + '&day=today'
+function sendSignDescription(singName) {
+    const sign = singName.toLowerCase();
+    const signData = "https://aztro.sameerkumar.website/?sign=" + sign +
+        "&day=today";
     const xhr = new XMLHttpRequest();
     xhr.open("POST", signData, true);
     xhr.onload = function() {
-        let obj = JSON.parse(this.responseText);
-        let daily = document.getElementById('daily_horoscope');
-        let str = obj.description;
-        daily.innerHTML = str;
-    }
+        let jsonObject = JSON.parse(this.responseText);
+        let element = document.getElementById("daily_horoscope");
+        let str = jsonObject.description;
+        element.innerHTML = str;
+    };
     xhr.send();
 }
 
-var elements = document.getElementsByClassName('sign');
 
-function addEventsLoop() {
+
+function addEventsAfterPageLoaded() {
+    const elements = document.getElementsByClassName("sign");
     Array.from(elements).forEach((element) => {
         let singName = element.name;
-        element.addEventListener('click', function() {
-            daily_horoscope(singName);
+        element.addEventListener("click", function() {
+            sendSignDescription(singName);
         }, false);
     });
 }
 
-document.addEventListener('DOMContentLoaded', addEventsLoop);
+document.addEventListener("DOMContentLoaded", addEventsAfterPageLoaded);
