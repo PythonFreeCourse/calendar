@@ -1,9 +1,6 @@
-from datetime import datetime, timedelta
-
 from bs4 import BeautifulSoup
 import pytest
 
-from app.database.models import Event, User
 from app.routers.event import create_event
 from app.routers.weekview import get_week_dates
 
@@ -32,7 +29,7 @@ def test_weekview_day_names(session, user, client, weekdays):
     day_divs = soup.find_all("div", {"class": 'day-name'})
     for i in range(6):
         assert weekdays[i][:3].upper() in str(day_divs[i])
-        
+
 
 def test_weekview_day_dates(session, user, client, sunday):
     response = client.get(f"/week/2021-1-3")
@@ -50,7 +47,9 @@ def test_weekview_day_dates(session, user, client, sunday):
      ("2021-1-31", 'event2'),
      ("2021-2-3", 'event3')]
 )
-def test_weekview_html_events(event1, event2, event3, session, user, client, date, event):
+def test_weekview_html_events(
+    event1, event2, event3, session, user, client, date, event
+):
     create_weekview_event([event1, event2, event3], session=session, user=user)
     response = client.get(f"/week/{date}")
     soup = BeautifulSoup(response.content, 'html.parser')

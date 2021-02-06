@@ -3,12 +3,10 @@ from typing import Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import and_, or_
 
 from app.database.database import get_db
 from app.database.models import Event, User
-from app.routers.user import get_all_user_events, create_user
-from app.routers.event import create_event
+from app.routers.user import get_all_user_events
 from app.dependencies import TEMPLATES_PATH
 
 
@@ -108,14 +106,18 @@ def get_events_and_attributes(day: datetime, session, user_id: int):
 
 
 @router.get('/day/{date}')
-async def dayview(request: Request, date: str, db_session=Depends(get_db), view='day'):
+async def dayview(
+          request: Request, date: str, db_session=Depends(get_db), view='day'
+      ):
     # TODO: add a login session
     user = db_session.query(User).filter_by(username='test_username').first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
-    events_n_attrs = get_events_and_attributes(day=day, session=db_session, user_id=user.id)
+    events_n_attrs = get_events_and_attributes(
+        day=day, session=db_session, user_id=user.id
+    )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,
@@ -124,9 +126,3 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db), view=
         "day": day.day,
         "view": view
         })
-
-@router.get('/create-testuser')
-async def create_test_user(request: Request, db_session=Depends(get_db)):
-    start = datetime(year=2021, month=3, day=6, hour=5, minute=15)
-    end = datetime(year=2021, month=3, day=7, hour=6, minute=45)
-    create_event(db=db_session, title='test2', start=start, end=end, owner_id=1)
