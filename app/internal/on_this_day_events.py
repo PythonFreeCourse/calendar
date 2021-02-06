@@ -1,18 +1,21 @@
 import json
 from datetime import date, datetime
-from typing import Dict
-
+from typing import Any, Dict
 import requests
+from fastapi import Depends
 from loguru import logger
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
+from app.database.database import get_db
 from app.database.models import WikipediaEvents
 
 
-def insert_on_this_day_data(session: Session) -> Dict:
+def insert_on_this_day_data(
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
     now = datetime.now()
     day, month = now.day, now.month
 
@@ -22,21 +25,23 @@ def insert_on_this_day_data(session: Session) -> Dict:
     res_events = text.get('events')
     res_date = text.get('date')
     res_wiki = text.get('wikipedia')
-    session.add(WikipediaEvents(events=res_events,
-                                date_=res_date, wikipedia=res_wiki))
-    session.commit()
+    db.add(WikipediaEvents(events=res_events,
+                           date_=res_date, wikipedia=res_wiki))
+    db.commit()
     return text
 
 
-def get_on_this_day_events(session: Session) -> Dict:
+def get_on_this_day_events(
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
     try:
-        data = (session.query(WikipediaEvents).
+        data = (db.query(WikipediaEvents).
                 filter(
                     func.date(WikipediaEvents.date_inserted) == date.today()).
                 one())
 
     except NoResultFound:
-        data = insert_on_this_day_data(session)
+        data = insert_on_this_day_data(db)
     except (SQLAlchemyError, AttributeError) as e:
         logger.error(f'on this day failed with error: {e}')
         data = {'events': [], 'wikipedia': 'https://en.wikipedia.org/'}
