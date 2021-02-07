@@ -14,7 +14,6 @@ from app.routers import (
 from app.telegram.bot import telegram_bot
 
 
-models.Base.metadata.drop_all(bind=engine)
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:
         raise models.PSQLEnvironmentError(
