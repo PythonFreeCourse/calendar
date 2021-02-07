@@ -2,8 +2,8 @@ import io
 import re
 
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, File, Request, UploadFile
 from loguru import logger
+from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
@@ -15,11 +15,6 @@ from app.database.database import get_db
 from app.database.models import User, Event, UserEvent
 from app.dependencies import MEDIA_PATH, templates
 from app.internal.on_this_day_events import get_on_this_day_events
-
-from fastapi import APIRouter, Depends, File, Request, UploadFile
-from PIL import Image
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -50,7 +45,6 @@ async def profile(
         request: Request,
         session=Depends(get_db),
         new_user=Depends(get_placeholder_user)):
-
     # Get relevant data from database
     upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
@@ -76,7 +70,6 @@ async def profile(
 @router.post("/update_user_fullname")
 async def update_user_fullname(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_fullname = data['fullname']
@@ -92,7 +85,6 @@ async def update_user_fullname(
 @router.post("/update_user_email")
 async def update_user_email(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_email = data['email']
@@ -108,7 +100,6 @@ async def update_user_email(
 @router.post("/update_user_description")
 async def update_profile(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_description = data['description']
@@ -124,7 +115,6 @@ async def update_profile(
 @router.post("/upload_user_photo")
 async def upload_user_photo(
         file: UploadFile = File(...), session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     pic = await file.read()
 
@@ -141,7 +131,6 @@ async def upload_user_photo(
 @router.post("/update_telegram_id")
 async def update_telegram_id(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_telegram_id = data['telegram_id']
