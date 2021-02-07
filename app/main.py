@@ -8,12 +8,13 @@ from app.database.database import engine, get_db
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.routers import (
-    agenda, calendar, categories, celebrity, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    agenda, calendar, categories, celebrity, currency, dayview,
+    email, event, invitation, profile, search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
 
+models.Base.metadata.drop_all(bind=engine)
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:
         raise models.PSQLEnvironmentError(
@@ -39,6 +40,7 @@ routers_to_include = [
     calendar.router,
     categories.router,
     celebrity.router,
+    currency.router,
     dayview.router,
     email.router,
     event.router,
