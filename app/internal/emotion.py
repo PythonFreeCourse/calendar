@@ -16,7 +16,7 @@ EMOTIONS = {"Happy": "&#128515",
             "Surprise": "&#128558"}
 
 Emoticon = namedtuple("Emoticon",
-                      ["dominant_emotion", "emotion_score", "smiley_code"])
+                      ["dominant_emotion", "emotion_score", "emoticon_code"])
 
 
 def dominant_emotion(title: str, content: str) -> Emoticon:
@@ -56,7 +56,7 @@ def is_emotion_above_significance(DominantEmotion: Emoticon,
 
 
 def get_html_emoticon(DominantEmotion: Emoticon) -> Union[str, None]:
-    return DominantEmotion.smiley_code
+    return DominantEmotion.emoticon_code
 
 
 def get_emotion(title: str, content: str) -> Union[str, None]:
