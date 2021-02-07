@@ -37,4 +37,4 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Apply automatic translateable string changes
+          commit_message: Apply automatic translatable string changes
