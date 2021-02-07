@@ -13,6 +13,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+Scripts/
+include/
 develop-eggs/
 dist/
 downloads/
@@ -30,6 +32,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+pyvenv.cfg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -116,6 +120,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.vscode/
 Scripts/*
 pyvenv.cfg
 
@@ -146,3 +151,5 @@ app/.vscode/
 
 # PyCharm
 .idea
+
+junit/
