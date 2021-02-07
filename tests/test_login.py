@@ -109,3 +109,9 @@ def test_corrupted_token(session, security_test_client):
     security_test_client.post(f'{url}', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
     assert b'Your token is incorrect' in res.content
+
+def test_forbidden_route_for_logged_in_user(session, security_test_client):
+    security_test_client.post('/register', data=REGISTER_DETAIL)
+    security_test_client.post('/login', data=LOGIN_DATA)
+    res = security_test_client.get('/login')
+    assert b'Login' not in res.content
