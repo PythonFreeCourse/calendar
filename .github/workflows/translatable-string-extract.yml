@@ -12,9 +12,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: pip install Babel
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install prerequesits
+        run: |
+          python -m pip install --upgrade pip
+          pip install Babel Jinja2
 
       - name: Create base.pot file
         run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot -c i18n
