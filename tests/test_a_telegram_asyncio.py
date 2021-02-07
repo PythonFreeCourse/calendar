@@ -316,7 +316,6 @@ class TestBotClient:
         assert b'Hello, Moshe!' in response.content
         assert b'To use PyLendar Bot you have to register' in response.content
 
-    """
     @staticmethod
     @pytest.mark.asyncio
     async def test_user_registered(telegram_client, session):
@@ -325,11 +324,9 @@ class TestBotClient:
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
-        assert b'Welcome to PyLendar telegram client!' in response.content
+
     @staticmethod
     @pytest.mark.asyncio
     async def test_telegram_router(telegram_client):
         response = await telegram_client.get('/telegram')
-        assert response.status_code == status.HTTP_200_OK
-        assert b"Start using PyLendar telegram bot!" in response.content
-    """
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
