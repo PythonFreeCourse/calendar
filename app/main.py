@@ -11,7 +11,6 @@ from app.routers import (
     event, invitation, login, logout, profile, register,
     search, telegram, whatsapp
 )
-from app.telegram.bot import telegram_bot
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
