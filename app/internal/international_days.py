@@ -7,7 +7,7 @@ from app.database.models import InternationalDays
 
 
 def create_international_day_object(
-        international_day: Dict[str, Optional[int]]) -> InternationalDays:
+        international_day: Dict[str, Optional[str]]) -> InternationalDays:
     """This function create a quote object from given fields dictionary.
     It is used for adding the data from the json into the db"""
     return InternationalDays(
