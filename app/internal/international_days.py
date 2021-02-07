@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
@@ -7,7 +7,7 @@ from app.database.models import InternationalDays
 
 
 def create_international_day_object(
-        international_day: Dict[str, Optional[str]]) -> InternationalDays:
+        international_day: Dict[str, Union[str, int]]) -> InternationalDays:
     """This function create a quote object from given fields dictionary.
     It is used for adding the data from the json into the db"""
     return InternationalDays(
