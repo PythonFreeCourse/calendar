@@ -326,7 +326,6 @@ class TestBotClient:
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
         assert b'Welcome to PyLendar telegram client!' in response.content
-        
     @staticmethod
     @pytest.mark.asyncio
     async def test_telegram_router(telegram_client):
