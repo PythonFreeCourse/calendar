@@ -27,14 +27,11 @@ jobs:
       - name: Create base.pot file
         run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot -c i18n
 
-      - name: Move to /app directory
-        run: cd app
-
       - name: Update all language base.po files
-        run: pybabel update -i locales/base.pot -d locales -D base
+        run: pybabel update -i app/locales/base.pot -d app/locales -D base
 
       - name: Update all .mo files
-        run: pybabel compile -d locales -D base
+        run: pybabel compile -d app/locales -D base
 
       # https://github.com/stefanzweifel/git-auto-commit-action
       - name: Commit changes
