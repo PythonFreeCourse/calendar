@@ -7,10 +7,6 @@ from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
-from app.routers import (
-    agenda, calendar, categories, currency, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp, exercise
-)
 from app.telegram.bot import telegram_bot
 from app.internal.languages import set_ui_language
 
@@ -38,7 +34,7 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, currency, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    event, invitation, profile, search, telegram, whatsapp, exercise
 )
 
 json_data_loader.load_to_db(next(get_db()))
