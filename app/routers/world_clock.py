@@ -3,7 +3,7 @@ import requests
 
 from datetime import datetime, timedelta
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 TOTAL_SEC_IN_HOUR = 3600
@@ -396,17 +396,17 @@ PARTS_OF_THE_DAY_FEEDBACK = {'Early morning':
                              [('13:00:00', '15:59:59'), 'OK'],
                              'Late afternoon':
                              [('16:00:00', '16:59:59'),
-                                  'Can be considered'],
+                              'Can be considered'],
                              'Early evening':
                              [('17:00:00', '18:59:59'),
-                                  'Can be considered'],
+                              'Can be considered'],
                              'Evening':
                              [('19:00:00', '20:59:59'), 'Better not'],
                              'Night':
                              [('21:00:00', '23:59:59'), 'Better not'],
                              'Late night':
                              [('00:00:00', '04:59:59'),
-                                  'Not possible'], }
+                              'Not possible'], }
 
 
 def normalize_continent_name(continent_name: str) -> Optional[str]:
