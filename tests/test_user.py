@@ -1,5 +1,35 @@
-from app.routers.user import create_user, does_user_exist, get_users
+from datetime import datetime
+import pytest
 
+from app.routers.user import create_user, disable_user, does_user_exist, get_users
+from app.database.models import User,UserEvent,Event
+
+# -----------------------------------------------------
+# Fixtures
+# -----------------------------------------------------
+
+@pytest.fixture
+def new_user(session):
+    user = create_user(
+        session=session,
+        username='new_test_username',
+        password='new_test_password',
+        email='new_test.email@gmail.com',
+        language='english'
+    )
+    return user
+
+# -----------------------------------------------------
+# Tests
+# -----------------------------------------------------
+
+def test_disabling_user(new_user, session):
+    disable_user(session, new_user.id)
+    testing1 = session.query(User).get(new_user.id)
+    assert testing1.disabled == True
+    future_events = list(session.query(Event.id).join(UserEvent).filter(UserEvent.user_id == new_user.id, Event.start > datetime.now()))
+    assert len(future_events) == 0
+    
 
 class TestUser:
 

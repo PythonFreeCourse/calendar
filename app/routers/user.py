@@ -1,10 +1,12 @@
 from typing import List
 
+from datetime import datetime 
+
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-
 from app.database.models import User, UserEvent, Event
 from app.internal.utils import save
+
 
 
 def create_user(username: str,
@@ -62,7 +64,23 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
 
 
 def disable_user(session: Session, user_id: int):
-    # this functions changes user status to disabled.
-    User.disabled = True
-    session.commit()    
+    """this functions changes user status to disabled.
+    returns
+    True if function worked properly 
+    False if it didn't."""
+
+    events_user_owns = list(session.query(Event).filter_by(owner_id = user_id))
+    if len(events_user_owns) == 0:
+        """if user doesn't own any event, we will disable him and remove the user from all of its future events."""
+        user_disabled = session.query(User).get(user_id)
+        user_disabled.disabled = True
+        future_events_for_user = session.query(UserEvent.id).join(Event, Event.id == UserEvent.event_id).filter(UserEvent.user_id == user_id, Event.start > datetime.now()).all()
+        for event_connection in future_events_for_user:
+            session.delete(event_connection)
+        session.commit()
+        return True
+    else:
+        """if user owns any event, he won't be able to disable himself."""
+        return False
+
 
