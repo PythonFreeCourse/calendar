@@ -32,6 +32,9 @@
                         <a class="nav-link" href="{{ url_for('login') }}">Sign In</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Sign Out</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
                     </li>
                     <li class="nav-item">
@@ -49,6 +52,7 @@
             </div>
         </div>
     </nav>
+
 {% block content %}
 
 

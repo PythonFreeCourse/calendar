@@ -31,9 +31,9 @@ REGISTER_FORM_VALIDATORS = [
     ]
 
 
-'''
+"""
 Test all active pydantic validators
-'''
+"""
 
 
 @pytest.mark.parametrize(
@@ -50,16 +50,16 @@ def test_register_form_validators(
     assert expected_response in data
 
 
-'''
+"""
 Test successfully register user to database, after passing all validators
-'''
+"""
 
 
-def test_register_successfull(session, client):
+def test_register_successfull(session, security_test_client):
     data = {'username': 'username', 'full_name': 'full_name',
             'password': 'password', 'confirm_password': 'password',
             'email': 'example@email.com', 'description': ""}
-    data = client.post('/register', data=data).content
+    data = security_test_client.post('/register', data=data).content
     assert b'User created' in data
 
 
@@ -71,21 +71,22 @@ UNIQUE_FIELDS_ARE_TAKEN = [
     ]
 
 
-'''
+"""
 Test register a user fails due to unique database fields already in use
-'''
+"""
 
 
 @pytest.mark.parametrize(
     "username, full_name, password, confirm_password,"
     + "email, description, expected_response", UNIQUE_FIELDS_ARE_TAKEN)
 def test_unique_fields_are_taken(
-    session, client, username, full_name, password, confirm_password,
+        session, security_test_client, username,
+        full_name, password, confirm_password,
         email, description, expected_response):
     user_data = {
         'username': 'username', 'full_name': 'full_name',
         'password': 'password', 'confirm_password': 'password',
         'email': 'example@email.com', 'description': ""}
-    client.post('/register', data=user_data)
-    data = client.post('/register', data=user_data).content
+    security_test_client.post('/register', data=user_data)
+    data = security_test_client.post('/register', data=user_data).content
     assert expected_response in data

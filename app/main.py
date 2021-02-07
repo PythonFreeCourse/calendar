@@ -7,7 +7,7 @@ from app.internal.quotes import daily_quotes, load_quotes
 from app.internal.security.ouath2 import my_exception_handler
 from app.routers import (
     agenda, categories, dayview, email,
-    event, invitation, login, profile,
+    event, invitation, login, logout, profile,
     register, search, telegram, whatsapp)
 from app.telegram.bot import telegram_bot
 from fastapi import Depends, FastAPI, Request
@@ -32,6 +32,8 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
+from tests import security_testing_routes
+app.include_router(security_testing_routes.router)
 app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
@@ -39,11 +41,26 @@ app.include_router(register.router)
 app.include_router(email.router)
 app.include_router(invitation.router)
 app.include_router(login.router)
+app.include_router(logout.router)
+
 
 app.add_exception_handler(HTTP_401_UNAUTHORIZED, my_exception_handler)
 load_quotes.load_daily_quotes(next(get_db()))
 
 app.logger = logger
+
+########
+
+# from jinja2 import Environment
+# from app.internal.security.dependancies import current_user, CurrentUser
+# env = Environment(enable_async= True)
+# async def current():
+#     user = await current_user(Session)
+#     print(user.username)
+#     return user
+# templates.env.globals.update(current_user=current) 
+# print(templates.env.globals.items())
+########
 
 routers_to_include = [
     agenda.router,
@@ -53,11 +70,13 @@ routers_to_include = [
     event.router,
     invitation.router,
     login.router,
+    logout.router,
     profile.router,
     register.router,
     search.router,
     telegram.router,
     whatsapp.router,
+    security_testing_routes.router,
 ]
 
 for router in routers_to_include:

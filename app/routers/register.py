@@ -17,7 +17,7 @@ router = APIRouter(
 
 async def render_registration_error(
         db: Session, new_user: UserCreate) -> dict:
-    '''After registering new user fails, defines relevant errors'''
+    """After registering new user fails, defines relevant errors"""
     db.rollback()
     errors = {}
     db_user_email = user.get_by_mail(db, email=new_user.email)
@@ -32,7 +32,7 @@ async def render_registration_error(
 
 @router.get("/register")
 async def register_user_form(request: Request) -> templates:
-    '''rendering register route get method'''
+    """rendering register route get method"""
     return templates.TemplateResponse("register.html", {
         "request": request,
         "errors": None
@@ -41,9 +41,9 @@ async def register_user_form(request: Request) -> templates:
 
 @router.post("/register")
 async def register(
-                request: Request, db:
-                Session = Depends(get_db)) -> templates:
-    '''rendering register route post method.'''
+                request: Request,
+                db: Session = Depends(get_db)) -> templates:
+    """rendering register route post method."""
     form = await request.form()
     form_dict = dict(form)
     try:
@@ -64,11 +64,10 @@ async def register(
         # attempt creating User Model object, and saving to database
 
         user.create(db=db, user=new_user)
+    
+        # if user registration fails due to database unique fields -
+        # rendering errors to register.html
 
-        '''
-        if creating User Model objects fails due to registered unique details -
-        rendering errors to register.html
-        '''
     except IntegrityError:
         errors = await render_registration_error(db, new_user)
         return templates.TemplateResponse("register.html", {
@@ -80,9 +79,3 @@ async def register(
         "request": request,
         "message": "User created",
         "status_code": 201})
-
-
-# NOT for production
-@router.get("/delete")
-def delete_user(db: Session = Depends(get_db)):
-    user.delete_by_mail(db=db, email="")

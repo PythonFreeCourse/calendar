@@ -67,3 +67,8 @@ def get_test_placeholder_user():
         full_name='FakeName',
         telegram_id='666666'
     )
+
+
+@pytest.fixture(scope="session")
+def security_test_client():
+    yield from create_test_client(event.get_db)
