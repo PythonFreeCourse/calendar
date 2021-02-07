@@ -46,14 +46,17 @@ async def profile(
         session.commit()
         user = session.query(User).filter_by(id=1).first()
 
-    # Get on this day data from wiki
+    signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
+             'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
+             'Capricorn', 'Aquarius', 'Pisces']
     on_this_day_data = get_on_this_day_events(session)
 
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
         "events": upcoming_events,
-        "on_this_day_data": on_this_day_data
+        "signs": signs,
+        "on_this_day_data": on_this_day_data,
     })
 
 
