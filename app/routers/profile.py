@@ -1,16 +1,17 @@
 import io
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
-from PIL import Image
-
 from app import config
 from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
 from app.routers.user_exercise import create_user_exercise
 from sqlalchemy.orm import Session
+from app.internal.on_this_day_events import get_on_this_day_events
+from fastapi import APIRouter, Depends, File, Request, UploadFile
+from PIL import Image
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
+
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 
@@ -47,10 +48,17 @@ async def profile(
         session.commit()
         user = session.query(User).filter_by(id=1).first()
 
+    signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
+             'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
+             'Capricorn', 'Aquarius', 'Pisces']
+    on_this_day_data = get_on_this_day_events(session)
+
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
         "events": upcoming_events,
+        "signs": signs,
+        "on_this_day_data": on_this_day_data,
     })
 
 
