@@ -27,7 +27,13 @@ MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
+
+# DEFAULT WEBSITE LANGUAGE
+WEBSITE_LANGUAGE = "en"
+
 # API-KEYS
+# Get a free API KEY for Astronomy feature @ www.weatherapi.com/signup.aspx
+ASTRONOMY_API_KEY = os.getenv('ASTRONOMY_API_KEY')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
 # EXPORT

@@ -27,7 +27,7 @@ def new_user(session):
 # -----------------------------------------------------
 
 def test_disabling_user(new_user, session):
-    """makes sure user is disabled and doesn't have any future events when disabled"""
+    """makes sure user is disabled and doesn't have any future events when disabled."""
     if disable_user(session, new_user.id):
         testing1 = session.query(User).get(new_user.id)
         assert testing1.disabled == True

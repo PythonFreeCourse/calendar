@@ -20,7 +20,7 @@ async def calendar(request: Request) -> Response:
     user_local_time = cg.Day.get_user_local_time()
     day = cg.create_day(user_local_time)
     return templates.TemplateResponse(
-        "calendar/calendar.html",
+        "calendar_monthly_view.html",
         {
             "request": request,
             "day": day,
@@ -34,6 +34,7 @@ async def calendar(request: Request) -> Response:
 async def update_calendar(request: Request, date: str) -> HTMLResponse:
     last_day = cg.Day.convert_str_to_date(date)
     next_weeks = cg.create_weeks(cg.get_n_days(last_day, ADD_DAYS_ON_SCROLL))
-    template = templates.get_template('calendar/add_week.html')
+    template = templates.get_template(
+        'partials/calendar/monthly_view/add_week.html')
     content = template.render(weeks_block=next_weeks)
     return HTMLResponse(content=content, status_code=HTTPStatus.OK)
