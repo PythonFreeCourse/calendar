@@ -82,5 +82,5 @@ def _get_supported_languages(language_dir: str = _get_language_directory()) \
             translation languages codes.
     """
 
-    return (language.name for language in
-            [Path(f.path) for f in os.scandir(language_dir) if f.is_dir()])
+    paths = [Path(f.path) for f in os.scandir(language_dir) if f.is_dir()]
+    return (language.name for language in paths)
