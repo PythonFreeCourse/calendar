@@ -413,7 +413,7 @@ def test_internal_weekly_tasks_generate_tasks(
 
     # Activates the generator
     task_gen = generate_tasks(user, session)
-    tasks_added = [task_added for task_added in task_gen]
+    tasks_added = list(task_gen)
 
     # the number of days defined in the weekly task is 3
     assert tasks_added.count(True) == 3
@@ -436,7 +436,7 @@ def test_internal_weekly_tasks_generate_tasks(
     # shouldn't affect the db
     # Only after a week new tasks should be added
     task_gen = generate_tasks(user, session)
-    tasks_added = [task_added for task_added in task_gen]
+    tasks_added = list(task_gen)
     assert tasks_added.count(True) == 0
     tasks = user.tasks
     assert len(tasks) == 3
