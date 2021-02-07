@@ -21,7 +21,6 @@ async def telegram_client():
     Base.metadata.drop_all(bind=test_engine)
 
 
-session = get_test_db()
 today_date = datetime.today().replace(hour=0, minute=0, second=0)
 
 
@@ -31,6 +30,7 @@ def get_test_placeholder_user():
         email='fake@mail.fake',
         password='123456fake',
         full_name='FakeName',
+        language_id=1,
         telegram_id='666666'
     )
 
