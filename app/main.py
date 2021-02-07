@@ -56,15 +56,20 @@ telegram_bot.set_webhook()
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
-    print(request.headers)
-    print(request.headers.values())
-    if request.headers["user-agent"] == "testclient":
-        response = await call_next(request)
-        return response
+async def add_process_time_header(request: Request, call_next,
+                                  ):
 
-    response = await call_next(request)
-    return response
+    route = str(request.url)
+    route = route.replace(str(request.base_url), '')
+    # resp = await call_next(request)
+    # print(resp['type'])
+    # resp['type'] = "http.response.start"
+    # user = session.query(models.User).filter_by(id=1).first()
+
+    # if feature_panel.is_feature_enabled(route=route, user_id=1):
+        # response = await call_next(request)
+        # return response
+    return await call_next(request)
 
 
 # TODO: I add the quote day to the home page
@@ -73,6 +78,8 @@ async def add_process_time_header(request: Request, call_next):
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
+    print(app)
+
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!",
