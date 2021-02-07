@@ -1,6 +1,5 @@
 from fastapi import Depends, FastAPI, Request
 from fastapi.openapi.docs import (
-    get_redoc_html,
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
@@ -17,7 +16,8 @@ from app.routers import (
     event, invitation, profile, search, telegram, user, whatsapp
 )
 from app.telegram.bot import telegram_bot
-from app.utils.extending_openapi import *
+from app.utils.extending_openapi import custom_openapi
+
 
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:
@@ -39,6 +39,7 @@ json_data_loader.load_to_db(next(get_db()))
 
 app.logger = logger
 
+
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
     return get_swagger_ui_html(
@@ -49,9 +50,11 @@ async def custom_swagger_ui_html():
         swagger_css_url="/static/swagger/swagger-ui.css",
     )
 
+
 @app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
 async def swagger_ui_redirect():
     return get_swagger_ui_oauth2_redirect_html()
+
 
 routers_to_include = [
     agenda.router,
@@ -86,5 +89,6 @@ async def home(request: Request, db: Session = Depends(get_db)):
         "message": "Hello, World!",
         "quote": quote
     })
+
 
 custom_openapi(app)
