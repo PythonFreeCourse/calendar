@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy import and_, or_
 
 from app.database.database import get_db
-from app.database.models import Event, User
+from app.database.models import Event, User, Task
 from app.dependencies import TEMPLATES_PATH
 from app.internal import zodiac
 
@@ -106,6 +106,8 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
                 and_(Event.start < day_end, day_end < Event.end)))
     events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
+    tasks = db_session.query(Task).filter(Task.owner_id == user.id)\
+        .filter(Task.date == day.date())
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,

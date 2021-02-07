@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event, UniqueConstraint)
+                        Integer, String, event, UniqueConstraint, Date, Time)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
@@ -48,20 +48,6 @@ class User(Base):
 
     def __repr__(self):
         return f'<User {self.id}>'
-
-
-class UserTask(Base):
-    __tablename__ = "user_task"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column('user_id', Integer, ForeignKey('users.id'))
-    event_id = Column('task_id', Integer, ForeignKey('tasks.id'))
-
-    tasks = relationship("Task", back_populates="participants")
-    participants = relationship("User", back_populates="tasks")
-
-    def __repr__(self):
-        return f'<UserTask ({self.participants}, {self.tasks})>'
 
 
 class Event(Base):
@@ -202,8 +188,8 @@ class Task(Base):
     description = Column(String)
     is_done = Column(Boolean, nullable=False)
     is_important = Column(Boolean, nullable=False)
-    date = Column(DateTime, nullable = False)
-    time = Column(DateTime, nullable = False)
+    date = Column(Date, nullable = False)
+    time = Column(Time, nullable = False)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="tasks")

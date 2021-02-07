@@ -1,20 +1,19 @@
 from datetime import datetime
 from operator import attrgetter
-from typing import List
-from urllib.request import Request
+from typing import List, Dict, Optional, Any
 
-from fastapi import Depends
+from fastapi import HTTPException
 from requests import Session
 from sqlalchemy.exc import SQLAlchemyError
+from starlette import status
 
-from app.database.database import get_db
-from app.database.models import Task, UserTask
+from app.database.models import Task
+from app.dependencies import logger
 from app.internal.utils import create_model
-from app.main import router
-from app.routers.event import by_id
 
 
-def create_task(db, title, description, date, time, owner_id, is_important=None) -> Task:
+def create_task(db, title, description, date, time, owner_id,
+                is_important) -> Task:
     """Creates and saves a new task."""
 
     task = create_model(
@@ -26,11 +25,6 @@ def create_task(db, title, description, date, time, owner_id, is_important=None)
         owner_id=owner_id,
         is_important=is_important,
         is_done=False
-    )
-    create_model(
-        db, UserTask,
-        user_id=owner_id,
-        task_id=task.id
     )
     return task
 
@@ -59,30 +53,56 @@ def is_date_before(date: datetime) -> bool:
     return date < datetime.now()
 
 
-@router.delete("/{task_id}")
-def delete_task(request: Request,
-                 task_id: int,
-                 db: Session = Depends(get_db)):
+def by_id(db, task_id):
+    task = db.query(Task).filter_by(id=task_id).one()
+    return task
 
-    # TODO: Check if the user is the owner of the task.
-    task = by_id(db, task_id)
-    participants = get_participants_emails_by_task(db, task_id)
+
+def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
+    """validate dictionary values by dictionary of types"""
+    errors = []
+    for field_name, field_type in to_check.items():
+        if types[field_name] and not isinstance(field_type, types[field_name]):
+            errors.append(
+                f"{field_name} is '{type(field_type).__name__}' and"
+                + f"it should be from type '{types[field_name].__name__}'")
+            logger.warning(errors)
+    if errors:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
+
+
+def get_task_with_editable_fields_only(task: Dict[str, Any]
+                                        ) -> Dict[str, Any]:
+    """Remove all keys that are not allowed to update"""
+
+    return {i: task[i] for i in UPDATE_TASKS_FIELDS if i in task}
+
+
+def _update_task(db: Session, task_id: int, task_to_update: Dict) -> task:
     try:
-        # Delete task
-        db.delete(task)
-
-        # Delete user_task
-        db.query(UserTask).filter(UserTask.task_id == task_id).delete()
+        # Update database
+        db.query(Task).filter(Task.id == task_id).update(
+            task_to_update, synchronize_session=False)
 
         db.commit()
+        return by_id(db, task_id)
+    except (AttributeError, SQLAlchemyError) as e:
+        logger.exception(str(e))
+        raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Internal server error")
 
-    except (SQLAlchemyError, TypeError):
-        return templates.TemplateResponse(
-            "task/taskview.html", {"request": request, "task_id": task_id},
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if participants and task.start > datetime.now():
-        pass
-        # TODO: Send them a cancellation notice
-        # if the deletion is successful
-    return RedirectResponse(
-        url="/calendar", status_code=status.HTTP_200_OK)
+
+def update_task(task_id: int, task: Dict, db: Session
+                 ) -> Optional[Task]:
+    # TODO Check if the user is the owner of the task.
+    old_task = by_id(db, task_id)
+    task_to_update = get_task_with_editable_fields_only(task)
+    is_fields_types_valid(task_to_update, UPDATE_TASKS_FIELDS)
+    check_change_dates_allowed(old_task, task_to_update)
+    if not task_to_update:
+        return None
+    task_updated = _update_task(db, task_id, task_to_update)
+    # TODO: Send emails to recipients.
+    return task_updated
