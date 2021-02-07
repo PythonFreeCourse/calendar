@@ -16,7 +16,7 @@ def create_user_exercise(session: Session, user: User) -> UserExercise:
             )
         save(user_exercise, session=session)
     else:
-        user_exercise = update_user_exercise(user, session)
+        user_exercise = update_user_exercise(session, user)
     return user_exercise
 
 
