@@ -3,14 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, Any
 
+
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event, UniqueConstraint)
+                        Integer, String, event, UniqueConstraint, JSON)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from app.dependencies import logger
 
 
@@ -156,6 +157,16 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class WikipediaEvents(Base):
+    __tablename__ = "wikipedia_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(String, nullable=False)
+    wikipedia = Column(String, nullable=False)
+    events = Column(JSON, nullable=True)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
 class Quote(Base):
