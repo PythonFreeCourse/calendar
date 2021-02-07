@@ -20,6 +20,7 @@ click==7.1.2
 colorama==0.4.4
 coverage==5.3.1
 databases==0.4.1
+dateparser==1.0.0
 dnspython==2.1.0
 email-validator==1.1.2
 execnet==1.7.1
@@ -100,6 +101,7 @@ toml==0.10.2
 tqdm==4.56.0
 typed-ast==1.4.2
 typing-extensions==3.7.4.3
+tzlocal==2.1
 urllib3==1.26.2
 uvicorn==0.13.3
 watchgod==0.6

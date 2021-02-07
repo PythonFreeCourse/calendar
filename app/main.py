@@ -74,8 +74,6 @@ routers_to_include = [
 for router in routers_to_include:
     app.include_router(router)
 
-telegram_bot.set_webhook()
-
 
 # TODO: I add the quote day to the home page
 # until the relevant calendar view will be developed.
