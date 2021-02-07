@@ -1,10 +1,14 @@
+from app.internal.utils import delete_instance
 from datetime import datetime
 
 import pytest
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
+from sqlalchemy.orm.session import Session
 from starlette import status
 
-from app.database.models import Event
+from app.database.models import Comment, Event
+from app.routers.event import get_event_data, router
 from app.routers.event import (_delete_event, by_id, delete_event,
                                check_change_dates_allowed, update_event,
                                _update_event)
@@ -177,3 +181,51 @@ def test_successful_deletion(event_test_client, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_add_comment(event_test_client: TestClient, session: Session,
+                     event: Event) -> None:
+    assert session.query(Comment).first() is None
+    content = 'test comment'
+    path = router.url_path_for('add_comment', event_id=event.id)
+    data = {'comment': content}
+    response = event_test_client.post(path, data=data, allow_redirects=True)
+    assert response.status_code == status.HTTP_200_OK
+    assert content in response.text
+    comment = session.query(Comment).first()
+    assert comment
+    delete_instance(session, comment)
+
+
+def test_get_event_data(session: Session, event: Event,
+                        comment: Comment) -> None:
+    data = (
+        event,
+        [{
+            'id': 1,
+            'avatar': 'profile.png',
+            'username': 'test_username',
+            'time': '01/01/0001 00:01',
+            'content': 'test comment',
+        }],
+        '%H:%M'
+    )
+    assert get_event_data(session, event.id) == data
+
+
+def test_view_comments(event_test_client: TestClient, event: Event,
+                       comment: Comment) -> None:
+    path = router.url_path_for('view_comments', event_id=event.id)
+    response = event_test_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    assert comment.content in response.text
+
+
+def test_delete_comment(event_test_client: TestClient, session: Session,
+                        event: Event, comment: Comment) -> None:
+    assert session.query(Comment).first()
+    path = router.url_path_for('delete_comment', event_id=event.id,
+                               comment_id=comment.id)
+    response = event_test_client.get(path)
+    assert response.status_code == status.HTTP_200_OK
+    assert session.query(Comment).first() is None

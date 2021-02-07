@@ -20,7 +20,7 @@ def create_user(username: str,
         email=email,
         language=language
     )
-    save(user, session=session)
+    save(session, user)
     return user
 
 

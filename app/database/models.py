@@ -173,6 +173,9 @@ class Comment(Base):
     user = relationship("User", back_populates="comments")
     event = relationship("Event", back_populates="comments")
 
+    def __repr__(self):
+        return f'<Comment {self.id}>'
+
 
 class Zodiac(Base):
     __tablename__ = "zodiac-signs"
