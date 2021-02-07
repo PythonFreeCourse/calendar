@@ -17,8 +17,8 @@ def create_international_day_object(
 
 def get_international_day_per_day(session: Session, date) -> \
         Optional[InternationalDays]:
-    day_num = date.day
-    month = date.strftime("%B")
+    day_num = int(date.day)
+    month = int(date.strftime("%B"))
     international_day = session.query(InternationalDays).filter(
         InternationalDays.day == str(day_num)) \
         .filter(InternationalDays.month == month).order_by(
