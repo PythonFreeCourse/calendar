@@ -33,7 +33,7 @@ def get_hashed_password(password) -> str:
 def verify_password(plain_password, hashed_password) -> bool:
     """Verifying password and hashed password are equal"""
     return pwd_context.verify(plain_password, hashed_password)
- 
+
 
 async def authenticate_user(
         db: Session, user: LoginUser) -> Union[LoginUser, bool]:

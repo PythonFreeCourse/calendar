@@ -8,7 +8,7 @@ from app.internal import daily_quotes, json_data_loader
 from app.internal.security.ouath2 import my_exception_handler
 from app.routers import (
     agenda, calendar, categories, currency, dayview, email,
-    event, invitation,login, logout, profile, register,
+    event, invitation, login, logout, profile, register,
     search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
