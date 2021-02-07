@@ -36,9 +36,9 @@ body {
     animation-duration: 1s;
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
-  }
+}
 
-  @keyframes profile-modal-fadeIn {
+@keyframes profile-modal-fadeIn {
     from {
         opacity: 0;
         -webkit-transform: translate3d(-100%, 0, 0);
@@ -73,4 +73,5 @@ body {
     transition-duration: .1s;
     text-decoration: none;
     cursor: pointer;
+    background-color:whitesmoke;
 }
