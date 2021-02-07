@@ -43,7 +43,7 @@ class User(Base):
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     is_active_exercise = Column(Boolean, default=False)
-
+    language_id = Column(Integer, ForeignKey("languages.id"))
     events = relationship("UserEvent", back_populates="participants")
 
     def __repr__(self):
@@ -90,6 +90,13 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class Language(Base):
+    __tablename__ = "languages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):
