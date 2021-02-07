@@ -65,7 +65,7 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
 
 def disable_user(session: Session, user_id: int):
     """this functions changes user status to disabled.
-    returns
+    returns:
     True if function worked properly 
     False if it didn't."""
 
