@@ -21,11 +21,11 @@ def international_day(session):
 
 
 def test_input_day_equal_output_day(session, international_day):
-    inter_day = international_days.\
+    inter_day = international_days. \
         get_international_day_per_day(session, DATE).international_day
     assert inter_day == DAY
 
 
 def test_international_day_per_day_no_international_days(session):
-    assert international_days.\
+    assert international_days. \
                get_international_day_per_day(session, DATE) is None
