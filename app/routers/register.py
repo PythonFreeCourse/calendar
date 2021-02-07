@@ -64,7 +64,7 @@ async def register(
         # attempt creating User Model object, and saving to database
 
         user.create(db=db, user=new_user)
-    
+
         # if user registration fails due to database unique fields -
         # rendering errors to register.html
 

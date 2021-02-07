@@ -3,7 +3,6 @@ from typing import Union
 
 from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
 from passlib.context import CryptContext
-from app.database.database import SessionLocal, get_db
 from app.database.models import User
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -22,7 +21,6 @@ oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
 
 async def get_db_user_by_username(db: Session, username: str) -> User:
     """Checking database for user by username field"""
-    # session = SessionLocal()
     user = db.query(User).filter_by(username=username).first()
     return user
 
@@ -65,7 +63,7 @@ def create_jwt_token(
 async def check_jwt_token(
     db: Session,
     token: str = Depends(oauth_schema),
-    path: bool = None) -> CurrentUser:
+        path: bool = None) -> CurrentUser:
     """
     Check whether JWT token is correct. Returns User object if yes.
     Returns None or raises HTTPException,

@@ -28,11 +28,11 @@ LOGIN_WRONG_DETAILS = [
 
 LOGIN_DATA = {'username': 'correct_user', 'password': 'correct_password'}
 
+
 def test_register_user(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
 
 
-# from app.internal import user as crud
 @pytest.mark.parametrize(
     "username, password, expected_response", LOGIN_WRONG_DETAILS)
 def test_login_fails(
@@ -93,7 +93,7 @@ def test_incorrect_secret_key_in_token(session, security_test_client):
 def test_expired_token(session, security_test_client):
     security_test_client.get('/logout')
     user = LoginUser(**LOGIN_DATA)
-    incorrect_token = create_jwt_token(user, JWT_MIN_EXP=0)
+    incorrect_token = create_jwt_token(user, JWT_MIN_EXP=-1)
     security_test_client.post('/register', data=REGISTER_DETAIL)
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)

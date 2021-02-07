@@ -20,7 +20,7 @@ class CurrentUser(BaseModel):
     """
     Security dependencies will return this object,
     instead of db object.
-    Returns all User's parameters, except password. 
+    Returns all User's parameters, except password.
     """
     id: int
     username: str
@@ -30,7 +30,7 @@ class CurrentUser(BaseModel):
     description: str = None
     avatar: str
     telegram_id: str = None
-    events = Optional [List[UserEvent]]
+    events = Optional[List[UserEvent]]
 
     class Config:
         orm_mode = True

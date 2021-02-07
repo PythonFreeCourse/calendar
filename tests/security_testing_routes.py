@@ -2,7 +2,6 @@ from app.dependencies import templates
 from fastapi import APIRouter, Depends, Request
 from app.internal.security.dependancies import (
     current_user_required, current_user, CurrentUser)
-from app.database.models import User
 
 """
 These routes are for security testing.

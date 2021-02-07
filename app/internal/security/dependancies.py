@@ -1,14 +1,14 @@
 from typing import Union
 
+from app.database.database import get_db
 from app.internal.security.ouath2 import (
-    Depends, Session, check_jwt_token, get_cookie, get_db)
+    Depends, Session, check_jwt_token, get_cookie)
 from app.internal.security.schema import CurrentUser
-from fastapi import Depends
 from starlette.requests import Request
 
 
 async def current_user_required(
-        request: Request, 
+        request: Request,
         db: Session = Depends(get_db),
         jwt: str = Depends(get_cookie)) -> CurrentUser:
     """A dependency function protecting routes for only logged in user"""
@@ -19,7 +19,7 @@ async def current_user_required(
 
 async def current_user(
     request: Request,
-    db: Session = Depends(get_db),) -> Union[CurrentUser, bool]:
+        db: Session = Depends(get_db),) -> Union[CurrentUser, bool]:
     """
     A dependency function.
     Returns logged in User object if exists.

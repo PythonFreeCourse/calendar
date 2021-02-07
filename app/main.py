@@ -8,7 +8,8 @@ from app.internal import daily_quotes, json_data_loader
 from app.internal.security.ouath2 import my_exception_handler
 from app.routers import (
     agenda, calendar, categories, currency, dayview, email,
-    event, invitation,login, logout, profile, register, search, telegram, whatsapp
+    event, invitation,login, logout, profile, register,
+    search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 from fastapi import Depends, FastAPI, Request
@@ -16,6 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
 from sqlalchemy.orm import Session
 from tests import security_testing_routes
+
 
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:

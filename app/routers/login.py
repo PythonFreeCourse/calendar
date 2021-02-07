@@ -1,14 +1,12 @@
 from typing import Optional, Union
 
 from app.database.database import get_db
-from app.database.models import User
 from app.dependencies import templates
 from app.internal.security.dependancies import (
-    current_user_required, current_user, CurrentUser)
+    current_user, CurrentUser)
 from app.internal.security.ouath2 import (
     authenticate_user, create_jwt_token, LoginUser)
 from fastapi import APIRouter, Depends, Request
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
@@ -24,7 +22,8 @@ router = APIRouter(
 @router.get("/login")
 async def login_user_form(
         request: Request, message: Optional[str] = "",
-        current_user: Union[CurrentUser, None] = Depends(current_user)) -> templates:
+        current_user: Union[CurrentUser, None] = Depends(current_user)
+        ) -> templates:
     """rendering login route get method"""
     if current_user:
         return RedirectResponse(url='/')
