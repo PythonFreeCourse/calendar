@@ -8,8 +8,6 @@ from app.database.database import engine, get_db
 from app.dependencies import logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
-from app.telegram.bot import telegram_bot
-
 
 def create_tables(engine, psql_environment):
     if 'sqlite' in str(engine.url) and psql_environment:
@@ -56,8 +54,6 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
-
-telegram_bot.set_webhook()
 
 
 # TODO: I add the quote day to the home page
