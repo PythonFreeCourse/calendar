@@ -13,6 +13,9 @@ jobs:
 
     steps:
 
+      - name: Install dependencies
+        run: pip install Babel
+
       - name: Create base.pot file
         run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot -c i18n
 
