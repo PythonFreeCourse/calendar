@@ -61,7 +61,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
-    comments = display_comments(event)
+    comments = display_comments(db, event)
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)

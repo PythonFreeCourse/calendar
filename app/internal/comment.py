@@ -1,13 +1,13 @@
 import datetime
 from typing import Dict, List
 
-from app.database import SessionLocal
+from sqlalchemy.orm.session import Session
+
 from app.database.models import Comment, Event
 from app.internal import utils
 
 
-def create_comment(event: Event, content: str) -> int:
-    session = SessionLocal()
+def create_comment(session: Session, event: Event, content: str) -> int:
     data = {
         'user': utils.get_current_user(),
         'event': event,
@@ -17,8 +17,8 @@ def create_comment(event: Event, content: str) -> int:
     utils.create_model(session, Comment, **data)
 
 
-def parse_comment(comment: Comment) -> Dict[str, str]:
-    user = utils.get_user(comment.user_id)
+def parse_comment(session: Session, comment: Comment) -> Dict[str, str]:
+    user = utils.get_user(session, comment.user_id)
     return {
         'avatar': user.avatar,
         'username': user.username,
@@ -27,7 +27,6 @@ def parse_comment(comment: Comment) -> Dict[str, str]:
     }
 
 
-def display_comments(event: Event) -> List[Dict[str, str]]:
-    session = SessionLocal()
+def display_comments(session: Session, event: Event) -> List[Dict[str, str]]:
     comments = session.query(Comment).filter_by(event_id=event.id).all()
     return [parse_comment(comment) for comment in comments]

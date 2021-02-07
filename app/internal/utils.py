@@ -1,7 +1,6 @@
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.database import SessionLocal
 from app.database.models import Base, User
 
 
@@ -24,6 +23,5 @@ def create_model(session: Session, model_class, **kw):
     return instance
 
 
-def get_user(user_id: int) -> Optional[User]:
-    session = SessionLocal()
+def get_user(session: Session, user_id: int) -> Optional[User]:
     return session.query(User).filter_by(id=user_id).first()
