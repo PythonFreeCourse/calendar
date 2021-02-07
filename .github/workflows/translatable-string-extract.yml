@@ -6,10 +6,10 @@ name: update-translations
 
 on:
   # Trigger the workflow on push request,
-  # but only for the develop branch
+  # but only for the main branch
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   update-translations:
