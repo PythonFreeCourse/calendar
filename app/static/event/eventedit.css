@@ -30,12 +30,14 @@ form {
 
 .form_row,
 .form_row_start,
-.form_row_end {
+.form_row_end
+.user_categories {
 	display: flex
 }
 
 .form_row_start,
-.form_row_end {
+.form_row_end
+.user_categories {
 	flex: 1;
 }
 

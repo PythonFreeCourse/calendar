@@ -11,3 +11,11 @@ def category(session: Session, sender: User) -> Category:
     yield category
     session.delete(category)
     session.commit()
+
+@pytest.fixture
+def category_2(session: Session, user: User) -> Category:
+    category = Category.create(session, name="Guitar Lesson", color="121212",
+                               user_id=user.id)
+    yield category
+    session.delete(category)
+    session.commit()

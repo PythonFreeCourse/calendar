@@ -1,19 +1,21 @@
 from typing import Dict, List, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
+from starlette.templating import _TemplateResponse
+
 
 from app.database.database import get_db
+from tests.conftest import get_test_db
 from app.database.models import Category
+from app.dependencies import templates
 
-router = APIRouter(
-    prefix="/categories",
-    tags=["categories"],
-)
+
+router = APIRouter()
 
 
 class CategoryModel(BaseModel):
@@ -32,7 +34,7 @@ class CategoryModel(BaseModel):
 
 
 # TODO(issue#29): get current user_id from session
-@router.get("/")
+@router.get("/categories/by_parameters")
 def get_categories(request: Request,
                    db_session: Session = Depends(get_db)) -> List[Category]:
     if validate_request_params(request.query_params):
@@ -43,22 +45,56 @@ def get_categories(request: Request,
                                    f"unallowed params.")
 
 
+@router.get("/event/edit")
+def your_categories(request: Request,
+                   db_session: Session = Depends(get_db)) -> List[Category]:
+    """
+    will add all user categories to dropdown list
+ 
+    """
+    user_id = 1
+    categories_list = get_user_categories(db_session, user_id)             
+    return templates.TemplateResponse("event/eventedit.html", {
+        "request": request,
+        "categories_list": categories_list,
+    })
+
+@router.get("/categories")
+def category_color_insert(request: Request) -> _TemplateResponse:
+    return templates.TemplateResponse("categories.html", {
+        "request": request
+    })
+
 # TODO(issue#29): get current user_id from session
-@router.post("/")
-async def set_category(category: CategoryModel,
-                       db_sess: Session = Depends(get_db)) -> Dict[str, Any]:
+@router.post("/categories")
+async def set_category(request: Request,
+                       category_name: str = Form(None),
+                       chosen_color: str = Form(None),
+                       db_sess: Session = Depends(get_db)):
+                       
+    message = ""
+    user_id = 1    # until issue#29 will get current user_id from session
     try:
-        cat = Category.create(db_sess,
-                              name=category.name,
-                              color=category.color,
-                              user_id=category.user_id)
+        Category.create(db_sess,
+                name=category_name,
+                color=chosen_color,
+                user_id=user_id)
     except IntegrityError:
         db_sess.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"category is already exists for "
-                                   f"user {category.user_id}.")
-    else:
-        return {"category": cat.to_dict()}
+        message = f"Category is already exists"
+        return templates.TemplateResponse("categories.html", {
+            "request": request,
+            "message": message,
+            "category_name": category_name,
+            "chosen_color": chosen_color,
+        })
+    message = f"Congratulation! You have created the category: {category_name}"
+    return templates.TemplateResponse("categories.html", {
+        "request": request,
+        "message": message,
+        "category_name": category_name,
+        "chosen_color": chosen_color,
+    })
 
 
 def validate_request_params(query_params: ImmutableMultiDict) -> bool:
@@ -87,3 +123,37 @@ def get_user_categories(db_session: Session,
         return []
     else:
         return categories
+
+@router.post("/for_categories_test")
+async def for_category_test(request: Request,
+                       category_name: str = Form(None),
+                       chosen_color: str = Form(None),
+                       db_sess: Session = Depends(get_test_db)):
+    """
+    This route is only for run tests, user can't know this url and even 
+    if he will try he will get error: Method Not Allowed.
+    """
+                       
+    message = ""
+    user_id = 1
+    try:
+        Category.create(db_sess,
+                name=category_name,
+                color=chosen_color,
+                user_id=user_id)
+    except IntegrityError:
+        db_sess.rollback()
+        message = f"category is already exists"
+        return templates.TemplateResponse("categories.html", {
+            "request": request,
+            "message": message,
+            "category_name": category_name,
+            "chosen_color": chosen_color,
+        })
+    message = f"You have created the category {category_name}"
+    return templates.TemplateResponse("categories.html", {
+        "request": request,
+        "message": message,
+        "category_name": category_name,
+        "chosen_color": chosen_color,
+    })

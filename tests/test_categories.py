@@ -1,15 +1,18 @@
 import pytest
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.testing import mock
+
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
+from app.database.database import get_db
 
-from app.database.models import Event
+from app.database.models import Event, Category
 from app.routers.categories import get_user_categories, validate_request_params
 
 
 class TestCategories:
-    CATEGORY_ALREADY_EXISTS_MSG = "category is already exists for"
+    CATEGORY_ALREADY_EXISTS_MSG = b"category is already exists"
+    CREATE_CATEGORY = b"You have created"
     UNALLOWED_PARAMS = "contains unallowed params"
 
     @staticmethod
@@ -17,23 +20,20 @@ class TestCategories:
         assert get_user_categories(session, category.user_id) == [category]
 
     @staticmethod
-    def test_creating_new_category(client, user):
-        response = client.post("/categories/",
-                               json={"user_id": user.id, "name": "Foo",
-                                     "color": "eecc11"})
+    def test_creating_new_category(session,client, user):
+        response = client.post("/for_categories_test", data = {"user_id": user.id,
+                                                      "category_name": "Foo",
+                                                      "chosen_color": "eecc11"})
         assert response.ok
-        assert {("user_id", user.id), ("name", "Foo"),
-                ("color", "eecc11")}.issubset(
-            set(response.json()['category'].items()))
+        assert TestCategories.CREATE_CATEGORY in response.content
 
     @staticmethod
-    def test_creating_not_unique_category_failed(client, sender, category):
-        response = client.post("/categories/", json={"user_id": sender.id,
-                                                     "name": "Guitar Lesson",
-                                                     "color": "121212"})
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in \
-               response.json()["detail"]
+    def test_creating_not_unique_category_failed(session, client, user, category_2):
+        response = client.post("/for_categories_test", data={"category_name": "Guitar Lesson",
+        "chosen_color": "121212",
+        "user_id": user.id})
+        assert response.status_code == status.HTTP_200_OK
+        assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in response.content
 
     @staticmethod
     def test_create_event_with_category(category):
@@ -51,7 +51,7 @@ class TestCategories:
 
     @staticmethod
     def test_get_user_categories(client, category):
-        response = client.get(f"/categories/?user_id={category.user_id}"
+        response = client.get(f"/categories/by_parameters/?user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
         assert response.ok
         assert set(response.json()[0].items()) == {
@@ -60,16 +60,16 @@ class TestCategories:
 
     @staticmethod
     def test_get_category_by_name(client, sender, category):
-        response = client.get(f"/categories/?user_id={category.user_id}"
+        response = client.get(f"/categories/by_parameters/?user_id={category.user_id}"
                               f"&name={category.name}")
         assert response.ok
         assert set(response.json()[0].items()) == {
             ("user_id", category.user_id), ("color", "121212"),
             ("name", "Guitar Lesson"), ("id", category.id)}
-
+    
     @staticmethod
     def test_get_category_by_color(client, sender, category):
-        response = client.get(f"/categories/?user_id={category.user_id}&"
+        response = client.get(f"/categories/by_parameters/?user_id={category.user_id}&"
                               f"color={category.color}")
         assert response.ok
         assert set(response.json()[0].items()) == {
@@ -77,10 +77,9 @@ class TestCategories:
             ("name", "Guitar Lesson"), ("id", category.id)}
 
     @staticmethod
-    def test_get_category_bad_request(client):
-        response = client.get("/categories/")
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert TestCategories.UNALLOWED_PARAMS in response.json()["detail"]
+    def test_get_category_ok_request(client):
+        response = client.get("/categories")
+        assert response.status_code == status.HTTP_200_OK
 
     @staticmethod
     def test_repr(category):
@@ -114,3 +113,8 @@ class TestCategories:
 
         session.query = mock.Mock(side_effect=raise_error)
         assert get_user_categories(session, 1) == []
+
+    @staticmethod
+    def test_event_status_ok(client):
+        response = client.get("/event/edit")
+        assert response.ok

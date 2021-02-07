@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+<link href="{{ url_for('static', path='/categories_style.css') }}" rel="stylesheet">
+<!-- https://github.com/joshbuchea/HEAD -->
+<link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+<h1>It's time to make some decisions</h1>
+<h1>
+  Here you can create your unique categories and choose your favorite color
+</h1>
+
+<form action="/categories" method="POST" required>
+  <p>Name your category:</p>
+  <p><input type="text" id ="category_name" name="category_name"></p>
+  <p>Choose your favorite color:</p>
+  <p><input type="color"  class="custom" id ="chosen_color", name="chosen_color"></p>
+  <p><input type="submit" class="btn btn-success" value="submit" /></p>
+</form>
+</div>
+{% if message %}
+  <div class="container mt-4">
+      <p>{{ message }}</p>
+  </div>
+{% endif %}
+
+{% endblock %}
