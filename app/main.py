@@ -6,10 +6,10 @@ from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
-from app.internal.quotes import daily_quotes, load_quotes
+from app.internal import daily_quotes, json_data_loader
 from app.routers import (
-    agenda, categories, dayview, email, event, invitation, profile, search,
-    telegram, whatsapp
+    agenda, calendar, categories, currency, dayview, email,
+    event, invitation, profile, search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
@@ -30,13 +30,15 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-load_quotes.load_daily_quotes(next(get_db()))
+json_data_loader.load_to_db(next(get_db()))
 
 app.logger = logger
 
 routers_to_include = [
     agenda.router,
+    calendar.router,
     categories.router,
+    currency.router,
     dayview.router,
     email.router,
     event.router,

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Capricorn",
+    "start_month": 12,
+    "start_day_in_month": 22,
+    "end_month": 1,
+    "end_day_in_month": 19
+  },
+  {
+    "name": "Aquarius",
+    "start_month": 1,
+    "start_day_in_month": 20,
+    "end_month": 2,
+    "end_day_in_month": 18
+  },
+  {
+    "name": "Pisces",
+    "start_month": 2,
+    "start_day_in_month": 19,
+    "end_month": 3,
+    "end_day_in_month": 20
+  },
+  {
+    "name": "Aries",
+    "start_month": 3,
+    "start_day_in_month": 21,
+    "end_month": 4,
+    "end_day_in_month": 19
+  },
+  {
+    "name": "Taurus",
+    "start_month": 4,
+    "start_day_in_month": 20,
+    "end_month": 5,
+    "end_day_in_month": 20
+  },
+  {
+    "name": "Gemini",
+    "start_month": 5,
+    "start_day_in_month": 21,
+    "end_month": 6,
+    "end_day_in_month": 20
+  },
+  {
+    "name": "Cancer",
+    "start_month": 6,
+    "start_day_in_month": 21,
+    "end_month": 7,
+    "end_day_in_month": 22
+  },
+  {
+    "name": "Leo",
+    "start_month": 7,
+    "start_day_in_month": 23,
+    "end_month": 8,
+    "end_day_in_month": 22
+  },
+  {
+    "name": "Virgo",
+    "start_month": 8,
+    "start_day_in_month": 23,
+    "end_month": 9,
+    "end_day_in_month": 22
+  },
+  {
+    "name": "Libra",
+    "start_month": 9,
+    "start_day_in_month": 23,
+    "end_month": 10,
+    "end_day_in_month": 22
+  },
+  {
+    "name": "Scorpio",
+    "start_month": 10,
+    "start_day_in_month": 23,
+    "end_month": 11,
+    "end_day_in_month": 21
+  },
+  {
+    "name": "Sagittarius",
+    "start_month": 11,
+    "start_day_in_month": 22,
+    "end_month": 12,
+    "end_day_in_month": 21
+  }
+]
