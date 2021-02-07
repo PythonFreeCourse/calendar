@@ -4,10 +4,11 @@ import re
 from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from loguru import logger
+from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from sqlalchemy.exc import SQLAlchemyError
-from PIL import Image
+from typing import List
 
 from app import config
 from app.database.database import get_db
@@ -172,7 +173,7 @@ async def update_holidays(
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
-def get_holidays_from_file(file, session):
+def get_holidays_from_file(file, session) -> List[Event]:
     """
     This function using regex to extract holiday title
     and date from standrd ics file
@@ -189,11 +190,11 @@ def get_holidays_from_file(file, session):
     return holidays
 
 
-def create_holiday_event(holiday, owner_id):
+def create_holiday_event(holiday, owner_id) -> Event:
     valid_ascii_chars_range = 128
     title = holiday.groupdict()['title'].strip()
-    title_to_save = ''.join([i if ord(i) < valid_ascii_chars_range
-                             else '' for i in title])
+    title_to_save = ''.join(i if ord(i) < valid_ascii_chars_range
+                            else '' for i in title)
     date = holiday.groupdict()['date'].strip()
     format_string = '%Y%m%d'
     holiday = Event(
