@@ -538,7 +538,9 @@ def update_settings(session: Session, wage: SalarySettings,
         wage.week_working_hours = form['week_working_hours']
         wage.daily_transport = form['daily_transport']
 
-        save(session, wage)
-        return True
     except KeyError:
         return False
+
+    else:
+        save(session, wage)
+        return True
