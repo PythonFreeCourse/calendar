@@ -71,7 +71,7 @@ async def start_exercise(session: Session = Depends(get_db)):
     session.commit()
 
     # create user exercise
-    create_user_exercise(session,user)
+    create_user_exercise(session, user)
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
