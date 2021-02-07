@@ -7,11 +7,11 @@
 
 {% block content %}
 <form method="GET" action="/agenda">
-    <div class="mb-3 agenda_filters"> 
+    <div class="mb-3 agenda_filters">
         <label for="start_date">From</label><br>
-        <input class="filter" type="date" id="start_date" name="start_date" value={{ start_date }}><br>
+        <input class="filter" type="date" id="start_date" name="start_date" value='{{ start_date }}'><br>
         <label for="end_date">To</label><br>
-        <input class="filter" type="date" id="end_date" name="end_date" value={{ end_date }}><br>
+        <input class="filter" type="date" id="end_date" name="end_date" value='{{ end_date }}'><br>
         <input class="filter" type="submit" value="Get Agenda">
     </div>
 </form>
