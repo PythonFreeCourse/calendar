@@ -131,7 +131,7 @@ TIMEZONES_COUNTRY_SUBCOUNTRY = {
     'America/Port_of_Spain': {'country': 'Trinidad and Tobago',
                               'subcountry': 'City of Port of Spain'},
     'America/Porto_Velho': {'country': 'Brazil',
-                            'subcountry':'Rond?nia'},
+                            'subcountry': 'Rond?nia'},
     'America/Puerto_Rico': {'country': 'Argentina',
                             'subcountry': 'Misiones'},
     'America/Punta_Arenas': {'country': 'Chile',
@@ -200,7 +200,7 @@ TIMEZONES_COUNTRY_SUBCOUNTRY = {
                          'subcountry': 'Ho Chi Minh City'},
     'Asia/Hong_Kong': {'country': 'Hong Kong',
                        'subcountry': 'Central and Western'},
-    'Asia/Hovd': {'country': 'Mongolia','subcountry': '?v?rhangay'},
+    'Asia/Hovd': {'country': 'Mongolia', 'subcountry': '?v?rhangay'},
     'Asia/Irkutsk': {'country': 'Russia', 'subcountry': 'Irkutsk'},
     'Asia/Jakarta': {'country': 'Indonesia',
                      'subcountry': 'Jakarta Raya'},
@@ -385,28 +385,28 @@ FEEDBACK_INDEX = 1
 ARB_COUNTRY_TIMEZONE = -1
 PATH_SEPARETOR = '/'
 PARTS_OF_THE_DAY_FEEDBACK = {'Early morning':
-                                 [('05:00:00', '07:59:59'), 'Better not'],
-                            'Morning':
-                                [('08:00:00', '10:59:59'), 'OK'],
-                            'Late morning':
-                                 [('11:00:00', '11:59:59'), 'OK'],
-                            'Early afternoon':
-                                 [('12:00:00', '12:59:59'), 'OK'],
-                            'Afternoon':
-                                 [('13:00:00', '15:59:59'), 'OK'],
-                            'Late afternoon':
-                                 [('16:00:00', '16:59:59'),
+                             [('05:00:00', '07:59:59'), 'Better not'],
+                             'Morning':
+                             [('08:00:00', '10:59:59'), 'OK'],
+                             'Late morning':
+                             [('11:00:00', '11:59:59'), 'OK'],
+                             'Early afternoon':
+                             [('12:00:00', '12:59:59'), 'OK'],
+                             'Afternoon':
+                             [('13:00:00', '15:59:59'), 'OK'],
+                             'Late afternoon':
+                             [('16:00:00', '16:59:59'),
                                   'Can be considered'],
-                            'Early evening':
-                                 [('17:00:00', '18:59:59'),
+                             'Early evening':
+                             [('17:00:00', '18:59:59'),
                                   'Can be considered'],
-                            'Evening':
-                                 [('19:00:00', '20:59:59'), 'Better not'],
-                            'Night':
-                                 [('21:00:00', '23:59:59'), 'Better not'],
-                            'Late night':
-                                 [('00:00:00', '04:59:59'),
-                                  'Not possible'],}
+                             'Evening':
+                             [('19:00:00', '20:59:59'), 'Better not'],
+                             'Night':
+                             [('21:00:00', '23:59:59'), 'Better not'],
+                             'Late night':
+                             [('00:00:00', '04:59:59'),
+                                  'Not possible'], }
 
 
 def normalize_continent_name(continent_name: str) -> Optional[str]:
@@ -687,7 +687,7 @@ def get_current_time_in_place(place_name: str) -> Optional[str]:
             dateutil.parser.parse(current_datetime_full)
         current_time = current_datetime_parsed.strftime('%H:%M:%S')
         return current_time
-print(get_current_time_in_place("Jerusalem"))
+
 
 def get_part_of_day_and_feedback(time: datetime) -> Tuple[str, str]:
     """Get the part of day and a suitable feedback for a given time.

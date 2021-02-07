@@ -1,7 +1,3 @@
-import io
-
-import sys
-
 from app.routers.world_clock import generate_possible_timezone_path,\
     get_all_possible_timezone_paths_for_given_place,\
     get_api_data, get_continent, get_country, \
@@ -18,11 +14,8 @@ import pytest
 import requests
 
 from unittest.mock import patch
-from unittest import mock
-from unittest.mock import patch
 
 from datetime import datetime
-from requests import HTTPError
 
 
 def test_api_http_error():
@@ -51,8 +44,7 @@ def test_api_request_exception():
 
 def test_get_api_data():
     timezones_data = get_api_data(TIMEZONES_BASE_URL)
-    for timezone in timezones_data:
-        assert type(timezone) == type('timezone')
+    assert isinstance(timezones_data, list)
 
 
 items_details = [
@@ -60,6 +52,7 @@ items_details = [
     ('South America', 'America'),
     ('Oceania', 'Oceania'),
 ]
+
 
 @pytest.mark.parametrize('continent_name, normalized_continent',
                          items_details)
@@ -213,7 +206,7 @@ def test_get_part_of_day_and_feedback():
 
 items_details = [
     ('22:22:12', 'Haifa', ('22:22:12', 'Night', 'Better not')),
-    ('22:22:12','Australia', ('12:22:12', 'Early afternoon', 'OK')),
+    ('22:22:12', 'Australia', ('12:22:12', 'Early afternoon', 'OK')),
 ]
 
 
