@@ -5,7 +5,7 @@ from app.database.models import User, UserExercise
 from app.internal.utils import save
 
 
-def create_user_exercise(user: User, session: Session) -> UserExercise:
+def create_user_exercise(session: Session, user: User) -> UserExercise:
     """
     Create and save new user exercise
     """
@@ -40,10 +40,9 @@ def get_user_exercise(session: Session, **param) -> list:
         return user_exercise
 
 
-def update_user_exercise(user: User, session: Session) -> UserExercise:
-    user_exercise = session.query(UserExercise).filter_by(user_id=user.id)\
-        .first()
+def update_user_exercise(session: Session, user: User) -> UserExercise:
+    user_ex = session.query(UserExercise).filter_by(user_id=user.id).first()
     # Update database
-    user_exercise.start_date = datetime.now()
+    user_ex.start_date = datetime.now()
     session.commit()
-    return user_exercise
+    return user_ex

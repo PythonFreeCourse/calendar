@@ -9,7 +9,7 @@
             <div class="col-5">
                 <!-- Exercise -->
                 {% if user.is_active_exercise %}
-                    <div style="font-family: 'Assistant', sans-serif;text-align: center;">
+                    <div class="exercise">
                          <img src="{{ url_for('static', path=exercise) }}" alt="exercise image" style="width:270%;height:200%">
                     </div>
                 {% endif %}
