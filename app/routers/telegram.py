@@ -13,14 +13,14 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/", include_in_schema=False)
 async def telegram(request: Request, session=Depends(get_db)):
 
     # todo: Add templating
     return "Start using PyLander telegram bot!"
 
 
-@router.post("/")
+@router.post("/", include_in_schema=False)
 async def bot_client(req: dict = Body(...), session=Depends(get_db)):
     chat = Chat(req)
 

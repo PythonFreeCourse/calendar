@@ -2,8 +2,7 @@ from fastapi import APIRouter
 from typing import Optional
 from urllib.parse import urlencode
 
-
-router = APIRouter()
+router = APIRouter(tags=["utis"])
 
 
 @router.get("/whatsapp")

@@ -1,10 +1,42 @@
 from typing import List
+from pydantic import BaseModel, Field
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.database.database import get_db
 from app.database.models import User, UserEvent, Event
 from app.internal.utils import save
+from fastapi import APIRouter, Depends
+
+router = APIRouter(
+    prefix="/user",
+    tags=["user"],
+    responses={404: {"description": "Not found"}},
+)
+
+
+class UserModel(BaseModel):
+    username: str
+    password: str
+    email: str = Field(regex='^\S+@\S+\.\S+$')
+    language: str
+
+
+@router.get("/get_all_users")
+async def get_all_users(session=Depends(get_db)):
+    return session.query(User).all()
+
+
+@router.get("/get_user")
+async def get_user(user_id: int, session=Depends(get_db)):
+    return session.query(User).filter_by(id=user_id).first()
+
+
+@router.post("/create_user")
+def create_user(user: UserModel, session=Depends(get_db)):
+    create_user(**user.dict(), session=session)
+    return f'User {user.username} successfully created'
 
 
 def create_user(username: str,
@@ -57,5 +89,5 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
 
     return (
         session.query(Event).join(UserEvent)
-        .filter(UserEvent.user_id == user_id).all()
+            .filter(UserEvent.user_id == user_id).all()
     )

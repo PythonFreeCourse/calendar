@@ -12,7 +12,6 @@ from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
-
 router = APIRouter()
 
 
@@ -93,7 +92,7 @@ class DivAttributes:
         return (start_multiday, end_multiday)
 
 
-@router.get('/day/{date}')
+@router.get('/day/{date}', include_in_schema=False)
 async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     # TODO: add a login session
     user = db_session.query(User).filter_by(username='test1').first()
@@ -101,9 +100,9 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     day_end = day + timedelta(hours=24)
     events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
-            or_(and_(Event.start >= day, Event.start < day_end),
-                and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))
+        or_(and_(Event.start >= day, Event.start < day_end),
+            and_(Event.end >= day, Event.end < day_end),
+            and_(Event.start < day_end, day_end < Event.end)))
     events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
     return templates.TemplateResponse("dayview.html", {
@@ -112,4 +111,4 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
         "month": day.strftime("%B").upper(),
         "day": day.day,
         "zodiac": zodiac_obj
-        })
+    })

@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from loguru import logger
+from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -24,13 +25,39 @@ router = APIRouter(
 )
 
 
-@router.get("/edit")
+class EventModel(BaseModel):
+    title: str
+    start: datetime
+    end: datetime
+    content: str
+    owner_id: int
+    location: str
+
+
+@router.get("/get_events")
+async def get_events(session=Depends(get_db)):
+    return session.query(Event).all()
+
+
+@router.post("/create_event_manually")
+async def create_event_manually(event: EventModel, session=Depends(get_db)):
+    create_event(db=session,
+                 title=event.title,
+                 start=event.start,
+                 end=event.start,
+                 content=event.content,
+                 owner_id=event.owner_id,
+                 location=event.location)
+    return f'Successfully created {event.title} event'
+
+
+@router.get("/edit", include_in_schema=False)
 async def eventedit(request: Request):
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request})
 
 
-@router.post("/edit")
+@router.post("/edit", include_in_schema=False)
 async def create_new_event(request: Request, session=Depends(get_db)):
     data = await request.form()
     title = data['title']
@@ -56,7 +83,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                             status_code=status.HTTP_302_FOUND)
 
 
-@router.get("/{event_id}")
+@router.get("/{event_id}", include_in_schema=False)
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
@@ -109,7 +136,7 @@ def by_id(db: Session, event_id: int) -> Event:
 
 
 def is_end_date_before_start_date(
-                            start_date: datetime, end_date: datetime) -> bool:
+        start_date: datetime, end_date: datetime) -> bool:
     """Check if the start date is earlier than the end date"""
 
     return start_date > end_date
@@ -127,8 +154,8 @@ def check_change_dates_allowed(
         allowed = 0
     if allowed == 0:
         raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid times")
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid times")
 
 
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
@@ -163,8 +190,8 @@ def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
         raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error")
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error")
 
 
 def update_event(event_id: int, event: Dict, db: Session
@@ -213,11 +240,11 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
         by event id."""
 
     return [email[0] for email in db.query(User.email).
-            select_from(Event).
-            join(UserEvent, UserEvent.event_id == Event.id).
-            join(User, User.id == UserEvent.user_id).
-            filter(Event.id == event_id).
-            all()]
+        select_from(Event).
+        join(UserEvent, UserEvent.event_id == Event.id).
+        join(User, User.id == UserEvent.user_id).
+        filter(Event.id == event_id).
+        all()]
 
 
 def _delete_event(db: Session, event: Event):
@@ -240,7 +267,6 @@ def _delete_event(db: Session, event: Event):
 @router.delete("/{event_id}")
 def delete_event(event_id: int,
                  db: Session = Depends(get_db)):
-
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
