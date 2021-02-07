@@ -4,7 +4,12 @@
 
 name: update-translations
 
-on: [push]
+on:
+  # Trigger the workflow on push request,
+  # but only for the develop branch
+  push:
+    branches:
+      - develop
 
 jobs:
   update-translations:
