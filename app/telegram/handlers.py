@@ -44,7 +44,7 @@ class MessageHandler:
 
     async def start_handler(self):
         answer = f'''Hello, {self.chat.first_name}!
-Welcome to PyLender telegram client!'''
+Welcome to PyLendar telegram client!'''
         await telegram_bot.send_message(chat_id=self.chat.user_id, text=answer)
         return answer
 
@@ -258,7 +258,7 @@ async def reply_unknown_user(chat):
     answer = f'''
 Hello, {chat.first_name}!
 
-To use PyLender Bot you have to register
+To use PyLendar Bot you have to register
 your Telegram Id in your profile page.
 
 Your Id is {chat.user_id}

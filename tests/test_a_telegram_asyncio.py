@@ -107,16 +107,14 @@ bot id/setWebhook?url=https://google.com/telegram/'
     assert bot.webhook_setter_url == bot._set_webhook_setter_url(
         "https://google.com")
 
-    set_request = bot.set_webhook()
-    assert set_request.status_code == status.HTTP_404_NOT_FOUND
+    set_request = await bot.set_webhook()
     assert set_request.json() == {
         'ok': False,
         'error_code': 404,
         'description': 'Not Found'
     }
 
-    drop_request = bot.drop_webhook()
-    assert drop_request.status_code == status.HTTP_404_NOT_FOUND
+    drop_request = await bot.drop_webhook()
     assert drop_request.json() == {
         'ok': False,
         'error_code': 404,
@@ -141,7 +139,7 @@ class TestBotClient:
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
         assert b'Hello, Moshe!' in response.content
-        assert b'To use PyLender Bot you have to register' \
+        assert b'To use PyLendar Bot you have to register' \
             in response.content
 
     @staticmethod
@@ -152,7 +150,7 @@ class TestBotClient:
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
-        assert b'Welcome to PyLender telegram client!' in response.content
+        assert b'Welcome to PyLendar telegram client!' in response.content
 
 
 class TestHandlers:
@@ -165,7 +163,7 @@ class TestHandlers:
 
         assert '/start' in message.handlers
         assert await message.process_callback() == '''Hello, Moshe!
-Welcome to PyLender telegram client!'''
+Welcome to PyLendar telegram client!'''
 
     @pytest.mark.asyncio
     async def test_default_handlers(self):
@@ -320,7 +318,7 @@ async def test_reply_unknown_user():
     assert answer == '''
 Hello, Moshe!
 
-To use PyLender Bot you have to register
+To use PyLendar Bot you have to register
 your Telegram Id in your profile page.
 
 Your Id is 666666

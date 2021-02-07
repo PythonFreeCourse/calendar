@@ -11,7 +11,6 @@ from app.routers import (
     agenda, calendar, categories, dayview, email,
     event, invitation, profile, search, telegram, whatsapp
 )
-from app.telegram.bot import telegram_bot
 
 
 def create_tables(engine, psql_environment):
@@ -50,8 +49,6 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
-
-telegram_bot.set_webhook()
 
 
 # TODO: I add the quote day to the home page
