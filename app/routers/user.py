@@ -19,7 +19,7 @@ router = APIRouter(
 class UserModel(BaseModel):
     username: str
     password: str
-    email: str = Field(regex='^\S+@\S+\.\S+$')
+    email: str = Field(regex='^\\S+@\\S+\\.\\S+$')
     language: str
 
 
@@ -34,7 +34,7 @@ async def get_user(user_id: int, session=Depends(get_db)):
 
 
 @router.post("/create_user")
-def create_user(user: UserModel, session=Depends(get_db)):
+def manually_create_user(user: UserModel, session=Depends(get_db)):
     create_user(**user.dict(), session=session)
     return f'User {user.username} successfully created'
 
@@ -89,5 +89,5 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
 
     return (
         session.query(Event).join(UserEvent)
-            .filter(UserEvent.user_id == user_id).all()
+        .filter(UserEvent.user_id == user_id).all()
     )

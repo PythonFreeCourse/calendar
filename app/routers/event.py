@@ -247,11 +247,11 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
         by event id."""
 
     return [email[0] for email in db.query(User.email).
-        select_from(Event).
-        join(UserEvent, UserEvent.event_id == Event.id).
-        join(User, User.id == UserEvent.user_id).
-        filter(Event.id == event_id).
-        all()]
+            select_from(Event).
+            join(UserEvent, UserEvent.event_id == Event.id).
+            join(User, User.id == UserEvent.user_id).
+            filter(Event.id == event_id).
+            all()]
 
 
 def _delete_event(db: Session, event: Event):

@@ -35,8 +35,7 @@ def view_invitations(request: Request, db: Session = Depends(get_db)):
 @router.post("/", include_in_schema=False)
 async def accept_invitations(
         request: Request,
-        db: Session = Depends(get_db)
-):
+        db: Session = Depends(get_db)):
     data = await request.form()
     invite_id = list(data.values())[0]
 
@@ -60,7 +59,8 @@ def get_all_invitations(session=Depends(get_db), **param) -> List[Invitation]:
 
 @router.post("/get_invitation_by_id")
 def get_invitation_by_id(
-        invitation_id: int, session=Depends(get_db)) -> Union[Invitation, None]:
+        invitation_id: int, session=Depends(get_db)) -> Union[
+        Invitation, None]:
     """Returns a invitation by an id.
     if id does not exist, returns None."""
 
