@@ -306,6 +306,7 @@ https://calendar.pythonic.guru/profile/
 
 
 class TestBotClient:
+
     @staticmethod
     @pytest.mark.asyncio
     async def test_user_not_registered(telegram_client):
@@ -313,8 +314,7 @@ class TestBotClient:
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
         assert b'Hello, Moshe!' in response.content
-        assert b'To use PyLander Bot you have to register' \
-            in response.content
+        assert b'To use PyLendar Bot you have to register' in response.content
 
     @staticmethod
     @pytest.mark.asyncio
@@ -324,11 +324,11 @@ class TestBotClient:
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
         assert response.status_code == status.HTTP_200_OK
-        assert b'Welcome to Pylander telegram client!' in response.content
+        assert b'Welcome to PyLendar telegram client!' in response.content
 
     @staticmethod
     @pytest.mark.asyncio
     async def test_telegram_router(telegram_client):
         response = await telegram_client.get('/telegram')
         assert response.status_code == status.HTTP_200_OK
-        assert b"Start using PyLander telegram bot!" in response.content
+        assert b"Start using PyLendar telegram bot!" in response.content
