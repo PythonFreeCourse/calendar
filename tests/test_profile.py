@@ -36,6 +36,7 @@ def test_profile_page(profile_test_client):
     assert b'profile.png' in data
     assert b'FakeName' in data
     assert b'Happy new user!' in data
+    assert b'On This Day' in data
 
 
 def test_update_user_fullname(profile_test_client):

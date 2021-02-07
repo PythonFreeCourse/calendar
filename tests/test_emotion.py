@@ -4,9 +4,10 @@ import pytest
 
 from app.internal.emotion import (
     dominant_emotion,
+    Emoticon,
     is_emotion_above_significance,
     get_emotion,
-    get_html_smiley)
+    get_html_emoticon)
 
 from app.routers.event import create_event
 
@@ -19,34 +20,35 @@ SURPRISE_MESSAGE = "wow, this is new!"  # 100% surprise
 
 
 emotion_tests = [
-    (HAPPY_MESSAGE, HAPPY_MESSAGE, ['Happy', 1.0, '&#128515']),
-    (SAD_MESSAGE, SAD_MESSAGE, ['Sad', 1.0, '&#128577']),
-    (ANGRY_MESSAGE, ANGRY_MESSAGE, ['Angry', 1.0, '&#128544']),
-    (FEAR_MESSAGE, FEAR_MESSAGE, ['Fear', 1.0, '&#128561']),
-    (SURPRISE_MESSAGE, SURPRISE_MESSAGE, ['Surprise', 1.0, '&#128558']),
-    (SURPRISE_MESSAGE, None, ['Surprise', 1.0, '&#128558']),
-    (SURPRISE_MESSAGE, "", ['Surprise', 1.0, '&#128558']),
-    (HAPPY_MESSAGE, SAD_MESSAGE, ['Happy', 0.6, '&#128515']),
+    (HAPPY_MESSAGE, HAPPY_MESSAGE, Emoticon('Happy', 1.0, '&#128515')),
+    (SAD_MESSAGE, SAD_MESSAGE, Emoticon('Sad', 1.0, '&#128577')),
+    (ANGRY_MESSAGE, ANGRY_MESSAGE, Emoticon('Angry', 1.0, '&#128544')),
+    (FEAR_MESSAGE, FEAR_MESSAGE, Emoticon('Fear', 1.0, '&#128561')),
+    (SURPRISE_MESSAGE, SURPRISE_MESSAGE,
+     Emoticon('Surprise', 1.0, '&#128558')),
+    (SURPRISE_MESSAGE, None, Emoticon('Surprise', 1.0, '&#128558')),
+    (SURPRISE_MESSAGE, "", Emoticon('Surprise', 1.0, '&#128558')),
+    (HAPPY_MESSAGE, SAD_MESSAGE, Emoticon('Happy', 0.6, '&#128515')),
 ]
 
 emotion_significance_tests = [
-    (['Happy', 1.0, '&#128515'], None, True),
-    (['Happy', 0.6, '&#128515'], None, True),
-    (['Happy', 0.4, '&#128515'], None, False),
-    (['Happy', 0.4, '&#128515'], 0.3, True),
-    (['Happy', 0.7, '&#128515'], 0.8, False)
+    (Emoticon('Happy', 1.0, '&#128515'), None, True),
+    (Emoticon('Happy', 0.6, '&#128515'), None, True),
+    (Emoticon('Happy', 0.4, '&#128515'), None, False),
+    (Emoticon('Happy', 0.4, '&#128515'), 0.3, True),
+    (Emoticon('Happy', 0.7, '&#128515'), 0.8, False)
 ]
 
-get_html_smiley_tests = [
-    (['Happy', 1.0, '&#128515'], '&#128515'),
-    (['Happy', 1.0, None], None)
+get_html_emoticon_tests = [
+    (Emoticon('Happy', 1.0, '&#128515'), '&#128515'),
+    (Emoticon('Happy', 1.0, None), None)
 ]
 
 get_emotion_tests = [
-    (HAPPY_MESSAGE, HAPPY_MESSAGE, '&#128515'),
-    (SAD_MESSAGE, SAD_MESSAGE, '&#128577'),
-    (HAPPY_MESSAGE, SAD_MESSAGE, '&#128515'),
-    (" ", " ", None)
+    Emoticon(HAPPY_MESSAGE, HAPPY_MESSAGE, '&#128515'),
+    Emoticon(SAD_MESSAGE, SAD_MESSAGE, '&#128577'),
+    Emoticon(HAPPY_MESSAGE, SAD_MESSAGE, '&#128515'),
+    Emoticon(" ", " ", None)
 ]
 
 create_event_tests = [
@@ -77,9 +79,9 @@ def test_is_emotion_above_significance(dominant_emotion, significance, result):
                                              significance) == result
 
 
-@pytest.mark.parametrize("dominant_emotion, result", get_html_smiley_tests)
-def test_get_html_smiley(dominant_emotion, result):
-    assert get_html_smiley(dominant_emotion) == result
+@pytest.mark.parametrize("dominant_emotion, result", get_html_emoticon_tests)
+def test_get_html_emoticon(dominant_emotion, result):
+    assert get_html_emoticon(dominant_emotion) == result
 
 
 @pytest.mark.parametrize("title, content, result", get_emotion_tests)
