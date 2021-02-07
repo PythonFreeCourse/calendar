@@ -71,17 +71,17 @@ button {
 }
 
 .google_maps_object {
-	width: 100%
+	width: 100%;
 }
 
 .title_color_red {
-	border-bottom: 4px solid red
+	border-bottom: 4px solid red;
 }
 
 .title_color_green {
-	border-bottom: 4px solid green
+	border-bottom: 4px solid green;
 }
 
 .title_color_blue {
-	border-bottom: 4px solid blue
+	border-bottom: 4px solid blue;
 }
