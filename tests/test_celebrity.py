@@ -1,6 +1,5 @@
 import datetime
 
-import pytest
 from app.internal.celebrity import get_today_month_and_day
 from hypothesis import given
 from hypothesis import strategies as st
