@@ -182,6 +182,6 @@ class InternationalDays(Base):
     __tablename__ = "international_days"
 
     id = Column(Integer, primary_key=True, index=True)
-    day = Column(String)
-    month = Column(String)
+    day = Column(Integer)
+    month = Column(Integer)
     international_day = Column(String)

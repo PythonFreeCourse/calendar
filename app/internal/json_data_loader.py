@@ -6,8 +6,8 @@ from loguru import logger
 from sqlalchemy.orm import Session
 
 from app.database.database import Base
-from app.database.models import Quote, Zodiac
-from app.internal import daily_quotes, zodiac
+from app.database.models import Quote, Zodiac, InternationalDays
+from app.internal import daily_quotes, zodiac, international_days
 
 
 def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
@@ -52,6 +52,9 @@ def load_to_db(session) -> None:
     load_data(
         session, 'app/resources/quotes.json',
         Quote, daily_quotes.create_quote_object)
+    load_data(
+        session, 'app/resources/international_days.json',
+        InternationalDays, international_days.create_international_day_object)
     """The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'. I saved the content so the API won't be
     called every time the app is initialized."""
