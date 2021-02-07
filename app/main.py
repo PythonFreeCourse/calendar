@@ -39,6 +39,7 @@ app.logger = logger
 routers_to_include = [
     agenda.router,
     audio.router,
+    calendar.router,
     categories.router,
     dayview.router,
     email.router,
