@@ -205,8 +205,8 @@ def test_get_part_of_day_and_feedback():
 
 
 items_details = [
-    ('22:22:12', 'Haifa', ('22:22:12', 'Night', 'Better not')),
-    ('22:22:12', 'Australia', ('12:22:12', 'Early afternoon', 'OK')),
+    ('22:22:12', 'Haifa', ('20:22:12', 'Evening', 'Better not')),
+    ('22:22:12', 'Australia', ('10:22:12', 'Morning', 'OK')),
 ]
 
 
