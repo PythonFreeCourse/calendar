@@ -22,6 +22,15 @@ class CategoryModel(BaseModel):
     color: str
     user_id: int
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Guitar lessons",
+                "color": "#aabbcc",
+                "user_id": 1,
+            }
+        }
+
 
 # TODO(issue#29): get current user_id from session
 @router.get("/")

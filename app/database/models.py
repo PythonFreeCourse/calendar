@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 from sqlalchemy import (
     Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
-    String, Time, UniqueConstraint)
+    JSON, String, Time, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base
@@ -237,6 +237,16 @@ class SalarySettings(Base):
 
     def __repr__(self):
         return f'<SalarySettings ({self.user_id}, {self.category_id})>'
+
+
+class WikipediaEvents(Base):
+    __tablename__ = "wikipedia_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(String, nullable=False)
+    wikipedia = Column(String, nullable=False)
+    events = Column(JSON, nullable=True)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
 class Quote(Base):
