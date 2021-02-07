@@ -84,7 +84,7 @@ nav {
 .user-features div {
     height: 1.75rem;
     width: 1.75rem;
-    font-size: var(--text_s);
+    font-size: var(--text_m);
     margin: var(--distance_s) auto auto auto;
     color: var(--primary);
     background-color: var(--bold_tertiary);
@@ -246,12 +246,17 @@ main {
 #months-navigation * {
     text-align: center;
     text-transform: uppercase;
-    font-size: var(--text_s);
     margin-top: var(--distance_s);
+}
+
+#pre-month-title,
+#aft-month-title {
+    font-size: var(--text_s);
 }
 
 #current-month-title {
     font-weight: 800;
+    font-size: var(--text_m);
 }
 
 .sticky {
@@ -336,7 +341,7 @@ main {
 
 .button {
     border-radius: 0.15rem;
-    font-size: var(--text_m);
+    font-size: var(--text_s);
     padding: 0.15rem 0.25rem;
 }
 
