@@ -6,7 +6,7 @@ import pytest
 from tests.asyncio_fixture import today_date
 from tests.client_fixture import get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
-# from app.telegram.keyboards import DATE_FORMAT
+from app.telegram.keyboards import DATE_FORMAT
 from app.telegram.models import Bot, Chat
 
 
@@ -329,17 +329,15 @@ https://calendar.pythonic.guru/profile/
 
 
 class TestBotClient:
-    """
     @staticmethod
-        @pytest.mark.asyncio
-        async def test_user_not_registered(telegram_client):
-            response = await telegram_client.post(
-                '/telegram/', json=gen_message('/start'))
-            assert response.status_code == status.HTTP_200_OK
-            assert b'Hello, Moshe!' in response.content
-            assert b'To use PyLander Bot you have to register' \
-                in response.content
-    """
+    @pytest.mark.asyncio
+    async def test_user_not_registered(telegram_client):
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Hello, Moshe!' in response.content
+        assert b'To use PyLander Bot you have to register' \
+            in response.content
 
     @staticmethod
     @pytest.mark.asyncio
