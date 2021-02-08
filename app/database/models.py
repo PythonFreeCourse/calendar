@@ -151,6 +151,22 @@ class Invitation(Base):
         )
 
 
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    status = Column(String, nullable=False, default="unread")
+    body = Column(String, nullable=False)
+    link = Column(String)
+    recipient_id = Column(Integer, ForeignKey("users.id"))
+    creation = Column(DateTime, default=datetime.now)
+
+    recipient = relationship("User")
+
+    def __repr__(self):
+        return f'<Notification {self.id}>'
+
+
 class Quote(Base):
     __tablename__ = "quotes"
 

@@ -9,7 +9,7 @@ from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.routers import (
     agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    event, notification, profile, search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
@@ -41,7 +41,7 @@ routers_to_include = [
     dayview.router,
     email.router,
     event.router,
-    invitation.router,
+    notification.router,
     profile.router,
     search.router,
     telegram.router,

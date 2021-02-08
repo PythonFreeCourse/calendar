@@ -5,7 +5,7 @@ from app import main
 from app.database.database import Base
 from app.database.models import User
 from app.main import app
-from app.routers import agenda, event, invitation, profile
+from app.routers import agenda, event, profile, notification
 from tests.conftest import get_test_db, test_engine
 
 
@@ -31,8 +31,8 @@ def agenda_test_client():
 
 
 @pytest.fixture(scope="session")
-def invitation_test_client():
-    yield from create_test_client(invitation.get_db)
+def notification_test_client():
+    yield from create_test_client(notification.get_db)
 
 
 @pytest.fixture(scope="session")

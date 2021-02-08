@@ -3,7 +3,7 @@ from typing import List, Dict
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, UserEvent
-from app.internal.utils import save
+from app.internal.utils import save, mark_as_read
 from app.routers.export import event_to_ical
 from app.routers.user import does_user_exist, get_users
 
@@ -62,6 +62,13 @@ def send_in_app_invitation(
     return True
 
 
+def decline(invitation: Invitation, session: Session) -> None:
+    """"""
+
+    invitation.status = 'declined'
+    save(invitation, session=session)
+
+
 def accept(invitation: Invitation, session: Session) -> None:
     """Accepts an invitation by creating an
     UserEvent association that represents
@@ -71,8 +78,7 @@ def accept(invitation: Invitation, session: Session) -> None:
         user_id=invitation.recipient.id,
         event_id=invitation.event.id
     )
-    invitation.status = 'accepted'
-    save(invitation, session=session)
+    mark_as_read(session, invitation)
     save(association, session=session)
 
 

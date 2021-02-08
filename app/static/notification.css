@@ -1,0 +1,44 @@
+/* general */
+#main {
+    width: 70%;
+    margin: 0 25% 0 5%;
+}
+
+
+/* buttons */
+.notification-btn {
+    background-color: transparent;
+    border: none;
+}
+
+.notification-btn:focus {
+    outline: 0;
+}
+
+.btn-read, .btn-accept {
+    color: green;
+}
+
+.btn-decline {
+    color: red;
+}
+
+.btn-read:focus, .btn-accept:focus {
+    color: black;
+}
+
+.btn-decline:focus {
+    color: black;
+}
+
+
+/* form */
+.notification-form {
+    display: inline-block;
+}
+
+
+/* icons */
+.icon {
+    font-size: 1.5rem;
+}

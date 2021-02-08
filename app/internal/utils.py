@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+from typing import Union, Type
 
-from app.database.models import Base
+from app.database.models import Base, Message, Invitation
+from sqlalchemy.orm import Session
 
 
 def save(item, session: Session) -> bool:
@@ -20,3 +21,13 @@ def create_model(session: Session, model_class, **kw):
     instance = model_class(**kw)
     save(instance, session)
     return instance
+
+
+def mark_as_read(
+        session: Session,
+        message: Union[Message, Invitation]
+) -> None:
+    """"""
+    print(message, '!!!')
+    message.status = 'accepted'
+    save(message, session=session)
