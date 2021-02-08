@@ -20,7 +20,7 @@ class TestCategories:
 
     @staticmethod
     def test_creating_new_category(session, client, user):
-        response = client.post("/for_categories_test", 
+        response = client.post("/for_categories_test",
                                data={"user_id": user.id,
                                      "category_name": "Foo",
                                      "chosen_color": "eecc11"})
@@ -52,7 +52,8 @@ class TestCategories:
 
     @staticmethod
     def test_get_user_categories(client, category):
-        response = client.get(f"/categories/by_parameters/?user_id={category.user_id}"
+        response = client.get(f"/categories/by_parameters/?"
+                              f"user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
         assert response.ok
         assert set(response.json()[0].items()) == {
