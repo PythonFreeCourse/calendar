@@ -42,7 +42,7 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
-
+    language_id = Column(Integer, ForeignKey("languages.id"))
     events = relationship("UserEvent", back_populates="participants")
 
     oauth_credentials = relationship(
@@ -82,6 +82,13 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class Language(Base):
+    __tablename__ = "languages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):

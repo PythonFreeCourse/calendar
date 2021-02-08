@@ -10,6 +10,20 @@ show_events_buttons = [
     ]
 ]
 
+new_event_buttons = [
+    [
+        {'text': 'Create ✅', 'callback_data': 'create'},
+        {'text': 'Cancel 🚫', 'callback_data': 'cancel'}
+    ]
+]
+
+field_buttons = [
+    [
+        {'text': 'Restart 🚀', 'callback_data': 'restart'},
+        {'text': 'Cancel 🚫', 'callback_data': 'cancel'}
+    ]
+]
+
 DATE_FORMAT = '%d %b %Y'
 
 
@@ -45,3 +59,5 @@ def gen_inline_keyboard(buttons: List[List[Any]]) -> Dict[str, Any]:
 
 
 show_events_kb = gen_inline_keyboard(show_events_buttons)
+new_event_kb = gen_inline_keyboard(new_event_buttons)
+field_kb = gen_inline_keyboard(field_buttons)

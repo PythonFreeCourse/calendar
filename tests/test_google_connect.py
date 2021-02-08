@@ -154,7 +154,8 @@ def test_get_credentials_from_db(session):
                        username='new_test_username',
                        password='new_test_password',
                        email='new_test.email@gmail.com',
-                       language='english')
+                       language='english',
+                       language_id=1)
 
     credentials = OAuthCredentials(
         owner=user,
@@ -239,7 +240,8 @@ def test_google_sync(mocker, google_connect_test_client,
                 username='new_test_username',
                 password='new_test_password',
                 email='new_test.email@gmail.com',
-                language='english')
+                language='english',
+                language_id=1)
 
     mocker.patch(
         'app.routers.google_connect.get_credentials_from_db',
@@ -270,7 +272,8 @@ def test_google_sync_second_path(mocker, google_connect_test_client,
                 username='new_test_username',
                 password='new_test_password',
                 email='new_test.email@gmail.com',
-                language='english')
+                language='english',
+                language_id=1)
 
     mocker.patch(
         'app.routers.google_connect.get_credentials_from_db',
@@ -292,7 +295,8 @@ def test_google_sync_third_path(mocker, google_connect_test_client,
                 username='new_test_username',
                 password='new_test_password',
                 email='new_test.email@gmail.com',
-                language='english')
+                language='english',
+                language_id=1)
 
     mocker.patch(
         'app.routers.google_connect.get_credentials_from_db',
@@ -354,7 +358,8 @@ def test_get_active_user(session):
                 username='new_test_username',
                 password='new_test_password',
                 email='new_test.email@gmail.com',
-                language='english')
+                language='english',
+                language_id=1)
 
     assert google_connect.get_active_user(session=session)
 
@@ -365,7 +370,8 @@ def test_create_google_event(session):
                        username='new_test_username',
                        password='new_test_password',
                        email='new_test.email@gmail.com',
-                       language='english')
+                       language='english',
+                       language_id=1)
 
     event = google_connect.create_google_event(
             'title',

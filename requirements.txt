@@ -12,6 +12,7 @@ atomicwrites==1.4.0
 atpublic==2.1.2
 attrs==20.3.0
 autopep8==1.5.4
+Babel==2.9.0
 bcrypt==3.2.0
 beautifulsoup4==4.9.3
 blinker==1.4
@@ -23,6 +24,7 @@ click==7.1.2
 colorama==0.4.4
 coverage==5.3.1
 databases==0.4.1
+dateparser==1.0.0
 dnspython==2.1.0
 email-validator==1.1.2
 execnet==1.7.1
@@ -118,11 +120,13 @@ toml==0.10.2
 tqdm==4.56.0
 typed-ast==1.4.2
 typing-extensions==3.7.4.3
+tzlocal==2.1
 uritemplate==3.0.1
 urllib3==1.26.2
 uvicorn==0.13.3
 watchgod==0.6
 websockets==8.1
+win32-setctime==1.0.3
 word-forms==2.1.0
 wsproto==1.0.0
 zipp==3.4.0
