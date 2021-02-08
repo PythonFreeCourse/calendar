@@ -1,13 +1,7 @@
-{% extends "base.html" %}
-
-{% block head %}
-{{ super() }}
-<link href="{{ url_for('static', path='/agenda_style.css') }}" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block head %} {{ super() }}
+<link href="{{ url_for('static', path='/agenda_style.css') }}" rel="stylesheet"> {% endblock %} {% block content %}
 <form method="GET" action="/agenda">
-    <div class="mb-3 agenda_filters"> 
+    <div class="mb-3 agenda_filters">
         <label for="start_date">From</label><br>
         <input class="filter" type="date" id="start_date" name="start_date" value={{ start_date }}><br>
         <label for="end_date">To</label><br>
@@ -25,28 +19,42 @@
     <div>
         <a class="btn agenda_button" href="/agenda?days=30">Next Month</a>
     </div>
+    <div>
+        <button class="btn agenda_button graph" type="button" name="{{events_for_graph}}">Week graph</button>
+    </div>
 </div>
 
 
 <div class="container mt-4">
     {% if start_date > end_date %}
-        <p>Start date is greater than end date</p>
+    <p>Start date is greater than end date</p>
     {% elif events | length == 0 %}
-        <p>No events found...</p>
+    <p>No events found...</p>
     {% elif start_date == end_date %}
-        <h1>{{ start_date.strftime("%d/%m/%Y") }}</h1>
+    <h1>{{ start_date.strftime("%d/%m/%Y") }}</h1>
     {% else %}
-        <h1>{{ start_date.strftime("%d/%m/%Y") }} - {{end_date.strftime("%d/%m/%Y") }}</h1>
+    <h1>{{ start_date.strftime("%d/%m/%Y") }} - {{end_date.strftime("%d/%m/%Y") }}</h1>
     {% endif %}
-</div>
-    
-<div>
-    {% for events_date, events_list in events.items() %}
-    <div class="shown_dates">{{ events_date.strftime("%d/%m/%Y") }}</div>
-        {% for event in events_list %}
-        <div class="event_line"> {{ event[0].start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event[0].id }}">{{ event[0].title }}</a> , duration: {{ event[1] }}</div>
-        {% endfor %}
-    {% endfor %}
-</div>
+    <div class="row">
+        <div class="col-5">
+            {% for events_date, events_list in events.items() %}
+            <div class="shown_dates">{{ events_date.strftime("%d/%m/%Y") }}</div>
+            {% for event in events_list %}
+            <div class="event_line"> {{ event[0].start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event[0].id }}">{{ event[0].title }}</a> , duration: {{ event[1] }}</div>
+            {% endfor %} {% endfor %}
+        </div>
 
+        <div class="col-4">
+            <div class="card-body">
+                <canvas id="myChart" width="400" height="400"></canvas>
+                <script src="../static/graph.js"></script>
+                <div class="container" id="graph">
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
 {% endblock %}
