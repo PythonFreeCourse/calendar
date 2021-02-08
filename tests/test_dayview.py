@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 from bs4 import BeautifulSoup
 
+from app.database.models import Event
 from app.routers.dayview import DivAttributes
 from app.routers.event import create_event
 
@@ -35,6 +36,25 @@ def test_div_attributes(event1):
     assert div_attr.color == 'grey'
 
 
+@pytest.mark.parametrize(
+    "minutes,css_class,visiblity", [
+        (90, 'title_size_small', True),
+        (45, 'title_size_Xsmall', False),
+        (30, 'title_size_tiny', False)
+    ]
+)
+def test_font_size_attribute(minutes, css_class, visiblity):
+    start = datetime(year=2021, month=2, day=3, hour=7)
+    end = start + timedelta(minutes=minutes)
+    event = Event(
+        title='test', content='test',
+        start=start, end=end, owner_id=1
+    )
+    div_attr = DivAttributes(event)
+    assert div_attr.title_size_class == css_class
+    assert div_attr.total_time_visible == visiblity
+
+
 def test_div_attr_multiday(multiday_event):
     day = datetime(year=2021, month=2, day=1)
     assert DivAttributes(multiday_event, day).grid_position == '57 / 101'
@@ -47,6 +67,12 @@ def test_div_attr_multiday(multiday_event):
 def test_div_attributes_with_costume_color(event2):
     div_attr = DivAttributes(event2)
     assert div_attr.color == 'blue'
+
+
+def test_wrong_timeformat(session, user, client, event1, event2, event3):
+    create_dayview_event([event1, event2, event3], session=session, user=user)
+    response = client.get('/day/1-2-2021')
+    assert response.status_code == 404
 
 
 def test_dayview_html(event1, event2, event3, session, user, client):

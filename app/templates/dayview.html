@@ -26,35 +26,19 @@
         <div class="schedule">
             <div class="container times bg-primeary position">
                 {% if view == 'day'%}
-                    {% for i in range(24)%}
+                    {% for hour in range(24)%}
                         <div class="row bg-transparent hourmark">
-                        {% set i = i|string() %}
-                        {{i.zfill(2)}}:00
+                        {% set hour = hour|string() %}
+                        {{hour.zfill(2)}}:00
                         </div>
                     {% endfor %}
                 {% endif %}
             </div>
             <div class="eventgrid">
                 {% for event, attr in events %}
-                    {% set totaltime = 'visible'%}
-                    {% if attr.length <= 90 %}
-                        {% set size = 'title_size_small' %}
-                        {% if attr.length <= 60 %}
-                                {% set totaltime = 'invisible'%}
-                            {% if attr.length < 45 %}
-                                    {% set size = 'title_size_Xsmall' %}
-                                {% if attr.length < 30 %}
-                                        {% set size = 'title_size_tiny' %}
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
-                    {% endif %}
-                    {% if view == 'week'%}
-                        {% set size = 'week-view-title' %}
-                    {% endif %}
                     <div id="event{{event.id}}" class="text-truncate px-2 d-flex flex-column justify-content-evenly event" style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
-                        <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
-                        {% if totaltime == 'visible' %}
+                        <p class="text-truncate my-0 {{ attr.title_size_class }}">{{ event.title }}</p>
+                        {% if attr.total_time_visible %}
                             <p class="total-time text-truncate fw-light my-0">{{attr.total_time}}</p>
                         {% endif %}
                     </div>

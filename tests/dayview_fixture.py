@@ -30,6 +30,14 @@ def event3():
 
 
 @pytest.fixture
+def small_event():
+    start = datetime(year=2021, month=2, day=3, hour=7)
+    end = datetime(year=2021, month=2, day=3, hour=8, minute=30)
+    return Event(title='test3', content='test',
+                 start=start, end=end, owner_id=1)
+
+
+@pytest.fixture
 def event_with_no_minutes_modified():
     start = datetime(year=2021, month=2, day=3, hour=7)
     end = datetime(year=2021, month=2, day=3, hour=8)

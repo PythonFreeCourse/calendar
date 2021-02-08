@@ -23,10 +23,10 @@
             </div>
             <div id="hoursgrid" class="container">
                 <div class="row hour-top sticky-top bg-white">T</div>
-                {% for i in range(24)%}
+                {% for hour in range(24)%}
                 <span class="row bg-transparent hourmark">
-                    {% set i = i|string() %}
-                    {{i.zfill(2)}}:00
+                    {% set hour = hour|string() %}
+                    {{hour.zfill(2)}}:00
                 </span>
                 {% endfor %}
             </div>
