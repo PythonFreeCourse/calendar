@@ -118,6 +118,7 @@ env.bak/
 venv.bak/
 Scripts/*
 pyvenv.cfg
+calender-venv/
 
 # Spyder project settings
 .spyderproject

@@ -255,7 +255,6 @@ def delete_event(event_id: int,
 
 def is_date_before(start_time: datetime, end_time: datetime) -> bool:
     """Check if the start_date is smaller then the end_time"""
-
     try:
         return start_time < end_time
     except TypeError:
