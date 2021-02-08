@@ -22,6 +22,7 @@ def create_tables(engine, psql_environment):
 
 
 create_tables(engine, config.PSQL_ENVIRONMENT)
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
