@@ -19,7 +19,6 @@ def create_dayview_event(events, session, user):
             color=event.color
         )
 
-
 def test_minutes_position_calculation(event_with_no_minutes_modified):
     div_attr = DivAttributes(event_with_no_minutes_modified)
     assert div_attr._minutes_position(div_attr.start_time.minute) is None
