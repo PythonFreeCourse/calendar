@@ -4,9 +4,8 @@ from sqlalchemy.testing import mock
 
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
-from app.database.database import get_db
 
-from app.database.models import Event, Category
+from app.database.models import Event
 from app.routers.categories import get_user_categories, validate_request_params
 
 
@@ -20,18 +19,20 @@ class TestCategories:
         assert get_user_categories(session, category.user_id) == [category]
 
     @staticmethod
-    def test_creating_new_category(session,client, user):
-        response = client.post("/for_categories_test", data = {"user_id": user.id,
-                                                      "category_name": "Foo",
-                                                      "chosen_color": "eecc11"})
+    def test_creating_new_category(session, client, user):
+        response = client.post("/for_categories_test", 
+                               data={"user_id": user.id,
+                                     "category_name": "Foo",
+                                     "chosen_color": "eecc11"})
         assert response.ok
         assert TestCategories.CREATE_CATEGORY in response.content
 
     @staticmethod
-    def test_creating_not_unique_category_failed(session, client, user, category_2):
-        response = client.post("/for_categories_test", data={"category_name": "Guitar Lesson",
-        "chosen_color": "121212",
-        "user_id": user.id})
+    def test_creating_not_unique_category_failed(client, sender, category):
+        response = client.post("/for_categories_test",
+                               data={"category_name": "Guitar Lesson",
+                                     "chosen_color": "121212",
+                                     "user_id": sender.id})
         assert response.status_code == status.HTTP_200_OK
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in response.content
 
@@ -60,16 +61,18 @@ class TestCategories:
 
     @staticmethod
     def test_get_category_by_name(client, sender, category):
-        response = client.get(f"/categories/by_parameters/?user_id={category.user_id}"
+        response = client.get(f"/categories/by_parameters/?"
+                              f"user_id={category.user_id}"
                               f"&name={category.name}")
         assert response.ok
         assert set(response.json()[0].items()) == {
             ("user_id", category.user_id), ("color", "121212"),
             ("name", "Guitar Lesson"), ("id", category.id)}
-    
+
     @staticmethod
     def test_get_category_by_color(client, sender, category):
-        response = client.get(f"/categories/by_parameters/?user_id={category.user_id}&"
+        response = client.get(f"/categories/by_parameters/?"
+                              f"user_id={category.user_id}&"
                               f"color={category.color}")
         assert response.ok
         assert set(response.json()[0].items()) == {
