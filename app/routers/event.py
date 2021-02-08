@@ -245,7 +245,6 @@ def _delete_event(db: Session, event: Event):
 @router.delete("/{event_id}")
 def delete_event(event_id: int,
                  db: Session = Depends(get_db)) -> Response:
-
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)

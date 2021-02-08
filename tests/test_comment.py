@@ -18,7 +18,7 @@ def test_parse_comment(session: Session, comment: Comment) -> None:
         'id': 1,
         'avatar': 'profile.png',
         'username': 'test_username',
-        'time': '01/01/0001 00:01',
+        'time': '01/01/2021 00:01',
         'content': 'test comment',
     }
     assert cmt.parse_comment(session, comment) == data

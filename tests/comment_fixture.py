@@ -14,7 +14,7 @@ def comment(session: Session, event: Event, user: User) -> Iterator[Comment]:
         'user': user,
         'event': event,
         'content': 'test comment',
-        'time': datetime(1, 1, 1, 0, 1),
+        'time': datetime(2021, 1, 1, 0, 1),
     }
     create_model(session, Comment, **data)
     comment = session.query(Comment).first()

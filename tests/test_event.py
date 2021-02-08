@@ -1,13 +1,13 @@
-from app.internal.utils import delete_instance
 from datetime import datetime
 
-import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
+import pytest
 from sqlalchemy.orm.session import Session
 from starlette import status
 
 from app.database.models import Comment, Event
+from app.internal.utils import delete_instance
 from app.routers.event import get_event_data, router
 from app.routers.event import (_delete_event, by_id, delete_event,
                                check_change_dates_allowed, update_event,
@@ -247,7 +247,7 @@ def test_get_event_data(session: Session, event: Event,
             'id': 1,
             'avatar': 'profile.png',
             'username': 'test_username',
-            'time': '01/01/0001 00:01',
+            'time': '01/01/2021 00:01',
             'content': 'test comment',
         }],
         '%H:%M'
