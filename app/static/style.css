@@ -68,12 +68,12 @@ body {
 #on,
 #off {
     background: rgb(197, 204, 197);
-    border: 3px solid black;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 20px;
+    border: 0.2em solid black;
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 1.5em;
     color: rgb(20, 20, 20);
-    font-size: 20px;
+    font-size: 1em;
     transition-duration: .1s;
     text-decoration: none;
     cursor: pointer;

@@ -25,8 +25,6 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-# routes:
-
 
 @router.get("/settings")
 def audio_settings(
@@ -110,10 +108,8 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
     (music_on, playlist, music_vol,
         sfxs_on, sfx_choice, sfxs_vol) = get_audio_settings(session)
     if music_on is not None:
-        music_vol = handle_vol(
-            music_on, music_vol)
-        sfxs_vol = handle_vol(
-            sfxs_on, sfxs_vol)
+        music_vol = handle_vol(music_on, music_vol)
+        sfxs_vol = handle_vol(sfxs_on, sfxs_vol)
 
     if not playlist:
         playlist = DEFAULT_MUSIC
@@ -368,7 +364,7 @@ def create_new_user_audio_record(session: Session, choice, user_id: int):
         choice ([type]): title of music track or sound effect.
         user_id (int): current users' id.
     """
-    choice = choice.split(".")[0]
+    choice = choice.split(".", maxsplit=1)[0]
     track = session.query(AudioTracks).filter_by(title=choice).first()
     track_id = track.id
     record = UserAudioTracks(user_id=user_id, track_id=track_id)

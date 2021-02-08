@@ -33,7 +33,7 @@ app.logger = logger
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    agenda, calendar, categories, currency, dayview, email,
+    agenda, audio, calendar, categories, currency, dayview, email,
     event, invitation, profile, search, telegram, whatsapp
 )
 

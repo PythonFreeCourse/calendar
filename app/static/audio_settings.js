@@ -1,9 +1,13 @@
 // Event listeners
+var test = document;
+var test2 = document.getElementById("on")
+console.log(test);
+console.log(test2);
 const set_checked_ids = [
-  "Music On",
-  "Music Off",
-  "Sound Effects On",
-  "Sound Effects Off",
+  "Music_On",
+  "Music_Off",
+  "Sound_Effects_On",
+  "Sound_Effects_Off",
 ];
 const other_ids_and_their_funcs = [
   ["activate", set_default],
@@ -54,13 +58,13 @@ function add_other_listeners(element_id, func) {
  */
 function set_checked(element_id) {
   document.getElementById(element_id).setAttribute("checked", "checked");
-  if (element_id == "Music Off") {
+  if (element_id == "Music_Off") {
     set_disabled_or_enabled("music", true, true);
-  } else if (element_id == "Music On") {
+  } else if (element_id == "Music_On") {
     set_disabled_or_enabled("music", true, false);
-  } else if (element_id == "Sound Effects Off") {
+  } else if (element_id == "Sound_Effects_Off") {
     set_disabled_or_enabled("sfx", false, true);
-  } else if (element_id == "Sound Effects On") {
+  } else if (element_id == "Sound_Effects_On") {
     set_disabled_or_enabled("sfx", false, false);
   }
 }
@@ -69,8 +73,8 @@ function set_checked(element_id) {
  * @summary This function sets audio options off by default.
  */
 function set_default() {
-  set_default_for_audio_type("Music On", "Music Off");
-  set_default_for_audio_type("Sound Effects On", "Sound Effects Off");
+  set_default_for_audio_type("Music_On", "Music_Off");
+  set_default_for_audio_type("Sound_Effects_On", "Sound_Effects_Off");
 }
 
 /**
@@ -89,7 +93,7 @@ function set_disabled_or_enabled(name, is_class, to_set) {
   } else {
     document.getElementById(name).disabled = to_set;
   }
-  document.getElementById("rangeInput " + name).disabled = to_set;
+  document.getElementById("rangeInput_" + name).disabled = to_set;
 }
 
 /**
@@ -106,6 +110,41 @@ function set_default_for_audio_type(audio_id_on, audio_id_off) {
   }
 }
 
+
+function prepare_audio () {
+  var audio_settings = JSON.parse(this.response);
+  music = document.getElementById("my_audio");
+  sfx = document.getElementById("sfx");
+  var audio_settings = JSON.parse(audio_settings);
+  var music_on = audio_settings["music_on"];
+
+  if (music.muted && (music_on || music_on == null)) {
+    var choices = audio_settings["playlist"];
+    music.src =
+      "/static/tracks/" +
+      choices[Math.floor(Math.random() * choices.length)];
+    music.volume = audio_settings["music_vol"];
+    music.muted = false;
+  }
+
+  if (music.paused) {
+    music.play();
+  }
+
+  sfx_on = audio_settings["sfxs_on"];
+  if (sfx.muted && (sfx_on || sfx_on == null)) {
+    sfx_choice = audio_settings["sfx_choice"];
+    sfx.src = "/static/tracks/" + sfx_choice;
+    sfx.volume = audio_settings["sfxs_vol"];
+    sfx.muted = false;
+  }
+
+  if (!sfx.muted) {
+    document.body.addEventListener("click", play_sfx, true);
+  }
+};
+
+
 /**
  * @summary This function loads user choices and starts audio.
  */
@@ -113,38 +152,7 @@ function start_audio() {
   var request = new XMLHttpRequest();
   request.open("GET", "/audio/start", true);
 
-  request.onload = function () {
-    var audio_settings = JSON.parse(this.response);
-    music = document.getElementById("my_audio");
-    sfx = document.getElementById("sfx");
-    var audio_settings = JSON.parse(audio_settings);
-    var music_on = audio_settings["music_on"];
-
-    if (music.muted && (music_on || music_on == null)) {
-      var choices = audio_settings["playlist"];
-      music.src =
-        "../static/tracks/" +
-        choices[Math.floor(Math.random() * choices.length)];
-      music.volume = audio_settings["music_vol"];
-      music.muted = false;
-    }
-
-    if (music.paused) {
-      music.play();
-    }
-
-    sfx_on = audio_settings["sfxs_on"];
-    if (sfx.muted && (sfx_on || sfx_on == null)) {
-      sfx_choice = audio_settings["sfx_choice"];
-      sfx.src = "../static/tracks/" + sfx_choice;
-      sfx.volume = audio_settings["sfxs_vol"];
-      sfx.muted = false;
-    }
-
-    if (!sfx.muted) {
-      document.body.addEventListener("click", play_sfx, true);
-    }
-  };
+  request.onload = prepare_audio
   request.send();
 }
 
@@ -160,6 +168,7 @@ function play_sfx() {
  * @summary This function stops the audio.
  */
 function stop_audio() {
+  console.log("stop_audio");
   music = document.getElementById("my_audio");
   sfx = document.getElementById("sfx");
 
