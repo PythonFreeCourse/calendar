@@ -26,7 +26,7 @@ router = APIRouter(
 
 @router.get("/edit")
 async def eventedit(request: Request):
-    return templates.TemplateResponse("event/eventedit.html",
+    return templates.TemplateResponse("eventedit.html",
                                       {"request": request})
 
 
@@ -40,7 +40,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
                             '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
-    user = user if user else create_user("u", "p", "e@mail.com", session)
+    user = user if user else create_user("u", "p", "e@mail.com", 'en', session)
     owner_id = user.id
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
@@ -63,7 +63,7 @@ async def eventview(request: Request, event_id: int,
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
-    return templates.TemplateResponse("event/eventview.html",
+    return templates.TemplateResponse("eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
                                        "end_format": end_format})
