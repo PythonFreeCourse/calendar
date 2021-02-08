@@ -54,15 +54,16 @@ def agenda(
             event_obj.start, event_obj.end
         )
         events[event_obj.start.date()].append((event_obj, event_duration))
-    
+
     start_date_graph, end_date_graph = calc_dates_range_for_agenda(
         start_date, end_date, 7
-        )
+    )
 
     events_objects_for_graph = agenda_events.get_events_per_dates(
         db, user_id, start_date_graph, end_date_graph
-        )
-    events_for_graph = {str(start_date_graph + timedelta(i)): 0 for i in range(8)}
+    )
+    events_for_graph = {
+        str(start_date_graph + timedelta(i)): 0 for i in range(8)}
 
     for event_obj in events_objects_for_graph:
         events_for_graph[str(event_obj.start.date())] += 1
