@@ -1,8 +1,4 @@
 // Event listeners
-var test = document;
-var test2 = document.getElementById("on")
-console.log(test);
-console.log(test2);
 const set_checked_ids = [
   "Music_On",
   "Music_Off",
@@ -110,8 +106,7 @@ function set_default_for_audio_type(audio_id_on, audio_id_off) {
   }
 }
 
-
-function prepare_audio () {
+function prepare_audio() {
   var audio_settings = JSON.parse(this.response);
   music = document.getElementById("my_audio");
   sfx = document.getElementById("sfx");
@@ -121,8 +116,7 @@ function prepare_audio () {
   if (music.muted && (music_on || music_on == null)) {
     var choices = audio_settings["playlist"];
     music.src =
-      "/static/tracks/" +
-      choices[Math.floor(Math.random() * choices.length)];
+      "/static/tracks/" + choices[Math.floor(Math.random() * choices.length)];
     music.volume = audio_settings["music_vol"];
     music.muted = false;
   }
@@ -142,8 +136,7 @@ function prepare_audio () {
   if (!sfx.muted) {
     document.body.addEventListener("click", play_sfx, true);
   }
-};
-
+}
 
 /**
  * @summary This function loads user choices and starts audio.
@@ -152,7 +145,7 @@ function start_audio() {
   var request = new XMLHttpRequest();
   request.open("GET", "/audio/start", true);
 
-  request.onload = prepare_audio
+  request.onload = prepare_audio;
   request.send();
 }
 
@@ -168,7 +161,6 @@ function play_sfx() {
  * @summary This function stops the audio.
  */
 function stop_audio() {
-  console.log("stop_audio");
   music = document.getElementById("my_audio");
   sfx = document.getElementById("sfx");
 
