@@ -13,7 +13,7 @@ DAY = "Hamburger day"
 @pytest.fixture
 def international_day(session):
     inter_day = create_model(
-        session, InternationalDays, id=1, day=1, month="June",
+        session, InternationalDays, id=1, day=1, month=6,
         international_day="Hamburger day"
     )
     yield inter_day
