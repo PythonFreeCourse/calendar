@@ -2,9 +2,12 @@ from sqlalchemy.orm import Session
 
 
 from app.database.database import get_db
+from app.main import app
 
 
 class TestApp:
+    
+    client = TestClient(app)
 
     @staticmethod
     def test_get_db():
