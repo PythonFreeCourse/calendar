@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-07 20:34+0000\n"
+"POT-Creation-Date: 2021-02-07 23:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -99,23 +99,23 @@ msgstr ""
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:221
+#: app/templates/profile.html:220
 msgid "Upcoming event on (date)"
 msgstr ""
 
-#: app/templates/profile.html:231
+#: app/templates/profile.html:246
 msgid "The Event (event)"
 msgstr ""
 
-#: app/templates/profile.html:234
+#: app/templates/profile.html:249
 msgid "Last updated (time) ago"
 msgstr ""
 
-#: app/templates/profile.html:250
+#: app/templates/profile.html:285
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:259
+#: app/templates/profile.html:293
 msgid "Your Card"
 msgstr ""
 
