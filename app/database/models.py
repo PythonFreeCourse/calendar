@@ -3,14 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, Any
 
+
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event, UniqueConstraint)
+                        Integer, String, event, UniqueConstraint, JSON)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from app.dependencies import logger
 
 
@@ -76,6 +77,13 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class Language(Base):
+    __tablename__ = "languages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):
