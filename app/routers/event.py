@@ -40,8 +40,11 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
                             '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
-    user = user if user else create_user(username="u", password="p",
-                                         email="e@mail.com", language="",
+    user = user if user else create_user(username="u",
+                                         password="p",
+                                         email="e@mail.com",
+                                         language="",
+                                         lanauge_id=1,
                                          session=session)
     owner_id = user.id
     location_type = data['location_type']

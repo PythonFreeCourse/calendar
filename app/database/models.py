@@ -33,6 +33,7 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
+    language_id = Column(Integer, ForeignKey("languages.id"))
 
     owned_events = relationship(
         "Event", cascade="all, delete", back_populates="owner",
@@ -92,6 +93,13 @@ class UserEvent(Base):
 
     def __repr__(self):
         return f'<UserEvent ({self.participants}, {self.events})>'
+
+
+class Language(Base):
+    __tablename__ = "languages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):

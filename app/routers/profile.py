@@ -26,6 +26,7 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
+        language_id=1,
         telegram_id='',
         language='english',
     )
@@ -36,7 +37,6 @@ async def profile(
         request: Request,
         session=Depends(get_db),
         new_user=Depends(get_placeholder_user)):
-
     # Get relevant data from database
     upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
@@ -62,7 +62,6 @@ async def profile(
 @router.post("/update_user_fullname")
 async def update_user_fullname(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_fullname = data['fullname']
@@ -78,7 +77,6 @@ async def update_user_fullname(
 @router.post("/update_user_email")
 async def update_user_email(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_email = data['email']
@@ -94,7 +92,6 @@ async def update_user_email(
 @router.post("/update_user_description")
 async def update_profile(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_description = data['description']
@@ -110,7 +107,6 @@ async def update_profile(
 @router.post("/upload_user_photo")
 async def upload_user_photo(
         file: UploadFile = File(...), session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     pic = await file.read()
 

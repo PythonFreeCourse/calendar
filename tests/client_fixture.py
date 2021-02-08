@@ -15,7 +15,9 @@ def get_test_placeholder_user() -> Iterator[User]:
         username='fake_user',
         email='fake@mail.fake',
         password='123456fake',
-        full_name='FakeName'
+        full_name='FakeName',
+        language_id=1,
+        telegram_id='666666'
     )
 
 

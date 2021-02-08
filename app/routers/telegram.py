@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Depends, Request
+from fastapi import APIRouter, Body, Depends
 
 from app.database.models import User
 from app.dependencies import get_db
@@ -11,13 +11,6 @@ router = APIRouter(
     tags=["telegram"],
     responses={404: {"description": "Not found"}},
 )
-
-
-@router.get("/")
-async def telegram(request: Request, session=Depends(get_db)):
-
-    # todo: Add templating
-    return "Start using PyLander telegram bot!"
 
 
 @router.post("/")

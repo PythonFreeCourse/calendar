@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 from httpx import AsyncClient
 import pytest
 
-from app.database.models import Base, User
+from app.database.models import Base
 from app.main import app
 from app.routers import telegram
 from app.routers.event import create_event
+from tests.client_fixture import get_test_placeholder_user
 from tests.conftest import test_engine, get_test_db
 
 
@@ -21,16 +22,6 @@ async def telegram_client():
 
 
 today_date = datetime.today().replace(hour=0, minute=0, second=0)
-
-
-def get_test_placeholder_user():
-    return User(
-        username='fake_user',
-        email='fake@mail.fake',
-        password='123456fake',
-        full_name='FakeName',
-        telegram_id='666666'
-    )
 
 
 @pytest.fixture
