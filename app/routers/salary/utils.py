@@ -1,6 +1,5 @@
 from app.internal.utils import save
 from sqlalchemy.orm.session import Session
-from sqlalchemy.sql.elements import and_
 from datetime import datetime, time, timedelta
 from typing import Dict, Iterator, Optional, Tuple
 
@@ -482,9 +481,8 @@ def get_settings(session: Session, user_id: int,
         SalarySettings | None: Settings for the provided user_id and
                                category_id if exists, None otherwise.
     """
-    settings = session.query(SalarySettings).filter(and_(
-        SalarySettings.user_id == user_id, SalarySettings.category_id
-        == category_id)).first()
+    settings = session.query(SalarySettings).filter_by(
+        user_id=user_id, category_id=category_id).first()
     session.close()
     return settings
 
