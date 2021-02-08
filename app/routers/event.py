@@ -46,7 +46,12 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
                             '%Y-%m-%d %H:%M')
     user = session.query(User).filter_by(id=1).first()
-    user = get_user_or_create_default(user, session)
+    user = user if user else create_user(username="u",
+                                         password="p",
+                                         email="e@mail.com",
+                                         language="",
+                                         lanauge_id=1,
+                                         session=session)
     owner_id = user.id
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
@@ -117,16 +122,6 @@ def by_id(db: Session, event_id: int) -> Event:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=error_message)
     return event
-
-
-def get_user_or_create_default(user: User, session: Session) -> User:
-    """Check if the user is logged in, else create a fictive user
-
-    Returns:
-        User: User instance."""
-    if not user:
-        user = create_user("u", "p", "e@mail.com", "english", session)
-    return user
 
 
 def is_end_date_before_start_date(
