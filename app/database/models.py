@@ -41,7 +41,7 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
-
+    language_id = Column(Integer, ForeignKey("languages.id"))
     events = relationship("UserEvent", back_populates="participants")
 
     def __repr__(self):
@@ -151,9 +151,38 @@ class Invitation(Base):
         )
 
 
+class WikipediaEvents(Base):
+    __tablename__ = "wikipedia_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(String, nullable=False)
+    wikipedia = Column(String, nullable=False)
+    events = Column(JSON, nullable=True)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
+
+
 class Quote(Base):
     __tablename__ = "quotes"
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+
+
+class Zodiac(Base):
+    __tablename__ = "zodiac-signs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    start_month = Column(Integer, nullable=False)
+    start_day_in_month = Column(Integer, nullable=False)
+    end_month = Column(Integer, nullable=False)
+    end_day_in_month = Column(Integer, nullable=False)
+
+    def __repr__(self):
+        return (
+            f'<Zodiac '
+            f'{self.name} '
+            f'{self.start_day_in_month}/{self.start_month}-'
+            f'{self.end_day_in_month}/{self.end_month}>'
+        )

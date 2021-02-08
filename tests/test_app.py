@@ -13,3 +13,7 @@ class TestApp:
     @staticmethod
     def test_session_db():
         assert get_db() is not None
+        
+    def test_home(client):
+        response = client.get("/")
+        assert response.ok
