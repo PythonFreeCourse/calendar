@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi.testclient import TestClient
 
 
 from app.database.database import get_db
@@ -6,7 +7,7 @@ from app.main import app
 
 
 class TestApp:
-    
+
     client = TestClient(app)
 
     @staticmethod
