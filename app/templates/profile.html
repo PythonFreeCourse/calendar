@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% include "event/partials/text_editor_partial_head.html" %} {% block content %}
 
 <div class="container mt-4">
     <div class="row">
@@ -162,7 +162,6 @@
                 </div>
             </div>
             <!-- End Profile card -->
-            <script src="../static/horoscope.js"></script>
 
             <div class="card card-profile">
                 <div class="card-body">
@@ -219,46 +218,80 @@
                 <div class="card card-event mb-2 pb-0">
                     <div class="card-header d-flex justify-content-between">
                         <small><i>{{ gettext("Upcoming event on (date)", date=event.start) }}</i></small>
-                        <span>
-                                <!-- Event settings -->
-                                <a class="text-dark" href="#">
-                                    <i class="fas fa-ellipsis-h"></i>
-                                </a>
-                            </span>
+                        <!-- Event settings -->
+                        <a class="text-dark" href="#">
+                            <div class="d-flex flex-row-reverse">
+
+                                <span class="text-secondary p-1 mx-2" type="button">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                        data-bs-toggle="modal" data-bs-target="#updateeventcontent">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </a>
+
+
                     </div>
                     <div class="card-body pb-1">
                         <p class="card-text">
-                            {{ gettext("The Event (event)", event=event.title) }}
+                            The Event {{ event }} - description ...
                         </p>
                         <hr class="mb-0">
-                        <small class="event-posted-time text-muted">{{ gettext("Last updated (time) ago") }}</small>
+                        <small class="event-posted-time text-muted">Last updated 3 mins ago</small>
                     </div>
                 </div>
-                <!-- End Events card -->
+                <div class="card-body pb-1">
+                    <p class="card-text">
+                        {{ gettext("The Event (event)", event=event.title) }}
+                    </p>
+                    <hr class="mb-0">
+                    <small class="event-posted-time text-muted">{{ gettext("Last updated (time) ago") }}</small>
+                </div>
+                <div class="modal modal-bg" id="updateeventcontent" tabindex="-1" data-bs-backdrop="static" aria-labelledby="updateeventcontentlabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Update Event</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="editorSection">{{ event.content }}</div>
+                                <button class="btn btn-sm btn-success" id="but">Save Changes</button>
+                                <!--  TODO usage of update event, WAITING FOR FUNCTION -->
 
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
                 {% endfor %}
             </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Right side -->
+
+<div class="col-4">
+
+    <!-- Meetups -->
+    <div class="card card-profile mb-3" style="height: 18em;">
+        <div class="card-body">
+            <p class="card-title">
+                {{ gettext("Explore MeetUps near you") }}
+            </p>
         </div>
 
-        <!-- Right side -->
-        <div class="col-4">
-
-            <!-- Meetups -->
-            <div class="card card-profile mb-3" style="height: 18em;">
-                <div class="card-body">
-                    <p class="card-title">
-                        {{ gettext("Explore MeetUps near you") }}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Card -->
-            <div class="card card-profile mb-3" style="height: 18em;">
-                <div class="card-body">
-                    <p class="card-title">
-                        {{ gettext("Your Card") }}
-                    </p>
-                </div>
+        <!-- Card -->
+        <div class="card card-profile mb-3" style="height: 18em;">
+            <div class="card-body">
+                <p class="card-title">
+                    {{ gettext("Your Card") }}
+                </p>
             </div>
 
 
@@ -268,15 +301,14 @@
                     <p class="card-title">
                         Your Card
                     </p>
-                <!-- Card -->
-                <div class="card card-profile mb-3" style="height: 18em;">
-                    <div class="card-body">
-                        {% include "on_this_day.html" %}
+                    <!-- Card -->
+                    <div class="card card-profile mb-3" style="height: 18em;">
+                        <div class="card-body">
+                            {% include "on_this_day.html" %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-{% endblock %}
+    {% include "event/partials/text_editor_partial_body.html" %} {% endblock %}
