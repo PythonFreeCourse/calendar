@@ -12,18 +12,29 @@ router = APIRouter(
 
 
 @router.get('/')
-def get_feature_panel(request: Request, session: SessionLocal = Depends(get_db)):
-    pass
+def get_feature_panel(request: Request,
+                      session: SessionLocal = Depends(get_db)):
+    features = session.query(Feature).all()
+    return features
 
 
 @router.get('/create-test')
 def test_insert(request: Request, session: SessionLocal = Depends(get_db)):
+
     delete_all_feature(session)
     user = session.query(User).filter_by(id=1).first()
-    feature = create_feature(db=session, name='profile', route='/profile',
-                             user=user, is_enable=False)
+    create_feature(
+                    db=session, name='profile',
+                    route='/profile',
+                    user=user, is_enable=True,
+                  )
+    create_feature(
+                    db=session, name='feature-panel',
+                    route='/features',
+                    user=user, is_enable=True
+                  )
 
-    return {'all': user.features, "feature": feature}
+    return {'all': user.features}
 
 
 def delete_feature(feature: Feature, session: SessionLocal = Depends(get_db)):
@@ -33,8 +44,8 @@ def delete_feature(feature: Feature, session: SessionLocal = Depends(get_db)):
 
 
 def delete_all_feature(session: SessionLocal = Depends(get_db)):
-    session.query(UserFeature).all().delete()
-    session.query(Feature).all().delete()
+    session.query(UserFeature).delete()
+    session.query(Feature).delete()
     session.commit()
 
 
@@ -42,24 +53,16 @@ def cleanup_existing_features():
     pass
 
 
-def is_feature_enabled(route: str, user_id: int):
-    # session: SessionLocal = Depends(get_db)
-    session = SessionLocal()
-
+def is_feature_enabled(route: str, user: int, session: SessionLocal):
     feature = session.query(Feature).filter_by(route=f'/{route}').first()
-    
-    if feature:
-        session.close()
-        return False
-
     user_pref = session.query(UserFeature).filter_by(
-                feature_id=feature.id, user_id=user_id).first()
+                feature_id=feature.id,
+                user_id=user.id
+                ).first()
 
-    session.close()
-    if user_pref is None:
+    if feature is None:
         return False
-
-    if user_pref.is_enabled:
+    elif user_pref is not None and user_pref.is_enable:
         return True
     return False
 

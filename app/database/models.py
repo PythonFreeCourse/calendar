@@ -35,7 +35,6 @@ class UserFeature(Base):
     feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
     user_id = Column('user_id', Integer, ForeignKey('users.id'))
 
-
     is_enable = Column(Boolean)
 
 

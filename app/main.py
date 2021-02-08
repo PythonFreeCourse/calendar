@@ -1,10 +1,11 @@
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
 
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
-from app.database.database import engine, get_db
+from app.database.database import engine, get_db, SessionLocal
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.routers import (
@@ -56,20 +57,44 @@ telegram_bot.set_webhook()
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next,
-                                  ):
+async def add_process_time_header(request: Request, call_next):
+    session = SessionLocal()
 
-    route = str(request.url)
-    route = route.replace(str(request.base_url), '')
-    # resp = await call_next(request)
-    # print(resp['type'])
-    # resp['type'] = "http.response.start"
-    # user = session.query(models.User).filter_by(id=1).first()
+    # getting the url route path for matching with the database
+    route = str(request.url).replace(str(request.base_url), '')[:-1]
 
-    # if feature_panel.is_feature_enabled(route=route, user_id=1):
-        # response = await call_next(request)
-        # return response
-    return await call_next(request)
+    #  TODO - replace to active user when login will be added to the project
+    user = session.query(models.User).filter_by(id=1).first()
+    if user is None:
+        # if there is no user connected
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        is_enabled = feature_panel.is_feature_enabled(
+            route=route,
+            user=user,
+            session=session
+        )
+        session.close()
+    except AttributeError as e:
+        '''
+        in case there is no feature exist in
+        the database that match the route pass the request.
+        '''
+        logger.error(e)
+        logger.warning('Not a feature - Access is allowed.')
+        return await call_next(request)
+
+    if is_enabled:
+        # in case the feature is enabled
+        return await call_next(request)
+
+    if 'referer' not in request.headers:
+        # in case request come from straight from url line on browser
+        return RedirectResponse(url=app.url_path_for('home'))
+
+    # in case the feature is disabled
+    return RedirectResponse(url=request.headers['referer'])
 
 
 # TODO: I add the quote day to the home page
