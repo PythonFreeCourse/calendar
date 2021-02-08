@@ -72,3 +72,14 @@ def profile_test_client() -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
+
+
+def get_test_placeholder_user():
+    return User(
+        username='fake_user',
+        email='fake@mail.fake',
+        password='123456fake',
+        full_name='FakeName',
+        language_id=1,
+        telegram_id='666666'
+    )

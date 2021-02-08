@@ -226,6 +226,7 @@ def bad_user(session: Session) -> User:
         username='test_username',
         password='test_password',
         email='test.email#gmail.com',
+        language_id=1,
     )
     yield test_user
     delete_instance(session, test_user)
