@@ -1,7 +1,6 @@
 dev.db
 test.db
 config.py
-.vscode/settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -14,6 +13,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+Scripts/
+include/
 develop-eggs/
 dist/
 downloads/
@@ -31,6 +32,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+pyvenv.cfg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -117,6 +120,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.vscode/
 Scripts/*
 pyvenv.cfg
 
@@ -142,4 +146,7 @@ dmypy.json
 .vscode/
 app/.vscode/
 
-app/routers/stam
+# PyCharm
+.idea
+
+junit/

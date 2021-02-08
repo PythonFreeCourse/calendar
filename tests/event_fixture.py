@@ -3,15 +3,14 @@ from datetime import datetime, timedelta
 import pytest
 from sqlalchemy.orm import Session
 
-from app.database.models import Event, User
+from app.database.models import Event, User, Category
 from app.routers.event import create_event
-
 
 today_date = datetime.today().replace(hour=0, minute=0, second=0)
 
 
 @pytest.fixture
-def event(sender: User, session: Session) -> Event:
+def event(sender: User, category: Category, session: Session) -> Event:
     return create_event(
         db=session,
         title='event',
@@ -20,6 +19,7 @@ def event(sender: User, session: Session) -> Event:
         content='test event',
         owner_id=sender.id,
         location="Some random location",
+        category_id=category.id,
     )
 
 

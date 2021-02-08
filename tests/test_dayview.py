@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from bs4 import BeautifulSoup
 import pytest
+from bs4 import BeautifulSoup
 
 from app.database.models import Event, User
 from app.routers.dayview import DivAttributes
@@ -10,8 +10,12 @@ from app.routers.dayview import DivAttributes
 # TODO add user session login
 @pytest.fixture
 def user():
-    return User(username='test1', email='user@email.com',
-                password='1a2b3c4e5f', full_name='test me')
+    return User(username='test1',
+                email='user@email.com',
+                password='1a2b3c4e5f',
+                full_name='test me',
+                language_id=1
+                )
 
 
 @pytest.fixture

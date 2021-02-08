@@ -1,10 +1,11 @@
 from datetime import datetime
 
 import pytest
+from fastapi import status
+
 from app.config import PSQL_ENVIRONMENT
 from app.database.models import Event, User
 from app.internal.search import get_results_by_keywords, get_stripped_keywords
-from fastapi import status
 
 
 class TestSearch:
@@ -43,7 +44,10 @@ class TestSearch:
 
     @staticmethod
     def create_user(session):
-        user = User(username='testuser', email='test@abc.com', password='1234')
+        user = User(username='testuser',
+                    email='test@abc.com',
+                    password='1234',
+                    language_id=1)
         session.add(user)
         session.commit()
         return user

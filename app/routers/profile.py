@@ -1,14 +1,15 @@
 import io
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
-from PIL import Image
-
 from app import config
 from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
+from app.internal.on_this_day_events import get_on_this_day_events
+
+from fastapi import APIRouter, Depends, File, Request, UploadFile
+from PIL import Image
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -16,7 +17,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": _("Not found")}},
 )
 
 
@@ -26,7 +27,9 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
-        telegram_id=''
+        language_id=1,
+        telegram_id='',
+        language='english',
     )
 
 
@@ -35,7 +38,6 @@ async def profile(
         request: Request,
         session=Depends(get_db),
         new_user=Depends(get_placeholder_user)):
-
     # Get relevant data from database
     upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
@@ -44,17 +46,23 @@ async def profile(
         session.commit()
         user = session.query(User).filter_by(id=1).first()
 
+    signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
+             'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
+             'Capricorn', 'Aquarius', 'Pisces']
+    on_this_day_data = get_on_this_day_events(session)
+
     return templates.TemplateResponse("profile.html", {
         "request": request,
         "user": user,
         "events": upcoming_events,
+        "signs": signs,
+        "on_this_day_data": on_this_day_data,
     })
 
 
 @router.post("/update_user_fullname")
 async def update_user_fullname(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_fullname = data['fullname']
@@ -70,7 +78,6 @@ async def update_user_fullname(
 @router.post("/update_user_email")
 async def update_user_email(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_email = data['email']
@@ -86,7 +93,6 @@ async def update_user_email(
 @router.post("/update_user_description")
 async def update_profile(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_description = data['description']
@@ -102,7 +108,6 @@ async def update_profile(
 @router.post("/upload_user_photo")
 async def upload_user_photo(
         file: UploadFile = File(...), session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     pic = await file.read()
 
@@ -110,6 +115,7 @@ async def upload_user_photo(
         # Save to database
         user.avatar = await process_image(pic, user)
         session.commit()
+
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -145,6 +151,6 @@ async def process_image(image, user):
 def get_image_crop_area(width, height):
     if width > height:
         delta = (width - height) // 2
-        return (delta, 0, width - delta, height)
+        return delta, 0, width - delta, height
     delta = (height - width) // 2
-    return (0, delta, width, width + delta)
+    return 0, delta, width, width + delta
