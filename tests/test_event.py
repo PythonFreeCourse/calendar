@@ -61,7 +61,7 @@ def test_eventedit(event_test_client):
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
     event_details = [event.title, event.content, event.location, event.start,
-                     event.end, event.color]
+                     event.end, event.color, event.category_id]
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"View Event" in response.content
@@ -71,6 +71,9 @@ def test_eventview_with_id(event_test_client, session, event):
 
 
 def test_eventedit_post_correct(client, user):
+    """
+    Test create new event successfully.
+    """
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)
     assert response.ok
@@ -79,7 +82,23 @@ def test_eventedit_post_correct(client, user):
             in response.headers['location'])
 
 
+def test_create_event_with_category(client, user, category, session):
+    """
+    Test create event with category successfully.
+    """
+    data = {**CORRECT_EVENT_FORM_DATA, **{'category_id': category.id}}
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=data)
+    assert response.ok
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
 def test_eventedit_post_wrong(client, user):
+    """
+    Test create new event unsuccessfully.
+    """
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=WRONG_EVENT_FORM_DATA)
     assert response.json()['detail'] == 'VC type with no valid zoom link'
@@ -87,12 +106,17 @@ def test_eventedit_post_wrong(client, user):
 
 @pytest.mark.parametrize("data", NONE_UPDATE_OPTIONS)
 def test_invalid_update(event, data, session):
-    assert update_event(event_id=event.id,
-                        event=data, db=session) is None
+    """
+    Test update existing event.
+    """
+    assert update_event(event_id=event.id, event=data, db=session) is None
 
 
 @pytest.mark.parametrize("data", INVALID_FIELD_UPDATE)
 def test_invalid_fields(event, data, session):
+    """
+    Test update existing event.
+    """
     with pytest.raises(HTTPException):
         response = update_event(event_id=event.id, event=data, db=session)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -102,12 +126,15 @@ def test_not_check_change_dates_allowed(event):
     data = {"start": "20.01.2020"}
     with pytest.raises(HTTPException):
         assert (
-            check_change_dates_allowed(event, data).status_code ==
-            status.HTTP_400_BAD_REQUEST
+                check_change_dates_allowed(event, data).status_code ==
+                status.HTTP_400_BAD_REQUEST
         )
 
 
 def test_successful_update(event, session):
+    """
+    Test update existing event successfully.
+    """
     data = {
         "title": "successful",
         "start": datetime(2021, 1, 20),
@@ -118,12 +145,27 @@ def test_successful_update(event, session):
         event_id=event.id, event=data, db=session).title
 
 
+def test_update_event_with_category(today_event, category, session):
+    """
+    Test update category for an existing event successfully.
+    """
+    data = {
+        "title": "successful",
+        "category_id": category.id,
+    }
+    updated_event = update_event(event_id=today_event.id, event=data,
+                                 db=session)
+    assert "successful" in updated_event.title
+    assert updated_event.category_id == category.id
+
+
 def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
         assert (
-            update_event(event_id=event.id, event=data, db=None).status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                update_event(event_id=event.id, event=data,
+                             db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -141,11 +183,11 @@ def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
         assert (
-            _update_event(
-                event_id=event.id,
-                event_to_update=data,
-                db=None).status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                _update_event(
+                    event_id=event.id,
+                    event_to_update=data,
+                    db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -157,16 +199,16 @@ def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
         response = delete_event(event_id=1, db=None)
         assert (
-            response.status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                response.status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
         assert (
-            _delete_event(event=event, db=None).status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                _delete_event(event=event, db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 

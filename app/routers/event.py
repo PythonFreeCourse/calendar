@@ -25,7 +25,8 @@ UPDATE_EVENTS_FIELDS = {
     'start': datetime,
     'end': datetime,
     'content': (str, type(None)),
-    'location': (str, type(None))
+    'location': (str, type(None)),
+    'category_id': (int, type(None)),
 }
 
 router = APIRouter(
@@ -55,12 +56,13 @@ async def create_new_event(request: Request,
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
+    category_id = data.get('category_id')
 
     if is_zoom:
         validate_zoom_link(location)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location)
+                         location, category_id=category_id)
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event.id),
                             status_code=status.HTTP_302_FOUND)
@@ -109,14 +111,13 @@ def by_id(db: Session, event_id: int) -> Event:
 
 
 def is_end_date_before_start_date(
-                            start_date: datetime, end_date: datetime) -> bool:
+        start_date: datetime, end_date: datetime) -> bool:
     """Check if the start date is earlier than the end date"""
 
     return start_date > end_date
 
 
-def check_change_dates_allowed(
-        old_event: Event, event: Dict[str, Any]):
+def check_change_dates_allowed(old_event: Event, event: Dict[str, Any]):
     allowed = 1
     try:
         start_date = event.get('start', old_event.start)
@@ -127,8 +128,8 @@ def check_change_dates_allowed(
         allowed = 0
     if allowed == 0:
         raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid times")
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid times")
 
 
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
@@ -163,8 +164,8 @@ def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
         raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Internal server error")
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error")
 
 
 def update_event(event_id: int, event: Dict, db: Session
@@ -181,7 +182,10 @@ def update_event(event_id: int, event: Dict, db: Session
     return event_updated
 
 
-def create_event(db, title, start, end, owner_id, content=None, location=None):
+def create_event(db: Session, title: str, start, end, owner_id: int,
+                 content: str = None,
+                 location: str = None,
+                 category_id: int = None):
     """Creates an event and an association."""
 
     event = create_model(
@@ -192,6 +196,7 @@ def create_event(db, title, start, end, owner_id, content=None, location=None):
         content=content,
         owner_id=owner_id,
         location=location,
+        category_id=category_id,
     )
     create_model(
         db, UserEvent,

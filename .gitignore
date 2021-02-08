@@ -149,4 +149,4 @@ app/.vscode/
 # PyCharm
 .idea
 
-routes 1.py
+junit/
