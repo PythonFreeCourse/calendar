@@ -1,23 +1,14 @@
 from sqlalchemy.orm import Session
-from fastapi.testclient import TestClient
-
 
 from app.database.database import get_db
-from app.main import app
 
 
 class TestApp:
 
-    client = TestClient(app)
-
-    @staticmethod
-    def test_get_db():
+    def test_get_db(self):
         assert isinstance(next(get_db()), Session)
 
     @staticmethod
-    def test_session_db():
-        assert get_db() is not None
-
     def test_home(client):
         response = client.get("/")
         assert response.ok
