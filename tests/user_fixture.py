@@ -12,6 +12,7 @@ def user(session: Session) -> User:
         username='test_username',
         password='test_password',
         email='test.email@gmail.com',
+        language_id=1,
         language='english'
     )
     yield test_user
@@ -25,6 +26,7 @@ def sender(session: Session) -> User:
         username='sender_username',
         password='sender_password',
         email='sender.email@gmail.com',
+        language_id=1,
         language='english'
     )
     yield sender
