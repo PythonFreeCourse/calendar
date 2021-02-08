@@ -190,7 +190,7 @@ def update_event(event_id: int, event: Dict, db: Session
 def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
-                 color: str=None,
+                 color: str = None,
                  category_id: int = None):
     """Creates an event and an association."""
 
