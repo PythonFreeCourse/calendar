@@ -27,8 +27,8 @@ class TestCategories:
             set(response.json()['category'].items()))
 
     @staticmethod
-    def test_creating_not_unique_category_failed(client, user, category):
-        response = client.post("/categories/", json={"user_id": user.id,
+    def test_creating_not_unique_category_failed(client, sender, category):
+        response = client.post("/categories/", json={"user_id": sender.id,
                                                      "name": "Guitar Lesson",
                                                      "color": "121212"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -43,6 +43,13 @@ class TestCategories:
         assert event.category_id == category.id
 
     @staticmethod
+    def test_update_event_with_category(today_event, category):
+        assert today_event.category_id is None
+        today_event.category_id = category.id
+        assert today_event.category_id is not None
+        assert today_event.category_id == category.id
+
+    @staticmethod
     def test_get_user_categories(client, category):
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
@@ -52,7 +59,7 @@ class TestCategories:
             ("name", "Guitar Lesson"), ("id", category.id)}
 
     @staticmethod
-    def test_get_category_by_name(client, user, category):
+    def test_get_category_by_name(client, sender, category):
         response = client.get(f"/categories/?user_id={category.user_id}"
                               f"&name={category.name}")
         assert response.ok
@@ -61,7 +68,7 @@ class TestCategories:
             ("name", "Guitar Lesson"), ("id", category.id)}
 
     @staticmethod
-    def test_get_category_by_color(client, user, category):
+    def test_get_category_by_color(client, sender, category):
         response = client.get(f"/categories/?user_id={category.user_id}&"
                               f"color={category.color}")
         assert response.ok

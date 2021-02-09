@@ -3,14 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, Any
 
+
+from app.config import PSQL_ENVIRONMENT
+from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event, UniqueConstraint)
+                        Integer, String, event, UniqueConstraint, JSON)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
 from app.dependencies import logger
 
 
@@ -41,7 +42,7 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
-
+    language_id = Column(Integer, ForeignKey("languages.id"))
     events = relationship("UserEvent", back_populates="participants")
 
     def __repr__(self):
@@ -60,6 +61,8 @@ class Event(Base):
     color = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
+    invitees = Column(String)
+    color = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
 
     owner = relationship("User")
@@ -76,6 +79,13 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class Language(Base):
+    __tablename__ = "languages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):
@@ -149,6 +159,16 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class WikipediaEvents(Base):
+    __tablename__ = "wikipedia_events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(String, nullable=False)
+    wikipedia = Column(String, nullable=False)
+    events = Column(JSON, nullable=True)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
 class Quote(Base):

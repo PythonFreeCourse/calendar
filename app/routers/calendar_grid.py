@@ -29,7 +29,7 @@ class Day:
         self.date: datetime = date
         self.sday: str = self.date.strftime("%A")
         self.dailyevents: List[Tuple] = []
-        self.events:  List[Tuple] = []
+        self.events: List[Tuple] = []
         self.css: Dict[str, str] = {
             'day_container': 'day',
             'date': 'day-number',
@@ -79,7 +79,7 @@ class DayWeekend(Day):
         super().__init__(date)
         self.css = {
             'day_container': 'day ',
-            'date': ' '.join(['day-number',  'text-gray']),
+            'date': ' '.join(['day-number', 'text-gray']),
             'daily_event': 'month-event',
             'daily_event_front': ' '.join([
                 'daily',
@@ -100,7 +100,7 @@ class Today(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'day_container':  ' '.join([
+            'day_container': ' '.join([
                 'day',
                 'text-darkblue',
                 'background-yellow'
@@ -134,7 +134,7 @@ class FirstDayMonth(Day):
             ]),
             'date': 'day-number',
             'daily_event': 'month-event',
-            'daily_event_front':  ' '.join([
+            'daily_event_front': ' '.join([
                 'daily front',
                 'text-lightgray',
                 'background-red'
@@ -196,8 +196,8 @@ def get_n_days(date: datetime, n: int) -> Iterator[Day]:
 
 
 def create_weeks(
-    days: Iterator[Day],
-    length: int = Week.WEEK_DAYS
+        days: Iterator[Day],
+        length: int = Week.WEEK_DAYS
 ) -> List[Week]:
     """Return lists of Weeks objects."""
     ndays: List[Day] = list(days)
