@@ -30,4 +30,3 @@ async def current_user(
     else:
         return None
     return await check_jwt_token(db, jwt)
-

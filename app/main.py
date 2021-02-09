@@ -6,11 +6,6 @@ from app.dependencies import (
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import my_exception_handler
-from app.routers import (
-    agenda, calendar, categories, currency, dayview, email,
-    event, invitation, login, logout, profile, register,
-    search, telegram, whatsapp
-)
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
@@ -52,7 +47,8 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, currency, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    event, invitation, login, logout, profile, register,
+    search, telegram, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))

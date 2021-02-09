@@ -1,4 +1,3 @@
-from app.dependencies import templates
 from app.internal.security.dependancies import (
     CurrentUser, current_user, is_logged_in)
 from fastapi import APIRouter, Depends, Request

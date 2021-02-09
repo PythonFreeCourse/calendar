@@ -1,6 +1,7 @@
 import pytest
 from starlette.status import HTTP_302_FOUND
 
+
 def test_register_route_ok(client):
     response = client.get("/register")
     assert response.ok

@@ -74,7 +74,6 @@ def get_test_placeholder_user():
     )
 
 
-
 @pytest.fixture(scope="session")
 def security_test_client():
     yield from create_test_client(event.get_db)
