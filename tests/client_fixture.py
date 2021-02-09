@@ -69,6 +69,7 @@ def get_test_placeholder_user():
         email='fake@mail.fake',
         password='123456fake',
         full_name='FakeName',
+        language_id=1,
         telegram_id='666666'
     )
 

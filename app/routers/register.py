@@ -6,6 +6,8 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 
 router = APIRouter(
@@ -76,7 +78,4 @@ async def register(
             "errors": errors,
             "form_values": form_dict})
 
-    return templates.TemplateResponse("home.html", {
-        "request": request,
-        "message": "User created",
-        "status_code": 201})
+    return RedirectResponse('/profile', status_code=HTTP_302_FOUND)

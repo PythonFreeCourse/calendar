@@ -3,8 +3,8 @@ from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import (
     logger, MEDIA_PATH, STATIC_PATH, templates)
-# from app.internal.quotes import daily_quotes, load_quotes
 from app.internal import daily_quotes, json_data_loader
+from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import my_exception_handler
 from app.routers import (
     agenda, calendar, categories, currency, dayview, email,
@@ -29,9 +29,11 @@ def create_tables(engine, psql_environment):
 
 
 create_tables(engine, PSQL_ENVIRONMENT)
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.logger = logger
 
 app.include_router(profile.router)
 app.include_router(event.router)
@@ -45,8 +47,15 @@ app.include_router(logout.router)
 app.add_exception_handler(HTTP_401_UNAUTHORIZED, my_exception_handler)
 
 json_data_loader.load_to_db(next(get_db()))
+# This MUST come before the app.routers imports.
+set_ui_language()
 
-app.logger = logger
+from app.routers import (  # noqa: E402
+    agenda, calendar, categories, currency, dayview, email,
+    event, invitation, profile, search, telegram, whatsapp
+)
+
+json_data_loader.load_to_db(next(get_db()))
 
 
 routers_to_include = [
@@ -76,6 +85,5 @@ async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
         "request": request,
-        "message": "Hello, World!",
-        "quote": quote
+        "quote": quote,
     })

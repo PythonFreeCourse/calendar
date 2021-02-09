@@ -1,12 +1,9 @@
 import pytest
-
-
-RESPONSE_OK = 200
-
+from starlette.status import HTTP_302_FOUND
 
 def test_register_route_ok(client):
     response = client.get("/register")
-    assert response.status_code == RESPONSE_OK
+    assert response.ok
 
 
 REGISTER_FORM_VALIDATORS = [
@@ -59,8 +56,8 @@ def test_register_successfull(session, security_test_client):
     data = {'username': 'username', 'full_name': 'full_name',
             'password': 'password', 'confirm_password': 'password',
             'email': 'example@email.com', 'description': ""}
-    data = security_test_client.post('/register', data=data).content
-    assert b'User created' in data
+    data = security_test_client.post('/register', data=data)
+    assert data.status_code == HTTP_302_FOUND
 
 
 UNIQUE_FIELDS_ARE_TAKEN = [

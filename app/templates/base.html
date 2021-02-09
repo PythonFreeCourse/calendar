@@ -16,31 +16,34 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-transparent">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">Calendar</a>
+            <a class="navbar-brand" href="/">{{ gettext("Calendar") }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">{{ gettext("Home") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">Profile</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">{{ gettext("Profile") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">Sign In</a>
+                        <a class="nav-link" href="{{ url_for('register') }}">{{ gettext("Sign Up") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">Sign Out</a>
+                        <a class="nav-link" href="{{ url_for('login') }}">{{ gettext("Sign in") }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
+                        <a class="nav-link" href="{{ url_for('logout') }}">{{ gettext("Sign Out") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{{ gettext("Sign up") }}</a>
                     </li>
                     <li class="nav-item">
                         <!-- new button for the agenda page. should be available after login
                         place will change later according to the web design -->
-                        <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
+                        <a class="nav-link" href="{{ url_for('agenda') }}">{{ gettext("Agenda") }}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
@@ -58,6 +61,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
-</body>
 
+</body>
 </html>

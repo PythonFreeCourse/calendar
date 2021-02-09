@@ -1,10 +1,7 @@
 from app.dependencies import templates
-from fastapi import APIRouter, Depends, Request
 from app.internal.security.dependancies import (
-    is_logged_in, current_user, CurrentUser)
-
-# from app.main import app
-# app.include_router(security_testing_routes.router)
+    CurrentUser, current_user, is_logged_in)
+from fastapi import APIRouter, Depends, Request
 
 
 """
@@ -24,10 +21,7 @@ async def protected_route(
         request: Request, user: CurrentUser = Depends(is_logged_in)):
     # This is how to protect route for logged in user only.
     # Dependency will return CurrentUser object.
-    return templates.TemplateResponse("home.html", {
-        "request": request,
-        "message": user.username
-    })
+    return {"user": user.username}
 
 
 @router.get('/test_user')
@@ -36,10 +30,7 @@ async def user_route(
     # This is how to get CurrentUser in a route.
     # Dependency will return CurrentUser object, or None if user not logged in.
     if current_user:
-        message = "Hello " + current_user.username
+        name = current_user.username
     else:
-        message = "No logged in user"
-    return templates.TemplateResponse("home.html", {
-        "request": request,
-        "message": message
-    })
+        name = "No logged in user"
+    return {"user": name}

@@ -3,13 +3,9 @@ from app.internal.security.ouath2 import create_jwt_token, LoginUser
 from starlette.status import HTTP_302_FOUND
 
 
-RESPONSE_OK = 200
-REDIRECT_OK = HTTP_302_FOUND
-
-
 def test_login_route_ok(security_test_client):
     response = security_test_client.get("/login")
-    assert response.status_code == RESPONSE_OK
+    assert response.ok
 
 
 REGISTER_DETAIL = {
@@ -46,14 +42,15 @@ def test_login_fails(
 def test_login_successfull(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     res = security_test_client.post('/login', data=LOGIN_DATA)
-    assert res.status_code == REDIRECT_OK
+    assert res.status_code == HTTP_302_FOUND
 
 
 def test_protected_with_logged_in_user(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     security_test_client.post('/login', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
-    assert b'correct_user' in res.content
+    print(res)
+    assert res.json() == {"user": 'correct_user'}
 
 
 def test_protected_without_logged_in_user(
@@ -66,7 +63,7 @@ def test_current_user_dependency_exists(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     res = security_test_client.post('/login', data=LOGIN_DATA)
     res = security_test_client.get('/test_user')
-    assert b'correct_user' in res.content
+    assert res.json() == {"user": 'correct_user'}
 
 
 def test_logout(session, security_test_client):
@@ -77,7 +74,7 @@ def test_logout(session, security_test_client):
 def test_current_user_dependency_not_exists(
         session, security_test_client):
     res = security_test_client.get('/test_user')
-    assert b'No logged in user' in res.content
+    assert res.json() == {"user": "No logged in user"}
 
 
 def test_incorrect_secret_key_in_token(session, security_test_client):
