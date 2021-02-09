@@ -12,6 +12,7 @@ class TestUserExercise:
             password='new_test_password',
             email='new_test.email@gmail.com',
             language='english',
+            language_id=1,
         )
         user_exercise = create_user_exercise(
             session=session,
