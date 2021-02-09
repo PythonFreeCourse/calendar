@@ -1,9 +1,8 @@
-from datetime import datetime
+from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, datetime, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -12,10 +11,24 @@ from starlette.responses import RedirectResponse
 
 from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
+from app.dependencies import logger
 from app.dependencies import templates
-from app.internal.event import validate_zoom_link
+from app.internal.event import (raise_if_zoom_link_invalid, get_invited_emails,
+                                get_uninvited_regular_emails)
 from app.internal.utils import create_model
 from app.routers.user import create_user
+
+TIME_FORMAT = '%Y-%m-%d %H:%M'
+
+UPDATE_EVENTS_FIELDS = {
+    'title': str,
+    'start': dt,
+    'end': dt,
+    'content': (str, type(None)),
+    'location': (str, type(None)),
+    'category_id': (int, type(None))
+}
+
 
 router = APIRouter(
     prefix="/event",
@@ -35,16 +48,16 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
-                              '%Y-%m-%d %H:%M')
-    end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
-                            '%Y-%m-%d %H:%M')
+    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
+                        TIME_FORMAT)
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
+                      TIME_FORMAT)
     user = session.query(User).filter_by(id=1).first()
     user = user if user else create_user(username="u",
                                          password="p",
                                          email="e@mail.com",
                                          language="",
-                                         lanauge_id=1,
+                                         language_id=1,
                                          session=session)
     owner_id = user.id
     location_type = data['location_type']
@@ -52,14 +65,20 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     location = data['location']
     category_id = data.get('category_id')
 
+    invited_emails = get_invited_emails(data['invited'])
+    uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
+                                                      title, invited_emails)
+
     if is_zoom:
-        validate_zoom_link(location)
+        raise_if_zoom_link_invalid(location)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, category_id=category_id)
-    return RedirectResponse(router.url_path_for('eventview',
-                                                event_id=event.id),
-                            status_code=status.HTTP_302_FOUND)
+                         location, invited_emails, category_id=category_id)
+    message = ''
+    if uninvited_contacts:
+        message = f'Forgot to invite {", ".join(uninvited_contacts)} maybe?'
+    return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
+                            + f'?{message}', status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/{event_id}")
@@ -69,20 +88,12 @@ async def eventview(request: Request, event_id: int,
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
+    message = request.query_params.get('message', '')
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
-                                       "end_format": end_format})
-
-
-UPDATE_EVENTS_FIELDS = {
-    'title': str,
-    'start': datetime,
-    'end': datetime,
-    'content': (str, type(None)),
-    'location': (str, type(None)),
-    'category_id': (int, type(None))
-}
+                                       "end_format": end_format,
+                                       "message": message})
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -115,10 +126,8 @@ def by_id(db: Session, event_id: int) -> Event:
     return event
 
 
-def is_end_date_before_start_date(
-        start_date: datetime, end_date: datetime) -> bool:
+def is_end_date_before_start_date(start_date: dt, end_date: dt) -> bool:
     """Check if the start date is earlier than the end date"""
-
     return start_date > end_date
 
 
@@ -190,8 +199,11 @@ def update_event(event_id: int, event: Dict, db: Session
 def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
+                 invitees: List[str] = None,
                  category_id: int = None):
     """Creates an event and an association."""
+
+    invitees_concatenated = ','.join(invitees or [])
 
     event = create_model(
         db, Event,
@@ -201,6 +213,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
+        invitees=invitees_concatenated,
         category_id=category_id,
     )
     create_model(
@@ -221,13 +234,11 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
     """Returns a list of all the email address of the event invited users,
         by event id."""
-
-    return [email[0] for email in db.query(User.email).
-            select_from(Event).
-            join(UserEvent, UserEvent.event_id == Event.id).
-            join(User, User.id == UserEvent.user_id).
-            filter(Event.id == event_id).
-            all()]
+    return [email[0] for email in
+            db.query(User.email).select_from(Event).join(
+                UserEvent, UserEvent.event_id == Event.id).join(
+                User, User.id == UserEvent.user_id).filter(
+                Event.id == event_id).all()]
 
 
 def _delete_event(db: Session, event: Event):
@@ -254,9 +265,38 @@ def delete_event(event_id: int,
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
     _delete_event(db, event)
-    if participants and event.start > datetime.now():
+    if participants and event.start > dt.now():
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
     return RedirectResponse(
         url="/calendar", status_code=status.HTTP_200_OK)
+
+
+def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+    """Check if the start_date is smaller then the end_time"""
+    try:
+        return start_time < end_time
+    except TypeError:
+        return False
+
+
+def add_new_event(values: dict, db: Session) -> Optional[Event]:
+    """Get User values and the DB Session insert the values
+    to the DB and refresh it exception in case that the keys
+    in the dict is not match to the fields in the DB
+    return the Event Class item"""
+
+    if not is_date_before(values['start'], values['end']):
+        return None
+    try:
+        new_event = create_model(db, Event, **values)
+        create_model(
+            db, UserEvent,
+            user_id=values['owner_id'],
+            event_id=new_event.id
+        )
+        return new_event
+    except (AssertionError, AttributeError, TypeError) as e:
+        logger.exception(e)
+        return None
