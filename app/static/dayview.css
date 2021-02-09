@@ -111,9 +111,3 @@ html {
     border-radius: 15px;
     border: 1px solid #30465D;
 }
-  
-button:hover {background-color:#30465D}
-
-.button:active {
-background-color: #3e8e41;
-}
