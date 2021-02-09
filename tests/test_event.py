@@ -20,7 +20,8 @@ CORRECT_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -34,7 +35,23 @@ WRONG_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
+}
+
+BAD_EMAILS_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com,ccc'
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -64,6 +81,44 @@ def test_eventview_with_id(event_test_client, session, event):
     for event_detail in event_details:
         assert str(event_detail).encode('utf-8') in response.content, \
             f'{event_detail} not in view event page'
+
+
+def test_eventview_without_id(client):
+    response = client.get("/event/view")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_eventedit_missing_old_invites(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    different_invitees_event = CORRECT_EVENT_FORM_DATA.copy()
+    different_invitees_event['invited'] = 'c@c.com,d@d.com'
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=different_invitees_event)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    for invitee in CORRECT_EVENT_FORM_DATA["invited"].split(","):
+        assert invitee in response.headers['location']
+
+
+def test_eventedit_bad_emails(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=BAD_EMAILS_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    different_invitees_event = CORRECT_EVENT_FORM_DATA.copy()
+    different_invitees_event['invited'] = 'c@c.com,d@d.com'
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=different_invitees_event)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    for invitee in CORRECT_EVENT_FORM_DATA["invited"].split(","):
+        assert invitee in response.headers['location']
+    assert 'ccc' not in response.headers['location']
 
 
 def test_eventedit_post_correct(client, user):
