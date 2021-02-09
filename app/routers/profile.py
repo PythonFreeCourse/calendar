@@ -26,7 +26,7 @@ REGEX_EXTRACT_HOLIDAYS = re.compile(
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": _("Not found")}},
 )
 
 
@@ -36,6 +36,7 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
+        language_id=1,
         telegram_id='',
         language='english',
     )
