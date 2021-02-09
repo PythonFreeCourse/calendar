@@ -1,11 +1,9 @@
-from datetime import datetime
-
 from app.routers.event import sort_by_date
 from app.routers.user import get_all_user_events
 from sqlalchemy.orm import Session
 from app.database.models import Event
 
- 
+
 def get_next_user_event(session: Session, user_id: int) -> Event:
     events_as_list = list(sort_by_date(get_all_user_events(session, user_id)))
     next_event = None

@@ -1,9 +1,5 @@
-from datetime import datetime
-from app.internal import timer
-import pytest
-
-from app.internal.timer import get_next_user_event, get_next_user_event_start_time
-
+from app.internal.timer import get_next_user_event
+from app.internal.timer import get_next_user_event_start_time
 
 def test_get_last_event_success(event, session):
     next_event = get_next_user_event(
