@@ -1,8 +1,10 @@
 repos:
+  # Flake8 to check style is OK
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.8.4
     hooks:
     - id: flake8
+  # yapf to fix many style mistakes
   - repo: https://github.com/pre-commit/mirrors-yapf
     rev: v0.30.0
     hooks:
@@ -12,6 +14,7 @@ repos:
       entry: yapf
       args: [-i, -vv]
       types: [python]
+  # More built in style checks and fixes
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:
