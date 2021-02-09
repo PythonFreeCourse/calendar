@@ -9,7 +9,7 @@ from app.internal.security.ouath2 import (
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND, HTTP_401_UNAUTHORIZED
+from starlette.status import HTTP_302_FOUND
 
 
 router = APIRouter(
@@ -72,16 +72,3 @@ async def login(
         httponly=True,
     )
     return response
-
-
-async def my_exception_handler(
-        request: Request,
-        exc: HTTP_401_UNAUTHORIZED) -> RedirectResponse:
-    """
-    Whenever HTTP_401_UNAUTHORIZED is raised,
-    redirecting to login route, with original requested url,
-    and details for why original request failed.
-    """
-    paramas = f"?next={exc.headers}&message={exc.detail}"
-    return RedirectResponse(router.url_path_for('login_user_form')
-                            + f'{paramas}', status_code=HTTP_302_FOUND)

@@ -1,11 +1,7 @@
-from typing import Union
-
+from app.internal import user
 from app.database.schemas import UserCreate
 from app.database.database import get_db
 from app.dependencies import templates
-from app.internal import user
-from app.internal.security.dependancies import (
-    current_user, CurrentUser)
 from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
@@ -37,13 +33,8 @@ async def render_registration_error(
 
 
 @router.get("/register")
-async def register_user_form(
-        request: Request,
-        current_user: Union[CurrentUser, None] = Depends(current_user)
-            ) -> templates:
+async def register_user_form(request: Request) -> templates:
     """rendering register route get method"""
-    if current_user:
-        return RedirectResponse(url='/')
     return templates.TemplateResponse("register.html", {
         "request": request,
         "errors": None

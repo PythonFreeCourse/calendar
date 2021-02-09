@@ -5,6 +5,7 @@ from app.dependencies import (
     logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
+from app.internal.security.ouath2 import my_exception_handler
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
@@ -29,6 +30,7 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+app.add_exception_handler(HTTP_401_UNAUTHORIZED, my_exception_handler)
 
 json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
@@ -40,9 +42,7 @@ from app.routers import (  # noqa: E402
     search, telegram, whatsapp
 )
 
-app.add_exception_handler(HTTP_401_UNAUTHORIZED, login.my_exception_handler)
 json_data_loader.load_to_db(next(get_db()))
-
 
 routers_to_include = [
     agenda.router,
