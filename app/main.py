@@ -30,15 +30,6 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
-app.include_router(profile.router)
-app.include_router(event.router)
-app.include_router(agenda.router)
-app.include_router(register.router)
-app.include_router(email.router)
-app.include_router(invitation.router)
-app.include_router(login.router)
-app.include_router(logout.router)
-
 app.add_exception_handler(HTTP_401_UNAUTHORIZED, my_exception_handler)
 
 json_data_loader.load_to_db(next(get_db()))
@@ -53,7 +44,6 @@ from app.routers import (  # noqa: E402
 
 json_data_loader.load_to_db(next(get_db()))
 
-
 routers_to_include = [
     agenda.router,
     calendar.router,
@@ -63,7 +53,10 @@ routers_to_include = [
     email.router,
     event.router,
     invitation.router,
+    login.router,
+    logout.router,
     profile.router,
+    register.router,
     search.router,
     telegram.router,
     whatsapp.router,
