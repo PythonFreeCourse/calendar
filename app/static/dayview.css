@@ -102,3 +102,18 @@ html {
     border-radius:50px;
     box-shadow: 1px 1px 2px #999;
 }
+
+.event-btn {
+    font-size: 10px;
+    text-align: center;
+    color: #fff;
+    background-color:#30465D;
+    border-radius: 15px;
+    border: 1px solid #30465D;
+}
+  
+button:hover {background-color:#30465D}
+
+.button:active {
+background-color: #3e8e41;
+}
