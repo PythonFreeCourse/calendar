@@ -86,6 +86,6 @@ def get_emotion(title: str, content: str) -> Union[str, None]:
     and if thr dominant emotion above the constrain we set
     return the emoticon code
     """
-    Dominant = get_dominant_emotion(title, content)
-    if is_emotion_above_significance(Dominant):
-        return get_html_emoticon(Dominant)
+    dominant = get_dominant_emotion(title, content)
+    if is_emotion_above_significance(dominant):
+        return get_html_emoticon(dominant)
