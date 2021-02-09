@@ -9,9 +9,6 @@ router = APIRouter()
 
 
 @router.get("/timer")
-def timer(
-    request: Request,
-    session=Depends(get_db),
-    ):
+def timer(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
     return get_next_user_event_start_time(session, user.id)
