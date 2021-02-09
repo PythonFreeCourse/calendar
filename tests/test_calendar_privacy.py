@@ -22,7 +22,8 @@ def test_can_show_calendar_public(session):
     # current_user = CurrentUser(**user.__dict__)
     current_user = user
     result = can_show_calendar(
-        requested_user_username='new_test_username', db=session, current_user=current_user
+        requested_user_username='new_test_username',
+        db=session, current_user=current_user
     )
     assert result
     session.delete(user)
