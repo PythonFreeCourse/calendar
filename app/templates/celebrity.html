@@ -16,7 +16,7 @@
 </div>
 <link rel="stylesheet" href="{{ url_for('static', path='/celebrity.css') }}">
 <script type="text/javascript" src="{{ url_for('static', path='/celebrity.js')}}"></script>
-<script>
+<script type="text/javascript">
     getCelebs("{{ date | safe }}");
 </script>
 {% endblock %}

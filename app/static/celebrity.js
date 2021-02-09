@@ -6,28 +6,32 @@ function getCelebs(dateToday) {
         .then(function (response) {
             return response.text();
         }).then(function (html) {
-            celebCards.innerHTML = "";
+            celebCards.innerText = "";
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
             getCelebsData(doc);
         }).catch(() => {
-            celebCards.innerHTML = "Failed to load Celebrity birthdays."
+            celebCards.innerText = "Failed to load Celebrity birthdays.";
         });
 
     function getCelebsData(doc) {
+        function getDataByType(myArray, dataType, selectorData) {
+            if (dataType === "names") {
+                myArray.push(selectorData.innerText.trim().substr(5).trim());
+            } else if (dataType === "images") {
+                myArray.push(selectorData.getAttribute("src"));
+            } else if (dataType === "links") {
+                myArray.push(selectorData.getAttribute("href"));
+            } else if (dataType === "jobs") {
+                myArray.push(selectorData.innerText.trim().split("|")[0].trim());
+            }
+        }
+
         function getArray(selector, dataType) {
             let myArray = new Array();
             const selectorData = doc.querySelectorAll(selector);
             for (let i = 0; i < numberOfCelebs; i++) {
-                if (dataType === "names") {
-                    myArray.push(selectorData[i].innerText.trim().substr(5).trim());
-                } else if (dataType === "images") {
-                    myArray.push(selectorData[i].getAttribute("src"));
-                } else if (dataType === "links") {
-                    myArray.push(selectorData[i].getAttribute("href"));
-                } else if (dataType === "jobs") {
-                    myArray.push(selectorData[i].innerText.trim().split("|")[0].trim());
-                }
+                getDataByType(myArray, dataType, selectorData[i]);
             }
             return myArray;
         }
@@ -92,9 +96,9 @@ function getCelebs(dateToday) {
             }
         }
 
-        const namesArray = getArray('h3.lister-item-header', "names");
-        const imagesArray = getArray('div.lister-item-image a img', "images");
-        const linksArray = getArray('div.lister-item-image a', "links");
+        const namesArray = getArray("h3.lister-item-header", "names");
+        const imagesArray = getArray("div.lister-item-image a img", "images");
+        const linksArray = getArray("div.lister-item-image a", "links");
         const jobsArray = getArray("p.text-muted", "jobs");
         buildCards(celebCards);
     }
