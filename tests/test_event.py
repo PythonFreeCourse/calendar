@@ -1,13 +1,21 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 import pytest
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
 from starlette import status
+from sqlalchemy.orm import Session
 
+
+from app.main import app
 from app.database.models import Event
+from app.database.database import get_db
 from app.routers.event import (_delete_event, by_id, delete_event,
-                               check_change_dates_allowed, update_event,
-                               _update_event)
+                               update_event, check_change_dates_allowed,
+                               add_new_event, _update_event,
+                               is_date_before)
+
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -20,7 +28,8 @@ CORRECT_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -34,7 +43,23 @@ WRONG_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
+}
+
+BAD_EMAILS_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com,ccc'
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -64,6 +89,44 @@ def test_eventview_with_id(event_test_client, session, event):
     for event_detail in event_details:
         assert str(event_detail).encode('utf-8') in response.content, \
             f'{event_detail} not in view event page'
+
+
+def test_eventview_without_id(client):
+    response = client.get("/event/view")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_eventedit_missing_old_invites(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    different_invitees_event = CORRECT_EVENT_FORM_DATA.copy()
+    different_invitees_event['invited'] = 'c@c.com,d@d.com'
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=different_invitees_event)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    for invitee in CORRECT_EVENT_FORM_DATA["invited"].split(","):
+        assert invitee in response.headers['location']
+
+
+def test_eventedit_bad_emails(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=BAD_EMAILS_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    different_invitees_event = CORRECT_EVENT_FORM_DATA.copy()
+    different_invitees_event['invited'] = 'c@c.com,d@d.com'
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=different_invitees_event)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    for invitee in CORRECT_EVENT_FORM_DATA["invited"].split(","):
+        assert invitee in response.headers['location']
+    assert 'ccc' not in response.headers['location']
 
 
 def test_eventedit_post_correct(client, user):
@@ -219,3 +282,54 @@ def test_successful_deletion(event_test_client, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+class TestApp:
+
+    client = TestClient(app)
+    date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+    event_test_data = {
+            'title': "Test Title",
+            "location": "Fake City",
+            "start": date_test_data[0],
+            "end": date_test_data[1],
+            "content": "Any Words",
+            "owner_id": 123}
+
+    @staticmethod
+    def test_get_db():
+        assert isinstance(next(get_db()), Session)
+
+    @staticmethod
+    def test_session_db():
+        assert get_db() is not None
+
+    @staticmethod
+    def check_is_date_before():
+        start = TestApp.date_test_data[0]
+        end = TestApp.date_test_data[1]
+        assert is_date_before(start, end)
+
+    @staticmethod
+    def test_bad_check_validation():
+        assert not is_date_before(
+            TestApp.date_test_data[0],
+            'bad value'
+                                )
+
+    @staticmethod
+    def test_add_event(session: Session):
+        assert add_new_event(TestApp.event_test_data, session) is not None
+
+    @staticmethod
+    def test_add_bad_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['no_colume'] = 'some data'
+        assert add_new_event(bad_event_test_data, session) is None
+
+    @staticmethod
+    def test_add_bad_times_to_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['start'] = TestApp.date_test_data[1]
+        bad_event_test_data['end'] = TestApp.date_test_data[0]
+        assert add_new_event(bad_event_test_data, session) is None
