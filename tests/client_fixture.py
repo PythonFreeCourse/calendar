@@ -7,6 +7,10 @@ from app.database.models import User
 from app.main import app
 from app.routers import agenda, event, invitation, profile
 from tests.conftest import get_test_db, test_engine
+from . import security_testing_routes
+
+
+app.include_router(security_testing_routes.router)
 
 
 @pytest.fixture(scope="session")
@@ -67,6 +71,7 @@ def get_test_placeholder_user():
         full_name='FakeName',
         telegram_id='666666'
     )
+
 
 
 @pytest.fixture(scope="session")

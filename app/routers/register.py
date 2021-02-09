@@ -52,10 +52,11 @@ async def register(
         new_user = UserCreate(**form_dict)
     except ValidationError as e:
         # if pydantic validations fails, rendering errors to register.html
-
-        errors = {error['loc'][0]: " ".join((
-            error['loc'][0].capitalize(),
-            error['msg'])) for error in e.errors()}
+        
+        errors_dict = {error['loc'][0]: error['msg'] for error in e.errors()}
+        errors = {
+            field: " ".join((field.capitalize(),
+            error_message)) for field, error_message in errors_dict.items()}
         return templates.TemplateResponse("register.html", {
             "request": request,
             "errors": errors,

@@ -15,7 +15,6 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
 from sqlalchemy.orm import Session
-from tests import security_testing_routes
 
 
 def create_tables(engine, psql_environment):
@@ -34,7 +33,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
-app.include_router(security_testing_routes.router)
 app.include_router(profile.router)
 app.include_router(event.router)
 app.include_router(agenda.router)
@@ -60,14 +58,10 @@ routers_to_include = [
     email.router,
     event.router,
     invitation.router,
-    login.router,
-    logout.router,
     profile.router,
-    register.router,
     search.router,
     telegram.router,
     whatsapp.router,
-    security_testing_routes.router,
 ]
 
 for router in routers_to_include:

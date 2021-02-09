@@ -27,6 +27,8 @@ virtualenv env
 pip install -r requirements.txt
 # Copy app\config.py.example to app\config.py.
 # Edit the variables' values.
+# Rendering JWT_KEY:
+python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
 uvicorn app.main:app --reload
 ```
 
@@ -37,7 +39,8 @@ source venv/bin/activate
 pip install -r requirements.txt
 cp app/config.py.example app/config.py
 # Edit the variables' values.
-uvicorn app.main:app --reload
+# Rendering JWT_KEY:
+python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
 ```
 ### Running tests
 ```shell
@@ -56,7 +59,7 @@ secrets.token_hex(32)
 ## Using security dependencies:
 '''
 from app.internal.security.dependencies:
-use current_user_required and current_user functions as a route dependencies.
+use is_logged_in and current_user functions as a route dependencies.
 an example for how to use can be found at tests.security_testing_routes file.
 '''
 

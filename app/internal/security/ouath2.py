@@ -25,12 +25,12 @@ async def get_db_user_by_username(db: Session, username: str) -> User:
     return user
 
 
-def get_hashed_password(password) -> str:
+def get_hashed_password(password: str) -> str:
     """Hashing user password"""
     return pwd_context.hash(password)
 
 
-def verify_password(plain_password, hashed_password) -> bool:
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verifying password and hashed password are equal"""
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -42,6 +42,7 @@ async def authenticate_user(
     if db_user:
         if verify_password(user.password, db_user.password):
             return LoginUser(
+                user_id=db_user.id,
                 username=user.username, password=db_user.password)
     return False
 
@@ -53,7 +54,7 @@ def create_jwt_token(
     expiration = datetime.utcnow() + timedelta(minutes=JWT_MIN_EXP)
     jwt_payload = {
         "sub": user.username,
-        "hashed_password": user.password,
+        "user_id": user.user_id,
         "exp": expiration}
     jwt_token = jwt.encode(
         jwt_payload, JWT_KEY, algorithm=JWT_ALGORITHM)
@@ -73,9 +74,9 @@ async def check_jwt_token(
         jwt_payload = jwt.decode(
             token, JWT_KEY, algorithms=JWT_ALGORITHM)
         jwt_username = jwt_payload.get("sub")
-        jwt_hashed_password = jwt_payload.get("hashed_password")
+        jwt_user_id = jwt_payload.get("user_id")
         db_user = await get_db_user_by_username(db, username=jwt_username)
-        if db_user and db_user.password == jwt_hashed_password:
+        if db_user and db_user.id == jwt_user_id:
             return CurrentUser(**db_user.__dict__)
         else:
             raise HTTPException(

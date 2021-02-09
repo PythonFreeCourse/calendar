@@ -7,7 +7,7 @@ from app.internal.security.schema import CurrentUser
 from starlette.requests import Request
 
 
-async def current_user_required(
+async def is_logged_in(
         request: Request,
         db: Session = Depends(get_db),
         jwt: str = Depends(get_cookie)) -> CurrentUser:
@@ -29,5 +29,5 @@ async def current_user(
         jwt = request.cookies['Authorization']
     else:
         return None
-    user = await check_jwt_token(db, jwt)
-    return user
+    return await check_jwt_token(db, jwt)
+
