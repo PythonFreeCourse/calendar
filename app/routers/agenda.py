@@ -49,7 +49,8 @@ def agenda(
         db, user_id, start_date_graph, end_date_graph
     )
     events_for_graph = {
-        str(start_date_graph + timedelta(i)): 0 for i in range(get_a_week_int + 1)}
+        str(start_date_graph +
+            timedelta(i)): 0 for i in range(get_a_week_int + 1)}
 
     for event_obj in events_this_week:
         events_for_graph[str(event_obj.start.date())] += 1
