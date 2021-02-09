@@ -27,7 +27,6 @@ def does_user_exercise_exist(session: Session, user_id: int) -> bool:
     return get_user_exercise(session=session, user_id=user_id)
 
 
-
 def get_user_exercise(session: Session, **param) -> list:
     """Returns user exercise filter by param."""
     try:
