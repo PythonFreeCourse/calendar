@@ -3,9 +3,9 @@ import datetime
 import pytest
 
 from app.internal.emotion import (
-    dominant_emotion,
     Emoticon,
     is_emotion_above_significance,
+    get_dominant_emotion,
     get_emotion,
     get_html_emoticon)
 
@@ -66,7 +66,7 @@ create_event_tests = [
 
 @pytest.mark.parametrize("title, content, result", emotion_tests)
 def test_dominant_emotion(title, content, result):
-    assert dominant_emotion(title, content) == result
+    assert get_dominant_emotion(title, content) == result
 
 
 @pytest.mark.parametrize("dominant_emotion, significance, result",

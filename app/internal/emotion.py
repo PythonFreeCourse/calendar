@@ -15,8 +15,7 @@ EMOTIONS = {"Happy": "&#128515",
             "Fear": "&#128561",
             "Surprise": "&#128558"}
 
-Emoticon = namedtuple("Emoticon",
-                      ["dominant_emotion", "emotion_score", "emoticon_code"])
+Emoticon = namedtuple("Emoticon", ["dominant", "score", "code"])
 
 
 def get_weights(emotion: str, title_emotion: Dict[str, float],
@@ -27,26 +26,27 @@ def get_weights(emotion: str, title_emotion: Dict[str, float],
             content_emotion[emotion] * CONTENT_WEIGHTS)
 
 
-def score_comp(emotion_score: float, DominantEmotion: Emoticon, emotion: str,
+def score_comp(emotion_score: float, dominant_emotion: Emoticon, emotion: str,
                code: str, flag: int) -> Tuple[Emoticon, int]:
     """
     score comparison between emotions.
     returns the dominant and if equals we flag it
     """
-    if emotion_score > DominantEmotion.emotion_score:
+    if emotion_score > dominant_emotion.score:
         flag = 0
-        DominantEmotion = Emoticon(emotion, emotion_score, code)
-    elif emotion_score == DominantEmotion.emotion_score:
+        dominant_emotion = Emoticon(dominant=emotion, score=emotion_score,
+                                   code=code)
+    elif emotion_score == dominant_emotion.score:
         flag = 1
-    return (DominantEmotion, flag)
+    return (dominant_emotion, flag)
 
 
-def dominant_emotion(title: str, content: str) -> Emoticon:
+def get_dominant_emotion(title: str, content: str) -> Emoticon:
     """
     get text from event title and content and return
     the dominant emotion, emotion score and emoticon code
     """
-    DominantEmotion = Emoticon(None, 0, None)
+    dominant_emotion = Emoticon(dominant=None, score=0, code=None)
     no_content = 1
     duplicate_dominant_flag = 0
     title_emotion = te.get_emotion(title)
@@ -59,26 +59,26 @@ def dominant_emotion(title: str, content: str) -> Emoticon:
         else:
             emotion_score = get_weights(emotion, title_emotion,
                                         content_emotion)
-        score_comparison = score_comp(emotion_score, DominantEmotion, emotion,
+        score_comparison = score_comp(emotion_score, dominant_emotion, emotion,
                                       code, duplicate_dominant_flag)
-        DominantEmotion, duplicate_dominant_flag = [*score_comparison]
+        dominant_emotion, duplicate_dominant_flag = [*score_comparison]
     if duplicate_dominant_flag:
-        return Emoticon(None, 0, None)
-    return DominantEmotion
+        return Emoticon(dominant=None, score=0, code=None)
+    return dominant_emotion
 
 
-def is_emotion_above_significance(DominantEmotion: Emoticon,
+def is_emotion_above_significance(dominant_emotion: Emoticon,
                                   significance: float =
                                   LEVEL_OF_SIGNIFICANCE) -> bool:
     """
     get the dominant emotion, emotion score and emoticon code
     and check if the emotion score above the constrain we set
     """
-    return DominantEmotion.emotion_score >= significance
+    return dominant_emotion.score >= significance
 
 
-def get_html_emoticon(DominantEmotion: Emoticon) -> Union[str, None]:
-    return DominantEmotion.emoticon_code
+def get_html_emoticon(dominant_emotion: Emoticon) -> Union[str, None]:
+    return dominant_emotion.code
 
 
 def get_emotion(title: str, content: str) -> Union[str, None]:
@@ -87,6 +87,6 @@ def get_emotion(title: str, content: str) -> Union[str, None]:
     and if thr dominant emotion above the constrain we set
     return the emoticon code
     """
-    Dominant = dominant_emotion(title, content)
+    Dominant = get_dominant_emotion(title, content)
     if is_emotion_above_significance(Dominant):
         return get_html_emoticon(Dominant)
