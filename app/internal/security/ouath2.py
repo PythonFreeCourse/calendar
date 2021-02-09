@@ -10,7 +10,6 @@ import jwt
 from jwt.exceptions import InvalidSignatureError
 from sqlalchemy.orm import Session
 from starlette.requests import Request
-from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 from .schema import LoginUser, CurrentUser
 
@@ -113,16 +112,18 @@ async def get_cookie(request: Request) -> str:
         detail="Please log in to enter this page")
 
 
-async def my_exception_handler(
-        request: Request,
-        exc: HTTP_401_UNAUTHORIZED) -> RedirectResponse:
-    """
-    Whenever HTTP_401_UNAUTHORIZED is raised,
-    redirecting to login route, with original requested url,
-    and details for why original request failed.
-    """
-    paramas = f"?next={exc.headers}&message={exc.detail}"
-    url = f"/login{paramas}"
-    response = RedirectResponse(url=url)
-    response.delete_cookie('Authorization')
-    return response
+# this import must be here to avoid circular importing
+# from app.routers.login import router
+
+
+# async def my_exception_handler(
+#         request: Request,
+#         exc: HTTP_401_UNAUTHORIZED) -> RedirectResponse:
+#     """
+#     Whenever HTTP_401_UNAUTHORIZED is raised,
+#     redirecting to login route, with original requested url,
+#     and details for why original request failed.
+#     """
+#     paramas = f"?next={exc.headers}&message={exc.detail}"
+#     return RedirectResponse(router.url_path_for('login_user_form')
+#                             + f'{paramas}', status_code=HTTP_302_FOUND)
