@@ -41,8 +41,8 @@ router = APIRouter(
 
 class EventModel(BaseModel):
     title: str
-    start: datetime
-    end: datetime
+    start: dt
+    end: dt
     content: str
     owner_id: int
     location: str
@@ -301,7 +301,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
