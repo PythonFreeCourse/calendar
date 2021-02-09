@@ -57,15 +57,20 @@ telegram_bot.set_webhook()
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
+async def filter_access_to_features(request: Request, call_next):
     session = SessionLocal()
+
+    allawed_routes = {
+        'home': '',
+        'profile': 'profile'  # just for now 
+    }
 
     # getting the url route path for matching with the database
     route = str(request.url).replace(str(request.base_url), '')[:-1]
 
     #  TODO - replace to active user when login will be added to the project
     user = session.query(models.User).filter_by(id=1).first()
-    if user is None:
+    if user is None and route not in allawed_routes.values():
         # if there is no user connected
         raise HTTPException(status_code=401, detail="Not authenticated")
 
@@ -79,7 +84,7 @@ async def add_process_time_header(request: Request, call_next):
     except AttributeError as e:
         '''
         in case there is no feature exist in
-        the database that match the route pass the request.
+        the database that match the route that passed to the request.
         '''
         logger.error(e)
         logger.warning('Not a feature - Access is allowed.')
