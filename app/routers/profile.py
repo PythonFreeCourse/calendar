@@ -5,6 +5,7 @@ from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
 from app.internal.on_this_day_events import get_on_this_day_events
+from app.internal.corona_stats import get_corona_stats
 
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
@@ -50,6 +51,7 @@ async def profile(
              'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
              'Capricorn', 'Aquarius', 'Pisces']
     on_this_day_data = get_on_this_day_events(session)
+    corona_stats_data = get_corona_stats(session)
 
     return templates.TemplateResponse("profile.html", {
         "request": request,
@@ -57,6 +59,7 @@ async def profile(
         "events": upcoming_events,
         "signs": signs,
         "on_this_day_data": on_this_day_data,
+        "corona_stats_data": corona_stats_data
     })
 
 
