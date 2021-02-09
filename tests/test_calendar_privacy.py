@@ -8,7 +8,8 @@ USER_DATA = {
     'username': 'new_test_username',
     'email': 'new_test.email@gmail.com',
     'password': 'new_test_password',
-    'language': 'english'
+    'language': 'english',
+    'language_id': 1
 }
 
 
@@ -40,7 +41,8 @@ def test_can_show_calendar_private(session):
         username='new_test_username2',
         email='new_test.email2@gmail.com',
         password='passpar_2',
-        language='english'
+        language='english',
+        language_id=1
     )
     current_user = user
     # to be replaced after user system is merged:
