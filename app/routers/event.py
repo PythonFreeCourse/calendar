@@ -13,7 +13,7 @@ from app.database.models import Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
   get_invited_emails, get_uninvited_regular_emails,
-  raise_if_zoom_link_invalid, validate_zoom_link,
+  raise_if_zoom_link_invalid,
 )
 from app.internal.utils import create_model
 from app.routers.user import create_user
@@ -272,7 +272,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
