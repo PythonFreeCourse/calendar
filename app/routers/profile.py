@@ -17,7 +17,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": "Not found"}},
+    responses={404: {"description": _("Not found")}},
     include_in_schema=False
 )
 
@@ -28,6 +28,7 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
+        language_id=1,
         telegram_id='',
         language='english',
     )
@@ -124,6 +125,7 @@ async def upload_user_photo(
 @router.post("/update_telegram_id")
 async def update_telegram_id(
         request: Request, session=Depends(get_db)):
+
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_telegram_id = data['telegram_id']

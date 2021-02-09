@@ -5,13 +5,11 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_302_FOUND
-from starlette.templating import Jinja2Templates
 
 from app.database.database import get_db
 from app.database.models import Invitation
+from app.dependencies import templates
 from app.routers.share import accept
-
-templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(
     prefix="/invitations",
@@ -35,7 +33,8 @@ def view_invitations(request: Request, db: Session = Depends(get_db)):
 @router.post("/", include_in_schema=False)
 async def accept_invitations(
         request: Request,
-        db: Session = Depends(get_db)):
+        db: Session = Depends(get_db)
+):
     data = await request.form()
     invite_id = list(data.values())[0]
 
@@ -49,6 +48,7 @@ async def accept_invitations(
 @router.get("/get_all_invitations")
 def get_all_invitations(session=Depends(get_db), **param) -> List[Invitation]:
     """Returns all invitations filter by param."""
+
     try:
         invitations = list(session.query(Invitation).filter_by(**param))
     except SQLAlchemyError:
