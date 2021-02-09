@@ -1,6 +1,6 @@
-from datetime import datetime as dt
+from datetime import datetime
 from operator import attrgetter
-from typing import Any, Dict, datetime, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
