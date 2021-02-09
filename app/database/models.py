@@ -43,7 +43,7 @@ class User(Base):
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     privacy = Column(String, default="Private", nullable=False)
-
+    language_id = Column(Integer, ForeignKey("languages.id"))
     events = relationship("UserEvent", back_populates="participants")
 
     def __repr__(self):
@@ -62,6 +62,8 @@ class Event(Base):
     color = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
+    invitees = Column(String)
+    color = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
 
     owner = relationship("User")
@@ -78,6 +80,13 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class Language(Base):
+    __tablename__ = "languages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):
