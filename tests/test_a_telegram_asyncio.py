@@ -130,6 +130,29 @@ bot id/setWebhook?url=https://google.com/telegram/'
     }
 
 
+class TestBotClient:
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_user_not_registered(telegram_client):
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Hello, Moshe!' in response.content
+        assert b'To use PyLendar Bot you have to register' \
+            in response.content
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_user_registered(telegram_client, session):
+        session.add(get_test_placeholder_user())
+        session.commit()
+        response = await telegram_client.post(
+            '/telegram/', json=gen_message('/start'))
+        assert response.status_code == status.HTTP_200_OK
+        assert b'Welcome to PyLendar telegram client!' in response.content
+
+
 class TestHandlers:
     TEST_USER = get_test_placeholder_user()
 
@@ -303,30 +326,3 @@ Keep it secret!
 
 https://calendar.pythonic.guru/profile/
 '''
-
-
-class TestBotClient:
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_user_not_registered(telegram_client):
-        response = await telegram_client.post(
-            '/telegram/', json=gen_message('/start'))
-        assert response.status_code == status.HTTP_200_OK
-        assert b'Hello, Moshe!' in response.content
-        assert b'To use PyLendar Bot you have to register' in response.content
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_user_registered(telegram_client, session):
-        session.add(get_test_placeholder_user())
-        session.commit()
-        response = await telegram_client.post(
-            '/telegram/', json=gen_message('/start'))
-        assert response.status_code == status.HTTP_200_OK
-
-    @staticmethod
-    @pytest.mark.asyncio
-    async def test_telegram_router(telegram_client):
-        response = await telegram_client.get('/telegram')
-        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

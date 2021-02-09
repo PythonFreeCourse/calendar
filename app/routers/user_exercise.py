@@ -24,10 +24,8 @@ def does_user_exercise_exist(session: Session, user_id: int) -> bool:
     """
       Check if a user exercise for user id exists.
     """
-    if get_user_exercise(session=session, user_id=user_id):
-        return True
-    else:
-        return False
+    return get_user_exercise(session=session, user_id=user_id)
+
 
 
 def get_user_exercise(session: Session, **param) -> list:

@@ -5,10 +5,10 @@ from app.database.database import get_db
 from app.database.models import User
 from app.dependencies import MEDIA_PATH, templates
 from app.routers.user_exercise import create_user_exercise
-from sqlalchemy.orm import Session
 from app.internal.on_this_day_events import get_on_this_day_events
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
+from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
@@ -18,7 +18,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": _("Not found")}},
+    responses={404: {"description": "Not found"}},
 )
 
 
@@ -62,7 +62,7 @@ async def profile(
     })
 
 
-@router.get("/start_exercise")
+@router.get("/exercise/start")
 async def start_exercise(session: Session = Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
 
@@ -76,12 +76,8 @@ async def start_exercise(session: Session = Depends(get_db)):
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
-@router.get("/stop_exercise")
+@router.get("/exercise/stop")
 async def stop_exercise(session=Depends(get_db)):
-    """
-    Stop exercise
-    set is_active_exercise to False
-    """
     user = session.query(User).filter_by(id=1).first()
 
     # Update database
