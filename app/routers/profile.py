@@ -9,7 +9,7 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Match
 
 from app import config
 from app.database.database import get_db
@@ -202,7 +202,7 @@ def get_holidays_from_file(file: List[Event], session: Session) -> List[Event]:
     return holidays
 
 
-def create_holiday_event(holiday: re.MatchObject, owner_id: int) -> Event:
+def create_holiday_event(holiday: Match[str], owner_id: int) -> Event:
     valid_ascii_chars_range = 128
     title = holiday.groupdict()['title'].strip()
     title_to_save = ''.join(i if ord(i) < valid_ascii_chars_range
