@@ -1,7 +1,5 @@
-from collections import namedtuple
-
 import text2emotion as te
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple, NamedTuple, Union
 
 from app.config import (
     CONTENT_WEIGHTS,
@@ -15,7 +13,8 @@ EMOTIONS = {"Happy": "&#128515",
             "Fear": "&#128561",
             "Surprise": "&#128558"}
 
-Emoticon = namedtuple("Emoticon", ["dominant", "score", "code"])
+Emoticon = NamedTuple("Emoticon", [("dominant", str), ("score", float),
+                      ("code", str)])
 
 
 def get_weights(emotion: str, title_emotion: Dict[str, float],
@@ -35,7 +34,7 @@ def score_comp(emotion_score: float, dominant_emotion: Emoticon, emotion: str,
     if emotion_score > dominant_emotion.score:
         flag = 0
         dominant_emotion = Emoticon(dominant=emotion, score=emotion_score,
-                                   code=code)
+                                    code=code)
     elif emotion_score == dominant_emotion.score:
         flag = 1
     return (dominant_emotion, flag)
