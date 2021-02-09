@@ -271,3 +271,32 @@ def delete_event(event_id: int,
         # if the deletion is successful
     return RedirectResponse(
         url="/calendar", status_code=status.HTTP_200_OK)
+
+
+def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+    """Check if the start_date is smaller then the end_time"""
+    try:
+        return start_time < end_time
+    except TypeError:
+        return False
+
+
+def add_new_event(values: dict, db: Session) -> Optional[Event]:
+    """Get User values and the DB Session insert the values
+    to the DB and refresh it exception in case that the keys
+    in the dict is not match to the fields in the DB
+    return the Event Class item"""
+
+    if not is_date_before(values['start'], values['end']):
+        return None
+    try:
+        new_event = create_model(db, Event, **values)
+        create_model(
+            db, UserEvent,
+            user_id=values['owner_id'],
+            event_id=new_event.id
+        )
+        return new_event
+    except (AssertionError, AttributeError, TypeError) as e:
+        logger.exception(e)
+        return None
