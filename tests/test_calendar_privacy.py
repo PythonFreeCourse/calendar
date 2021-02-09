@@ -50,5 +50,3 @@ def test_can_show_calendar_private(session):
     session.delete(user)
     session.delete(another_user)
     session.commit()
-
-

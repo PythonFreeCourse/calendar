@@ -143,7 +143,9 @@ async def update_telegram_id(
 
 @router.post("/update_calendar_privacy")
 async def update_calendar_privacy(
-    request: Request, session=Depends(get_db)):
+        request: Request,
+        session=Depends(get_db)
+):
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_privacy = data['privacy']
