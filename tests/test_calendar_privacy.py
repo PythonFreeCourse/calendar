@@ -1,8 +1,7 @@
 from app.internal.calendar_privacy import can_show_calendar
-# after user system is merged: from app.internal.security.dependancies import CurrentUser
+# after user system is merged:
+# from app.internal.security.dependancies import CurrentUser
 from app.routers.user import create_user
-
-import pytest
 
 
 USER_DATA = {
@@ -19,9 +18,12 @@ def test_can_show_calendar_public(session):
             **USER_DATA
     )
     user.privacy = "Public"
-    #  to be replaced after user system is merged:current_user = CurrentUser(**user.__dict__)
+    #  to be replaced after user system is merged:
+    # current_user = CurrentUser(**user.__dict__)
     current_user = user
-    result = can_show_calendar(requested_user_username='new_test_username', db=session, current_user=current_user)
+    result = can_show_calendar(
+        requested_user_username='new_test_username', db=session, current_user=current_user
+    )
     assert result
     session.delete(user)
     session.commit()
@@ -39,12 +41,18 @@ def test_can_show_calendar_private(session):
         password='passpar_2',
         language='english'
     )
-    
     current_user = user
-    # to be replaced after user system is merged: current_user = CurrentUser(**user.__dict__)
+    # to be replaced after user system is merged:
+    # current_user = CurrentUser(**user.__dict__)
 
-    result_a = can_show_calendar(requested_user_username='new_test_username2', db=session, current_user=current_user)
-    result_b = can_show_calendar(requested_user_username='new_test_username', db=session, current_user=current_user)
+    result_a = can_show_calendar(
+        requested_user_username='new_test_username2',
+        db=session, current_user=current_user
+    )
+    result_b = can_show_calendar(
+        requested_user_username='new_test_username',
+        db=session, current_user=current_user
+    )
     assert not result_a
     assert result_b
     session.delete(user)
