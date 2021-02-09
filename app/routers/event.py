@@ -24,11 +24,11 @@ UPDATE_EVENTS_FIELDS = {
     'title': str,
     'start': dt,
     'end': dt,
+    'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
-    'category_id': (int, type(None))
+    'category_id': (int, type(None)),
 }
-
 
 router = APIRouter(
     prefix="/event",
@@ -50,8 +50,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     content = data['description']
     start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
                         TIME_FORMAT)
-    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
-                      TIME_FORMAT)
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'], TIME_FORMAT)
     user = session.query(User).filter_by(id=1).first()
     user = user if user else create_user(username="u",
                                          password="p",
@@ -60,6 +59,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                                          language_id=1,
                                          session=session)
     owner_id = user.id
+    availability = data.get('availability', 'True') == 'True'
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
@@ -73,7 +73,9 @@ async def create_new_event(request: Request, session=Depends(get_db)):
         raise_if_zoom_link_invalid(location)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, invited_emails, category_id=category_id)
+                         location, invitees=invited_emails,
+                         category_id=category_id,
+                         availability=availability)
     message = ''
     if uninvited_contacts:
         message = f'Forgot to invite {", ".join(uninvited_contacts)} maybe?'
@@ -164,7 +166,11 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
                                         ) -> Dict[str, Any]:
     """Remove all keys that are not allowed to update"""
 
-    return {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+    edit_event = {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+    # Convert `availability` value into boolean.
+    if 'availability' in edit_event.keys():
+        edit_event['availability'] = (edit_event['availability'] == 'True')
+    return edit_event
 
 
 def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
@@ -200,7 +206,8 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
                  invitees: List[str] = None,
-                 category_id: int = None):
+                 category_id: int = None,
+                 availability: bool = True):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
@@ -215,6 +222,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         location=location,
         invitees=invitees_concatenated,
         category_id=category_id,
+        availability=availability
     )
     create_model(
         db, UserEvent,
@@ -259,8 +267,7 @@ def _delete_event(db: Session, event: Event):
 
 
 @router.delete("/{event_id}")
-def delete_event(event_id: int,
-                 db: Session = Depends(get_db)):
+def delete_event(event_id: int, db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
@@ -273,7 +280,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
