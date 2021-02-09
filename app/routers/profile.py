@@ -8,6 +8,7 @@ from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 from typing import List
 
 from app import config
@@ -183,7 +184,7 @@ async def update_holidays(
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
-def get_holidays_from_file(file, session) -> List[Event]:
+def get_holidays_from_file(file: List[Event], session: Session) -> List[Event]:
     """
     This function using regex to extract holiday title
     and date from standrd ics file
@@ -194,13 +195,13 @@ def get_holidays_from_file(file, session) -> List[Event]:
     parsed_holidays = REGEX_EXTRACT_HOLIDAYS.finditer(file)
     holidays = []
     for holiday in parsed_holidays:
-        holiday = create_holiday_event(
+        holiday_event = create_holiday_event(
             holiday, session.query(User).filter_by(id=1).first().id)
-        holidays.append(holiday)
+        holidays.append(holiday_event)
     return holidays
 
 
-def create_holiday_event(holiday, owner_id) -> Event:
+def create_holiday_event(holiday: re.MatchObject, owner_id: int) -> Event:
     valid_ascii_chars_range = 128
     title = holiday.groupdict()['title'].strip()
     title_to_save = ''.join(i if ord(i) < valid_ascii_chars_range
@@ -217,7 +218,7 @@ def create_holiday_event(holiday, owner_id) -> Event:
     return holiday
 
 
-def save_holidays_to_db(holidays, session):
+def save_holidays_to_db(holidays: List[Event], session: Session):
     """
     this function saves holiday list into database.
     :param holidays: list of holidays events

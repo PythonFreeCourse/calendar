@@ -1,5 +1,6 @@
-from app.database.models import Event
+from app.database.models import Event, User
 from app.routers import profile
+from sqlalchemy.orm import Session
 import os
 
 
@@ -14,7 +15,7 @@ class TestHolidaysImport:
         assert resp.ok
         assert b'Import holidays using ics file' in resp.content
 
-    def test_get_holidays(self, session, user):
+    def test_get_holidays(self, session: Session, user: User):
         current_folder = os.path.dirname(os.path.realpath(__file__))
         resource_folder = os.path.join(current_folder, 'resources')
         test_file = os.path.join(resource_folder, 'ics_example.txt')
@@ -24,7 +25,7 @@ class TestHolidaysImport:
             profile.save_holidays_to_db(holidays, session)
         assert len(session.query(Event).all()) == 4
 
-    def test_wrong_file_get_holidays(self, session, user):
+    def test_wrong_file_get_holidays(self, session: Session, user: User):
         current_folder = os.path.dirname(os.path.realpath(__file__))
         resource_folder = os.path.join(current_folder, 'resources')
         test_file = os.path.join(resource_folder, 'wrong_ics_example.txt')
