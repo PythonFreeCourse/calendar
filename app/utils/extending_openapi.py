@@ -6,8 +6,7 @@ def custom_openapi(app):
         return app.openapi_schema
     url = ('https://forums.pythonic.guru'
            '/uploads/default/original/1X/'
-           '3c7e2ccc77e214fb4e38daa421f1b8878a5677f9.jpeg'
-        )
+           '3c7e2ccc77e214fb4e38daa421f1b8878a5677f9.jpeg')
     openapi_schema = get_openapi(
         title="Pylander API",
         version="1.0.0",
