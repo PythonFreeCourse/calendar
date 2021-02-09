@@ -44,7 +44,10 @@ class TestSearch:
 
     @staticmethod
     def create_user(session):
-        user = User(username='testuser', email='test@abc.com', password='1234')
+        user = User(username='testuser',
+                    email='test@abc.com',
+                    password='1234',
+                    language_id=1)
         session.add(user)
         session.commit()
         return user

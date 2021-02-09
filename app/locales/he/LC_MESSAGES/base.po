@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-01 10:21+0200\n"
+"POT-Creation-Date: 2021-02-07 23:37+0000\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: app/routers/profile.py:19
+#: app/routers/profile.py:20
 msgid "Not found"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgstr ""
 msgid "No events found..."
 msgstr ""
 
-#: app/templates/base.html:18
+#: app/templates/base.html:19
 msgid "Calendar"
 msgstr ""
 
@@ -78,52 +78,45 @@ msgstr ""
 msgid "Agenda"
 msgstr ""
 
-#: app/templates/profile.html:59
+#: app/templates/profile.html:50
 msgid "Update name"
 msgstr ""
 
-#: app/templates/profile.html:66 app/templates/profile.html:88
-#: app/templates/profile.html:109 app/templates/profile.html:133
+#: app/templates/profile.html:57 app/templates/profile.html:77
+#: app/templates/profile.html:97 app/templates/profile.html:120
+#: app/templates/profile.html:140
 msgid "Save changes"
 msgstr ""
 
-#: app/templates/profile.html:80
+#: app/templates/profile.html:70
 msgid "Update email"
 msgstr ""
 
-#: app/templates/profile.html:101
+#: app/templates/profile.html:90
 msgid "Update description"
 msgstr ""
 
-#: app/templates/profile.html:124
+#: app/templates/profile.html:111
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:176
-msgid "Settings"
-msgstr ""
-
-#: app/templates/profile.html:207
-msgid "Your feature"
-msgstr ""
-
-#: app/templates/profile.html:228
+#: app/templates/profile.html:220
 msgid "Upcoming event on (date)"
 msgstr ""
 
-#: app/templates/profile.html:239
+#: app/templates/profile.html:246
 msgid "The Event (event)"
 msgstr ""
 
-#: app/templates/profile.html:242
+#: app/templates/profile.html:249
 msgid "Last updated (time) ago"
 msgstr ""
 
-#: app/templates/profile.html:259
+#: app/templates/profile.html:285
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:268 app/templates/profile.html:277
+#: app/templates/profile.html:293
 msgid "Your Card"
 msgstr ""
 
@@ -136,5 +129,11 @@ msgstr "בדיקת תרגום בפייתון"
 #~ msgstr ""
 
 #~ msgid "Export my calendar"
+#~ msgstr ""
+
+#~ msgid "Settings"
+#~ msgstr ""
+
+#~ msgid "Your feature"
 #~ msgstr ""
 
