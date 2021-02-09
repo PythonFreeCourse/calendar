@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 @router.get("/celebrity")
-def search(request: Request):
+def celebrity(request: Request):
     today = get_today_month_and_day()
 
     return templates.TemplateResponse("celebrity.html", {
