@@ -111,3 +111,7 @@ html {
     border-radius: 15px;
     border: 1px solid #30465D;
 }
+
+.add-event-icon {
+    display: inline-block;
+}

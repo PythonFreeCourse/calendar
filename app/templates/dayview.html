@@ -57,12 +57,15 @@
             <div class="actiongrid">
                 {% for event, attr in events %}
                     <div class="d-flex flex-row justify-content-around align-items-end action-continer" style="grid-row: {{attr.grid_position}};">
-                        <a href="/event/edit" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
+                        <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
                         <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}" width="15em" height="15em"></a>
                         <button class="event-btn" title="See full event" onclick="displayEvent('{{event.id}}')">event details</button>
                     </div>
                 {% endfor %}
             </div>
+        </div>
+        <div>
+            <a href="/event/edit" title="Add Event" class="add-event-icon"><img src="{{ url_for('static', path='/images/icons/plus.svg')}}" width="30em" height="30em"></a>
         </div>
         <div id="here" style="height:100%"></div>
         <div id="nice" style="height:100%">Have a nice day</div>
