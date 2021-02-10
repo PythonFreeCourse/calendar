@@ -1,11 +1,10 @@
 from typing import Optional
 
 from iso639 import languages
+from loguru import logger
+from sqlalchemy.orm.session import Session
 from textblob import TextBlob, download_corpora
 from textblob.exceptions import NotTranslated
-
-from app.database.database import SessionLocal
-from loguru import logger
 
 from app.routers.user import get_users
 
@@ -46,7 +45,7 @@ def _detect_text_language(text: str) -> str:
     return str(TextBlob(text).detect_language())
 
 
-def _get_user_language(user_id: int, session: SessionLocal) -> str:
+def _get_user_language(user_id: int, session: Session) -> str:
     """
     Gets a user-id and returns the language he speaks
     Uses the DB"""
@@ -62,7 +61,7 @@ def _get_user_language(user_id: int, session: SessionLocal) -> str:
 
 
 def translate_text_for_user(text: str,
-                            session: SessionLocal,
+                            session: Session,
                             user_id: int) -> str:
     """
     Gets a text and a user-id and returns the text,
