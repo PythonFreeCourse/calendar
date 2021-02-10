@@ -145,7 +145,7 @@ async def update_telegram_id(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
-@router.get("/import_holidays")
+@router.get("/holidays/import")
 def import_holidays(request: Request):
     return templates.TemplateResponse("import_holidays.html", {
         "request": request,
@@ -171,7 +171,7 @@ def get_image_crop_area(width, height):
     return 0, delta, width, width + delta
 
 
-@router.post("/update_holidays")
+@router.post("/holidays/update")
 async def update_holidays(
         file: UploadFile = File(...), session=Depends(get_db)):
     icsfile = await file.read()

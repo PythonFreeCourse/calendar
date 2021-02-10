@@ -1,17 +1,15 @@
+import os
 from app.database.models import Event, User
 from app.routers import profile
 from sqlalchemy.orm import Session
-import os
 
 
 class TestHolidaysImport:
-    HOLIDAYS = '/profile/import_holidays'
+    HOLIDAYS = '/profile/holidays/import'
 
     @staticmethod
     def test_import_holidays_page_exists(client):
         resp = client.get(TestHolidaysImport.HOLIDAYS)
-        print(resp.ok)
-        print(resp.content)
         assert resp.ok
         assert b'Import holidays using ics file' in resp.content
 
