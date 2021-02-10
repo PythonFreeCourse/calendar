@@ -1,9 +1,18 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from datetime import datetime
-from app.database.models import User, UserExercise
-from app.internal.utils import save
+from app.database.models import Base, User, UserExercise
 
+
+def save(session: Session, instance: Base) -> bool:
+    """Commits an instance to the db.
+    source: app.database.models.Base"""
+
+    if issubclass(instance.__class__, Base):
+        session.add(instance)
+        session.commit()
+        return True
+    return False
 
 def create_user_exercise(session: Session, user: User) -> UserExercise:
     """
