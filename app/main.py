@@ -5,7 +5,7 @@ from starlette.responses import RedirectResponse
 
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
-from app.database.database import engine, get_db
+from app.database.database import engine, get_db, SessionLocal
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.routers import (
@@ -70,8 +70,7 @@ async def filter_access_to_features(request: Request, call_next):
         in case there is no feature exist in
         the database that match the route that passed to the request.
         '''
-        logger.error(e)
-        logger.warning('Not a feature - Access is allowed.')
+        logger.error('Not a feature - Access is allowed.  Error: ' + str(e))
         return await call_next(request)
 
     if is_enabled:
@@ -86,13 +85,19 @@ async def filter_access_to_features(request: Request, call_next):
     return RedirectResponse(url=request.headers['referer'])
 
 
+@app.on_event("startup")
+async def startup_event():
+    session = SessionLocal()
+    feature_panel.create_features_at_startup(session=session)
+    session.close()
+
+
 # TODO: I add the quote day to the home page
 # until the relavent calendar view will be developed.
 @app.get("/")
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    print(app)
 
     return templates.TemplateResponse("home.html", {
         "request": request,

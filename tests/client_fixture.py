@@ -1,4 +1,4 @@
-from fastapi.testclient import TestClient
+from async_asgi_testclient.testing import TestClient
 import pytest
 
 from app import main
@@ -7,6 +7,11 @@ from app.database.models import User
 from app.main import app
 from app.routers import agenda, event, invitation, profile
 from tests.conftest import get_test_db, test_engine
+
+
+# class TestClientMod(TestClient):
+#     def ok(self):
+#         return 200 >= self.status_code < 300
 
 
 @pytest.fixture(scope="session")
