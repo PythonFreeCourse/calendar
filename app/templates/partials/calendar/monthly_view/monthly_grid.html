@@ -1,15 +1,15 @@
 <div class="calendar">
-    <div class="calender-days-titles">
-        {% for d in week_days %}
-        {% if d == day.sday %}
-        <div class="day-title underline-yellow"><b>{{ d.upper() }}</b></div>
-        {% else %}
-        <div class="day-title"> {{ d.upper() }}</div>
-        {% endif %}
-        {% endfor %}
-    </div>
-    <div id="calender-grid">
-        {% include 'partials/calendar/monthly_view/add_week.html' %}
-    </div>
+  <div class="calender-days-titles">
+    {% for d in week_days %}
+    {% if d == day.sday %}
+    <div class="day-title underline-yellow"><b>{{ d.upper() }}</b></div>
+    {% else %}
+    <div class="day-title"> {{ d.upper() }}</div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  <div id="calender-grid">
+    {% include 'partials/calendar/monthly_view/add_week.html' %}
+  </div>
 </div>
 <div id="day-view"></div>

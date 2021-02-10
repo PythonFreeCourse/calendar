@@ -8,7 +8,6 @@ from app.internal.import_file import (
     is_file_extension_valid, is_file_size_valid, is_file_valid_to_import,
     is_start_day_before_end_date, user_click_import)
 
-
 FILE_TXT_SAMPLE = r"tests/files_for_import_file_tests/sample_calendar_data.txt"
 FILE_TXT_INVALID = r"tests/files_for_import_file_tests/sample_data_invalid.txt"
 FILE_RNG_INVALID = r"tests/files_for_import_file_tests/sample_rng_invalid.txt"
@@ -26,7 +25,6 @@ FILE_TXT_DATE_VER = r"tests/files_for_import_file_tests/sample_date2_ver.txt"
 FILE_TXT_LOCATION = r"tests/files_for_import_file_tests/‏‏sample_loc_ver.txt"
 FILE_TXT_MIX_DATE = r"tests/files_for_import_file_tests/‏‏sample_date_mix.txt"
 
-
 IMPORT_TXT_FILE_RESULT_DATA = [
     {'Head': 'Head1', 'Content': 'Content1',
      'S_Date': datetime.datetime(2019, 5, 21, 0, 0),
@@ -41,7 +39,6 @@ IMPORT_TXT_FILE_RESULT_DATA = [
      'E_Date': datetime.datetime(2022, 2, 2, 0, 0),
      'Location': None},
 ]
-
 
 file_size_tests = [
     # File size above the constraint we set in the global variable (5 MB)
@@ -111,7 +108,6 @@ is_event_valid_duration_tests = [
      datetime.datetime(1991, 12, 5, 10, 30), 5, True)
 ]
 
-
 check_validity_of_text_tests = [
     (r"Head1, Content1, 05-21-2019, 05-21-2019", True),
     (r"Head1, Content1, 05-21-2019 10:30, 05-21-2019 11:30", True),
@@ -150,17 +146,17 @@ import_txt_file_tests = [
 import_ics_tests = [
     # ics file
     (FILE_ICS,
-        [
-            {'Head': 'HeadA', 'Content': 'Content1',
-             'S_Date': datetime.datetime(2019, 8, 2, 10, 34),
-             'E_Date': datetime.datetime(2019, 8, 2, 11, 4),
-             'Location': 'Tel-Aviv'},
-            {'Head': 'HeadB', 'Content': 'Content2',
-             'S_Date': datetime.datetime(2019, 8, 2, 20, 0),
-             'E_Date': datetime.datetime(2019, 8, 2, 20, 30),
-             'Location': 'Tel-Aviv'
-             }
-        ]),
+     [
+         {'Head': 'HeadA', 'Content': 'Content1',
+          'S_Date': datetime.datetime(2019, 8, 2, 10, 34),
+          'E_Date': datetime.datetime(2019, 8, 2, 11, 4),
+          'Location': 'Tel-Aviv'},
+         {'Head': 'HeadB', 'Content': 'Content2',
+          'S_Date': datetime.datetime(2019, 8, 2, 20, 0),
+          'E_Date': datetime.datetime(2019, 8, 2, 20, 30),
+          'Location': 'Tel-Aviv'
+          }
+     ]),
     # ics invalid file
     (FILE_ICS_INVALID_DATA, []),
     # ics invalid file
