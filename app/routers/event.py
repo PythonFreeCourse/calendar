@@ -174,6 +174,11 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
 def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
     try:
         # Update database
+        print(event_to_update)
+        location = get_location_coordinates(event_to_update.get('location'))
+        if location is not None:
+            for i, field in enumerate(location._fields):
+                event_to_update[field] = location[i]
         db.query(Event).filter(Event.id == event_id).update(
             event_to_update, synchronize_session=False)
 

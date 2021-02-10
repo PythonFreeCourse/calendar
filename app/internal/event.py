@@ -98,7 +98,7 @@ def get_location_coordinates(
         ) -> NamedTuple:
     """Return location coordinates and accurate
     address of the specified location."""
-    Location = namedtuple('Location', 'latitude, longitude, address')
+    Location = namedtuple('Location', 'latitude, longitude, location')
     geolocator = Nominatim(user_agent="calendar", timeout=timeout)
     try:
         geolocation = geolocator.geocode(address)
