@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.main import app
 from app.database.models import Event
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.routers.event import (_delete_event, by_id, delete_event,
                                update_event, check_change_dates_allowed,
                                add_new_event, _update_event,

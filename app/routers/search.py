@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm import Session
 
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.internal.search import get_results_by_keywords
+
 
 router = APIRouter()
 
