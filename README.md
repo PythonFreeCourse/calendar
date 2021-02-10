@@ -18,7 +18,7 @@
 ### Prerequisites
 1. Windows or Linux based system - either [WSL on windows](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or full blown linux.
 2. [Python](https://www.python.org/downloads/release/python-385/)
-3. Install requirements:
+3. Install python's requirements:
 ```shell
 pip install -r requirements.txt
 ```
