@@ -1,5 +1,5 @@
 import text2emotion as te
-from typing import Dict, Tuple, NamedTuple, Union
+from typing import Dict, NamedTuple, Union
 
 from app.config import (
     CONTENT_WEIGHTS,
