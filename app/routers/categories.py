@@ -82,8 +82,8 @@ def validate_request_params(query_params: ImmutableMultiDict) -> bool:
     intersection_set = request_params.intersection(all_fields)
     if "color" in intersection_set:
         is_valid_color = validate_color_format(query_params["color"])
-    return union_set == all_fields and "user_id" in intersection_set and \
-           is_valid_color
+    return union_set == all_fields and "user_id" in intersection_set and (
+        is_valid_color)
 
 
 def validate_color_format(color: str) -> bool:
