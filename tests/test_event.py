@@ -1,13 +1,21 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+
 
 import pytest
 from fastapi import HTTPException
+from fastapi.testclient import TestClient
 from starlette import status
+from sqlalchemy.orm import Session
 
+
+from app.main import app
 from app.database.models import Event
+from app.database.database import get_db
 from app.routers.event import (_delete_event, by_id, delete_event,
-                               check_change_dates_allowed, update_event,
-                               _update_event)
+                               update_event, check_change_dates_allowed,
+                               add_new_event, _update_event,
+                               is_date_before)
+
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -327,3 +335,54 @@ def test_successful_deletion(event_test_client, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+class TestApp:
+
+    client = TestClient(app)
+    date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+    event_test_data = {
+            'title': "Test Title",
+            "location": "Fake City",
+            "start": date_test_data[0],
+            "end": date_test_data[1],
+            "content": "Any Words",
+            "owner_id": 123}
+
+    @staticmethod
+    def test_get_db():
+        assert isinstance(next(get_db()), Session)
+
+    @staticmethod
+    def test_session_db():
+        assert get_db() is not None
+
+    @staticmethod
+    def check_is_date_before():
+        start = TestApp.date_test_data[0]
+        end = TestApp.date_test_data[1]
+        assert is_date_before(start, end)
+
+    @staticmethod
+    def test_bad_check_validation():
+        assert not is_date_before(
+            TestApp.date_test_data[0],
+            'bad value'
+                                )
+
+    @staticmethod
+    def test_add_event(session: Session):
+        assert add_new_event(TestApp.event_test_data, session) is not None
+
+    @staticmethod
+    def test_add_bad_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['no_colume'] = 'some data'
+        assert add_new_event(bad_event_test_data, session) is None
+
+    @staticmethod
+    def test_add_bad_times_to_event(session: Session):
+        bad_event_test_data = TestApp.event_test_data
+        bad_event_test_data['start'] = TestApp.date_test_data[1]
+        bad_event_test_data['end'] = TestApp.date_test_data[0]
+        assert add_new_event(bad_event_test_data, session) is None
