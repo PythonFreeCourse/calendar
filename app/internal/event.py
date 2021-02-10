@@ -1,15 +1,21 @@
 import logging
 import re
-from typing import List, Set
+from collections import namedtuple
+from typing import List, NamedTuple, Set
 
+from loguru import logger
+
+from app.database.models import Event
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
+from geopy.geocoders.nominatim import Nominatim
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
-from app.database.models import Event
 
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
+LOCATION_TIMEOUT = 20
 
 
 def raise_if_zoom_link_invalid(location):
@@ -84,3 +90,23 @@ def get_messages(session: Session,
         messages.append(f'Same event happened {weeks_diff} weeks before too. '
                         f'Want to create another one {weeks_diff} after too?')
     return messages
+
+
+def get_location_coordinates(
+        address: str,
+        timeout: float = LOCATION_TIMEOUT
+        ) -> NamedTuple:
+    """Return location coordinates and accurate
+    address of the specified location."""
+    Location = namedtuple('Location', 'latitude, longitude, address')
+    geolocator = Nominatim(user_agent="calendar", timeout=timeout)
+    try:
+        geolocation = geolocator.geocode(address)
+        if geolocation is not None:
+            location = Location(geolocation.latitude,
+                                geolocation.longitude,
+                                geolocation.raw["display_name"])
+            return location
+    except (GeocoderTimedOut, GeocoderUnavailable) as e:
+        logger.exception(str(e))
+    return None, None, address

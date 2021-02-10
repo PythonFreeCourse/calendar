@@ -1,10 +1,8 @@
 from datetime import datetime as dt
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
 from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -13,16 +11,14 @@ from starlette import status
 from starlette.responses import RedirectResponse
 
 from app.database.models import Event, User, UserEvent
-from app.dependencies import get_db, logger, templates
+from app.dependencies import get_db, templates
 from app.internal.event import (
-    get_invited_emails, get_messages, get_uninvited_regular_emails,
-    raise_if_zoom_link_invalid,
+    get_invited_emails, get_location_coordinates, get_messages,
+    get_uninvited_regular_emails, raise_if_zoom_link_invalid,
 )
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
-
-LOCATION_TIMEOUT = 20
 
 TIME_FORMAT = '%Y-%m-%d %H:%M'
 
@@ -285,21 +281,6 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def get_location_coordinates(
-        address: str,
-        timeout: float = LOCATION_TIMEOUT
-        ) -> Tuple[Optional[float], Optional[float], str]:
-    """Return location coordinates and accurate
-    address of the specified location."""
-    geolocator = Nominatim(user_agent="calendar", timeout=timeout)
-    try:
-        location = geolocator.geocode(address)
-        if location is not None:
-            accurate_address = location.raw["display_name"]
-            return location.latitude, location.longitude, accurate_address
-    except (GeocoderTimedOut, GeocoderUnavailable) as e:
-        logger.exception(str(e))
-    return None, None, address
 def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:

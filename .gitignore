@@ -33,6 +33,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 pyvenv.cfg
+.DS_Store
 
 
 # PyInstaller

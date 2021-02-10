@@ -16,6 +16,7 @@ class TestGeolocation:
         'location': 'אדר 11, אשדוד',
         'description': 'test1',
         'color': 'red',
+        'invited': 'None',
         'availability': 'busy',
         'privacy': 'public'
     }
@@ -29,6 +30,7 @@ class TestGeolocation:
         'location_type': 'address',
         'location': 'not a real location with coords',
         'description': 'test1',
+        'invited': 'None',
         'color': 'red',
         'availability': 'busy',
         'privacy': 'public'
