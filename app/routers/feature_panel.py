@@ -13,32 +13,45 @@ router = APIRouter(
 
 
 @router.get('/')
-def get_feature_panel(request: Request,
-                      session: SessionLocal = Depends(get_db)):
+def get_feature_panel(
+        request: Request, session: SessionLocal = Depends(get_db)):
+
     features = session.query(Feature).all()
     return features
 
 
-@router.get('/create-test')
+@router.get('/create-test-features')
 def test_insert(request: Request, session: SessionLocal = Depends(get_db)):
 
-    user = session.query(User).filter_by(id=1).first()
     create_feature(
-                    db=session, name='profile',
-                    route='/profile',
-                    user=user, is_enable=True,
-                    description='description',
-                    creator='creator'
-                  )
+        db=session, name='profile',
+        route='/profile', description='description',
+        creator='creator'
+    )
     create_feature(
-                    db=session, name='feature-panel',
-                    route='/features',
-                    user=user, is_enable=False,
-                    description='description',
-                    creator='liran caduri'
-                  )
+        db=session, name='feature-panel',
+        route='/features', description='description',
+        creator='liran caduri'
+    )
+    create_feature(
+        db=session, name='invitations',
+        route='/invitations', description='description',
+        creator='creator2'
+    )
 
-    return {'all': user.features}
+    features = session.query(Feature).all()
+
+    return {'all': features}
+
+
+@router.get('/test-association')
+def testAssociation(request: Request, session: SessionLocal = Depends(get_db)):
+    create_association(db=session, feature_id=1, user_id=1, is_enable=True)
+    create_association(db=session, feature_id=3, user_id=1, is_enable=False)
+
+    associations = session.query(UserFeature).all()
+
+    return {'all': associations}
 
 
 def delete_feature(feature: Feature, session: SessionLocal = Depends(get_db)):
@@ -83,24 +96,35 @@ def get_user_disabled_features(user_id: int = 1,
     return data
 
 
-def is_feature_enabled(route: str, user: int, session: SessionLocal):
+@router.get('/deactive')
+def get_user_unlinked_features(user_id: int = 1,
+                               session: SessionLocal = Depends(get_db)):
+    data = []
+    return data
+
+
+def is_feature_enabled(route: str):
+    session = SessionLocal()
+    # TODO - get active user id
+    user = session.query(User).filter_by(id=1).first()
+
     feature = session.query(Feature).filter_by(route=f'/{route}').first()
+    print(route)
     user_pref = session.query(UserFeature).filter_by(
                 feature_id=feature.id,
                 user_id=user.id
                 ).first()
-
+    print(user_pref)
     if feature is None:
         return False
-    elif user_pref is not None and user_pref.is_enable:
+    elif user_pref is not None and user_pref.is_enable or user_pref is None:
         return True
     return False
 
 
 def create_feature(db: SessionLocal, name: str, route: str,
-                   user: User, is_enable: bool,
                    description: str, creator: str = None):
-    """Creates a feature and an association."""
+    """Creates a feature."""
 
     feature = create_model(
         db, Feature,
@@ -109,10 +133,18 @@ def create_feature(db: SessionLocal, name: str, route: str,
         creator=creator,
         description=description
     )
-    create_model(
+    return feature
+
+
+def create_association(
+        db: SessionLocal, feature_id: int, user_id: int, is_enable: bool):
+    """Creates an association."""
+
+    association = create_model(
         db, UserFeature,
-        user_id=user.id,
-        feature_id=feature.id,
+        user_id=user_id,
+        feature_id=feature_id,
         is_enable=is_enable
     )
-    return feature
+
+    return association

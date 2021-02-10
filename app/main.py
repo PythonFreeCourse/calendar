@@ -1,11 +1,11 @@
-from fastapi import Depends, FastAPI, Request, HTTPException
+from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 
 from app.config import PSQL_ENVIRONMENT
 from app.database import models
-from app.database.database import engine, get_db, SessionLocal
+from app.database.database import engine, get_db
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
 from app.internal import daily_quotes, json_data_loader
 from app.routers import (
@@ -58,29 +58,13 @@ telegram_bot.set_webhook()
 
 @app.middleware("http")
 async def filter_access_to_features(request: Request, call_next):
-    session = SessionLocal()
-
-    allawed_routes = {
-        'home': '',
-        'profile': 'profile'  # just for now 
-    }
 
     # getting the url route path for matching with the database
     route = str(request.url).replace(str(request.base_url), '')[:-1]
 
-    #  TODO - replace to active user when login will be added to the project
-    user = session.query(models.User).filter_by(id=1).first()
-    if user is None and route not in allawed_routes.values():
-        # if there is no user connected
-        raise HTTPException(status_code=401, detail="Not authenticated")
-
     try:
-        is_enabled = feature_panel.is_feature_enabled(
-            route=route,
-            user=user,
-            session=session
-        )
-        session.close()
+        is_enabled = feature_panel.is_feature_enabled(route=route)
+        # session.close()
     except AttributeError as e:
         '''
         in case there is no feature exist in
