@@ -1,6 +1,8 @@
+from fastapi import BackgroundTasks, status
 import pytest
 from sqlalchemy.orm import Session
 
+from app.database.models import User
 from app.internal.email import (
     mail,
     send_email_invitation,
@@ -8,10 +10,7 @@ from app.internal.email import (
     send,
     verify_email_pattern
 )
-from fastapi import BackgroundTasks, status
-
-from app.database.models import User
-from tests.utils import create_model, delete_instance
+from app.internal.utils import create_model, delete_instance
 
 
 def test_email_send(client, user, event, smtpd):

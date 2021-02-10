@@ -12,9 +12,8 @@ from sqlalchemy.orm import Session
 from typing import List, Match
 
 from app import config
-from app.database.database import get_db
 from app.database.models import User, Event, UserEvent
-from app.dependencies import MEDIA_PATH, templates
+from app.dependencies import get_db, MEDIA_PATH, templates
 from app.internal.on_this_day_events import get_on_this_day_events
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
@@ -26,7 +25,7 @@ REGEX_EXTRACT_HOLIDAYS = re.compile(
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": _("Not found")}},
+    responses={404: {"description": "Not found"}},
 )
 
 
@@ -133,6 +132,7 @@ async def upload_user_photo(
 @router.post("/update_telegram_id")
 async def update_telegram_id(
         request: Request, session=Depends(get_db)):
+
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_telegram_id = data['telegram_id']

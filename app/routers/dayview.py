@@ -5,9 +5,8 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import and_, or_
 
-from app.database.database import get_db
 from app.database.models import Event, User
-from app.dependencies import TEMPLATES_PATH
+from app.dependencies import get_db, TEMPLATES_PATH
 from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)

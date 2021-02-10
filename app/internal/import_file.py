@@ -6,28 +6,40 @@ import re
 from typing import Any, Dict, Generator, List, Tuple, Union
 
 from icalendar import Calendar
+from sqlalchemy.orm.session import Session
 
 from app.config import (
     EVENT_CONTENT_LIMIT,
+    EVENT_DURATION_LIMIT,
     EVENT_HEADER_LIMIT,
     EVENT_HEADER_NOT_EMPTY,
     EVENT_VALID_YEARS,
+    LOCATION_LIMIT,
     MAX_EVENTS_START_DATE,
     MAX_FILE_SIZE_MB,
     VALID_FILE_EXTENSION
 )
-from app.database.database import SessionLocal
 from app.routers.event import create_event
 from loguru import logger
 
 
 DATE_FORMAT = "%m-%d-%Y"
+DATE_FORMAT2 = "%m-%d-%Y %H:%M"
 DESC_EVENT = "VEVENT"
 EVENT_PATTERN = re.compile(r"^(\w{" + str(EVENT_HEADER_NOT_EMPTY) + "," +
                            str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
                            str(EVENT_CONTENT_LIMIT) +
                            r"}),\s(\d{2}-\d{2}-\d{4})," +
-                           r"\s(\d{2}-\d{2}-\d{4})$")
+                           r"\s(\d{2}-\d{2}-\d{4})(?:,\s([\w\s-]{0," +
+                           str(LOCATION_LIMIT) +
+                           r"}))?$")
+EVENT_PATTERN2 = re.compile(r"^(\w{" + str(EVENT_HEADER_NOT_EMPTY) + "," +
+                            str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
+                            str(EVENT_CONTENT_LIMIT) +
+                            r"}),\s(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2})," +
+                            r"\s(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2})" +
+                            r"(?:,\s([\w\s-]{0," + str(LOCATION_LIMIT) +
+                            r"}))?$")
 
 
 def is_file_size_valid(file: str, max_size: int = MAX_FILE_SIZE_MB) -> bool:
@@ -45,6 +57,17 @@ def is_file_exist(file: str) -> bool:
     return Path(file).is_file()
 
 
+def change_string_to_date(date: str) -> Union[datetime.datetime, bool]:
+    try:
+        if ":" in date:
+            date1 = datetime.datetime.strptime(date, DATE_FORMAT2)
+        else:
+            date1 = datetime.datetime.strptime(date, DATE_FORMAT)
+    except ValueError:
+        return False
+    return date1
+
+
 def is_date_in_range(date: Union[str, datetime.datetime],
                      valid_dates: int = EVENT_VALID_YEARS) -> bool:
     """
@@ -52,19 +75,36 @@ def is_date_in_range(date: Union[str, datetime.datetime],
     """
     now_year = datetime.datetime.now().year
     if isinstance(date, str):
-        try:
-            check_date = datetime.datetime.strptime(date, DATE_FORMAT)
-        except ValueError:
+        check_date = change_string_to_date(date)
+        if not check_date:
             return False
     else:
         check_date = date
     return now_year - valid_dates < check_date.year < now_year + valid_dates
 
 
+def is_start_day_before_end_date(start: Union[datetime.datetime, str],
+                                 end: Union[datetime.datetime, str]) -> bool:
+    if isinstance(start, str):
+        start = change_string_to_date(start)
+        end = change_string_to_date(end)
+    return start <= end
+
+
+def is_event_valid_duration(start: Union[datetime.datetime, str],
+                            end: Union[datetime.datetime, str],
+                            max_duration: int = EVENT_DURATION_LIMIT) -> bool:
+    if isinstance(start, str):
+        start = change_string_to_date(start)
+        end = change_string_to_date(end)
+    return (end - start).days < max_duration
+
+
 def is_event_text_valid(row: str) -> bool:
     """Check if the row contains valid data"""
     get_values = EVENT_PATTERN.search(row)
-    return get_values is not None
+    get_values2 = EVENT_PATTERN2.search(row)
+    return get_values is not None or get_values2 is not None
 
 
 def is_file_valid_to_import(file: str) -> bool:
@@ -100,17 +140,29 @@ def open_txt_file(txt_file: str) -> Generator[str, None, None]:
 
 def save_calendar_content_txt(event: str, calendar_content: List) -> bool:
     """populate calendar with event content"""
-    head, content, start_date, end_date = event.split(", ")
+    if len(event.split(", ")) == 5:
+        head, content, start_date, end_date, location = event.split(", ")
+        location = location.replace("\n", "")
+    else:
+        head, content, start_date, end_date = event.split(", ")
+        end_date = end_date.replace("\n", "")
+        location = None
     if (not is_date_in_range(start_date) or
-       not is_date_in_range(end_date.replace("\n", ""))):
+       not is_date_in_range(end_date) or
+       not is_start_day_before_end_date(start_date, end_date) or
+       not is_event_valid_duration(start_date, end_date)):
         return False
-    start_date = datetime.datetime.strptime(start_date, DATE_FORMAT)
-    end_date = datetime.datetime.strptime(end_date.replace("\n", ""),
-                                          DATE_FORMAT)
+    if re.search(r":", start_date) and re.search(r":", start_date):
+        start_date = datetime.datetime.strptime(start_date, DATE_FORMAT2)
+        end_date = datetime.datetime.strptime(end_date, DATE_FORMAT2)
+    else:
+        start_date = datetime.datetime.strptime(start_date, DATE_FORMAT)
+        end_date = datetime.datetime.strptime(end_date, DATE_FORMAT)
     calendar_content.append({"Head": head,
                              "Content": content,
                              "S_Date": start_date,
-                             "E_Date": end_date})
+                             "E_Date": end_date,
+                             "Location": location})
     return True
 
 
@@ -149,7 +201,8 @@ def save_calendar_content_ics(component, calendar_content) -> None:
                         "S_Date": component.get('dtstart').dt
                         .replace(tzinfo=None),
                         "E_Date": component.get('dtend').dt
-                        .replace(tzinfo=None)
+                        .replace(tzinfo=None),
+                        "Location": str(component.get('location'))
                     })
 
 
@@ -168,23 +221,25 @@ def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:
 
 def save_events_to_database(events: List[Dict[str, Union[str, Any]]],
                             user_id: int,
-                            session: SessionLocal) -> None:
+                            session: Session) -> None:
     """insert the events into Event table"""
     for event in events:
         title = event["Head"]
         content = event["Content"]
         start = event["S_Date"]
         end = event["E_Date"]
+        location = event["Location"]
         owner_id = user_id
         create_event(db=session,
                      title=title,
                      content=content,
                      start=start,
                      end=end,
+                     location=location,
                      owner_id=owner_id)
 
 
-def user_click_import(file: str, user_id: int, session: SessionLocal) -> bool:
+def user_click_import(file: str, user_id: int, session: Session) -> bool:
     """
     when user choose a file and click import, we are checking the file
     and if everything is ok we will insert the data to DB

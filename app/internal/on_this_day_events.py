@@ -9,8 +9,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
-from app.database.database import get_db
 from app.database.models import WikipediaEvents
+from app.dependencies import get_db
 
 
 def insert_on_this_day_data(
