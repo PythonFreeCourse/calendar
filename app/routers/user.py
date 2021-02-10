@@ -24,7 +24,7 @@ def create_user(username: str,
         language=language,
         language_id=language_id
     )
-    save(user, session=session)
+    save(session, user)
     return user
 
 

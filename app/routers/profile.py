@@ -1,15 +1,14 @@
 import io
 
-from app import config
-from app.database.database import get_db
-from app.database.models import User
-from app.dependencies import MEDIA_PATH, templates
-from app.internal.on_this_day_events import get_on_this_day_events
-
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+
+from app import config
+from app.database.models import User
+from app.dependencies import get_db, MEDIA_PATH, templates
+from app.internal.on_this_day_events import get_on_this_day_events
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -17,7 +16,7 @@ PICTURE_SIZE = config.AVATAR_SIZE
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": _("Not found")}},
+    responses={404: {"description": "Not found"}},
 )
 
 
