@@ -15,10 +15,11 @@ EMOTIONS = {"Happy": "&#128515",
 
 Emoticon = NamedTuple("Emoticon", [("dominant", str), ("score", float),
                       ("code", str)])
+DupEmotion = NamedTuple("DupEmotion", [("dominant", str), ("flag", bool)])
 
 
-def get_weights(emotion: str, title_emotion: Dict[str, float],
-                content_emotion: Dict[str, float] = None) -> float:
+def get_weight(emotion: str, title_emotion: Dict[str, float],
+               content_emotion: Dict[str, float] = None) -> float:
     if not content_emotion:
         return title_emotion[emotion]
     return (title_emotion[emotion] * TITLE_WEIGHTS +
@@ -26,18 +27,18 @@ def get_weights(emotion: str, title_emotion: Dict[str, float],
 
 
 def score_comp(emotion_score: float, dominant_emotion: Emoticon, emotion: str,
-               code: str, flag: int) -> Tuple[Emoticon, int]:
+               code: str, flag: bool) -> DupEmotion:
     """
     score comparison between emotions.
     returns the dominant and if equals we flag it
     """
     if emotion_score > dominant_emotion.score:
-        flag = 0
+        flag = False
         dominant_emotion = Emoticon(dominant=emotion, score=emotion_score,
                                     code=code)
     elif emotion_score == dominant_emotion.score:
-        flag = 1
-    return (dominant_emotion, flag)
+        flag = True
+    return DupEmotion(dominant=dominant_emotion, flag=flag)
 
 
 def get_dominant_emotion(title: str, content: str) -> Emoticon:
@@ -46,18 +47,17 @@ def get_dominant_emotion(title: str, content: str) -> Emoticon:
     the dominant emotion, emotion score and emoticon code
     """
     dominant_emotion = Emoticon(dominant=None, score=0, code=None)
-    no_content = 1
-    duplicate_dominant_flag = 0
+    has_content = False
+    duplicate_dominant_flag = False
     title_emotion = te.get_emotion(title)
     if content is not None and content.strip() != "":
         content_emotion = te.get_emotion(content)
-        no_content = 0
+        has_content = True
     for emotion, code in EMOTIONS.items():
-        if no_content:
-            emotion_score = get_weights(emotion, title_emotion)
-        else:
-            emotion_score = get_weights(emotion, title_emotion,
-                                        content_emotion)
+        weight_parameters = [emotion, title_emotion]
+        if has_content:
+            weight_parameters.append(content_emotion)
+        emotion_score = get_weight(*weight_parameters)
         score_comparison = score_comp(emotion_score, dominant_emotion, emotion,
                                       code, duplicate_dominant_flag)
         dominant_emotion, duplicate_dominant_flag = [*score_comparison]

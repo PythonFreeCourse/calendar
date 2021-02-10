@@ -1,27 +1,23 @@
 from datetime import datetime, timedelta
 
-
-import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
-from starlette import status
+import pytest
 from sqlalchemy.orm import Session
+from starlette import status
 
-
-from app.main import app
 from app.database.models import Event
-from app.database.database import get_db
-from app.routers.event import (_delete_event, by_id, delete_event,
-                               update_event, check_change_dates_allowed,
-                               add_new_event, _update_event,
-                               is_date_before)
-
+from app.dependencies import get_db
+from app.main import app
+from app.routers.event import (_delete_event, _update_event, add_new_event,
+                               by_id, check_change_dates_allowed, delete_event,
+                               is_date_before, update_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
-    'start_time': '15:59',
-    'end_date': '2021-01-27',
+    'start_time': '12:59',
+    'end_date': '2021-01-28',
     'end_time': '15:01',
     'location_type': 'vc_url',
     'location': 'https://us02web.zoom.us/j/875384596',
@@ -60,6 +56,36 @@ BAD_EMAILS_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com,ccc'
+}
+
+WEEK_LATER_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-02-04',
+    'start_time': '12:59',
+    'end_date': '2021-02-04',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
+}
+
+TWO_WEEKS_LATER_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-02-11',
+    'start_time': '12:59',
+    'end_date': '2021-02-11',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -161,6 +187,29 @@ def test_eventedit_post_wrong(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=WRONG_EVENT_FORM_DATA)
     assert response.json()['detail'] == 'VC type with no valid zoom link'
+
+
+def test_eventedit_with_pattern(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=WEEK_LATER_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert ('Same event happened 1 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=TWO_WEEKS_LATER_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert ('Same event happened 1 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
+    assert ('Same event happened 2 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
 
 
 @pytest.mark.parametrize("data", NONE_UPDATE_OPTIONS)
@@ -285,16 +334,15 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 
 
 class TestApp:
-
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
-            'title': "Test Title",
-            "location": "Fake City",
-            "start": date_test_data[0],
-            "end": date_test_data[1],
-            "content": "Any Words",
-            "owner_id": 123}
+        'title': "Test Title",
+        "location": "Fake City",
+        "start": date_test_data[0],
+        "end": date_test_data[1],
+        "content": "Any Words",
+        "owner_id": 123}
 
     @staticmethod
     def test_get_db():
@@ -315,7 +363,7 @@ class TestApp:
         assert not is_date_before(
             TestApp.date_test_data[0],
             'bad value'
-                                )
+        )
 
     @staticmethod
     def test_add_event(session: Session):
