@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 from app.database.models import Event, User, OAuthCredentials, UserEvent
-from app.database.database import get_db, SessionLocal
+from app.dependencies import get_db, SessionLocal
 from app.routers.profile import router as profile_router
 from app.config import CLIENT_SECRET_FILE
 from app.routers.event import create_event

@@ -148,6 +148,9 @@ dmypy.json
 pyvenv.cfg
 bin
 
+app/routers/stam
+routes 1.py
+
 # PyCharm
 .idea
 
