@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from app.database.models import User
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.routers.user_exercise import get_user_exercise
 from datetime import datetime
 from app import config
