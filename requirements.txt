@@ -34,7 +34,6 @@ hpack==4.0.0
 httpcore==0.12.2
 httpx==0.16.1
 hyperframe==6.0.0
-hypothesis==6.1.1
 icalendar==4.0.7
 idna==2.10
 importlib-metadata==3.3.0
