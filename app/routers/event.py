@@ -222,12 +222,12 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         location=location,
         invitees=invitees_concatenated,
         category_id=category_id,
-        availability=availability
+        availability=availability,
     )
     create_model(
         db, UserEvent,
         user_id=owner_id,
-        event_id=event.id
+        event_id=event.id,
     )
     return event
 

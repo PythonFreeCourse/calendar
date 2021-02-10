@@ -47,7 +47,7 @@
         <div class="event_line">
             {% set availability = 'Busy' if event[0].availability == True else 'Free' %}
             <div class="{{ availability | lower }}" title="{{ availability }}"></div>
-            <div>{{ event[0].start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event[0].id }}">{{ event[0].title }}</a> , duration: {{ event[1] }}</div>
+            <div>{{ event[0].start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event[0].id }}">{{ event[0].title | safe }}</a> , duration: {{ event[1] }}</div>
         </div>
         {% endfor %}
     {% endfor %}
