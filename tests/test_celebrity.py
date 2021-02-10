@@ -8,7 +8,7 @@ CELEBRITY_PAGE = "/celebrity"
 FAKE_TIME = datetime.date(2018, 9, 18)
 
 FAKE_DATES = [
-    datetime.date(2020, 1, 1),
+    datetime.date(2021, 1, 1),
     datetime.date(1789, 7, 14),
     datetime.date(1776, 7, 4),
     datetime.date(1945, 1, 27),
