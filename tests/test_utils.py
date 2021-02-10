@@ -6,7 +6,7 @@ from app.internal import utils
 
 class TestUtils:
 
-    def test_save_success(self, user, session: Session) -> None:
+    def test_save_success(self, user: User, session: Session) -> None:
         user.username = 'edit_username'
         assert utils.save(session, user)
 

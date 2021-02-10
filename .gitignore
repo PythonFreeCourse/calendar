@@ -123,6 +123,7 @@ venv.bak/
 .vscode/
 Scripts/*
 pyvenv.cfg
+calender-venv/
 
 # Spyder project settings
 .spyderproject
@@ -145,6 +146,8 @@ dmypy.json
 # VScode
 .vscode/
 app/.vscode/
+
+app/routers/stam
 
 # PyCharm
 .idea

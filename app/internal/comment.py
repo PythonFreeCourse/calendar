@@ -14,12 +14,6 @@ def create_comment(session: Session, event: Event, content: str) -> None:
         session (Session): DB session.
         event (Event): Instance of the event to create a comment for.
         content (str): The content of the comment.
-
-    Returns:
-        None
-
-    Raises:
-        None
     """
     data = {
         'user': utils.get_current_user(session),
@@ -44,9 +38,6 @@ def parse_comment(session: Session, comment: Comment) -> Dict[str, str]:
                         'username' - Commentor's username.
                         'time' - Comment's posting time.
                         'content' - Comment's content
-
-    Raises:
-        None
     """
     user = utils.get_user(session, comment.user_id)
     return {
@@ -69,9 +60,6 @@ def display_comments(session: Session, event: Event) -> List[Dict[str, str]]:
     Returns:
         list(dict(str: str)): List of info dictionaries of all the comments for
                               the given event.
-
-    Raises:
-        None
     """
     comments = session.query(Comment).filter_by(event_id=event.id).all()
     return [parse_comment(session, comment) for comment in comments]
@@ -87,9 +75,6 @@ def delete_comment(session: Session, comment_id: int) -> bool:
 
     Returns:
         bool: True if successful, False otherwise.
-
-    Raises:
-        None
     """
     comment = session.query(Comment).filter_by(id=comment_id).first()
     if comment:

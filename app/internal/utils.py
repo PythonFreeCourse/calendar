@@ -21,7 +21,6 @@ def create_model(session: Session, model_class: Base,
     """Creates and saves a db model."""
 
     instance = model_class(**kw)
-    save(instance, session)
     save(session, instance)
     return instance
 
