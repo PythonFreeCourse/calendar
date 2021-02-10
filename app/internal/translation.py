@@ -3,7 +3,7 @@ from typing import Optional
 from iso639 import languages
 from loguru import logger
 from sqlalchemy.orm.session import Session
-from textblob import TextBlob, download_corpora
+from textblob import download_corpora, TextBlob
 from textblob.exceptions import NotTranslated
 
 from app.routers.user import get_users

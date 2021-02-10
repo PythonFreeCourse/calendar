@@ -1,6 +1,6 @@
-from app.database.models import User
 from sqlalchemy.orm import Session
 
+from app.database.models import User
 from app.internal import utils
 
 

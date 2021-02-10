@@ -1,8 +1,8 @@
 import datetime
 
 import pytest
-from app.internal.celebrity import get_today_month_and_day
 
+from app.internal.celebrity import get_today_month_and_day
 
 CELEBRITY_PAGE = "/celebrity"
 FAKE_TIME = datetime.date(2018, 9, 18)

@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.database.models import User, UserEvent, Event
+from app.database.models import Event, User, UserEvent
 from app.internal.utils import save
 
 
