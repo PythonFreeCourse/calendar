@@ -9,6 +9,7 @@ from app.database.database import get_db
 from app.database.models import Event, User, Task
 from app.dependencies import TEMPLATES_PATH
 from app.internal import zodiac
+from app.internal.todo_list import sort_by_time
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
@@ -108,10 +109,13 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
     tasks = db_session.query(Task).filter(Task.owner_id == user.id)\
         .filter(Task.date == day.date())
+    tasks = sort_by_time(list(tasks))
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
         "month": day.strftime("%B").upper(),
         "day": day.day,
-        "zodiac": zodiac_obj
+        "zodiac": zodiac_obj,
+        "datestr": date,
+        "tasks": tasks,
         })

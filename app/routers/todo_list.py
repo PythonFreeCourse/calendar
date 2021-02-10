@@ -1,7 +1,6 @@
 from datetime import datetime
-from urllib.request import Request
 
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Form
 from requests import Session
 from sqlalchemy.exc import SQLAlchemyError
 from starlette import status
@@ -10,7 +9,7 @@ from starlette.responses import RedirectResponse
 from app.config import templates
 from app.database.database import get_db
 from app.database.models import User
-from app.internal.todo_list import create_task
+from app.internal.todo_list import create_task, by_id
 
 router = APIRouter(
     prefix="/task",
@@ -19,12 +18,13 @@ router = APIRouter(
 )
 
 
-@router.delete("/{task_id}")
-def delete_task(request: Request,
-                task_id: int,
-                db: Session = Depends(get_db)):
+@router.post("/delete")
+def delete_task(
+        taskId: int = Form(...),
+        datestr: str = Form(...),
+        db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the task.
-    task = by_id(db, task_id)
+    task = by_id(db, taskId)
     try:
         # Delete task
         db.delete(task)
@@ -33,21 +33,36 @@ def delete_task(request: Request,
 
     except (SQLAlchemyError, TypeError):
         return templates.TemplateResponse(
-            "dayview.html", {"request": request, "task_id": task_id},
+            "dayview.html", {"task_id": taskId},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # TODO: Send them a cancellation notice
         # if the deletion is successful
     return RedirectResponse(
-        url="/calendar", status_code=status.HTTP_200_OK)
+        url=f"/day/{datestr}", status_code=302)
 
 
 @router.post("/add")
-async def add_task(title: str, description: str, datestr: str, timestr: str,
-                   session=Depends(get_db), is_important: bool = False):
+async def add_task(title: str = Form(...), description: str = Form(...),
+                   datestr: str = Form(...), timestr: str = Form(...),
+                   is_important: bool = Form(False), session=Depends(get_db)):
     # TODO: add a login session
     user = session.query(User).filter_by(username='test1').first()
     create_task(session, title, description,
                 datetime.strptime(datestr, '%Y-%m-%d')
                 .date(), datetime.strptime(timestr, '%H:%M').time(),
                 user.id, is_important)
-    return RedirectResponse(f"/day/{datestr}")
+    return RedirectResponse(f"/day/{datestr}", status_code=303)
+
+
+@router.post("/edit")
+async def edit_task(task_id: int = Form(...), title: str = Form(...), description: str = Form(...),
+                   datestr: str = Form(...), timestr: str = Form(...),
+                   is_important: bool = Form(False), session=Depends(get_db)):
+    task = by_id(session, task_id)
+    task.title = title
+    task.description = description
+    task.date = datetime.strptime(datestr, '%Y-%m-%d').date()
+    task.time = datetime.strptime(timestr, '%H:%M').time()
+    task.is_important = is_important
+    session.commit()
+    return RedirectResponse(f"/day/{datestr}", status_code=303)

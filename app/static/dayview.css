@@ -104,7 +104,6 @@ html {
 }
 
 .todo-style {
-	font: 95% Arial, Helvetica, sans-serif;
 	background: #F7F7F7;
 }
 
@@ -116,7 +115,6 @@ html {
     background-color: var(--primary);
     color: #fff;
     margin-top: 12px;
-    font-family: "Consolas";
     font-size: 20px;
     padding: 14px;
     border-radius: 20px;
@@ -153,7 +151,6 @@ html {
 	border: 1px solid #ccc;
 	padding: 3%;
 	color: #555;
-	font: 95% Arial, Helvetica, sans-serif;
 }
 
 .todo-style input[type="text"]:focus,
@@ -166,8 +163,8 @@ html {
 }
 
 .todo-style th, .todo-style td {
-  padding-right: 30px;
-  padding-top: 20px;
+  padding-right: 3em;
+  padding-top: 2em;
   text-align: left;
 }
 
