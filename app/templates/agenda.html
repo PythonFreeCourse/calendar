@@ -41,14 +41,17 @@
 </div>
 
 <div>
-  {% for events_date, events_list in events.items() %}
-  <div class="shown_dates">{{ events_date.strftime("%d/%m/%Y") }}</div>
-  {% for event in events_list %}
-  <div class="event_line"> {{ event[0].start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event[0].id }}">{{
-    event[0].title }}</a> , duration: {{ event[1] }}
-  </div>
-  {% endfor %}
-  {% endfor %}
+    {% for events_date, events_list in events.items() %}
+    <div class="shown_dates">{{ events_date.strftime("%d/%m/%Y") }}</div>
+        {% for event in events_list %}
+        <div class="event_line">
+            {% set availability = 'Busy' if event.availability == True else 'Free' %}
+            <div class="{{ availability | lower }}" title="{{ availability }}"></div>
+            <div>{{ event.start.time().strftime("%H:%M") }} - <a href="/event/view/{{ event.id }}">{{ event.title }}</a> , duration: {{ (event.end - event.start) }}</div>
+        </div>
+
+        {% endfor %}
+    {% endfor %}
 </div>
 
 {% endblock %}

@@ -47,10 +47,7 @@ def agenda(
     )
     events = defaultdict(list)
     for event_obj in events_objects:
-        event_duration = agenda_events.get_time_delta_string(
-            event_obj.start, event_obj.end
-        )
-        events[event_obj.start.date()].append((event_obj, event_duration))
+        events[event_obj.start.date()].append(event_obj)
 
     return templates.TemplateResponse("agenda.html", {
         "request": request,
