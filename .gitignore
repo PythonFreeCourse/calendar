@@ -33,8 +33,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 pyvenv.cfg
-.DS_Store
-DS_Store
 
 
 # PyInstaller
@@ -156,3 +154,7 @@ routes 1.py
 .idea
 
 junit/
+
+# .DS_Store
+.DS_Store
+DS_Store
