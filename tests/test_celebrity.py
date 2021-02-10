@@ -26,9 +26,9 @@ def datetime_mock(monkeypatch):
     monkeypatch.setattr(datetime, 'date', MyDateTime)
 
 
-@pytest.mark.parametrize('date_string', FAKE_DATES)
-def test_get_today_month_and_day_bad(date_string, datetime_mock):
-    assert get_today_month_and_day() != date_string.strftime("%m-%d")
+@pytest.mark.parametrize('date', FAKE_DATES)
+def test_get_today_month_and_day_bad(date, datetime_mock):
+    assert get_today_month_and_day() != date.strftime("%m-%d")
 
 
 def test_get_today_month_and_day_good(datetime_mock):
