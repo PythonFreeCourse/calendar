@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm import Session
 
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.internal.search import get_results_by_keywords
 
 router = APIRouter()
@@ -21,9 +20,9 @@ def search(request: Request):
 
 @router.post("/search")
 async def show_results(
-                        request: Request,
-                        keywords: str = Form(None),
-                        db: Session = Depends(get_db)):
+        request: Request,
+        keywords: str = Form(None),
+        db: Session = Depends(get_db)):
     # Made up user details until there's a user login system
     current_username = "Chuck Norris"
     current_user = 1
@@ -44,5 +43,5 @@ async def show_results(
         "message": message,
         "results": results,
         "keywords": keywords
-        }
-    )
+    }
+                                      )

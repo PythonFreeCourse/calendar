@@ -1,6 +1,6 @@
 from typing import Union
 
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.database.models import User
 from app.internal.security.ouath2 import (
     Depends, Session, check_jwt_token,

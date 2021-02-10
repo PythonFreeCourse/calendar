@@ -1,21 +1,17 @@
 from datetime import datetime, timedelta
 
-
-import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
-from starlette import status
+import pytest
 from sqlalchemy.orm import Session
+from starlette import status
 
-
-from app.main import app
 from app.database.models import Event
-from app.database.database import get_db
-from app.routers.event import (_delete_event, by_id, delete_event,
-                               update_event, check_change_dates_allowed,
-                               add_new_event, _update_event,
-                               is_date_before)
-
+from app.dependencies import get_db
+from app.main import app
+from app.routers.event import (_delete_event, _update_event, add_new_event,
+                               by_id, check_change_dates_allowed, delete_event,
+                               is_date_before, update_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -285,16 +281,15 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 
 
 class TestApp:
-
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
-            'title': "Test Title",
-            "location": "Fake City",
-            "start": date_test_data[0],
-            "end": date_test_data[1],
-            "content": "Any Words",
-            "owner_id": 123}
+        'title': "Test Title",
+        "location": "Fake City",
+        "start": date_test_data[0],
+        "end": date_test_data[1],
+        "content": "Any Words",
+        "owner_id": 123}
 
     @staticmethod
     def test_get_db():
@@ -315,7 +310,7 @@ class TestApp:
         assert not is_date_before(
             TestApp.date_test_data[0],
             'bad value'
-                                )
+        )
 
     @staticmethod
     def test_add_event(session: Session):

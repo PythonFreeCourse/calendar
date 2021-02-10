@@ -1,11 +1,10 @@
-from app.config import PSQL_ENVIRONMENT
-from app.database import models
-from app.database.database import engine, get_db
-from app.dependencies import (
-    logger, MEDIA_PATH, STATIC_PATH, templates)
+from app import config
+from app.database import engine, models
+from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
+from app.routers.salary import routes as salary
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
@@ -23,7 +22,7 @@ def create_tables(engine, psql_environment):
         models.Base.metadata.create_all(bind=engine)
 
 
-create_tables(engine, PSQL_ENVIRONMENT)
+create_tables(engine, config.PSQL_ENVIRONMENT)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
@@ -37,8 +36,8 @@ json_data_loader.load_to_db(next(get_db()))
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    agenda, calendar, categories, currency, dayview, email,
-    event, invitation, login, logout, profile, register,
+    agenda, calendar, categories, celebrity, currency, dayview,
+    email, event, invitation, login, logout, profile, register,
     search, telegram, whatsapp
 )
 
@@ -48,6 +47,7 @@ routers_to_include = [
     agenda.router,
     calendar.router,
     categories.router,
+    celebrity.router,
     currency.router,
     dayview.router,
     email.router,
@@ -57,6 +57,7 @@ routers_to_include = [
     logout.router,
     profile.router,
     register.router,
+    salary.router,
     search.router,
     telegram.router,
     whatsapp.router,

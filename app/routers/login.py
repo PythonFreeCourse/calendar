@@ -1,7 +1,6 @@
 from typing import Optional, Union
 
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.internal.security.dependancies import (
     User, current_user)
 from app.internal.security.ouath2 import (

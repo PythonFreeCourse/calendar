@@ -1,7 +1,6 @@
 from app.internal import user
 from app.database.schemas import UserCreate
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
