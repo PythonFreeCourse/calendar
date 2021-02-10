@@ -25,9 +25,10 @@ def get_invited_emails(invited_from_form: str):
         invited_email = invited_email.strip()
         try:
             validate_email(invited_email, check_deliverability=False)
-            invited_emails.append(invited_email)
         except EmailSyntaxError:
-            logging.error(f'{invited_email} is not a valid email address')
+            logging.exception(f'{invited_email} is not a valid email address')
+            continue
+        invited_emails.append(invited_email)
 
     return invited_emails
 
