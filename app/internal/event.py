@@ -19,7 +19,7 @@ def raise_if_zoom_link_invalid(location):
                             detail="VC type with no valid zoom link")
 
 
-def get_invited_emails(invited_from_form: str) -> List[str] :
+def get_invited_emails(invited_from_form: str) -> List[str]:
     invited_emails = []
     for invited_email in invited_from_form.split(','):
         invited_email = invited_email.strip()
