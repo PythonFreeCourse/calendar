@@ -2,8 +2,6 @@ import pytest
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.database.models import User, UserExercise
-from tests.utils import create_model, delete_instance
-from app.database.models import User
 from app.internal.utils import create_model, delete_instance
 
 
