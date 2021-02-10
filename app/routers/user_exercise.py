@@ -14,6 +14,7 @@ def save(session: Session, instance: Base) -> bool:
         return True
     return False
 
+
 def create_user_exercise(session: Session, user: User) -> UserExercise:
     """
     Create and save new user exercise
