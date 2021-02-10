@@ -1,7 +1,8 @@
 import datetime
 
-from app.dependencies import templates
 from fastapi import APIRouter, Request
+
+from app.dependencies import templates
 
 
 router = APIRouter()

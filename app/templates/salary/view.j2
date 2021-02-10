@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container col col-sm-7 col-md-5 col-lg-4 col-xl-3 mt-3">
+    <div class="card">
+      <div class="card-header text-center">
+        <h1>{{ category }}</h1>
+        <h2>{{ month }} {{ salary.year}}</h2>
+      </div>
+    
+      <div class="card-body">
+        <h3 class="text-center">Base Salary</h3>
+        <p class="d-flex justify-content-between px-5">Hourly Wage: <span>{{ wage.wage }}</span></p>
+        <p class="d-flex justify-content-between px-5">Number of shifts: <span>{{ salary.num_of_shifts }}</span></p>
+        <p class="d-flex justify-content-between px-5">Base Salary: <span>{{ salary.base_salary }}</span></p>
+
+        <h3 class="text-center">Additions</h3>
+        {% if salary.month_weekly_overtime %}
+          <p class="d-flex justify-content-between px-5">Weekly Overtime Total: <span>{{ salary.month_weekly_overtime }}</span></p>
+        {% endif %}
+        {% if salary.transport %}
+          <p class="d-flex justify-content-between px-5">Transport: <span>{{ salary.transport }}</span></p>
+        {% endif %}
+        {% if salary.bonus %}
+          <p class="d-flex justify-content-between px-5">Bonus: <span>{{ salary.bonus }}</span></p>
+        {% endif %}
+        
+        {% if salary.deduction %}
+          <h3 class="text-center">Deductions</h3>
+          <p class="d-flex justify-content-between px-5">Deduction: <span>{{ salary.deduction }}</span></p>
+        {% endif %}
+      </div>
+      
+      <div class="card-footer text-center">
+        <h4>Total Salary:</h4>
+        <h5>{{ salary.salary }}</h5>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-muted">Need to alter your settings? <a href="{{ url_for('edit_settings', category_id=category_id) }}">Edit your settings here</a></p>
+    </div>
+  </div>
+{% endblock content %}

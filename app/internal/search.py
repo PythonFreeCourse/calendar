@@ -1,8 +1,8 @@
 from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm.session import Session
 
-from app.database.database import SessionLocal
 from app.database.models import Event
 
 
@@ -16,7 +16,7 @@ def get_stripped_keywords(keywords: str) -> str:
 
 
 def get_results_by_keywords(
-                            session: SessionLocal,
+                            session: Session,
                             keywords: str,
                             owner_id: int
                            ) -> List[Event]:
