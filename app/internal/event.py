@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import List
+from typing import List, Set
 
 from email_validator import validate_email, EmailSyntaxError
 from fastapi import HTTPException
@@ -19,7 +19,7 @@ def raise_if_zoom_link_invalid(location):
                             detail="VC type with no valid zoom link")
 
 
-def get_invited_emails(invited_from_form: str):
+def get_invited_emails(invited_from_form: str) -> List[str] :
     invited_emails = []
     for invited_email in invited_from_form.split(','):
         invited_email = invited_email.strip()
@@ -36,16 +36,14 @@ def get_invited_emails(invited_from_form: str):
 def get_uninvited_regular_emails(session: Session,
                                  owner_id: int,
                                  title: str,
-                                 invited_emails: List[str]):
+                                 invited_emails: List[str]) -> Set[str]:
     invitees_query = session.query(Event).with_entities(Event.invitees)
     similar_events_invitees = invitees_query.filter(Event.owner_id == owner_id,
                                                     Event.title == title).all()
-    all_regular_invitees_concatenated = ''
+    regular_invitees = set()
     for record in similar_events_invitees:
         if record:
-            all_regular_invitees_concatenated += ',' + record[0]
-
-    regular_invitees = set(all_regular_invitees_concatenated.split(','))
+            regular_invitees.update(record[0].split(','))
 
     return regular_invitees - set(invited_emails)
 
@@ -72,3 +70,18 @@ def find_pattern(session, event):
         Event.owner_id == event.owner_id, Event.title == event.title).all()
 
     return check_diffs(event, all_events_with_same_name)
+
+
+def get_messages(session: Session,
+                 event: Event,
+                 uninvited_contacts: List[str]) -> List[str]:
+    messages = []
+    if uninvited_contacts:
+        messages.append(f'Forgot to invite '
+                        f'{", ".join(uninvited_contacts)} maybe?')
+
+    pattern = find_pattern(session, event)
+    for weeks_diff in pattern:
+        messages.append(f'Same event happened {weeks_diff} weeks before too. '
+                        f'Want to create another one {weeks_diff} after too?')
+    return messages

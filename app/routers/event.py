@@ -12,7 +12,7 @@ from starlette.responses import RedirectResponse
 from app.database.models import Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (raise_if_zoom_link_invalid, get_invited_emails,
-                                get_uninvited_regular_emails, find_pattern)
+                                get_uninvited_regular_emails, get_messages)
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
@@ -71,16 +71,8 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     event = create_event(session, title, start, end, owner_id, content,
                          location, invited_emails, category_id=category_id)
-    messages = []
-    if uninvited_contacts:
-        messages.append(f'Forgot to invite '
-                        f'{", ".join(uninvited_contacts)} maybe?')
 
-    pattern = find_pattern(session, event)
-    for weeks_diff in pattern:
-        messages.append(f'Same event happened {weeks_diff} weeks before too. '
-                        f'Want to create another one {weeks_diff} after too?')
-
+    messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
                             + f'messages={"---".join(messages)}',
                             status_code=status.HTTP_302_FOUND)
