@@ -24,7 +24,7 @@ def create_user_exercise(session: Session, user: User) -> UserExercise:
             user_id=user.id,
             start_date=datetime.now()
             )
-        save(user_exercise, session=session)
+        save( session=session, instance=user_exercise)
     else:
         user_exercise = update_user_exercise(session=session, user=user)
     return user_exercise
