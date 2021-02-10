@@ -1,11 +1,6 @@
 import io
 
-from app import config
-from app.database.database import get_db
-from app.database.models import User
-from app.dependencies import MEDIA_PATH, templates
 from app.routers.user_exercise import create_user_exercise
-from app.internal.on_this_day_events import get_on_this_day_events
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
 from sqlalchemy.orm import Session
