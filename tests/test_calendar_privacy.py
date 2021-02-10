@@ -35,7 +35,7 @@ def test_can_show_calendar_private(session, user):
         db=session, current_user=current_user
     )
     result_b = can_show_calendar(
-        requested_user_username='new_test_username',
+        requested_user_username='test_username',
         db=session, current_user=current_user
     )
     assert result_a is False

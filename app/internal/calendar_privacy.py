@@ -1,4 +1,4 @@
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.database.models import User
 # TODO switch to using this when the user system is merged
 # from app.internal.security.dependancies import (
