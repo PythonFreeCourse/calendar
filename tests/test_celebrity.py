@@ -1,21 +1,38 @@
 import datetime
 
+import pytest
 from app.internal.celebrity import get_today_month_and_day
-from hypothesis import given
-from hypothesis import strategies as st
 
 
 CELEBRITY_PAGE = "/celebrity"
-DATE_START = datetime.date(2019, 1, 1)
-DATE_END = datetime.date(2022, 1, 1)
+FAKE_TIME = datetime.date(2018, 9, 18)
+
+FAKE_DATES = [
+    datetime.date(2020, 1, 1),
+    datetime.date(1789, 7, 14),
+    datetime.date(1776, 7, 4),
+    datetime.date(1945, 1, 27),
+    datetime.date(2000, 10, 16)
+]
 
 
-@given(fake_date=st.dates(DATE_START, DATE_END))
-def test_get_today_month_and_day(fake_date):
-    if datetime.date.today().strftime("%m-%d") == fake_date.strftime("%m-%d"):
-        assert get_today_month_and_day() == fake_date.strftime("%m-%d")
-    else:
-        assert get_today_month_and_day() != fake_date.strftime("%m-%d")
+@pytest.fixture
+def datetime_mock(monkeypatch):
+    class MyDateTime:
+        @classmethod
+        def today(cls):
+            return FAKE_TIME
+
+    monkeypatch.setattr(datetime, 'date', MyDateTime)
+
+
+@pytest.mark.parametrize('date_string', FAKE_DATES)
+def test_get_today_month_and_day_bad(date_string, datetime_mock):
+    assert get_today_month_and_day() != date_string.strftime("%m-%d")
+
+
+def test_get_today_month_and_day_good(datetime_mock):
+    assert get_today_month_and_day() == FAKE_TIME.strftime("%m-%d")
 
 
 def test_celebrity_page_exists(client):

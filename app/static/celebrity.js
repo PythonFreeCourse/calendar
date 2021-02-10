@@ -2,7 +2,9 @@ const celebCards = document.getElementById("celebCards");
 
 function getCelebs(dateToday) {
     const numberOfCelebs = 12;
-    fetch('https://www.imdb.com/search/name/?birth_monthday=' + dateToday)
+    const celebsUrl = 'https://www.imdb.com/search/name/?birth_monthday=' + dateToday;
+
+    fetch(celebsUrl)
         .then(function (response) {
             return response.text();
         }).then(function (html) {
@@ -104,4 +106,6 @@ function getCelebs(dateToday) {
     }
 }
 
-getCelebs(celebCards.dataset.today);
+window.addEventListener('load', function () {
+    getCelebs(celebCards.dataset.today);
+});
