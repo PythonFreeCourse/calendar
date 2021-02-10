@@ -176,3 +176,11 @@ class Zodiac(Base):
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
         )
+
+
+class UserMenstrualPeriodLength(Base):
+    __tablename__ = "user_menstrual_period_length"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    period_length = Column(Integer)
