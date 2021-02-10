@@ -49,6 +49,7 @@ def freezeargs(func):
     https://stackoverflow.com/questions/6358481/
     using-functools-lru-cache-with-dictionary-arguments
     """
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         args = tuple([frozendict.frozendict(arg)
@@ -56,6 +57,7 @@ def freezeargs(func):
         kwargs = {k: frozendict.frozendict(v) if isinstance(v, dict) else v
                   for k, v in kwargs.items()}
         return func(*args, **kwargs)
+
     return wrapped
 
 
@@ -96,10 +98,10 @@ def get_historical_weather(input_date, location):
     """
     input_query_string = BASE_QUERY_STRING
     input_query_string["startDateTime"] = input_date.isoformat()
-    input_query_string["endDateTime"] =\
+    input_query_string["endDateTime"] = \
         (input_date + datetime.timedelta(days=1)).isoformat()
     input_query_string["location"] = location
-    api_json, error_text =\
+    api_json, error_text = \
         get_data_from_weather_api(HISTORY_URL, input_query_string)
     if api_json:
         location_found = list(api_json.keys())[0]
@@ -130,7 +132,7 @@ def get_forecast_weather(input_date, location):
     location_found = list(api_json.keys())[0]
     for i in range(len(api_json[location_found]['values'])):
         # find relevant date from API output
-        if str(input_date) ==\
+        if str(input_date) == \
                 api_json[location_found]['values'][i]['datetimeStr'][:10]:
             weather_data = {
                 'MinTempCel': api_json[location_found]['values'][i]['mint'],
@@ -263,9 +265,9 @@ def get_weather_data(requested_date, location):
         else:
             output["Status"] = SUCCESS_STATUS
             output["ErrorDescription"] = None
-            output["MinTempFar"] = round((weather_json['MinTempCel'] * 9/5)
+            output["MinTempFar"] = round((weather_json['MinTempCel'] * 9 / 5)
                                          + 32)
-            output["MaxTempFar"] = round((weather_json['MaxTempCel'] * 9/5)
+            output["MaxTempFar"] = round((weather_json['MaxTempCel'] * 9 / 5)
                                          + 32)
             output.update(weather_json)
     else:

@@ -1,16 +1,16 @@
+import asyncio
 import datetime
 
-import asyncio
 import dateparser
 
+from app.database.models import User
+from app.dependencies import get_db
+from app.routers.event import create_event
+from .bot import telegram_bot
 from .keyboards import (
     DATE_FORMAT, field_kb, gen_inline_keyboard,
     get_this_week_buttons, new_event_kb, show_events_kb)
 from .models import Chat
-from .bot import telegram_bot
-from app.database.models import User
-from app.dependencies import get_db
-from app.routers.event import create_event
 
 
 class MessageHandler:

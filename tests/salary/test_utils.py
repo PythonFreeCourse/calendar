@@ -8,7 +8,6 @@ from requests.sessions import Session
 from app.database.models import Event, SalarySettings
 from app.routers.salary import config, utils
 
-
 NIGHT_TIMES = [
     (datetime(2020, 1, 15), False,
      (datetime.combine(datetime(2020, 1, 15), config.NIGHT_START),
@@ -178,20 +177,20 @@ TIMES = [
 
 UPDATES = [
     ({
-        'wage': '35',
-        'off_day': '6',
-        'holiday_category_id': '7',
-        'regular_hour_basis': '19',
-        'night_hour_basis': '6.5',
-        'night_start': '13:00',
-        'night_end': '14:30:00',
-        'night_min_len': '20:42',
-        'first_overtime_amount': '4',
-        'first_overtime_pay': '1',
-        'second_overtime_pay': '2',
-        'week_working_hours': '80',
-        'daily_transport': '20',
-    }, True),
+         'wage': '35',
+         'off_day': '6',
+         'holiday_category_id': '7',
+         'regular_hour_basis': '19',
+         'night_hour_basis': '6.5',
+         'night_start': '13:00',
+         'night_end': '14:30:00',
+         'night_min_len': '20:42',
+         'first_overtime_amount': '4',
+         'first_overtime_pay': '1',
+         'second_overtime_pay': '2',
+         'week_working_hours': '80',
+         'daily_transport': '20',
+     }, True),
     ({}, False)
 ]
 
@@ -238,7 +237,7 @@ def test_is_night_shift(wage: SalarySettings, start: datetime, end: datetime,
 @pytest.mark.parametrize('start, end, dates',
                          HOLIDAY_TIMES)
 def test_get_relevant_holiday_times(
-    wage: SalarySettings, start: datetime, end: datetime,
+        wage: SalarySettings, start: datetime, end: datetime,
         dates: Tuple[datetime, datetime]) -> None:
     # Code revision required after holiday times feature is added
     # Code revision required after Shabbat times feature is added
@@ -266,7 +265,7 @@ def test_get_hour_basis(wage: SalarySettings, start: datetime,
 
 @pytest.mark.parametrize('start, end, overtimes', OVERTIMES)
 def test_calc_overtime_hours(
-    wage: SalarySettings, start: datetime, end: datetime,
+        wage: SalarySettings, start: datetime, end: datetime,
         overtimes: Tuple[float, float]) -> None:
     assert utils.calc_overtime_hours(start, end, wage) == overtimes
 
@@ -359,7 +358,7 @@ def test_calc_transport(amount: int, daily_transport: float,
 @mock.patch('app.routers.salary.utils.get_event_by_category',
             side_effect=get_event_by_category)
 def test_calc_salary(
-    mocked_func, wage: SalarySettings, overtime: bool,
+        mocked_func, wage: SalarySettings, overtime: bool,
         deduction: config.NUMERIC, salary: Dict[str, config.NUMERIC]) -> None:
     # Code revision required after categories feature is added
     assert utils.calc_salary(2021, 1, wage, overtime, 0, deduction) == salary
