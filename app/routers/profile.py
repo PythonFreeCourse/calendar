@@ -1,24 +1,31 @@
 import io
+import re
 
-from app import config
-from app.database.database import get_db
-from app.database.models import User
-from app.dependencies import MEDIA_PATH, templates
-from app.internal.on_this_day_events import get_on_this_day_events
-
+from datetime import datetime, timedelta
+from loguru import logger
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from typing import List, Match
+
+from app import config
+from app.database.models import User, Event, UserEvent
+from app.dependencies import get_db, MEDIA_PATH, templates
+from app.internal.on_this_day_events import get_on_this_day_events
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
+REGEX_EXTRACT_HOLIDAYS = re.compile(
+    r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
+    re.MULTILINE)
 
 router = APIRouter(
     prefix="/profile",
     tags=["profile"],
-    responses={404: {"description": _("Not found")}},
-    include_in_schema=False
+    responses={404: {"description": "Not found"}},
 )
 
 
@@ -125,7 +132,6 @@ async def upload_user_photo(
 @router.post("/update_telegram_id")
 async def update_telegram_id(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_telegram_id = data['telegram_id']
@@ -136,6 +142,13 @@ async def update_telegram_id(
 
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.get("/holidays/import")
+def import_holidays(request: Request):
+    return templates.TemplateResponse("import_holidays.html", {
+        "request": request,
+    })
 
 
 async def process_image(image, user):
@@ -155,3 +168,71 @@ def get_image_crop_area(width, height):
         return delta, 0, width - delta, height
     delta = (height - width) // 2
     return 0, delta, width, width + delta
+
+
+@router.post("/holidays/update")
+async def update_holidays(
+        file: UploadFile = File(...), session=Depends(get_db)):
+    icsfile = await file.read()
+    holidays = get_holidays_from_file(icsfile.decode(), session)
+    try:
+        save_holidays_to_db(holidays, session)
+    except SQLAlchemyError as ex:
+        logger.exception(ex)
+    finally:
+        url = router.url_path_for("profile")
+        return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+def get_holidays_from_file(file: List[Event], session: Session) -> List[Event]:
+    """
+    This function using regex to extract holiday title
+    and date from standrd ics file
+    :param file:standard ics file
+    :param session:current connection
+    :return:list of holidays events
+    """
+    parsed_holidays = REGEX_EXTRACT_HOLIDAYS.finditer(file)
+    holidays = []
+    for holiday in parsed_holidays:
+        holiday_event = create_holiday_event(
+            holiday, session.query(User).filter_by(id=1).first().id)
+        holidays.append(holiday_event)
+    return holidays
+
+
+def create_holiday_event(holiday: Match[str], owner_id: int) -> Event:
+    valid_ascii_chars_range = 128
+    title = holiday.groupdict()['title'].strip()
+    title_to_save = ''.join(i if ord(i) < valid_ascii_chars_range
+                            else '' for i in title)
+    date = holiday.groupdict()['date'].strip()
+    format_string = '%Y%m%d'
+    holiday = Event(
+        title=title_to_save,
+        start=datetime.strptime(date, format_string),
+        end=datetime.strptime(date, format_string) + timedelta(days=1),
+        content='holiday',
+        owner_id=owner_id
+    )
+    return holiday
+
+
+def save_holidays_to_db(holidays: List[Event], session: Session):
+    """
+    this function saves holiday list into database.
+    :param holidays: list of holidays events
+    :param session: current connection
+    """
+    session.add_all(holidays)
+    session.commit()
+    session.flush(holidays)
+    userevents = []
+    for holiday in holidays:
+        userevent = UserEvent(
+            user_id=holiday.owner_id,
+            event_id=holiday.id
+        )
+        userevents.append(userevent)
+    session.add_all(userevents)
+    session.commit()

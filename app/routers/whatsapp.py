@@ -1,5 +1,6 @@
-from fastapi import APIRouter
 from typing import Optional
+
+from fastapi import APIRouter
 from urllib.parse import urlencode
 
 router = APIRouter(tags=["utis"])

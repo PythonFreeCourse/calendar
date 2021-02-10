@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from starlette.templating import _TemplateResponse
 
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.internal import agenda_events
 
 router = APIRouter()
