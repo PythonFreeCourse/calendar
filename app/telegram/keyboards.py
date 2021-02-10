@@ -2,7 +2,6 @@ import datetime
 import json
 from typing import Any, Dict, List
 
-
 show_events_buttons = [
     [
         {'text': 'Today', 'callback_data': 'Today'},
@@ -36,21 +35,33 @@ def get_this_week_buttons() -> List[List[Any]]:
 
     return [
         [
-            {'text': buttons[0],
-                'callback_data': buttons[0]},
-            {'text': buttons[1],
-                'callback_data': buttons[1]},
-            {'text': buttons[2],
-                'callback_data': buttons[2]}
+            {
+                'text': buttons[0],
+                'callback_data': buttons[0],
+            },
+            {
+                'text': buttons[1],
+                'callback_data': buttons[1],
+            },
+            {
+                'text': buttons[2],
+                'callback_data': buttons[2],
+            },
         ],
         [
-            {'text': buttons[3],
-                'callback_data': buttons[3]},
-            {'text': buttons[4],
-                'callback_data': buttons[4]},
-            {'text': buttons[5],
-                'callback_data': buttons[5]}
-        ]
+            {
+                'text': buttons[3],
+                'callback_data': buttons[3],
+            },
+            {
+                'text': buttons[4],
+                'callback_data': buttons[4],
+            },
+            {
+                'text': buttons[5],
+                'callback_data': buttons[5],
+            },
+        ],
     ]
 
 

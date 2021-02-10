@@ -4,7 +4,6 @@ from app import config
 from app.dependencies import get_settings
 from .models import Bot
 
-
 settings: config.Settings = get_settings()
 
 BOT_API = settings.bot_api

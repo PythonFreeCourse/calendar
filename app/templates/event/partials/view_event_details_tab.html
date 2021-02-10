@@ -8,10 +8,10 @@
     </div>
 </div>
 <div class="event_info_row">
-    <span class="icon">ICON</span>
-    <time datetime="{{event.start}}">{{event.start.strftime(start_format)}}</time>
-    -
-    <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+  <span class="icon">ICON</span>
+  <time datetime="{{event.start}}">{{event.start.strftime(start_format)}}</time>
+  -
+  <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
 </div>
 
 <!--<div class="event_info_row">-->
@@ -20,9 +20,9 @@
 <!--</div>-->
 
 <div class="event_info_row">
-    <span class="icon">ICON</span>
-    <address>{{event.location}}</address>
-    <!--    <address>LOCATION / <a href="#">VC URL</a></address>-->
+  <span class="icon">ICON</span>
+  <address>{{event.location}}</address>
+  <!--    <address>LOCATION / <a href="#">VC URL</a></address>-->
 </div>
 
 {% if event.latitude is not none and event.longitude is not none %}
@@ -40,5 +40,5 @@
 {% endif %}
 
 <p class="event_info_row">
-    {{event.content}}
+  {{event.content}}
 </p>
