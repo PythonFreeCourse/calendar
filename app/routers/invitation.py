@@ -58,9 +58,8 @@ def get_all_invitations(session=Depends(get_db), **param) -> List[Invitation]:
 
 
 @router.post("/get_invitation_by_id")
-def get_invitation_by_id(
-        invitation_id: int, session=Depends(get_db)) -> Union[
-        Invitation, None]:
+def get_invitation_by_id(invitation_id: int,
+                         session=Depends(get_db)) -> Union[Invitation, None]:
     """Returns a invitation by an id.
     if id does not exist, returns None."""
 

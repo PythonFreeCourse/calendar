@@ -21,19 +21,20 @@ class UserModel(BaseModel):
     password: str
     email: str = Field(regex='^\\S+@\\S+\\.\\S+$')
     language: str
+    language_id: int
 
 
-@router.get("/get_all_users")
+@router.get("/list")
 async def get_all_users(session=Depends(get_db)):
     return session.query(User).all()
 
 
-@router.get("/get_user")
-async def get_user(user_id: int, session=Depends(get_db)):
-    return session.query(User).filter_by(id=user_id).first()
+@router.get("/")
+async def get_user(id: int, session=Depends(get_db)):
+    return session.query(User).filter_by(id=id).first()
 
 
-@router.post("/create_user")
+@router.post("/")
 def manually_create_user(user: UserModel, session=Depends(get_db)):
     create_user(**user.dict(), session=session)
     return f'User {user.username} successfully created'

@@ -43,13 +43,13 @@ def get_categories(request: Request,
                                    f"unallowed params.")
 
 
-@router.get("/get_all_categories")
+@router.get("/list")
 def get_all_categories(db_session: Session = Depends(get_db)) -> List[
                         Category]:
     return db_session.query(Category).all()
 
 
-@router.post("/get_categories_by_user_id")
+@router.get("/")
 def get_categories_by_user_id(user_id: int,
                               db_session: Session = Depends(get_db)) -> List[
                               Category]:
