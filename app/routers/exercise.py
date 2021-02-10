@@ -34,8 +34,7 @@ async def exercise(
     user_exercise = get_user_exercise(session, user_id=user.id)
     if user_exercise:
         # Get exercise day
-        date_time_now = datetime.now()
-        delta = date_time_now - user_exercise[0].start_date
+        delta = datetime.now() - user_exercise[0].start_date
         # All exercises split to 30 days
         day = (delta.days % 30) + 1
     else:

@@ -149,8 +149,8 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     """validate dictionary values by dictionary of types"""
     errors = []
     for field_name, field_type in to_check.items():
-        if types[field_name] \
-                and not isinstance(field_type, (types[field_name])):
+        if types[field_name] and not isinstance(field_type,
+                                                (types[field_name])):
             errors.append(
                 f"{field_name} is '{type(field_type).__name__}' and"
                 + f"it should be from type '{types[field_name].__name__}'")
