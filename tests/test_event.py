@@ -339,16 +339,15 @@ def test_reload_comments(event_test_client: TestClient, session: Session,
 
 
 class TestApp:
-
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
-            'title': "Test Title",
-            "location": "Fake City",
-            "start": date_test_data[0],
-            "end": date_test_data[1],
-            "content": "Any Words",
-            "owner_id": 123}
+        'title': "Test Title",
+        "location": "Fake City",
+        "start": date_test_data[0],
+        "end": date_test_data[1],
+        "content": "Any Words",
+        "owner_id": 123}
 
     @staticmethod
     def test_get_db():
@@ -369,7 +368,7 @@ class TestApp:
         assert not evt.is_date_before(
             TestApp.date_test_data[0],
             'bad value'
-                                )
+        )
 
     @staticmethod
     def test_add_event(session: Session):

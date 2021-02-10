@@ -12,8 +12,8 @@ from starlette.responses import RedirectResponse, Response
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
-  get_invited_emails, get_uninvited_regular_emails,
-  raise_if_zoom_link_invalid,
+    get_invited_emails, get_uninvited_regular_emails,
+    raise_if_zoom_link_invalid,
 )
 from app.internal import comment as cmt
 from app.internal.utils import create_model, get_current_user

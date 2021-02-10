@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import List
 
-import pytz
 from icalendar import Calendar, Event, vCalAddress, vText
+import pytz
 
 from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
 from app.database.models import Event as UserEvent
@@ -12,10 +12,10 @@ def generate_id(event: UserEvent) -> bytes:
     """Creates an unique id."""
 
     return (
-        str(event.id)
-        + event.start.strftime('%Y%m%d')
-        + event.end.strftime('%Y%m%d')
-        + f'@{DOMAIN}'
+            str(event.id)
+            + event.start.strftime('%Y%m%d')
+            + event.end.strftime('%Y%m%d')
+            + f'@{DOMAIN}'
     ).encode()
 
 

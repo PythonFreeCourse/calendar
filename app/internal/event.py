@@ -1,9 +1,8 @@
 import logging
 import re
 
-from email_validator import validate_email, EmailSyntaxError
+from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
-
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from app.database.models import Event
