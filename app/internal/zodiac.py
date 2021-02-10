@@ -1,8 +1,8 @@
 from datetime import date
 from typing import Dict, Union
 
-from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
+from sqlalchemy.orm import Session
 
 from app.database.models import Zodiac
 

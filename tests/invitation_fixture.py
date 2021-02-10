@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, User
-from tests.utils import create_model, delete_instance
+from app.internal.utils import create_model, delete_instance
 
 
 @pytest.fixture
