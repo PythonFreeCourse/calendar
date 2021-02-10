@@ -12,6 +12,11 @@ from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
+from app import config
+from app.database.models import User
+from app.dependencies import get_db, MEDIA_PATH, templates
+from app.internal.on_this_day_events import get_on_this_day_events
+
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 

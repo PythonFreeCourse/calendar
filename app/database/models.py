@@ -3,30 +3,21 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Dict, Any
 
-
-from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
-from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event, UniqueConstraint, JSON)
+from sqlalchemy import (
+    Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
+    JSON, String, Time, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy.orm import relationship, Session
+from sqlalchemy.sql.schema import CheckConstraint
 
+from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
+import app.routers.salary.config as SalaryConfig
 
 
-class UserEvent(Base):
-    __tablename__ = "user_event"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column('user_id', Integer, ForeignKey('users.id'))
-    event_id = Column('event_id', Integer, ForeignKey('events.id'))
-
-    events = relationship("Event", back_populates="participants")
-    participants = relationship("User", back_populates="events")
-
-    def __repr__(self):
-        return f'<UserEvent ({self.participants}, {self.events})>'
+Base = declarative_base()
 
 
 class User(Base):
@@ -44,7 +35,16 @@ class User(Base):
     is_active = Column(Boolean, default=False)
     is_active_exercise = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
-    events = relationship("UserEvent", back_populates="participants")
+
+    owned_events = relationship(
+        "Event", cascade="all, delete", back_populates="owner",
+    )
+    events = relationship(
+        "UserEvent", cascade="all, delete", back_populates="participants",
+    )
+    salary_settings = relationship(
+        "SalarySettings", cascade="all, delete", back_populates="user",
+    )
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -78,8 +78,10 @@ class Event(Base):
     color = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
 
-    owner = relationship("User")
-    participants = relationship("UserEvent", back_populates="events")
+    owner = relationship("User", back_populates="owned_events")
+    participants = relationship(
+        "UserEvent", cascade="all, delete", back_populates="events",
+    )
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -92,6 +94,20 @@ class Event(Base):
 
     def __repr__(self):
         return f'<Event {self.id}>'
+
+
+class UserEvent(Base):
+    __tablename__ = "user_event"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+    event_id = Column('event_id', Integer, ForeignKey('events.id'))
+
+    events = relationship("Event", back_populates="participants")
+    participants = relationship("User", back_populates="events")
+
+    def __repr__(self):
+        return f'<UserEvent ({self.participants}, {self.events})>'
 
 
 class Language(Base):
@@ -172,6 +188,78 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class SalarySettings(Base):
+    # Code revision required after categories feature is added
+    # Code revision required after holiday times feature is added
+    # Code revision required after Shabbat times feature is added
+    __tablename__ = "salary_settings"
+
+    user_id = Column(
+        Integer, ForeignKey("users.id"), primary_key=True,
+    )
+    # category_id = Column(
+    #     Integer, ForeignKey("categories.id"), primary_key=True,
+    # )
+    category_id = Column(
+        Integer, primary_key=True,
+    )
+    wage = Column(
+        Float, nullable=False, default=SalaryConfig.MINIMUM_WAGE,
+    )
+    off_day = Column(
+        Integer, CheckConstraint("0<=off_day<=6"), nullable=False,
+        default=SalaryConfig.SATURDAY,
+    )
+    # holiday_category_id = Column(
+    #     Integer, ForeignKey("holiday_categories.id"), nullable=False,
+    #     default=SalaryConfig.ISRAELI_JEWISH,
+    # )
+    holiday_category_id = Column(
+        Integer, nullable=False,
+        default=SalaryConfig.ISRAELI_JEWISH,
+    )
+    regular_hour_basis = Column(
+        Float, nullable=False, default=SalaryConfig.REGULAR_HOUR_BASIS,
+    )
+    night_hour_basis = Column(
+        Float, nullable=False, default=SalaryConfig.NIGHT_HOUR_BASIS,
+    )
+    night_start = Column(
+        Time, nullable=False, default=SalaryConfig.NIGHT_START,
+    )
+    night_end = Column(
+        Time, nullable=False, default=SalaryConfig.NIGHT_END,
+    )
+    night_min_len = Column(
+        Time, nullable=False, default=SalaryConfig.NIGHT_MIN_LEN,
+    )
+    first_overtime_amount = Column(
+        Float, nullable=False, default=SalaryConfig.FIRST_OVERTIME_AMOUNT,
+    )
+    first_overtime_pay = Column(
+        Float, nullable=False, default=SalaryConfig.FIRST_OVERTIME_PAY,
+    )
+    second_overtime_pay = Column(
+        Float, nullable=False, default=SalaryConfig.SECOND_OVERTIME_PAY,
+    )
+    week_working_hours = Column(
+        Float, nullable=False, default=SalaryConfig.WEEK_WORKING_HOURS,
+    )
+    daily_transport = Column(
+        Float, CheckConstraint(
+            f"daily_transport<={SalaryConfig.MAXIMUM_TRANSPORT}"),
+        nullable=False, default=SalaryConfig.STANDARD_TRANSPORT,
+    )
+
+    user = relationship("User", back_populates="salary_settings")
+    # category = relationship("Category", back_populates="salary_settings")
+    # holiday_category =relationship("HolidayCategory",
+    #                                back_populates="salary_settings")
+
+    def __repr__(self):
+        return f'<SalarySettings ({self.user_id}, {self.category_id})>'
 
 
 class WikipediaEvents(Base):

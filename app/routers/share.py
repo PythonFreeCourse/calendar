@@ -72,8 +72,8 @@ def accept(invitation: Invitation, session: Session) -> None:
         event_id=invitation.event.id
     )
     invitation.status = 'accepted'
-    save(invitation, session=session)
-    save(association, session=session)
+    save(session, invitation)
+    save(session, association)
 
 
 def share(event: Event, participants: List[str], session: Session) -> bool:

@@ -5,8 +5,7 @@ from typing import Dict, List, Callable, Union
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.database import Base
-from app.database.models import Quote, Zodiac
+from app.database.models import Base, Quote, Zodiac
 from app.internal import daily_quotes, zodiac
 
 
