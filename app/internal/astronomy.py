@@ -1,10 +1,10 @@
 import datetime
 import functools
-import httpx
 from typing import Dict
 
-from app import config
+import httpx
 
+from app import config
 
 # This feature requires an API KEY - get yours free @ www.weatherapi.com
 
@@ -13,7 +13,7 @@ NO_API_RESPONSE = "No response from server"
 
 
 @functools.lru_cache(maxsize=128, typed=False)
-async def get_data_from_api(formatted_date: str, location: str)\
+async def get_data_from_api(formatted_date: str, location: str) \
         -> Dict[str, int]:
     """ get the relevant astronomical data by calling the "weather api" API.
     Args:
