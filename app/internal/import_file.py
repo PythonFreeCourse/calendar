@@ -197,10 +197,8 @@ def save_calendar_content_ics(component, calendar_content) -> None:
     calendar_content.append({
         "Head": str(component.get('summary')),
         "Content": str(component.get('description')),
-        "S_Date": component.get('dtstart').dt
-            .replace(tzinfo=None),
-        "E_Date": component.get('dtend').dt
-            .replace(tzinfo=None),
+        "S_Date": component.get('dtstart').dt.replace(tzinfo=None),
+        "E_Date": component.get('dtend').dt.replace(tzinfo=None),
         "Location": str(component.get('location'))
     })
 
