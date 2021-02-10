@@ -4,8 +4,8 @@ from pydantic import BaseModel, Field
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.database.database import get_db
 from app.database.models import User, UserEvent, Event
+from app.dependencies import get_db
 from app.internal.utils import save
 from fastapi import APIRouter, Depends
 
