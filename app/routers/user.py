@@ -13,6 +13,7 @@ def create_user(username: str,
                 password: str,
                 email: str,
                 language: str,
+                language_id: int,
                 session: Session) -> User:
     """Creates and saves a new user."""
 
@@ -20,7 +21,8 @@ def create_user(username: str,
         username=username,
         password=password,
         email=email,
-        language=language
+        language=language,
+        language_id=language_id
     )
     save(user, session=session)
     return user
