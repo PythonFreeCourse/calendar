@@ -6,14 +6,12 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from starlette import status
 
-from app.database.database import get_db
 from app.database.models import Event
+from app.dependencies import get_db
 from app.main import app
-from app.routers.event import (_delete_event, by_id, delete_event,
-                               add_new_event, is_date_before,
-                               check_change_dates_allowed,
-                               update_event,
-                               _update_event, create_event)
+from app.routers.event import (_delete_event, _update_event, add_new_event,
+                               by_id, check_change_dates_allowed, delete_event,
+                               is_date_before, update_event, create_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',

@@ -1,20 +1,21 @@
-import json
 from datetime import date, datetime
+import json
 from typing import Any, Dict
-import requests
+
 from fastapi import Depends
 from loguru import logger
+import requests
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
 
-from app.database.database import get_db
 from app.database.models import WikipediaEvents
+from app.dependencies import get_db
 
 
 def insert_on_this_day_data(
-    db: Session = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     now = datetime.now()
     day, month = now.day, now.month
@@ -32,12 +33,12 @@ def insert_on_this_day_data(
 
 
 def get_on_this_day_events(
-    db: Session = Depends(get_db)
+        db: Session = Depends(get_db)
 ) -> Dict[str, Any]:
     try:
         data = (db.query(WikipediaEvents).
                 filter(
-                    func.date(WikipediaEvents.date_inserted) == date.today()).
+            func.date(WikipediaEvents.date_inserted) == date.today()).
                 one())
 
     except NoResultFound:

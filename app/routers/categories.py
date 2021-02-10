@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
 
-from app.database.database import get_db
 from app.database.models import Category
+from app.dependencies import get_db
 
 router = APIRouter(
     prefix="/categories",
