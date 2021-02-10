@@ -29,21 +29,21 @@ class TestCategories:
             set(response.json()['category'].items()))
 
     @staticmethod
-    def test_creating_new_category_bad_color_format(client, user):
-        response = client.post("/categories/",
-                               json={"user_id": user.id, "name": "Foo",
-                                     "color": "bad format"})
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert TestCategories.BAD_COLOR_FORMAT in \
-               response.json()["detail"]
-
-    @staticmethod
     def test_creating_not_unique_category_failed(client, sender, category):
         response = client.post("/categories/", json={"user_id": sender.id,
                                                      "name": "Guitar Lesson",
                                                      "color": "121212"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in \
+               response.json()["detail"]
+
+    @staticmethod
+    def test_creating_new_category_bad_color_format(client, user):
+        response = client.post("/categories/",
+                               json={"user_id": user.id, "name": "Foo",
+                                     "color": "bad format"})
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert TestCategories.BAD_COLOR_FORMAT in \
                response.json()["detail"]
 
     @staticmethod
@@ -126,6 +126,7 @@ class TestCategories:
         ("aabbcc", True),
         ("110033", True),
         ("114b33", True),
+        ("", True),
         ("aabbcg", False),
         ("aabbc", False),
     ])
