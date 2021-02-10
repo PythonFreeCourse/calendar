@@ -3,7 +3,7 @@ from typing import Optional, Union
 from app.database.database import get_db
 from app.dependencies import templates
 from app.internal.security.dependancies import (
-    current_user, CurrentUser)
+    User, current_user)
 from app.internal.security.ouath2 import (
     authenticate_user, create_jwt_token, LoginUser)
 from fastapi import APIRouter, Depends, Request
@@ -22,8 +22,7 @@ router = APIRouter(
 @router.get("/login")
 async def login_user_form(
         request: Request, message: Optional[str] = "",
-        current_user: Union[CurrentUser, None] = Depends(current_user)
-        ) -> templates:
+        current_user: Union[User, None] = Depends(current_user)) -> templates:
     """rendering login route get method"""
     if current_user:
         return RedirectResponse(url='/')

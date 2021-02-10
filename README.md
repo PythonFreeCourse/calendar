@@ -41,27 +41,6 @@ cp app/config.py.example app/config.py
 # Edit the variables' values.
 # Rendering JWT_KEY:
 python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
-```
-### Running tests
-```shell
-python -m pytest --cov-report term-missing --cov=app tests
-```
-
-### Generating  personal JWT Secret Key
-'''shell
-python
-import secrets
-secrets.token_hex(32)
-# copy generated string.
-# in config.py file, replace JWT_KEY value with generated string
-''' 
-
-## Using security dependencies:
-'''
-from app.internal.security.dependencies:
-use is_logged_in and current_user functions as a route dependencies.
-an example for how to use can be found at tests.security_testing_routes file.
-'''
 
 ## Contributing
 View [contributing guidelines](https://github.com/PythonFreeCourse/calendar/blob/master/CONTRIBUTING.md).

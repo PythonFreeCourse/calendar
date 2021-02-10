@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
-from .schema import LoginUser, CurrentUser
+from .schema import LoginUser
 
 
 pwd_context = CryptContext(schemes=["bcrypt"])
@@ -39,11 +39,10 @@ async def authenticate_user(
         db: Session, user: LoginUser) -> Union[LoginUser, bool]:
     """Verifying user is in database and password is correct"""
     db_user = await get_db_user_by_username(db=db, username=user.username)
-    if db_user:
-        if verify_password(user.password, db_user.password):
-            return LoginUser(
-                user_id=db_user.id,
-                username=user.username, password=db_user.password)
+    if db_user and verify_password(user.password, db_user.password):
+        return LoginUser(
+            user_id=db_user.id,
+            username=user.username, password=db_user.password)
     return False
 
 
@@ -63,26 +62,16 @@ def create_jwt_token(
 
 async def check_jwt_token(
     db: Session,
-    token: str = Depends(oauth_schema),
-        path: bool = None) -> CurrentUser:
+        token: str = Depends(oauth_schema), path: bool = None) -> User:
     """
-    Check whether JWT token is correct. Returns User object if yes.
-    Returns None or raises HTTPException,
-    depanding which depandency activated this function.
+    Check whether JWT token is correct.
+    Returns jwt payloads if correct.
+    Raises HTTPException if fails to decode.
     """
     try:
         jwt_payload = jwt.decode(
             token, JWT_KEY, algorithms=JWT_ALGORITHM)
-        jwt_username = jwt_payload.get("sub")
-        jwt_user_id = jwt_payload.get("user_id")
-        db_user = await get_db_user_by_username(db, username=jwt_username)
-        if db_user and db_user.id == jwt_user_id:
-            return CurrentUser(**db_user.__dict__)
-        else:
-            raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED,
-                headers=path,
-                detail="Your token is incorrect. Please log in again")
+        return jwt_payload.get("sub"), jwt_payload.get("user_id")
     except InvalidSignatureError:
         raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
@@ -113,7 +102,7 @@ async def get_cookie(request: Request) -> str:
         detail="Please log in to enter this page")
 
 
-async def my_exception_handler(
+async def auth_exception_handler(
         request: Request,
         exc: HTTP_401_UNAUTHORIZED) -> RedirectResponse:
     """

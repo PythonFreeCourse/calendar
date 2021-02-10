@@ -23,6 +23,8 @@ LOGIN_WRONG_DETAILS = [
     ]
 
 LOGIN_DATA = {'username': 'correct_user', 'password': 'correct_password'}
+WRONG_LOGIN_DATA = {
+    'username': 'incorrect_user', 'password': 'correct_password'}
 
 
 def test_register_user(session, security_test_client):
@@ -45,16 +47,18 @@ def test_login_successfull(session, security_test_client):
     assert res.status_code == HTTP_302_FOUND
 
 
-def test_protected_with_logged_in_user(session, security_test_client):
+def test_is_logged_in_dependency_with_logged_in_user(
+        session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     security_test_client.post('/login', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
     print(res)
-    assert res.json() == {"user": 'correct_user'}
+    assert res.json() == {"user": True}
 
 
-def test_protected_without_logged_in_user(
+def test_is_logged_in_dependency_without_logged_in_user(
         session, security_test_client):
+    res = security_test_client.get('/logout')
     res = security_test_client.get('/protected')
     assert b'Please log in' in res.content
 
@@ -64,6 +68,19 @@ def test_current_user_dependency_exists(session, security_test_client):
     res = security_test_client.post('/login', data=LOGIN_DATA)
     res = security_test_client.get('/test_user')
     assert res.json() == {"user": 'correct_user'}
+
+
+def test_is_authenticated_dependency_exists(session, security_test_client):
+    security_test_client.post('/register', data=REGISTER_DETAIL)
+    res = security_test_client.post('/login', data=LOGIN_DATA)
+    res = security_test_client.get('/is_authenticated')
+    assert res.json() == {"user": 'correct_user'}
+
+
+def test_is_authenticated_dependency_not_exists(session, security_test_client):
+    res = security_test_client.get('/logout')
+    res = security_test_client.get('/is_authenticated')
+    assert b'Please log in' in res.content
 
 
 def test_logout(session, security_test_client):
@@ -84,6 +101,16 @@ def test_incorrect_secret_key_in_token(session, security_test_client):
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
+    assert b'Your token is incorrect' in res.content
+
+
+def test_wrong_details_in_token(session, security_test_client):
+    user = LoginUser(**WRONG_LOGIN_DATA)
+    incorrect_token = create_jwt_token(user)
+    security_test_client.post('/register', data=REGISTER_DETAIL)
+    url = f"/login?existing_jwt={incorrect_token}"
+    security_test_client.post(f'{url}', data=LOGIN_DATA)
+    res = security_test_client.get('/is_authenticated')
     assert b'Your token is incorrect' in res.content
 
 
