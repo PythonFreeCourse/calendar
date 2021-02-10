@@ -1,8 +1,12 @@
 function listVoices(synth, voiceSelect) {
-	voices = synth.getVoices();
-	const selectedIndex = Math.max(0, voiceSelect.selectedIndex);
+	const voices = synth.getVoices();
+    const selectedIndex = Math.max(0, voiceSelect.selectedIndex);
+    voicesSetup(voices, voiceSelect, selectedIndex);
+}
 
-	voiceSelect.innerText = '';
+
+function voicesSetup(voices, voiceSelect, selectedIndex) {
+    voiceSelect.innerText = '';
 	for (const voice of voices) {
 		const option = document.createElement('option');
 		option.textContent = `${voice.name} (${voice.lang})`;
@@ -24,20 +28,7 @@ function setOutput(ctrl) {
 }
 
 
-window.addEventListener("load", (event) => {
-
-	const synth = window.speechSynthesis;
-	let voices = [];
-	const voiceSelect = document.getElementById('voice');
-
-	listVoices(synth, voiceSelect);
-	if (synth.onvoiceschanged !== undefined) {
-		synth.onvoiceschanged = listVoices;
-	}
-
-	const controls = ["volume", "pitch", "rate"];
-	const actions = ["load", "input"];
-
+function setListenersToControls(controls, actions) {
 	for (const control of controls) {
 		for (const action of actions) {
 			setOutput(`${control}`);
@@ -46,7 +37,10 @@ window.addEventListener("load", (event) => {
 			});
 		}
 	}
+}
 
+
+function speechText(voiceSelect, voices, synth) {
 	document.getElementById('speak').addEventListener("click", (event) => {
 		event.preventDefault();
 		const say = document.getElementById('say').value;
@@ -64,5 +58,25 @@ window.addEventListener("load", (event) => {
 		sayThis.rate = document.getElementById('rate').value;
 		synth.speak(sayThis);
 	});
+}
+
+
+window.addEventListener("load", (event) => {
+
+	const synth = window.speechSynthesis;
+	let voices = [];
+	const voiceSelect = document.getElementById('voice');
+
+	listVoices(synth, voiceSelect);
+	if (synth.onvoiceschanged !== undefined) {
+		synth.onvoiceschanged = listVoices;
+	}
+
+	const controls = ["volume", "pitch", "rate"];
+	const actions = ["load", "input"];
+	
+    setListenersToControls(controls, actions);
+	
+	speechText(voiceSelect, voices, synth);
 
 });
