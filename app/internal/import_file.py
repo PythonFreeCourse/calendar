@@ -6,6 +6,7 @@ import re
 from typing import Any, Dict, Generator, List, Tuple, Union
 
 from icalendar import Calendar
+from loguru import logger
 from sqlalchemy.orm.session import Session
 
 from app.config import (
@@ -20,8 +21,6 @@ from app.config import (
     VALID_FILE_EXTENSION
 )
 from app.routers.event import create_event
-from loguru import logger
-
 
 DATE_FORMAT = "%m-%d-%Y"
 DATE_FORMAT2 = "%m-%d-%Y %H:%M"
@@ -148,9 +147,9 @@ def save_calendar_content_txt(event: str, calendar_content: List) -> bool:
         end_date = end_date.replace("\n", "")
         location = None
     if (not is_date_in_range(start_date) or
-       not is_date_in_range(end_date) or
-       not is_start_day_before_end_date(start_date, end_date) or
-       not is_event_valid_duration(start_date, end_date)):
+            not is_date_in_range(end_date) or
+            not is_start_day_before_end_date(start_date, end_date) or
+            not is_event_valid_duration(start_date, end_date)):
         return False
     if re.search(r":", start_date) and re.search(r":", start_date):
         start_date = datetime.datetime.strptime(start_date, DATE_FORMAT2)
@@ -170,7 +169,7 @@ def import_txt_file(txt_file: str) -> List[Dict[str, Union[str, Any]]]:
     calendar_content = []
     for event in open_txt_file(txt_file):
         if (not is_event_text_valid(event) or
-           not save_calendar_content_txt(event, calendar_content)):
+                not save_calendar_content_txt(event, calendar_content)):
             return []
     return calendar_content
 
@@ -196,14 +195,14 @@ def is_valid_data_event_ics(component) -> bool:
 
 def save_calendar_content_ics(component, calendar_content) -> None:
     calendar_content.append({
-                        "Head": str(component.get('summary')),
-                        "Content": str(component.get('description')),
-                        "S_Date": component.get('dtstart').dt
-                        .replace(tzinfo=None),
-                        "E_Date": component.get('dtend').dt
-                        .replace(tzinfo=None),
-                        "Location": str(component.get('location'))
-                    })
+        "Head": str(component.get('summary')),
+        "Content": str(component.get('description')),
+        "S_Date": component.get('dtstart').dt
+            .replace(tzinfo=None),
+        "E_Date": component.get('dtend').dt
+            .replace(tzinfo=None),
+        "Location": str(component.get('location'))
+    })
 
 
 def import_ics_file(ics_file: str) -> List[Dict[str, Union[str, Any]]]:

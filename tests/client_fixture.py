@@ -3,8 +3,8 @@ from typing import Iterator
 from fastapi.testclient import TestClient
 import pytest
 
-from app.database.models import Base, User
 from app import main
+from app.database.models import Base, User
 from app.routers import agenda, event, invitation, profile
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
