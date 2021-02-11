@@ -69,23 +69,15 @@ async def filter_access_to_features(request: Request, call_next):
     # getting the url route path for matching with the database
     route = str(request.url).replace(str(request.base_url), '')[:-1]
 
-    try:
-        is_enabled = feature_panel.is_feature_enabled(route=route)
-        # session.close()
-    except AttributeError as e:
-        '''
-        in case there is no feature exist in
-        the database that match the route that passed to the request.
-        '''
-        logger.error('Not a feature - Access is allowed.  Error: ' + str(e))
-        return await call_next(request)
+    # get if feature is enabled
+    is_enabled = feature_panel.is_feature_enabled(route=route)
 
     if is_enabled:
         # in case the feature is enabled
         return await call_next(request)
 
-    if 'referer' not in request.headers:
-        # in case request come from straight from url line on browser
+    elif 'referer' not in request.headers:
+        # in case request come straight from url line in browser
         return RedirectResponse(url=app.url_path_for('home'))
 
     # in case the feature is disabled
