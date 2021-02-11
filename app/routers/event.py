@@ -28,6 +28,7 @@ UPDATE_EVENTS_FIELDS = {
     'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
+    'vc_link': (str, type(None)),
     'category_id': (int, type(None)),
 }
 
@@ -61,13 +62,8 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     owner_id = user.id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
-    category_id = data.get('category_id')
     vc_link = data['vc_url']
-
-    event = create_event(session, title, start, end, owner_id, content,
-                         location, vc_link, category_id=category_id)
-    return RedirectResponse(router.url_path_for('eventview',
-                                                event_id=event.id),
+    category_id = data.get('category_id')
 
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
@@ -100,17 +96,6 @@ async def eventview(request: Request, event_id: int,
                                        "start_format": start_format,
                                         "end_format": end_format,
                                        "messages": messages})
-
-
-UPDATE_EVENTS_FIELDS = {
-    'title': str,
-    'start': datetime,
-    'end': datetime,
-    'content': (str, type(None)),
-    'location': (str, type(None)),
-    'vc_link': (str, type(None)),
-    'category_id': (int, type(None))
-}
 
 
 def by_id(db: Session, event_id: int) -> Event:
