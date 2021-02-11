@@ -27,7 +27,6 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     full_name = Column(String)
-    language = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
@@ -57,6 +56,8 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    color = Column(String, nullable=True)
+    emotion = Column(String, nullable=True)
     invitees = Column(String)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
@@ -283,3 +284,16 @@ class Zodiac(Base):
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
         )
+
+
+# insert language data
+
+# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+# https://stackoverflow.com/questions/17461251
+def insert_data(target, session: Session, **kw):
+    session.execute(
+        target.insert(),
+        {'id': 1, 'name': 'English'}, {'id': 2, 'name': 'עברית'})
+
+
+event.listen(Language.__table__, 'after_create', insert_data)

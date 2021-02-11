@@ -15,6 +15,7 @@ from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
 )
+from app.internal.emotion import get_emotion
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
@@ -55,7 +56,6 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     user = user if user else create_user(username="u",
                                          password="p",
                                          email="e@mail.com",
-                                         language="",
                                          language_id=1,
                                          session=session)
     owner_id = user.id
@@ -212,6 +212,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
+        emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         category_id=category_id,
     )
