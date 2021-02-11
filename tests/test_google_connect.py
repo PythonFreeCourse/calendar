@@ -91,10 +91,6 @@ def credentials():
     return cred
 
 
-def safe_run_local_server(*args, **kwargs):
-    logger.debug('running server')
-
-
 @pytest.mark.usefixtures("user", "session", "google_events_mock")
 def test_push_events_to_db(google_events_mock, user, session):
     assert google_connect.push_events_to_db(google_events_mock, user, session)
@@ -314,7 +310,9 @@ def test_google_sync_third_path(mocker, google_connect_test_client,
         'google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file',
         return_value=mocker.Mock(name='flow', **{
             "credentials": credentials,
-            "run_local_server": safe_run_local_server
+            "run_local_server": mocker.Mock(name='run_local_server',
+                                            return_value=logger.debug(
+                                                'running server'))
         })
     )
 
@@ -341,7 +339,9 @@ def test_get_credentials_from_consent_screen(mocker, session,
         'google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file',
         return_value=mocker.Mock(name='flow', **{
             "credentials": credentials,
-            "run_local_server": safe_run_local_server
+            "run_local_server": mocker.Mock(name='run_local_server',
+                                            return_value=logger.debug(
+                                                'running server'))
         })
     )
     assert google_connect.get_credentials_from_consent_screen(
