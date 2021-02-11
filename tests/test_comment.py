@@ -16,7 +16,8 @@ def test_create_comment(session: Session, event: Event, user: User) -> None:
 
 
 def test_parse_comment(session: Session, comment: Comment) -> None:
-    data = 1, {
+    data = {
+        'id': 1,
         'avatar': 'profile.png',
         'username': 'test_username',
         'time': '01/01/2021 00:01',
@@ -28,12 +29,12 @@ def test_parse_comment(session: Session, comment: Comment) -> None:
 def test_display_comment(session: Session, event: Event,
                          comment: Comment) -> None:
     comments = json.loads(cmt.display_comments(session, event))
-    assert len(comments.keys()) == 1
+    assert len(comments) == 1
 
 
 def test_display_comment_empty(session: Session, event: Event) -> None:
     comments = json.loads(cmt.display_comments(session, event))
-    assert comments == {}
+    assert comments == []
 
 
 def test_delete_comment(session: Session, comment: Comment) -> None:

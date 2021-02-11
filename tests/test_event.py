@@ -350,12 +350,13 @@ def test_get_event_data(session: Session, event: Event,
                         comment: Comment) -> None:
     data = (
         event,
-        {'1': {
+        [{
+            'id': 1,
             'avatar': 'profile.png',
             'username': 'test_username',
             'time': '01/01/2021 00:01',
             'content': 'test comment',
-        }},
+        }],
         '%H:%M'
     )
     assert evt.get_event_data(session, event.id) == data

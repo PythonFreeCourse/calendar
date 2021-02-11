@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import Dict, Tuple
+from typing import Dict
 
 from sqlalchemy.orm.session import Session
 
@@ -25,8 +25,7 @@ def create_comment(session: Session, event: Event, content: str) -> None:
     utils.create_model(session, Comment, **data)
 
 
-def parse_comment(session: Session,
-                  comment: Comment) -> Tuple[int, Dict[str, str]]:
+def parse_comment(session: Session, comment: Comment) -> Dict[str, str]:
     """Returns a dictionary with the comment's info.
 
     Args:
@@ -42,7 +41,8 @@ def parse_comment(session: Session,
                         'content' - Comment's content
     """
     user = utils.get_user(session, comment.user_id)
-    return comment.id, {
+    return {
+        'id': comment.id,
         'avatar': user.avatar,
         'username': user.username,
         'time': comment.time.strftime(r'%d/%m/%Y %H:%M'),
@@ -63,11 +63,8 @@ def display_comments(session: Session, event: Event) -> str:
                               the given event.
     """
     comments = session.query(Comment).filter_by(event_id=event.id).all()
-    parsed_comments = {}
-    for comment in comments:
-        comment_id, comment_info = parse_comment(session, comment)
-        parsed_comments[comment_id] = comment_info
-    return json.dumps(parsed_comments)
+    return json.dumps([parse_comment(session, comment)
+                       for comment in comments])
 
 
 def delete_comment(session: Session, comment_id: int) -> bool:
