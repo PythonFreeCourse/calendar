@@ -44,6 +44,9 @@
     <!-- Buttons could and should be replaced with button-like anchors if need so -->
     <button type="button">Duplicate</button>
     <button type="button">Edit</button>
+    {% if event.is_public %}
+    <button type="button">Join event</button>
+    {% endif %}
   </div>
 </div>
 </body>
