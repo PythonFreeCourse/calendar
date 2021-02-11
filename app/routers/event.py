@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -332,7 +333,7 @@ def get_event_data(db: Session, event_id: int) -> EVENT_DATA:
         None
     """
     event = by_id(db, event_id)
-    comments = cmt.display_comments(db, event)
+    comments = json.loads(cmt.display_comments(db, event))
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else START_FORMAT)
     return event, comments, end_format
@@ -354,35 +355,14 @@ async def view_comments(request: Request, event_id: int,
                                        "end_format": end_format})
 
 
-# @router.get("/{event_id}/comments/{comment_id}")
-# async def delete_comment(request: Request, event_id: int, comment_id: int,
-#                          db: Session = Depends(get_db)) -> Response:
-#     """Deletes a comment instance from the db.
-
-#     Redirects back to the event's comments tab upon deletion.
-#     """
-#     cmt.delete_comment(db, comment_id)
-#     return RedirectResponse(router.url_path_for('view_comments',
-#                                                 event_id=event_id))
-
-
+@router.get("/{event_id}/comments/{comment_id}")
 @router.delete("/{event_id}/comments/{comment_id}")
 async def delete_comment(request: Request, event_id: int, comment_id: int,
-                         db: Session = Depends(get_db)) -> None:
+                         db: Session = Depends(get_db)) -> Response:
     """Deletes a comment instance from the db.
 
     Redirects back to the event's comments tab upon deletion.
     """
     cmt.delete_comment(db, comment_id)
-
-
-@router.get("/{event_id}/comments/{comment_id}")
-async def reload_comments(request: Request, event_id: int, comment_id: int,
-                          db: Session = Depends(get_db)) -> Response:
-    """Deletes a comment instance from the db.
-
-    Redirects back to the event's comments tab upon deletion.
-    """
-    await delete_comment(request, event_id, comment_id, db)
     return RedirectResponse(router.url_path_for('view_comments',
                                                 event_id=event_id))

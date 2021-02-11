@@ -1,5 +1,6 @@
 import datetime
-from typing import Dict, List
+import json
+from typing import Dict, Tuple
 
 from sqlalchemy.orm.session import Session
 
@@ -24,7 +25,8 @@ def create_comment(session: Session, event: Event, content: str) -> None:
     utils.create_model(session, Comment, **data)
 
 
-def parse_comment(session: Session, comment: Comment) -> Dict[str, str]:
+def parse_comment(session: Session,
+                  comment: Comment) -> Tuple[int, Dict[str, str]]:
     """Returns a dictionary with the comment's info.
 
     Args:
@@ -40,8 +42,7 @@ def parse_comment(session: Session, comment: Comment) -> Dict[str, str]:
                         'content' - Comment's content
     """
     user = utils.get_user(session, comment.user_id)
-    return {
-        'id': comment.id,
+    return comment.id, {
         'avatar': user.avatar,
         'username': user.username,
         'time': comment.time.strftime(r'%d/%m/%Y %H:%M'),
@@ -49,7 +50,7 @@ def parse_comment(session: Session, comment: Comment) -> Dict[str, str]:
     }
 
 
-def display_comments(session: Session, event: Event) -> List[Dict[str, str]]:
+def display_comments(session: Session, event: Event) -> str:
     """Returns a list of info dictionaries of all the comments for the given
     event.
 
@@ -62,7 +63,11 @@ def display_comments(session: Session, event: Event) -> List[Dict[str, str]]:
                               the given event.
     """
     comments = session.query(Comment).filter_by(event_id=event.id).all()
-    return [parse_comment(session, comment) for comment in comments]
+    parsed_comments = {}
+    for comment in comments:
+        comment_id, comment_info = parse_comment(session, comment)
+        parsed_comments[comment_id] = comment_info
+    return json.dumps(parsed_comments)
 
 
 def delete_comment(session: Session, comment_id: int) -> bool:

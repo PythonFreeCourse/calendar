@@ -3,18 +3,18 @@
     <button class="btn btn-danger text-center">Post Comment</button>
 </form>
 
-{% for comment in comments %}
+{% for id in comments %}
     <div class="card my-3">
         <div class="card-header">
-            <img class="float-start card-img-top profile-image rounded-circle mx-auto d-block" src="{{ url_for('media', path=comment['avatar']) }}" alt="Profile image" width="100">
-            <a class="float-end" href="{{ url_for('reload_comments', event_id=event.id, comment_id=comment['id']) }}">
+            <img class="float-start card-img-top profile-image rounded-circle mx-auto d-block" src="{{ url_for('media', path=comments[id]['avatar']) }}" alt="Profile image" width="100">
+            <a class="float-end" href="{{ url_for('delete_comment', event_id=event.id, comment_id=id) }}">
                 <button class="btn btn-danger text-center">X</button>
             </a>
-            <p class="mt-4"><strong> {{ comment['username'] }} </strong></p>
-            <p>{{ comment['time'] }}</p>
+            <p class="mt-4"><strong> {{ comments[id]['username'] }} </strong></p>
+            <p>{{ comments[id]['time'] }}</p>
         </div>
         <div class="card-body">
-            {{ comment['content'] }}
+            {{ comments[id]['content'] }}
         </div>
     </div>
 {% endfor %}
