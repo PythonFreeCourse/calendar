@@ -1,34 +1,34 @@
 from datetime import datetime, timedelta
 
-
 import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
 from starlette import status
 from sqlalchemy.orm import Session
 
 
 from app.main import app
 from app.database.models import Event
-from app.database.database import get_db
-from app.routers.event import (_delete_event, by_id, delete_event,
-                               update_event, check_change_dates_allowed,
-                               add_new_event, _update_event,
-                               is_date_before)
-
+from app.dependencies import get_db
+from app.main import app
+from app.routers.event import (_delete_event, _update_event, add_new_event,
+                               by_id, check_change_dates_allowed, delete_event,
+                               is_date_before, update_event, create_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
-    'start_time': '15:59',
-    'end_date': '2021-01-27',
+    'start_time': '12:59',
+    'end_date': '2021-01-28',
     'end_time': '15:01',
     'location_type': 'vc_url',
     'location': 'https://us02web.zoom.us/j/875384596',
     'description': 'content',
     'color': 'red',
-    'availability': 'busy',
-    'privacy': 'public'
+    'availability': 'True',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com',
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -41,8 +41,54 @@ WRONG_EVENT_FORM_DATA = {
     'location': 'not a zoom link',
     'description': 'content',
     'color': 'red',
+    'availability': 'True',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
+}
+
+BAD_EMAILS_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com,ccc'
+}
+
+WEEK_LATER_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-02-04',
+    'start_time': '12:59',
+    'end_date': '2021-02-04',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
+}
+
+TWO_WEEKS_LATER_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-02-11',
+    'start_time': '12:59',
+    'end_date': '2021-02-11',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -74,6 +120,79 @@ def test_eventview_with_id(event_test_client, session, event):
             f'{event_detail} not in view event page'
 
 
+def test_create_event_with_default_availability(client, user, session):
+    """
+    Test create event with default availability. (busy)
+    """
+    data = {
+        'title': 'test title',
+        'start': datetime.strptime('2021-01-01 15:59', '%Y-%m-%d %H:%M'),
+        'end': datetime.strptime('2021-01-02 15:01', '%Y-%m-%d %H:%M'),
+        'location': 'https://us02web.zoom.us/j/875384596',
+        'content': 'content',
+        'owner_id': user.id,
+    }
+
+    event = create_event(session, **data)
+    assert event.availability is True
+
+
+def test_create_event_with_free_availability(client, user, session):
+    """
+    Test create event with free availability.
+    """
+    data = {
+        'title': 'test title',
+        'start': datetime.strptime('2021-01-01 15:59', '%Y-%m-%d %H:%M'),
+        'end': datetime.strptime('2021-01-02 15:01', '%Y-%m-%d %H:%M'),
+        'location': 'https://us02web.zoom.us/j/875384596',
+        'content': 'content',
+        'owner_id': user.id,
+        'availability': False,
+    }
+
+    event = create_event(session, **data)
+    assert event.availability is False
+
+
+def test_eventview_without_id(client):
+    response = client.get("/event/view")
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_eventedit_missing_old_invites(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    different_invitees_event = CORRECT_EVENT_FORM_DATA.copy()
+    different_invitees_event['invited'] = 'c@c.com,d@d.com'
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=different_invitees_event)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    for invitee in CORRECT_EVENT_FORM_DATA["invited"].split(","):
+        assert invitee in response.headers['location']
+
+
+def test_eventedit_bad_emails(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=BAD_EMAILS_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    different_invitees_event = CORRECT_EVENT_FORM_DATA.copy()
+    different_invitees_event['invited'] = 'c@c.com,d@d.com'
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=different_invitees_event)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    for invitee in CORRECT_EVENT_FORM_DATA["invited"].split(","):
+        assert invitee in response.headers['location']
+    assert 'ccc' not in response.headers['location']
+
+
 def test_eventedit_post_correct(client, user):
     """
     Test create new event successfully.
@@ -81,7 +200,6 @@ def test_eventedit_post_correct(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)
     assert response.ok
-    assert response.status_code == status.HTTP_302_FOUND
     assert (client.app.url_path_for('eventview', event_id=1).strip('1')
             in response.headers['location'])
 
@@ -106,6 +224,29 @@ def test_eventedit_post_wrong(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=WRONG_EVENT_FORM_DATA)
     assert response.json()['detail'] == 'VC type with no valid zoom link'
+
+
+def test_eventedit_with_pattern(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=WEEK_LATER_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert ('Same event happened 1 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=TWO_WEEKS_LATER_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert ('Same event happened 1 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
+    assert ('Same event happened 2 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
 
 
 @pytest.mark.parametrize("data", NONE_UPDATE_OPTIONS)
@@ -135,6 +276,19 @@ def test_not_check_change_dates_allowed(event):
         )
 
 
+def test_update_event_availability(event, session):
+    """
+    Test update event's availability.
+    """
+    original_availability = event.availability
+    data = {
+        "availability": not original_availability
+    }
+    assert original_availability is not update_event(event_id=event.id,
+                                                     event=data,
+                                                     db=session).availability
+
+
 def test_successful_update(event, session):
     """
     Test update existing event successfully.
@@ -143,10 +297,12 @@ def test_successful_update(event, session):
         "title": "successful",
         "start": datetime(2021, 1, 20),
         "end": datetime(2021, 1, 21),
+        "availability": "False",
     }
     assert isinstance(update_event(1, data, session), Event)
-    assert "successful" in update_event(
-        event_id=event.id, event=data, db=session).title
+    updated_event = update_event(event_id=event.id, event=data, db=session)
+    assert "successful" in updated_event.title
+    assert updated_event.availability is False
 
 
 def test_update_event_with_category(today_event, category, session):
@@ -230,16 +386,16 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 
 
 class TestApp:
-
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
-            'title': "Test Title",
-            "location": "Fake City",
-            "start": date_test_data[0],
-            "end": date_test_data[1],
-            "content": "Any Words",
-            "owner_id": 123}
+        'title': "Test Title",
+        "location": "Fake City",
+        "vc_link": "https://fakelink.com",
+        "start": date_test_data[0],
+        "end": date_test_data[1],
+        "content": "Any Words",
+        "owner_id": 123}
 
     @staticmethod
     def test_get_db():
@@ -260,7 +416,7 @@ class TestApp:
         assert not is_date_before(
             TestApp.date_test_data[0],
             'bad value'
-                                )
+        )
 
     @staticmethod
     def test_add_event(session: Session):
