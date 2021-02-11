@@ -5,13 +5,11 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from starlette import status
-from sqlalchemy.orm import Session
 
 
 from app.main import app
 from app.database.models import Event
 from app.dependencies import get_db
-from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
                                by_id, check_change_dates_allowed, delete_event,
                                is_date_before, update_event, create_event)
@@ -110,7 +108,8 @@ def test_eventedit(event_test_client):
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
-    event_details = [event.title, event.content, event.location, event.vc_link, event.start,
+    event_details = [event.title, event.content, event.location,
+                     event.vc_link, event.start,
                      event.end, event.color, event.category_id]
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok

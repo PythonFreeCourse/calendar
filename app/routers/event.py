@@ -94,7 +94,7 @@ async def eventview(request: Request, event_id: int,
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
-                                        "end_format": end_format,
+                                       "end_format": end_format,
                                        "messages": messages})
 
 
