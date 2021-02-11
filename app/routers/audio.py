@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.database.models import (AudioSettings, AudioTracks, User,
                                  UserAudioTracks)
 from app.dependencies import SOUNDS_PATH, templates
