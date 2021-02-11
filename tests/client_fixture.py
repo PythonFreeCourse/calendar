@@ -5,9 +5,8 @@ import pytest
 
 from app import main
 from app.main import app
-from app.routers import agenda, audio, event, invitation, profile
 from app.database.models import Base, User
-from app.routers import agenda, event, invitation, profile
+from app.routers import agenda, audio, event, invitation, profile
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 
