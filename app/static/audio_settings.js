@@ -14,7 +14,7 @@ set_checked_ids.forEach((val) => {
   add_set_checked_listener(val);
 });
 other_ids_and_their_funcs.forEach((val) => {
-  add_other_listeners(val[0], val[1]);
+  perform_func_on_click(val[0], val[1]);
 });
 
 /**
@@ -24,7 +24,7 @@ other_ids_and_their_funcs.forEach((val) => {
  * @param {string} element_id - the id attribute of the html element. One of: Music On/off, Sound Effects On/Off.
  */
 function add_set_checked_listener(element_id) {
-  let elem = document.getElementById(element_id);
+  const elem = document.getElementById(element_id);
   if (elem) {
     elem.addEventListener("click", function () {
       set_checked(element_id);
@@ -40,7 +40,7 @@ function add_set_checked_listener(element_id) {
  * @param {string} element_id - the id attribute of the html element.
  * One of: Music On/off, Sound Effects On/Off.
  */
-function add_other_listeners(element_id, func) {
+function perform_func_on_click(element_id, func) {
   let elem = document.getElementById(element_id);
   if (elem) {
     elem.addEventListener("click", func);
