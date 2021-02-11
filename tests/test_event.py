@@ -11,7 +11,10 @@ from app.dependencies import get_db
 from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
                                by_id, check_change_dates_allowed, delete_event,
-                               is_date_before, update_event)
+                               create_event, is_date_before, update_event)
+from app.routers.event import add_user_to_event
+from tests.test_user import new_user
+
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -104,21 +107,22 @@ INVALID_FIELD_UPDATE = [
 #-------------------------------------------------
 
 @pytest.fixture
-def new_event():
+def new_event(session):
     """this func is a valid event, made in order to test event functions"""
-    return add_new_event(TestApp.event_test_data, session)
+    event = create_event(db, **CORRECT_EVENT_FORM_DATA)
+    return event
 
 
 #-------------------------------------------------
 # tests
 #-------------------------------------------------
 
-def test_joining_public_event():
+def test_joining_public_event(session):
     """test in order to make sure user is added the first time he asks to join event,
     yet won't join the same user twice"""
     first_join = add_user_to_event(session,new_user.id,new_event.id)
     assert first_join
-    second_join = add_user_to_event(session,new_user.id,new_event.id)
+    second_join = add_user_to_event(session,new_user.id, new_event.id)
     assert not second_join
 
 

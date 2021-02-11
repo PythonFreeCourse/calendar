@@ -302,13 +302,8 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-def add_user_to_event(
-    session: Session, user_id: int, event_id: int  
-): """this function gets an existing event and a user and adds the user to the participant list.
-    function won't add the user to the event if the user is already participates in it.
-    Function will return:
-    True if the connection was set successfuly
-    False if it didn't"""
+def add_user_to_event(session: Session, user_id: int, event_id: int):
+    
     user_already_connected = session.query(UserEvent).filter_by(event_id == event_id, user_id == user_id).all()
     if user_already_connected:
         """ if user is not registered to the event, the system will add him"""
