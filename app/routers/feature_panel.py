@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends
 from sqlalchemy import or_
 
-from app.database.database import get_db, SessionLocal
+from app.dependencies import get_db, SessionLocal
 from app.database.models import User, UserFeature, Feature
 from app.internal.utils import create_model
 from app.features.features import features

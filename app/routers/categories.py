@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
 
-from app.database.database import get_db
 from app.database.models import Category
+from app.dependencies import get_db
 
 router = APIRouter(
     prefix="/categories",
@@ -20,6 +20,15 @@ class CategoryModel(BaseModel):
     name: str
     color: str
     user_id: int
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Guitar lessons",
+                "color": "#aabbcc",
+                "user_id": 1,
+            }
+        }
 
 
 # TODO(issue#29): get current user_id from session

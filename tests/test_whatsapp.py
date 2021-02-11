@@ -8,7 +8,7 @@ def test_whatsapp_send():
     message = 'Event or a joke or the schedule of one day'
     assert whatsapp.make_link(phone_number, message) == {
         "link": "https://api.whatsapp.com/send?phone=972536106106&text=Event+"
-        "or+a+joke+or+the+schedule+of+one+day"}
+                "or+a+joke+or+the+schedule+of+one+day"}
 
 
 def test_wrong_phone_number():
@@ -17,7 +17,7 @@ def test_wrong_phone_number():
     message = 'Wrong phone number?'
     assert whatsapp.make_link(phone_number, message) == {
         "link": "https://api.whatsapp.com/send?phone=999999&text=Wrong+phone+"
-        "number%3F"}
+                "number%3F"}
 
 
 def test_no_message():
@@ -34,7 +34,7 @@ def test_no_number():
     message = 'Which phone number?'
     assert whatsapp.make_link(phone_number, message) == {
         "link": "https://api.whatsapp.com/send?phone=&text=Which+phone+"
-        "number%3F"}
+                "number%3F"}
 
 
 @pytest.mark.asyncio

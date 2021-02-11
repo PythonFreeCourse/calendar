@@ -31,7 +31,6 @@
 │       ├── agenda_style.css
 │       ├── popover.js
 │       ├── style.css
-│       ├── popover.js
 │   ├── templates
 │       ├── base.html
 │       ├── home.html

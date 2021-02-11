@@ -27,7 +27,7 @@ class TestAgenda:
             next_month_event, old_event
     ):
         resp = agenda_test_client.get(TestAgenda.AGENDA)
-        assert resp.status_code == status.HTTP_200_OK
+        assert resp.ok
         assert b"event 1" in resp.content
         assert b"event 2" in resp.content
         assert b"event 3" not in resp.content

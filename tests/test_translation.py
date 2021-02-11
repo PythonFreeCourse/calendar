@@ -1,14 +1,10 @@
-import pytest
 from iso639 import languages
+import pytest
 from textblob import TextBlob
 
-from app.internal.translation import (
-    translate_text,
-    translate_text_for_user,
-    _get_user_language,
-    _lang_full_to_short,
-    _detect_text_language
-)
+from app.internal.translation import (_detect_text_language,
+                                      _get_user_language, _lang_full_to_short,
+                                      translate_text, translate_text_for_user)
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang",
