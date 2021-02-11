@@ -106,10 +106,11 @@ INVALID_FIELD_UPDATE = [
 # fixtures
 #-------------------------------------------------
 
+
+
 @pytest.fixture
-def new_event(session):
-    """this func is a valid event, made in order to test event functions"""
-    event = create_event(db, **CORRECT_EVENT_FORM_DATA)
+def new_event(session, new_user):
+    event = add_new_event(TestApp.event_test_data, session)
     return event
 
 
@@ -117,12 +118,13 @@ def new_event(session):
 # tests
 #-------------------------------------------------
 
-def test_joining_public_event(session):
+def test_joining_public_event(session, new_event, new_user):
     """test in order to make sure user is added the first time he asks to join event,
     yet won't join the same user twice"""
-    first_join = add_user_to_event(session,new_user.id,new_event.id)
+    print(f"user {new_user.id} event {new_event.id}")
+    first_join = add_user_to_event(session,new_event.id, new_user.id)
     assert first_join
-    second_join = add_user_to_event(session,new_user.id, new_event.id)
+    second_join = add_user_to_event(session,new_event.id, new_user.id)
     assert not second_join
 
 

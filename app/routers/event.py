@@ -199,6 +199,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
                  invitees: List[str] = None,
+                 is_public: bool = False,
                  category_id: int = None):
     """Creates an event and an association."""
 
@@ -214,6 +215,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         location=location,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
+        is_public=is_public,
         category_id=category_id,
     )
     create_model(
@@ -304,18 +306,17 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 
 def add_user_to_event(session: Session, user_id: int, event_id: int):
     
-    user_already_connected = session.query(UserEvent).filter_by(event_id == event_id, user_id == user_id).all()
-    if user_already_connected:
+    user_already_connected = session.query(UserEvent).filter(event_id == event_id, user_id == user_id).all()
+    print(user_already_connected)
+    if not user_already_connected:
         """ if user is not registered to the event, the system will add him"""
-        try:
-            create_model(
-                db, UserEvent,
-                user_id=owner_id,
-                event_id=event.id
-            )
-            return True
-        except:
-            return False
+        
+        create_model(
+            session, UserEvent,
+            user_id=user_id,
+            event_id=event_id
+        )
+        return True
     else:
         """if the user has a connection to the event,
         the function will recognize the duplicate and return false."""
