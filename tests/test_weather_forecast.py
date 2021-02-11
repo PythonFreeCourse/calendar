@@ -29,12 +29,14 @@ DATA_GET_WEATHER = [
 
 @pytest.mark.parametrize('requested_date, location, expected',
                          DATA_GET_WEATHER)
+@pytest.mark.weather_forecast
 def test_get_weather_data(requested_date, location, expected, requests_mock):
     requests_mock.get(HISTORY_URL, json=RESPONSE_FROM_MOCK)
     output = get_weather_data(requested_date, location)
     assert output['Status'] == expected
 
 
+@pytest.mark.weather_forecast
 def test_get_forecast_weather_data(requests_mock):
     temp_date = datetime.datetime.now() + datetime.timedelta(days=2)
     response_from_mock = RESPONSE_FROM_MOCK
@@ -45,6 +47,7 @@ def test_get_forecast_weather_data(requests_mock):
     assert output['Status'] == 0
 
 
+@pytest.mark.weather_forecast
 def test_location_not_found(requests_mock):
     requested_date = datetime.datetime(day=10, month=1, year=2020)
     requests_mock.get(HISTORY_URL, json=ERROR_RESPONSE_FROM_MOCK)
@@ -53,6 +56,7 @@ def test_location_not_found(requests_mock):
 
 
 @responses.activate
+@pytest.mark.weather_forecast
 def test_historical_no_response_from_api():
     requested_date = datetime.datetime(day=11, month=1, year=2020)
     responses.add(responses.GET, HISTORY_URL, status=500)
@@ -62,6 +66,7 @@ def test_historical_no_response_from_api():
 
 
 @responses.activate
+@pytest.mark.weather_forecast
 def test_historical_exception_from_api():
     requested_date = datetime.datetime(day=12, month=1, year=2020)
     with pytest.raises(requests.exceptions.ConnectionError):
@@ -71,6 +76,7 @@ def test_historical_exception_from_api():
 
 
 @responses.activate
+@pytest.mark.weather_forecast
 def test_forecast_exception_from_api():
     requested_date = datetime.datetime.now() + datetime.timedelta(days=3)
     with pytest.raises(requests.exceptions.ConnectionError):

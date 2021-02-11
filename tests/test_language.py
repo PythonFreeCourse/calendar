@@ -25,6 +25,7 @@ class TestLanguage:
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              LANGUAGE_TESTS)
+    @pytest.mark.language
     def test_gettext_python(language_code, translation, is_valid):
         languages.set_ui_language(language_code)
 
@@ -36,6 +37,7 @@ class TestLanguage:
     @staticmethod
     @pytest.mark.parametrize("language_code, translation, is_valid",
                              LANGUAGE_TESTS)
+    @pytest.mark.language
     def test_gettext_html(language_code, translation, is_valid):
         languages.set_ui_language(language_code)
 
@@ -46,16 +48,19 @@ class TestLanguage:
                 or (not is_valid and translation in text))
 
     @staticmethod
+    @pytest.mark.language
     def test_get_supported_languages():
         number_of_languages = len(list(languages._get_supported_languages()))
         assert number_of_languages == TestLanguage.NUMBER_OF_LANGUAGES
 
     @staticmethod
+    @pytest.mark.language
     def test_get_language_directory():
         pytest.MonkeyPatch().setattr(Path, 'is_dir', lambda x: True)
         assert languages._get_language_directory()
 
     @staticmethod
+    @pytest.mark.language
     def test_get_display_language():
         # TODO: Waiting for user registration.
         #  Test: no user, user not logged in and user with non-english set.

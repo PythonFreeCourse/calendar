@@ -19,6 +19,7 @@ lemmatized_words = [
 
 
 @pytest.mark.parametrize('lemmatized, link', lemmatized_words)
+@pytest.mark.event_images
 def test_generate_flare_link_from_lemmatized_word(lemmatized, link):
     assert generate_flare_link_from_lemmatized_word(lemmatized) == link
 
@@ -32,6 +33,7 @@ contents = [
 
 
 @pytest.mark.parametrize('content, alphabet_only', contents)
+@pytest.mark.event_images
 def test_remove_non_alphabet_chars(content, alphabet_only):
     assert remove_non_alphabet_chars(content) == alphabet_only
 
@@ -46,6 +48,7 @@ values = [
 
 
 @pytest.mark.parametrize('related_word, key', values)
+@pytest.mark.event_images
 def test_get_image_name(related_word, key):
     assert get_image_name(related_word) == key
 
@@ -60,6 +63,7 @@ tokens = [
 
 
 @pytest.mark.parametrize('token, link', tokens)
+@pytest.mark.event_images
 def test_search_token_in_related_words(token, link):
     assert search_token_in_related_words(token) == link
 
@@ -75,5 +79,6 @@ event_contents = [
 
 
 @pytest.mark.parametrize('event_content, link', event_contents)
+@pytest.mark.event_images
 def test_attach_image_to_event(event_content, link):
     assert attach_image_to_event(event_content) == link

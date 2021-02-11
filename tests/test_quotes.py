@@ -1,11 +1,14 @@
 from datetime import date
 
+import pytest
+
 from app.internal import daily_quotes
 
 DATE = date(2021, 1, 1)
 DATE2 = date(2021, 1, 2)
 
 
+@pytest.mark.quotes
 def test_create_quote_object():
     quotes_fields = {
         'text': 'some_quote', 'author': 'Freud'}
@@ -15,15 +18,18 @@ def test_create_quote_object():
 
 
 # Tests for providing a daily-quote from the db:
+@pytest.mark.quotes
 def test_quote_per_day_no_quotes(session):
     assert daily_quotes.quote_per_day(session, DATE) is None
 
 
+@pytest.mark.quotes
 def test_quote_per_day_get_first_quote(session, quote1, quote2):
     assert daily_quotes.quote_per_day(
         session, DATE).text == quote1.text
 
 
+@pytest.mark.quotes
 def test_quote_per_day_get_second_quote(session, quote1, quote2):
     assert daily_quotes.quote_per_day(
         session, DATE2).text == quote2.text

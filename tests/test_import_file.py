@@ -140,6 +140,7 @@ user_click_import_tests = [
 
 
 @pytest.mark.parametrize("file1, max_size, result", file_size_tests)
+@pytest.mark.import_file
 def test_is_file_size_valid(file1, max_size, result):
     if max_size is None:
         assert is_file_size_valid(file1) == result
@@ -148,11 +149,13 @@ def test_is_file_size_valid(file1, max_size, result):
 
 
 @pytest.mark.parametrize("file1, result", file_exist_tests)
+@pytest.mark.import_file
 def test_is_file_exist(file1, result):
     assert is_file_exist(file1) == result
 
 
 @pytest.mark.parametrize("file1, extension, result", file_extension_tests)
+@pytest.mark.import_file
 def test_is_file_extension_valid(file1, extension, result):
     if extension is None:
         assert is_file_extension_valid(file1) == result
@@ -161,6 +164,7 @@ def test_is_file_extension_valid(file1, extension, result):
 
 
 @pytest.mark.parametrize("date, valid_dates, result", date_in_range_tests)
+@pytest.mark.import_file
 def test_is_date_in_range(date, valid_dates, result):
     if valid_dates is None:
         assert is_date_in_range(date) == result
@@ -169,25 +173,30 @@ def test_is_date_in_range(date, valid_dates, result):
 
 
 @pytest.mark.parametrize("row, result", check_validity_of_text_tests)
+@pytest.mark.import_file
 def test_check_validity_of_text(row, result):
     assert is_event_text_valid(row) == result
 
 
 @pytest.mark.parametrize("file1, result", import_txt_file_tests)
+@pytest.mark.import_file
 def test_import_txt_file(file1, result):
     assert import_txt_file(file1) == result
 
 
 @pytest.mark.parametrize("file1, result", import_ics_tests)
+@pytest.mark.import_file
 def test_import_ics_file(file1, result):
     assert import_ics_file(file1) == result
 
 
 @pytest.mark.parametrize("file1, result", is_file_valid_to_import_tests)
+@pytest.mark.import_file
 def test_is_file_valid_to_import(file1, result):
     assert is_file_valid_to_import(file1) == result
 
 
 @pytest.mark.parametrize("file1, user_id, result", user_click_import_tests)
+@pytest.mark.import_file
 def test_user_click_import(file1, user_id, result, session):
     assert user_click_import(file1, user_id, session) == result

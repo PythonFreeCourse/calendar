@@ -1,4 +1,5 @@
 import datetime
+import pytest
 
 import app.routers.calendar_grid as cg
 
@@ -18,18 +19,21 @@ WEEK_DAYS = cg.Week.WEEK_DAYS
 
 class TestCalendarGrid:
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_calendar(client):
         response = client.get("/calendar/month")
         assert response.ok
         assert b"SUNDAY" in response.content
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_calendar_extends(client):
         response = client.get(f"/calendar/month/{DAY.set_id()}")
         assert response.ok
         assert b"08" in response.content
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_create_day():
         dates_to_check = {
             'normal_day': datetime.date(2021, 1, 20),
@@ -42,6 +46,7 @@ class TestCalendarGrid:
             assert isinstance(cg.create_day(value), DAY_TYPES[i])
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_next_date():
         next_day_generator = cg.get_next_date(DATE)
         next_day = next(next_day_generator, None)
@@ -51,10 +56,12 @@ class TestCalendarGrid:
         assert next_day.date == next_day_check.date
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_date_before_n_days():
         assert cg.get_date_before_n_days(DATE, N_DAYS) == N_DAYS_BEFORE
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_first_day_month_block(Calendar):
         assert (
             cg.get_first_day_month_block(DATE)
@@ -62,12 +69,14 @@ class TestCalendarGrid:
         )
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_n_days():
         next_n_dates = cg.get_n_days(DATE, N_DAYS)
         for i in range(N_DAYS):
             assert next(next_n_dates).date == NEXT_N_DAYS[i].date
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_create_weeks():
         week = cg.create_weeks(NEXT_N_DAYS, cg.Week.WEEK_DAYS)
         assert week
@@ -76,6 +85,7 @@ class TestCalendarGrid:
         assert len(week) == 1 and len(week[0].days) == 3
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_month_block(Calendar):
         month_weeks = cg.create_weeks(
             Calendar.itermonthdates(1988, 5), WEEK_DAYS)
@@ -86,6 +96,7 @@ class TestCalendarGrid:
                 assert get_block[i].days[j].date == month_weeks[i].days[j]
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_get_user_local_time():
         time_string = "%b%w%Y"
         server_time = cg.Day.get_user_local_time()
@@ -95,22 +106,27 @@ class TestCalendarGrid:
             time_string) == server_time_check.strftime(time_string)
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_is_weekend():
         assert not cg.Day.is_weekend(DATE)
         assert cg.Day.is_weekend(WEEKEND.date)
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_display_day():
         assert DAY.display() == '03 MAY 88'
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_set_id():
         assert DAY.set_id() == '03-May-1988'
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_display_str():
         assert str(DAY) == '03'
 
     @staticmethod
+    @pytest.mark.calendar_grid
     def test_create_week_object():
         assert cg.Week(NEXT_N_DAYS)

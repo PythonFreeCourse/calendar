@@ -48,12 +48,14 @@ INVALID_FIELD_UPDATE = [
 ]
 
 
+@pytest.mark.event
 def test_eventedit(event_test_client):
     response = event_test_client.get("/event/edit")
     assert response.ok
     assert b"Edit Event" in response.content
 
 
+@pytest.mark.event
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
     event_details = [event.title, event.content, event.location, event.start,
@@ -66,6 +68,7 @@ def test_eventview_with_id(event_test_client, session, event):
             f'{event_detail} not in view event page'
 
 
+@pytest.mark.event
 def test_eventedit_post_correct(client, user):
     """
     Test create new event successfully.
@@ -78,6 +81,7 @@ def test_eventedit_post_correct(client, user):
             in response.headers['location'])
 
 
+@pytest.mark.event
 def test_create_event_with_category(client, user, category, session):
     """
     Test create event with category successfully.
@@ -91,6 +95,7 @@ def test_create_event_with_category(client, user, category, session):
             in response.headers['location'])
 
 
+@pytest.mark.event
 def test_eventedit_post_wrong(client, user):
     """
     Test create new event unsuccessfully.
@@ -101,6 +106,7 @@ def test_eventedit_post_wrong(client, user):
 
 
 @pytest.mark.parametrize("data", NONE_UPDATE_OPTIONS)
+@pytest.mark.event
 def test_invalid_update(event, data, session):
     """
     Test update existing event.
@@ -109,6 +115,7 @@ def test_invalid_update(event, data, session):
 
 
 @pytest.mark.parametrize("data", INVALID_FIELD_UPDATE)
+@pytest.mark.event
 def test_invalid_fields(event, data, session):
     """
     Test update existing event.
@@ -118,6 +125,7 @@ def test_invalid_fields(event, data, session):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
+@pytest.mark.event
 def test_not_check_change_dates_allowed(event):
     data = {"start": "20.01.2020"}
     with pytest.raises(HTTPException):
@@ -127,6 +135,7 @@ def test_not_check_change_dates_allowed(event):
         )
 
 
+@pytest.mark.event
 def test_successful_update(event, session):
     """
     Test update existing event successfully.
@@ -141,6 +150,7 @@ def test_successful_update(event, session):
         event_id=event.id, event=data, db=session).title
 
 
+@pytest.mark.event
 def test_update_event_with_category(today_event, category, session):
     """
     Test update category for an existing event successfully.
@@ -155,6 +165,7 @@ def test_update_event_with_category(today_event, category, session):
     assert updated_event.category_id == category.id
 
 
+@pytest.mark.event
 def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
@@ -165,6 +176,7 @@ def test_update_db_close(event):
         )
 
 
+@pytest.mark.event
 def test_update_event_does_not_exist(event, session):
     data = {
         "content": "An update test for an event does not exist"
@@ -175,6 +187,7 @@ def test_update_event_does_not_exist(event, session):
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+@pytest.mark.event
 def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
@@ -187,6 +200,7 @@ def test_db_close_update(session, event):
         )
 
 
+@pytest.mark.event
 def test_repr(event):
     assert event.__repr__() == f'<Event {event.id}>'
 
@@ -200,6 +214,7 @@ def test_no_connection_to_db_in_delete(event):
         )
 
 
+@pytest.mark.event
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
         assert (
@@ -208,6 +223,7 @@ def test_no_connection_to_db_in_internal_deletion(event):
         )
 
 
+@pytest.mark.event
 def test_successful_deletion(event_test_client, session, event):
     response = event_test_client.delete("/event/1")
     assert response.ok
@@ -216,6 +232,7 @@ def test_successful_deletion(event_test_client, session, event):
             db=session, event_id=1).content
 
 
+@pytest.mark.event
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND

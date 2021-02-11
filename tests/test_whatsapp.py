@@ -1,6 +1,9 @@
+import pytest
+
 from app.routers import whatsapp
 
 
+@pytest.mark.whatsapp
 def test_whatsapp_send():
     # Redirects you directly to the specified contact and the message will
     #  already be there (or to whatsapp web if the call is from the web)
@@ -11,6 +14,7 @@ def test_whatsapp_send():
         "or+a+joke+or+the+schedule+of+one+day"}
 
 
+@pytest.mark.whatsapp
 def test_wrong_phone_number():
     # Redirects you to a popup: The phone number shared via a link is incorrect
     phone_number = "999999"
@@ -20,6 +24,7 @@ def test_wrong_phone_number():
         "number%3F"}
 
 
+@pytest.mark.whatsapp
 def test_no_message():
     # Redirects to whatsapp of the specified number. Write your own message.
     phone_number = "972536106106"
@@ -28,6 +33,7 @@ def test_no_message():
         "link": "https://api.whatsapp.com/send?phone=972536106106&text="}
 
 
+@pytest.mark.whatsapp
 def test_no_number():
     # Redirects to whatsapp window. Choose someone from your own contact list.
     phone_number = ""
@@ -37,6 +43,7 @@ def test_no_number():
         "number%3F"}
 
 
+@pytest.mark.whatsapp
 def test_end_to_end_testing(client):
     resp = client.get('/whatsapp?phone_number=972536106106&message=testing')
     assert resp.ok

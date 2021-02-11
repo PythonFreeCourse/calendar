@@ -5,6 +5,7 @@ from app.database.models import PSQLEnvironmentError
 from app.main import create_tables
 
 
+@pytest.mark.psql_environment
 def test_main_create_tables_error(sqlite_engine):
     raised_error = False
     with pytest.raises(PSQLEnvironmentError):
@@ -13,6 +14,7 @@ def test_main_create_tables_error(sqlite_engine):
         assert raised_error
 
 
+@pytest.mark.psql_environment
 def test_database_create_engine():
     sqlalchemy_database_url = "postgresql://postgres:1234@localhost/postgres"
     engine = create_env_engine(True, sqlalchemy_database_url)

@@ -82,6 +82,7 @@ def gen_callback(text):
 class TestChatModel:
 
     @staticmethod
+    @pytest.mark.a_telegram_asyncio
     def test_private_message():
         chat = Chat(gen_message('Cool message'))
         assert chat.message == 'Cool message'
@@ -89,6 +90,7 @@ class TestChatModel:
         assert chat.first_name == 'Moshe'
 
     @staticmethod
+    @pytest.mark.a_telegram_asyncio
     def test_callback_message():
         chat = Chat(gen_callback('Callback Message'))
         assert chat.message == 'Callback Message'
@@ -97,6 +99,7 @@ class TestChatModel:
 
 
 @pytest.mark.asyncio
+@pytest.mark.a_telegram_asyncio
 async def test_bot_model():
     bot = Bot("fake bot id", "https://google.com")
     assert bot.base == 'https://api.telegram.org/botfake bot id/'
@@ -134,6 +137,7 @@ class TestBotClient:
 
     @staticmethod
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_user_not_registered(telegram_client):
         response = await telegram_client.post(
             '/telegram/', json=gen_message('/start'))
@@ -144,6 +148,7 @@ class TestBotClient:
 
     @staticmethod
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_user_registered(telegram_client, session):
         session.add(get_test_placeholder_user())
         session.commit()
@@ -157,6 +162,7 @@ class TestHandlers:
     TEST_USER = get_test_placeholder_user()
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_start_handlers(self):
         chat = Chat(gen_message('/start'))
         message = MessageHandler(chat, self.TEST_USER)
@@ -166,6 +172,7 @@ class TestHandlers:
 Welcome to PyLendar telegram client!'''
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_default_handlers(self):
         wrong_start = MessageHandler(
             Chat(gen_message('start')), self.TEST_USER)
@@ -179,18 +186,21 @@ Welcome to PyLendar telegram client!'''
         assert await message.process_callback() == "Unknown command."
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_show_events_handler(self):
         chat = Chat(gen_message('/show_events'))
         message = MessageHandler(chat, self.TEST_USER)
         assert await message.process_callback() == 'Choose events day.'
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_no_today_events_handler(self):
         chat = Chat(gen_callback('Today'))
         message = MessageHandler(chat, self.TEST_USER)
         assert await message.process_callback() == "There're no events today."
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_today_handler(self, fake_user_events):
         chat = Chat(gen_callback('Today'))
         message = MessageHandler(chat, fake_user_events)
@@ -198,12 +208,14 @@ Welcome to PyLendar telegram client!'''
         assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_this_week_handler(self):
         chat = Chat(gen_callback('This week'))
         message = MessageHandler(chat, self.TEST_USER)
         assert await message.process_callback() == 'Choose a day.'
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_no_chosen_day_handler(self):
         chat = Chat(gen_callback('10 Feb 2021'))
         message = MessageHandler(chat, self.TEST_USER)
@@ -212,6 +224,7 @@ Welcome to PyLendar telegram client!'''
         assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_chosen_day_handler(self, fake_user_events):
         chosen_date = today_date + timedelta(days=2)
         button = str(chosen_date.strftime(DATE_FORMAT))
@@ -222,6 +235,7 @@ Welcome to PyLendar telegram client!'''
         assert await message.chosen_day_handler() == answer
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_new_event_handler(self):
         chat = Chat(gen_message('/new_event'))
         message = MessageHandler(chat, self.TEST_USER)
@@ -229,6 +243,7 @@ Welcome to PyLendar telegram client!'''
         assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_process_new_event(self):
         chat = Chat(gen_message('New Title'))
         message = MessageHandler(chat, self.TEST_USER)
@@ -281,6 +296,7 @@ Welcome to PyLendar telegram client!'''
         assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_process_new_event_cancel(self):
         chat = Chat(gen_message('/new_event'))
         message = MessageHandler(chat, self.TEST_USER)
@@ -293,6 +309,7 @@ Welcome to PyLendar telegram client!'''
         assert await message.process_callback() == answer
 
     @pytest.mark.asyncio
+    @pytest.mark.a_telegram_asyncio
     async def test_process_new_event_restart(self):
         chat = Chat(gen_message('/new_event'))
         message = MessageHandler(chat, self.TEST_USER)
@@ -312,6 +329,7 @@ Welcome to PyLendar telegram client!'''
 
 
 @pytest.mark.asyncio
+@pytest.mark.a_telegram_asyncio
 async def test_reply_unknown_user():
     chat = Chat(gen_message('/show_events'))
     answer = await reply_unknown_user(chat)
