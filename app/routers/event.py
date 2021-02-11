@@ -13,8 +13,10 @@ from app.database.database import get_db
 from app.database.models import Event, User, UserEvent
 from app.dependencies import logger
 from app.dependencies import templates
-from app.internal.event import (raise_if_zoom_link_invalid, get_invited_emails,
-                                get_uninvited_regular_emails)
+from app.internal.event import (
+    raise_if_zoom_link_invalid, get_invited_emails,
+    get_uninvited_regular_emails
+)
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
@@ -232,10 +234,10 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
 
 def get_attendees_email(session: Session, event: Event):
-    return (session.query(User.email).join(UserEvent)
-            .filter(UserEvent.events == event).all())
-    # return (session.query(User.email).join(UserEvent)
-    #         .filter(UserEvent.events == event).all())
+    return (
+        session.query(User.email).join(UserEvent)
+        .filter(UserEvent.events == event).all()
+    )
 
 
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
@@ -280,7 +282,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time

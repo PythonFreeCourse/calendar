@@ -11,10 +11,9 @@ from starlette.responses import StreamingResponse
 from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
 from app.database.database import get_db
 from app.database.models import Event
-from app.internal.agenda_events import (
-    filter_dates, filter_start_dates, filter_end_dates)
+from app.internal.agenda_events import get_events_in_time_frame
+
 from app.routers.event import get_attendees_email
-from app.routers.user import get_all_user_events
 
 router = APIRouter(
     prefix="/export",
@@ -31,7 +30,7 @@ def export(
 ) -> StreamingResponse:
     user_id = 1
     events = get_events_in_time_frame(start_date, end_date, user_id, db)
-    file = BytesIO(export_calendar(db, events))
+    file = BytesIO(export_calendar(db, list(events)))
     return StreamingResponse(
         content=file,
         media_type="text/calendar",
@@ -39,42 +38,6 @@ def export(
             # change filename to "pylendar.ics"
             "Content-Disposition": "attachment;filename=pylendar.ics"
         })
-
-
-def get_events_in_time_frame(
-        start_date: Union[date, str],
-        end_date: Union[date, str],
-        user_id: int, db: Session
-) -> List[Event]:
-    """Returns all events in a time frame.
-    if "start_date" or "end_date" are empty strings,
-    it will ignore that parameter when filtering.
-
-    for example:
-    if start_date = "" and end_date = datetime.now().date,
-    then the function will return all events that ends before end_date."""
-
-    events = get_all_user_events(db, user_id)
-    if start_date and end_date:
-        filtered_events = filter_dates(
-            end=end_date,
-            start=start_date,
-            events=events
-        )
-    elif start_date:
-        filtered_events = filter_start_dates(
-            start=start_date,
-            events=events
-        )
-    elif end_date:
-        filtered_events = filter_end_dates(
-            end=end_date,
-            events=events
-        )
-    else:
-        filtered_events = events
-
-    return filtered_events
 
 
 def generate_id(event: Event) -> bytes:

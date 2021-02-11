@@ -1,3 +1,4 @@
+
 {% extends "base.html" %} {% include "event/partials/text_editor_partial_head.html" %} {% block content %}
 
 <div class="container mt-4">
@@ -10,7 +11,7 @@
                 <!-- Profile update menu -->
                 <div class="d-flex flex-row-reverse">
                     <div class="dropdown">
-                        <span class="text-secondary p-1 mx-2" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="text-secondary p-1 mx-2" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa fa-edit"></i>
                             </span>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -197,20 +198,16 @@
                         </li>
                         {% endif %}
                         <li class="list-group-item list-group-item-action no-border">
-                            <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
-                        </li>
-                        <li class="list-group-item list-group-item-action no-border">
-                            <a class="text-decoration-none text-secondary" href="#">Your feature</a>
-                        </li>
-                        <li class="list-group-item list-group-item-action no-border">
                             <form method="GET" action="{{ url_for('export') }}">
                                 <label for="start_date">From</label><br>
                                 <input class="filter" type="date" id="start_date" name="start_date"><br>
                                 <label for="end_date">To</label><br>
                                 <input class="filter" type="date" id="end_date" name="end_date"><br>
-                                <input class="filter"
-                                       type="submit" value="Export">
+                                <input class="filter" type="submit" value="Export">
                             </form>
+                        </li>
+                        <li class="list-group-item list-group-item-action no-border">
+                            <a class="text-decoration-none text-secondary" href="#">Your feature</a>
                         </li>
                     </ul>
                 </div>
@@ -320,3 +317,5 @@
         </div>
     </div>
 </div>
+
+{% include "event/partials/text_editor_partial_body.html" %} {% endblock %}

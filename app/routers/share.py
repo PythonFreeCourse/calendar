@@ -55,7 +55,6 @@ def send_in_app_invitation(
             session.add(Invitation(recipient=recipient, event=event))
 
         else:
-            print(recipient.email, event.owner.email)
             # if user tries to send to themselves.
             return False
 
