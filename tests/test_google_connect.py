@@ -88,13 +88,7 @@ def credentials():
         expiry=datetime(2021, 1, 28)
     )
 
-    cred.refresh = safe_refresh
-
     return cred
-
-
-def safe_refresh(*args):
-    logger.debug('refreshed')
 
 
 def safe_run_local_server(*args, **kwargs):
@@ -177,14 +171,16 @@ def test_get_credentials_from_db(session):
 @pytest.mark.usefixtures("session", "user", "credentials")
 def test_refresh_token(mocker, session, user, credentials):
 
-    def safe_expired():
-        return False
+    mocker.patch(
+        'google.oauth2.credentials.Credentials.refresh',
+        return_value=logger.debug('refreshed')
+    )
 
     assert google_connect.refresh_token(credentials, user, session)
 
     mocker.patch(
         'google.oauth2.credentials.Credentials.expired',
-        return_value=safe_expired
+        return_value=False
     )
 
     assert google_connect.refresh_token(credentials, user, session)
