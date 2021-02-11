@@ -16,7 +16,7 @@ def save(session: Session, instance: Base) -> bool:
 
 
 def create_user_exercise(session: Session, user: User) -> UserExercise:
-    """ Create and save new user exercise """
+    """Create and save new user exercise"""
     if not does_user_exercise_exist(session=session, user_id=user.id):
         user_exercise = UserExercise(
             user_id=user.id,
@@ -29,9 +29,7 @@ def create_user_exercise(session: Session, user: User) -> UserExercise:
 
 
 def does_user_exercise_exist(session: Session, user_id: int) -> bool:
-    """
-      Check if a user exercise for user id exists.
-    """
+    """Check if a user exercise for user id exists."""
     return get_user_exercise(session=session, user_id=user_id)
 
 
