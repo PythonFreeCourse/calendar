@@ -300,3 +300,28 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+def add_user_to_event(
+    session: Session, user_id: int, event_id: int  
+): """this function gets an existing event and a user and adds the user to the participant list.
+    function won't add the user to the event if the user is already participates in it.
+    Function will return:
+    True if the connection was set successfuly
+    False if it didn't"""
+    user_already_connected = session.query(UserEvent).filter_by(event_id == event_id, user_id == user_id).all()
+    if user_already_connected:
+        """ if user is not registered to the event, the system will add him"""
+        try:
+            create_model(
+                db, UserEvent,
+                user_id=owner_id,
+                event_id=event.id
+            )
+            return True
+        except:
+            return False
+    else:
+        """if the user has a connection to the event,
+        the function will recognize the duplicate and return false."""
+        return False
