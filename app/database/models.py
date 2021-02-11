@@ -67,6 +67,7 @@ class Event(Base):
     participants = relationship(
         "UserEvent", cascade="all, delete", back_populates="events",
     )
+    shared_list = relationship("SharedList", uselist=False, back_populates="event")
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -282,4 +283,42 @@ class Zodiac(Base):
             f'{self.name} '
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
+        )
+
+
+class SharedListItem(Base):
+    __tablename__ = "shared_list_item"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    participant = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    shared_list_id = Column(Integer, ForeignKey('shared_list.id'))
+
+    shared_list = relationship("SharedList", back_populates="items")
+
+    def __repr__(self):
+        return (
+            f'<Item {self.id}: {self.name} '
+            f'Amount: {self.amount} '
+            f'Participant: {self.participant} '
+            f'Notes: {self.notes})>'
+        )
+
+
+class SharedList(Base):
+    __tablename__ = "shared_list"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey("events.id"))
+    title = Column(String, nullable=True)
+
+    items = relationship("SharedListItem", back_populates="shared_list")
+    event = relationship("Event", back_populates="shared_list")
+
+    def __repr__(self):
+        return (
+            f'<Shared list {self.id}: '
+            f'Items: {self.items}>'
         )

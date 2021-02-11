@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 from operator import attrgetter
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
@@ -9,7 +9,7 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from app.database.models import Event, User, UserEvent
+from app.database.models import Event, SharedList, SharedListItem, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
@@ -67,12 +67,15 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
+    shared_list = data.get('shared_list')
+    shared_list = create_shared_list(shared_list, session)
 
     if is_zoom:
         raise_if_zoom_link_invalid(location)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, invited_emails, category_id=category_id)
+                         location, invited_emails, category_id=category_id,
+                         shared_list=shared_list)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -296,6 +299,21 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
             event_id=new_event.id
         )
         return new_event
+    except (AssertionError, AttributeError, TypeError) as e:
+        logger.exception(e)
+        return None
+
+
+def create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]], db: Session) -> SharedList:
+    try:
+        title = raw_shared_list.get('title')
+        if title is None:
+            title = 'Shared List'
+        shared_list = create_model(db, SharedList, title=title)
+        for item in raw_shared_list['items']:
+            item = create_model(db, SharedListItem, **item)
+            shared_list.items.append(item)
+        return shared_list
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
