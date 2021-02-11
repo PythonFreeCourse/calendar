@@ -1,13 +1,14 @@
 from bisect import bisect_left
 from datetime import datetime, timedelta
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
 from app.database.database import get_db
 from app.database.models import Event, User
-from app.routers.user import get_all_user_events
+from app.routers.user import get_all_user_events, create_user
+from app.routers.event import create_event
 from app.dependencies import TEMPLATES_PATH
 from app.internal import zodiac
 
@@ -28,8 +29,8 @@ class DivAttributes:
     DEFAULT_COLOR = 'grey'
     DEFAULT_FORMAT = "%H:%M"
     MULTIDAY_FORMAT = "%d/%m %H:%M"
-    CLASS_SIZES = ['title_size_tiny', 'title_size_Xsmall', 'title_size_small']
-    LENGTH_SIZE_STEP = [30, 45, 90]
+    CLASS_SIZES = ('title_size_tiny', 'title_size_Xsmall', 'title_size_small')
+    LENGTH_SIZE_STEP = (30, 45, 90)
 
     def __init__(self, event: Event,
                  day: Union[bool, datetime] = False) -> None:
@@ -88,11 +89,10 @@ class DivAttributes:
         return ' '.join([start_time_str, '-', end_time_str])
 
     def _set_total_time_visiblity(self) -> bool:
-        return not self.length <= 60
+        return self.length > 60
 
-    def _set_title_size(self) -> Union[str, None]:
+    def _set_title_size(self) -> Optional[str]:
         i = bisect_left(self.LENGTH_SIZE_STEP, self.length)
-        print(i)
         if i < len(self.CLASS_SIZES):
             return self.CLASS_SIZES[i]
 
@@ -111,33 +111,33 @@ def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
     return (
         (event.start >= day and event.start < day_end) or
         (event.end >= day and event.end < day_end) or
-        (event.start < day_end and day_end < event.end)
+        (event.start < day_end < event.end)
         )
 
 
-def get_events_and_attributes(day: datetime, session, user_id: int):
+def get_events_and_attributes(
+    day: datetime, session, user_id: int,
+) -> Tuple[Event, DivAttributes]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
-    daily_events = []
     for event in events:
         if event_in_day(event=event, day=day, day_end=day_end):
-            daily_events.append((event, DivAttributes(event, day)))
-    return daily_events
+            yield (event, DivAttributes(event, day))
 
 
 @router.get('/day/{date}')
 async def dayview(
-          request: Request, date: str, db_session=Depends(get_db), view='day'
+          request: Request, date: str, session=Depends(get_db), view='day',
       ):
     # TODO: add a login session
-    user = db_session.query(User).filter_by(username='test_username').first()
+    user = session.query(User).filter_by(username='test_username').first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
-    zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
+    zodiac_obj = zodiac.get_zodiac_of_day(session, day)
     events_n_attrs = get_events_and_attributes(
-        day=day, session=db_session, user_id=user.id
+        day=day, session=session, user_id=user.id,
     )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
@@ -148,3 +148,12 @@ async def dayview(
         "zodiac": zodiac_obj,
         "view": view
     })
+
+
+@router.get('/create-testuser')
+async def create_test_user(request: Request, session=Depends(get_db)):
+    #user = create_user(username='test_username', password='12345678', email='email@test.com', session=session, language='en', language_id=1)
+    user = session.query(User).filter_by(username='test_username').first()
+    start = datetime(year=2021, month=1, day=5, hour=16, minute=13)
+    end = datetime(year=2021, month=1, day=5, hour=16, minute=46)
+    create_event(db=session, title='test2', start=start, end=end, owner_id=user.id)
