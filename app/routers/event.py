@@ -46,13 +46,13 @@ class EventModel(BaseModel):
     location: str
 
 
-@router.get("/get_events")
+@router.get("/events")
 async def get_events(session=Depends(get_db)):
     return session.query(Event).all()
 
 
-@router.post("/create_event_manually")
-async def create_event_manually(event: EventModel, session=Depends(get_db)):
+@router.post("/create_event")
+async def create_event_api(event: EventModel, session=Depends(get_db)):
     create_event(db=session,
                  title=event.title,
                  start=event.start,
