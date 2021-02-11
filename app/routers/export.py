@@ -4,15 +4,15 @@ from typing import List, Union
 
 import pytz
 from fastapi import APIRouter, Depends
-from icalendar import Calendar, Event as IcalEvent, vCalAddress, vText
+from icalendar import Calendar, vCalAddress, vText
+from icalendar import Event as IcalEvent
 from sqlalchemy.orm import Session
 from starlette.responses import StreamingResponse
 
 from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
-from app.database.database import get_db
 from app.database.models import Event
+from app.dependencies import get_db
 from app.internal.agenda_events import get_events_in_time_frame
-
 from app.routers.event import get_attendees_email
 
 router = APIRouter(
@@ -28,6 +28,7 @@ def export(
         end_date: Union[date, str],
         db: Session = Depends(get_db),
 ) -> StreamingResponse:
+
     user_id = 1
     events = get_events_in_time_frame(start_date, end_date, user_id, db)
     file = BytesIO(export_calendar(db, list(events)))
@@ -44,10 +45,10 @@ def generate_id(event: Event) -> bytes:
     """Creates an unique id."""
 
     return (
-        str(event.id)
-        + event.start.strftime('%Y%m%d')
-        + event.end.strftime('%Y%m%d')
-        + f'@{DOMAIN}'
+            str(event.id)
+            + event.start.strftime('%Y%m%d')
+            + event.end.strftime('%Y%m%d')
+            + f'@{DOMAIN}'
     ).encode()
 
 

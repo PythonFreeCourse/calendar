@@ -1,12 +1,11 @@
 import json
 import os
-from typing import Dict, List, Callable, Union
+from typing import Callable, Dict, List, Union
 
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.database import Base
-from app.database.models import Quote, Zodiac
+from app.database.models import Base, Quote, Zodiac
 from app.internal import daily_quotes, zodiac
 
 
