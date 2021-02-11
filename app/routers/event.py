@@ -28,6 +28,7 @@ UPDATE_EVENTS_FIELDS = {
     'title': str,
     'start': datetime,
     'end': datetime,
+    'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
     'category_id': (int, type(None)),
@@ -57,6 +58,7 @@ async def create_new_event(request: Request,
     end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
                             TIME_FORMAT)
     owner_id = get_current_user(session).id
+    availability = data.get('availability', 'True') == 'True'
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
@@ -70,7 +72,9 @@ async def create_new_event(request: Request,
         raise_if_zoom_link_invalid(location)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, invited_emails, category_id=category_id)
+                         location, invitees=invited_emails,
+                         category_id=category_id,
+                         availability=availability)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -161,7 +165,11 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
                                         ) -> Dict[str, Any]:
     """Remove all keys that are not allowed to update"""
 
-    return {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+    edit_event = {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+    # Convert `availability` value into boolean.
+    if 'availability' in edit_event.keys():
+        edit_event['availability'] = (edit_event['availability'] == 'True')
+    return edit_event
 
 
 def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
@@ -197,7 +205,8 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
                  invitees: List[str] = None,
-                 category_id: int = None):
+                 category_id: int = None,
+                 availability: bool = True):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
@@ -213,11 +222,12 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         category_id=category_id,
+        availability=availability,
     )
     create_model(
         db, UserEvent,
         user_id=owner_id,
-        event_id=event.id
+        event_id=event.id,
     )
     return event
 
