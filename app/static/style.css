@@ -96,3 +96,7 @@ p {
   border: none;
   background-color: whitesmoke;
 }
+
+.subtitle {
+    font-size: 20px;
+}
