@@ -8,7 +8,6 @@ from app.database.models import Event, User, UserEvent
 from app.internal.utils import save
 
 
-
 def create_user(username: str,
                 password: str,
                 email: str,
@@ -74,7 +73,8 @@ def disable_user(session: Session, user_id: int):
     if events_user_owns:
         return False
 
-    """if user doesn't own any event, we will disable him and remove the user from all of its future events."""
+    """if user doesn't own any event,
+    we will disable him and remove the user from all of its future events."""
     user_disabled = session.query(User).get(user_id)
     user_disabled.disabled = True
     future_events_for_user = session.query(UserEvent.id)
