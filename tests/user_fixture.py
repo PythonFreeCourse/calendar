@@ -4,6 +4,7 @@ from app.internal.utils import create_model, delete_instance
 from datetime import datetime
 from sqlalchemy.orm import Session
 
+
 @pytest.fixture
 def user(session: Session) -> User:
     test_user = create_model(
