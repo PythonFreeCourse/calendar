@@ -78,8 +78,8 @@ def disable_user(session: Session, user_id: int):
     user_disabled = session.query(User).get(user_id)
     user_disabled.disabled = True
     future_events_for_user = session.query(UserEvent.id)
-    .join(Event, Event.id == UserEvent.event_id).filter(
-        UserEvent.user_id == user_id, Event.start > datetime.now()).all()
+    .join(Event, Event.id == UserEvent.event_id)
+    .filter(UserEvent.user_id == user_id, Event.start > datetime.now()).all()
     for event_connection in future_events_for_user:
         session.delete(event_connection)
     session.commit()
