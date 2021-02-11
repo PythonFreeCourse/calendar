@@ -9,7 +9,7 @@ from starlette.status import HTTP_302_FOUND
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import config
-from app.database.models import User, Event, UserEvent
+from app.database.models import User
 from app.dependencies import get_db, MEDIA_PATH, templates
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.import_holidays import (get_holidays_from_file,
