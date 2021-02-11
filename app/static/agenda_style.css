@@ -1,10 +1,13 @@
-.agenda_filters {
+/* .agenda_filters {
   display: flex;
-  padding: 1em;
 }
 
 .filter {
   margin-right: 1em;
+} */
+
+#dates {
+  text-align: center;
 }
 
 .shown_dates {
@@ -12,19 +15,30 @@
 }
 
 .event_line {
+  width: 50%;
   margin-left: 3em;
-  margin-right: 3em;
-  margin-bottom: 1em;
+  margin-bottom: 0.5em;
   border: 1px solid black;
-  display: block;
   padding: 0.2em;
+  border-radius: 5px;
 }
 
-.exact_date {
+.duration {
+  font-size: small;
+}
+
+/* .exact_date {
   display: flex;
-}
+} */
 
-.agenda_button {
+/* .agenda_button {
   border: 1px solid black;
   margin: 1em;
+} */
+
+@media only screen and (max-width: 768px) {
+  .event_line {
+    width: 100%;
+    margin: 1em;
+  }
 }
