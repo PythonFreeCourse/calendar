@@ -21,6 +21,9 @@
   border: 1px solid black;
   padding: 0.2em;
   border-radius: 5px;
+  display: grid;
+  grid-template-columns: 1em 1fr;
+  grid-gap: 0.6em;
 }
 
 .duration {
@@ -41,4 +44,13 @@
     width: 100%;
     margin: 1em;
   }
+}
+
+/** Event availability */
+.busy {
+  background-color: rgb(96, 155, 235)
+}
+
+.free {
+  background-color: rgba(241, 243, 244, 0.74)
 }
