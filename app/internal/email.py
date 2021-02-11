@@ -52,6 +52,47 @@ def send(
     return True
 
 
+def send_email_with_body(
+        session: Session, event_used: int, user_to_send: int,
+        title: str, body_content: str, background_tasks: BackgroundTasks = BackgroundTasks
+) -> bool:
+    """This function is the altered version of the function above,
+    that allows adaptable email content.
+    It takes an event, user and email content and sends the event to the user.
+
+    Args:
+        session(Session): The session to redirect to the database.
+        title (str): Title of the email that is being sent.
+        event_used (int): Id number of the event that is used.
+        user_to_send (int): Id number of user that we want to notify.
+        body_content (string): the content of the email sent to the user.
+        background_tasks (BackgroundTasks): Function from fastapi that lets
+            you apply tasks in the background.
+        
+
+    Returns:
+        bool: Returns True if the email was sent, else returns False.
+    """
+    event_used = session.query(Event).filter(
+        Event.id == event_used).first()
+    user_to_send = session.query(User).filter(
+        User.id == user_to_send).first()
+    if not user_to_send or not event_used:
+        return False
+    if not verify_email_pattern(user_to_send.email):
+        return False
+
+    subject = f"{title} {event_used.title}"
+    recipients = {"email": [user_to_send.email]}.get("email")
+    body = f"begins at:{event_used.start} : {event_used.content} \n {body_content}"
+
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body)
+    return True
+
+
 def send_email_invitation(sender_name: str,
                           recipient_name: str,
                           recipient_mail: str,

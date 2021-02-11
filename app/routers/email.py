@@ -69,3 +69,17 @@ def send_invitation(invitation: InvitationParams,
             background_tasks=background_task):
         raise HTTPException(status_code=422, detail="Couldn't send the email!")
     return RedirectResponse(invitation.send_to, status_code=303)
+
+
+def send_email_to_event_participants(
+        session: Session,
+        event_id: int, 
+        email_content: str, 
+        title: str):
+    """ this function sents emails to all of the event participants.
+    the function gets the event id and the content of the email, then sends emails.
+    even if the sending of one of the email fails the function will keep running."""
+    all_participants = session.query(UserEvent).filter(event_id == event_id).all()
+    for person in all_participants:
+        send_email_with_body(session, event_id, person.user_id, title, email_content)
+
