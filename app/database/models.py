@@ -47,6 +47,12 @@ class User(Base):
     def __repr__(self):
         return f'<User {self.id}>'
 
+    @staticmethod
+    async def get_by_username(db: Session, username: str) -> User:
+        """query database for a user by unique username"""
+        return db.query(User).filter(
+            User.username == username).first()
+
 
 class Event(Base):
     __tablename__ = "events"

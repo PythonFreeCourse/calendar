@@ -4,12 +4,12 @@ from app.dependencies import get_db
 from app.database.models import User
 from app.internal.security.ouath2 import (
     Depends, Session, check_jwt_token,
-    get_cookie, get_db_user_by_username,
-    HTTP_401_UNAUTHORIZED, HTTPException)
+    get_authorization_cookie, HTTP_401_UNAUTHORIZED,
+    HTTPException)
 from starlette.requests import Request
 
 
-async def validate_user(
+async def get_user(
         db: Session, user_id: int, username: str, path: str) -> User:
     '''
     Helper for dependency functions.
@@ -18,7 +18,7 @@ async def validate_user(
     returns User base model instance if succeeded,
     raises HTTPException if fails.
     '''
-    db_user = await get_db_user_by_username(db, username=username)
+    db_user = await User.get_by_username(db, username=username)
     if db_user and db_user.id == user_id:
         return db_user
     else:
@@ -30,7 +30,7 @@ async def validate_user(
 
 async def is_logged_in(
     request: Request, db: Session = Depends(get_db),
-        jwt: str = Depends(get_cookie)) -> bool:
+        jwt: str = Depends(get_authorization_cookie)) -> bool:
     """
     A dependency function protecting routes for only logged in user
     """
@@ -38,21 +38,21 @@ async def is_logged_in(
     return True
 
 
-async def is_authenticated(
+async def logged_in_user(
     request: Request,
         db: Session = Depends(get_db),
-        jwt: str = Depends(get_cookie)) -> User:
+        jwt: str = Depends(get_authorization_cookie)) -> User:
     """
     A dependency function protecting routes for only logged in user.
     Returns logged in User object.
     """
     username, user_id = await check_jwt_token(db, jwt)
-    return await validate_user(db, user_id, username, request.url.path)
+    return await get_user(db, user_id, username, request.url.path)
 
 
-async def current_user(
+async def optional_logged_in_user(
     request: Request,
-        db: Session = Depends(get_db)) -> Union[User, bool]:
+        db: Session = Depends(get_db)) -> Union[User, type(None)]:
     """
     A dependency function.
     Returns logged in User object if exists.
@@ -63,4 +63,4 @@ async def current_user(
     else:
         return None
     username, user_id = await check_jwt_token(db, jwt)
-    return await validate_user(db, user_id, username, request.url.path)
+    return await get_user(db, user_id, username, request.url.path)

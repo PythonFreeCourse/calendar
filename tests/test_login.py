@@ -1,5 +1,6 @@
 import pytest
-from app.internal.security.ouath2 import create_jwt_token, LoginUser
+from app.internal.security.ouath2 import create_jwt_token
+from app.internal.security.schema import LoginUser
 from starlette.status import HTTP_302_FOUND
 
 
@@ -73,13 +74,13 @@ def test_current_user_dependency_exists(session, security_test_client):
 def test_is_authenticated_dependency_exists(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     res = security_test_client.post('/login', data=LOGIN_DATA)
-    res = security_test_client.get('/is_authenticated')
+    res = security_test_client.get('/logged_in_user')
     assert res.json() == {"user": 'correct_user'}
 
 
 def test_is_authenticated_dependency_not_exists(session, security_test_client):
     res = security_test_client.get('/logout')
-    res = security_test_client.get('/is_authenticated')
+    res = security_test_client.get('/logged_in_user')
     assert b'Please log in' in res.content
 
 
@@ -96,7 +97,7 @@ def test_current_user_dependency_not_exists(
 
 def test_incorrect_secret_key_in_token(session, security_test_client):
     user = LoginUser(**LOGIN_DATA)
-    incorrect_token = create_jwt_token(user, JWT_KEY="wrong secret key")
+    incorrect_token = create_jwt_token(user, jwt_key="wrong secret key")
     security_test_client.post('/register', data=REGISTER_DETAIL)
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)
@@ -110,14 +111,14 @@ def test_wrong_details_in_token(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)
-    res = security_test_client.get('/is_authenticated')
+    res = security_test_client.get('/logged_in_user')
     assert b'Your token is incorrect' in res.content
 
 
 def test_expired_token(session, security_test_client):
     security_test_client.get('/logout')
     user = LoginUser(**LOGIN_DATA)
-    incorrect_token = create_jwt_token(user, JWT_MIN_EXP=-1)
+    incorrect_token = create_jwt_token(user, jwt_min_exp=-1)
     security_test_client.post('/register', data=REGISTER_DETAIL)
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)

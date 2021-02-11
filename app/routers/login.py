@@ -2,9 +2,10 @@ from typing import Optional, Union
 
 from app.dependencies import get_db, templates
 from app.internal.security.dependancies import (
-    User, current_user)
+    User, optional_logged_in_user)
 from app.internal.security.ouath2 import (
-    authenticate_user, create_jwt_token, LoginUser)
+    authenticate_user, create_jwt_token)
+from app.internal.security import schema
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
@@ -21,7 +22,8 @@ router = APIRouter(
 @router.get("/login")
 async def login_user_form(
         request: Request, message: Optional[str] = "",
-        current_user: Union[User, None] = Depends(current_user)) -> templates:
+        current_user: Union[User, None] = Depends(optional_logged_in_user)
+            ) -> templates:
     """rendering login route get method"""
     if current_user:
         return RedirectResponse(url='/')
@@ -43,7 +45,7 @@ async def login(
     form_dict = dict(form)
     # creating pydantic schema object out of form data
 
-    user = LoginUser(**form_dict)
+    user = schema.LoginUser(**form_dict)
     """
     Validaiting login form data,
     if user exist in database,

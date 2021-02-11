@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 from typing import Union
 
 from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
-from passlib.context import CryptContext
 from app.database.models import User
+from passlib.context import CryptContext
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 import jwt
@@ -12,17 +12,11 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
-from .schema import LoginUser
+from . import schema
 
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
-
-
-async def get_db_user_by_username(db: Session, username: str) -> User:
-    """Checking database for user by username field"""
-    user = db.query(User).filter_by(username=username).first()
-    return user
 
 
 def get_hashed_password(password: str) -> str:
@@ -36,27 +30,28 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 async def authenticate_user(
-        db: Session, user: LoginUser) -> Union[LoginUser, bool]:
+        db: Session, new_user: schema.LoginUser
+            ) -> Union[schema.LoginUser, bool]:
     """Verifying user is in database and password is correct"""
-    db_user = await get_db_user_by_username(db=db, username=user.username)
-    if db_user and verify_password(user.password, db_user.password):
-        return LoginUser(
+    db_user = await User.get_by_username(db=db, username=new_user.username)
+    if db_user and verify_password(new_user.password, db_user.password):
+        return schema.LoginUser(
             user_id=db_user.id,
-            username=user.username, password=db_user.password)
+            username=new_user.username, password=db_user.password)
     return False
 
 
 def create_jwt_token(
-        user: LoginUser, JWT_MIN_EXP: int = JWT_MIN_EXP,
-        JWT_KEY: str = JWT_KEY) -> str:
+        user: schema.LoginUser, jwt_min_exp: int = JWT_MIN_EXP,
+        jwt_key: str = JWT_KEY) -> str:
     """Creating jwt-token out of user unique data"""
-    expiration = datetime.utcnow() + timedelta(minutes=JWT_MIN_EXP)
+    expiration = datetime.utcnow() + timedelta(minutes=jwt_min_exp)
     jwt_payload = {
         "sub": user.username,
         "user_id": user.user_id,
         "exp": expiration}
     jwt_token = jwt.encode(
-        jwt_payload, JWT_KEY, algorithm=JWT_ALGORITHM)
+        jwt_payload, jwt_key, algorithm=JWT_ALGORITHM)
     return jwt_token
 
 
@@ -89,7 +84,7 @@ async def check_jwt_token(
             detail="Your token is incorrect. Please log in again")
 
 
-async def get_cookie(request: Request) -> str:
+async def get_authorization_cookie(request: Request) -> str:
     """
     Extracts jwt from HTTPONLY cookie, if exists.
     Raises HTTPException if not.
