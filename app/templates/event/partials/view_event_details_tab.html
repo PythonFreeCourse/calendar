@@ -1,6 +1,6 @@
-<div class="event_info_row title" style="border-bottom: 4px solid {{event.color}}">
+<div class="event_info_row title" style="border-bottom: 4px solid {{ event.color }}">
   <div class="event_info_row_start">
-    <h1>{{event.title}}</h1>
+    <h1>{{ event.title }}</h1>
   </div>
   <div class="event_info_row_end">
     <!--        <span class="icon">AVAILABILITY</span>-->
@@ -9,9 +9,9 @@
 </div>
 <div class="event_info_row">
   <span class="icon">ICON</span>
-  <time datetime="{{event.start}}">{{event.start.strftime(start_format)}}</time>
+  <time datetime="{{ event.start }}">{{ event.start.strftime(start_format) }}</time>
   -
-  <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+  <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
 </div>
 
 <!--<div class="event_info_row">-->
@@ -21,12 +21,12 @@
 
 <div class="event_info_row">
   <span class="icon">ICON</span>
-  <address>{{event.location}}</address>
+  <address>{{ event.location }}</address>
   <!--    <address>LOCATION / <a href="#">VC URL</a></address>-->
 </div>
 
 <p class="event_info_row">
-  {{event.content}}
+  {{ event.content }}
 </p>
 
 <div class="event_info_buttons_row event_info_row_end">

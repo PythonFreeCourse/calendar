@@ -16,8 +16,8 @@ from app.routers import event as evt
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
-    'start_time': '15:59',
-    'end_date': '2021-01-27',
+    'start_time': '12:59',
+    'end_date': '2021-01-28',
     'end_time': '15:01',
     'location_type': 'vc_url',
     'location': 'https://us02web.zoom.us/j/875384596',
@@ -56,6 +56,36 @@ BAD_EMAILS_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com,ccc'
+}
+
+WEEK_LATER_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-02-04',
+    'start_time': '12:59',
+    'end_date': '2021-02-04',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
+}
+
+TWO_WEEKS_LATER_EVENT_FORM_DATA = {
+    'title': 'test title',
+    'start_date': '2021-02-11',
+    'start_time': '12:59',
+    'end_date': '2021-02-11',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'invited': 'a@a.com,b@b.com'
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -157,6 +187,29 @@ def test_eventedit_post_wrong(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=WRONG_EVENT_FORM_DATA)
     assert response.json()['detail'] == 'VC type with no valid zoom link'
+
+
+def test_eventedit_with_pattern(client, user):
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=WEEK_LATER_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert ('Same event happened 1 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
+
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=TWO_WEEKS_LATER_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert ('Same event happened 1 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
+    assert ('Same event happened 2 weeks before too. ' in
+            response.headers['location'].replace('+', ' '))
 
 
 @pytest.mark.parametrize("data", NONE_UPDATE_OPTIONS)
@@ -297,13 +350,12 @@ def test_get_event_data(session: Session, event: Event,
                         comment: Comment) -> None:
     data = (
         event,
-        [{
-            'id': 1,
+        {'1': {
             'avatar': 'profile.png',
             'username': 'test_username',
             'time': '01/01/2021 00:01',
             'content': 'test comment',
-        }],
+        }},
         '%H:%M'
     )
     assert evt.get_event_data(session, event.id) == data
@@ -321,16 +373,6 @@ def test_delete_comment(event_test_client: TestClient, session: Session,
                         event: Event, comment: Comment) -> None:
     assert session.query(Comment).first()
     path = evt.router.url_path_for('delete_comment', event_id=event.id,
-                                   comment_id=comment.id)
-    response = event_test_client.delete(path)
-    assert response.ok
-    assert session.query(Comment).first() is None
-
-
-def test_reload_comments(event_test_client: TestClient, session: Session,
-                         event: Event, comment: Comment) -> None:
-    assert session.query(Comment).first()
-    path = evt.router.url_path_for('reload_comments', event_id=event.id,
                                    comment_id=comment.id)
     response = event_test_client.get(path)
     assert response.ok

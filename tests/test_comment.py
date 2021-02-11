@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy.orm.session import Session
 
 from app.database.models import Comment, Event, User
@@ -14,8 +16,7 @@ def test_create_comment(session: Session, event: Event, user: User) -> None:
 
 
 def test_parse_comment(session: Session, comment: Comment) -> None:
-    data = {
-        'id': 1,
+    data = 1, {
         'avatar': 'profile.png',
         'username': 'test_username',
         'time': '01/01/2021 00:01',
@@ -26,13 +27,13 @@ def test_parse_comment(session: Session, comment: Comment) -> None:
 
 def test_display_comment(session: Session, event: Event,
                          comment: Comment) -> None:
-    comments = cmt.display_comments(session, event)
-    assert len(comments) == 1
+    comments = json.loads(cmt.display_comments(session, event))
+    assert len(comments.keys()) == 1
 
 
 def test_display_comment_empty(session: Session, event: Event) -> None:
-    comments = cmt.display_comments(session, event)
-    assert comments == []
+    comments = json.loads(cmt.display_comments(session, event))
+    assert comments == {}
 
 
 def test_delete_comment(session: Session, comment: Comment) -> None:
