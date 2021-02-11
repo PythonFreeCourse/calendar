@@ -70,6 +70,8 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    color = Column(String, nullable=True)
+    emotion = Column(String, nullable=True)
     invitees = Column(String)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
