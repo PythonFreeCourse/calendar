@@ -33,7 +33,7 @@ class TestCategories:
                                                      "color": "121212"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in \
-            response.json()["detail"]
+               response.json()["detail"]
 
     @staticmethod
     def test_create_event_with_category(category):

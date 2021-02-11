@@ -1,12 +1,11 @@
+from app.routers import agenda, event, invitation, profile, google_connect
 from typing import Iterator
 
 from fastapi.testclient import TestClient
 import pytest
 
-from app.database.models import Base, User
 from app import main
-from app.main import app
-from app.routers import agenda, event, invitation, profile, google_connect
+from app.database.models import Base, User
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 
@@ -75,12 +74,12 @@ def profile_test_client() -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def google_connect_test_client():
     Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[google_connect.get_db] = get_test_db
+    main.app.dependency_overrides[google_connect.get_db] = get_test_db
 
-    with TestClient(app) as client:
+    with TestClient(main.app) as client:
         yield client
 
-    app.dependency_overrides = {}
+    main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
 
 

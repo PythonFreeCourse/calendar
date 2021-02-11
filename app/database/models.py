@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
 
 from sqlalchemy import (
     Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
@@ -15,7 +15,6 @@ from sqlalchemy.sql.schema import CheckConstraint
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
 import app.routers.salary.config as SalaryConfig
-
 
 Base = declarative_base()
 
@@ -64,9 +63,9 @@ class Event(Base):
     location = Column(String)
     is_google_event = Column(Boolean)
     color = Column(String, nullable=True)
+    invitees = Column(String)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
-    invitees = Column(String)
     color = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
 
@@ -261,6 +260,7 @@ class SalarySettings(Base):
     )
 
     user = relationship("User", back_populates="salary_settings")
+
     # category = relationship("Category", back_populates="salary_settings")
     # holiday_category =relationship("HolidayCategory",
     #                                back_populates="salary_settings")
