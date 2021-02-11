@@ -1,23 +1,23 @@
 import os
 from typing import List, Optional
 
-from app.config import (email_conf, templates, CALENDAR_SITE_NAME,
-                        CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE)
-from app.database.models import Event, User
 from fastapi import BackgroundTasks, UploadFile
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import EmailStr
 from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
 
+from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
+                        CALENDAR_SITE_NAME, email_conf, templates)
+from app.database.models import Event, User
+
 mail = FastMail(email_conf)
 
 
-def send(session: Session,
-         event_used: int,
-         user_to_send: int,
-         title: str,
-         background_tasks: BackgroundTasks = BackgroundTasks) -> bool:
+def send(
+        session: Session, event_used: int, user_to_send: int,
+        title: str, background_tasks: BackgroundTasks = BackgroundTasks
+) -> bool:
     """This function is being used to send emails in the background.
     It takes an event and a user and it sends the event to the user.
 
@@ -32,16 +32,18 @@ def send(session: Session,
     Returns:
         bool: Returns True if the email was sent, else returns False.
     """
-    event_used = session.query(Event).filter(Event.id == event_used).first()
-    user_to_send = session.query(User).filter(User.id == user_to_send).first()
+    event_used = session.query(Event).filter(
+        Event.id == event_used).first()
+    user_to_send = session.query(User).filter(
+        User.id == user_to_send).first()
     if not user_to_send or not event_used:
         return False
     if not verify_email_pattern(user_to_send.email):
         return False
 
-    subject = f'{title} {event_used.title}'
-    recipients = {'email': [user_to_send.email]}.get('email')
-    body = f'begins at:{event_used.start} : {event_used.content}'
+    subject = f"{title} {event_used.title}"
+    recipients = {"email": [user_to_send.email]}.get("email")
+    body = f"begins at:{event_used.start} : {event_used.content}"
 
     background_tasks.add_task(send_internal,
                               subject=subject,
@@ -50,11 +52,11 @@ def send(session: Session,
     return True
 
 
-def send_email_invitation(
-        sender_name: str,
-        recipient_name: str,
-        recipient_mail: str,
-        background_tasks: BackgroundTasks = BackgroundTasks) -> bool:
+def send_email_invitation(sender_name: str,
+                          recipient_name: str,
+                          recipient_mail: str,
+                          background_tasks: BackgroundTasks = BackgroundTasks
+                          ) -> bool:
     """
     This function takes as parameters the sender's name,
     the recipient's name and his email address, configuration, and
@@ -78,18 +80,17 @@ def send_email_invitation(
     if not sender_name:
         return False
 
-    template = templates.get_template('invite_mail.html')
-    html = template.render(recipient=recipient_name,
-                           sender=sender_name,
+    template = templates.get_template("invite_mail.html")
+    html = template.render(recipient=recipient_name, sender=sender_name,
                            site_name=CALENDAR_SITE_NAME,
                            registration_link=CALENDAR_REGISTRATION_PAGE,
                            home_link=CALENDAR_HOME_PAGE,
                            addr_to=recipient_mail)
 
-    subject = 'Invitation'
+    subject = "Invitation"
     recipients = [recipient_mail]
     body = html
-    subtype = 'html'
+    subtype = "html"
 
     background_tasks.add_task(send_internal,
                               subject=subject,
@@ -120,9 +121,9 @@ def send_email_file(file_path: str,
     if not os.path.exists(file_path):
         return False
 
-    subject = 'File'
+    subject = "File"
     recipients = [recipient_mail]
-    body = 'file'
+    body = "file"
     file_attachments = [file_path]
 
     background_tasks.add_task(send_internal,
@@ -146,9 +147,8 @@ async def send_internal(subject: str,
         recipients=[EmailStr(recipient) for recipient in recipients],
         body=body,
         subtype=subtype,
-        attachments=[
-            UploadFile(file_attachment) for file_attachment in file_attachments
-        ])
+        attachments=[UploadFile(file_attachment)
+                     for file_attachment in file_attachments])
 
     return await send_internal_internal(message)
 

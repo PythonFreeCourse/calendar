@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% block head %}
+  {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -28,9 +28,10 @@
             integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
             crossorigin="anonymous"></script>
     <script defer type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
-    {% endblock head %}
-    {% block title %}<title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>{%
-    endblock %}
+  {% endblock head %}
+  {% block title %}
+    <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
+  {% endblock %}
 </head>
 <body>
 {% block body %}

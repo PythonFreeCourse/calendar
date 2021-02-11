@@ -11,7 +11,6 @@ from app.dependencies import get_db, templates
 from app.internal.utils import create_model, get_current_user
 from app.routers.salary import utils
 
-
 router = APIRouter(
     prefix='/salary',
     tags=['salary'],
