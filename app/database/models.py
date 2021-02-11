@@ -59,6 +59,7 @@ class Event(Base):
     content = Column(String)
     location = Column(String)
     color = Column(String, nullable=True)
+    all_day = Column(Boolean, default=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     category_id = Column(Integer, ForeignKey("categories.id"))

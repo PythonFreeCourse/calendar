@@ -20,7 +20,8 @@ CORRECT_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'event_type': 'on'
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -34,7 +35,8 @@ WRONG_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'event_type': 'on'
 }
 
 NONE_UPDATE_OPTIONS = [

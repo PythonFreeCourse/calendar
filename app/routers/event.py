@@ -47,12 +47,17 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
+    all_day = data['event_type']
+    if all_day == "on":
+        all_day = True
+    else:
+        all_day = False
     category_id = data.get('category_id')
 
     if is_zoom:
         validate_zoom_link(location)
 
-    event = create_event(session, title, start, end, owner_id, content,
+    event = create_event(session, title, start, end, owner_id, all_day, content,
                          location, category_id=category_id)
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event.id),
@@ -63,9 +68,13 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
-    start_format = '%A, %d/%m/%Y %H:%M'
-    end_format = ('%H:%M' if event.start.date() == event.end.date()
-                  else start_format)
+    if event.all_day is False:
+        start_format = '%A, %d/%m/%Y %H:%M'
+        end_format = ('%H:%M' if event.start.date() == event.end.date()
+                    else start_format)
+    else:
+        start_format = '%A, %d/%m/%Y'
+        end_format = ""
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
@@ -76,6 +85,7 @@ UPDATE_EVENTS_FIELDS = {
     'title': str,
     'start': datetime,
     'end': datetime,
+    'all_day': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
     'category_id': (int, type(None))
@@ -185,9 +195,10 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
-                 content: str = None,
-                 location: str = None,
-                 category_id: int = None):
+                all_day: bool,
+                content: str = None,
+                location: str = None,
+                category_id: int = None):
     """Creates an event and an association."""
 
     event = create_model(
@@ -198,7 +209,8 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
-        category_id=category_id,
+        all_day=all_day,
+        category_id=category_id
     )
     create_model(
         db, UserEvent,
