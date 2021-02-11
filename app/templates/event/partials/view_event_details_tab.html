@@ -1,17 +1,17 @@
-<div class="event_info_row title_color_{{event.color}}" >
-    <div class="event_info_row_start">
-        <h1>{{event.title}}</h1>
-    </div>
-    <div class="event_info_row_end">
-        <!--        <span class="icon">AVAILABILITY</span>-->
-        <!--        <span class="icon">PRIVACY</span>-->
-    </div>
+<div class="event_info_row title_color_{{event.color}} title">
+  <div class="event_info_row_start">
+    <h1>{{ event.title }}</h1>
+  </div>
+  <div class="event_info_row_end">
+    <!--        <span class="icon">AVAILABILITY</span>-->
+    <!--        <span class="icon">PRIVACY</span>-->
+  </div>
 </div>
 <div class="event_info_row">
   <span class="icon">ICON</span>
-  <time datetime="{{event.start}}">{{event.start.strftime(start_format)}}</time>
+  <time datetime="{{ event.start }}">{{ event.start.strftime(start_format) }}</time>
   -
-  <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+  <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
 </div>
 
 <!--<div class="event_info_row">-->
@@ -21,7 +21,7 @@
 
 <div class="event_info_row">
   <span class="icon">ICON</span>
-  <address>{{event.location}}</address>
+  <address>{{ event.location }}</address>
   <!--    <address>LOCATION / <a href="#">VC URL</a></address>-->
 </div>
 
@@ -40,5 +40,5 @@
 {% endif %}
 
 <p class="event_info_row">
-  {{event.content}}
+  {{ event.content }}
 </p>
