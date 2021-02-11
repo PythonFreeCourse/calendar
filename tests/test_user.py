@@ -15,7 +15,7 @@ def new_user(session):
         username='new_test_username',
         password='new_test_password',
         email='new_test.email@gmail.com',
-        language='english'
+        language_id='english'
     )
 
     return user
