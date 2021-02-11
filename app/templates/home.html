@@ -2,6 +2,8 @@
 
 {% block content %}
 
+
+
 <div class="container mt-4">
 </div>
 <br>
@@ -11,13 +13,16 @@
 </div>
 <br>
 
+
 <!-- I chose to add the quote day to the home page until the relavent calendar view will be developed.  -->
 <div>
-    {% if quote %} {% if not quote.author%}
+    {% if quote %}
+    {% if not quote.author%}
     <p><i>"{{ quote.text }}"</i></p>
     {% else %}
     <p><i>"{{ quote.text }}"</i> <span style="font-size: small;">&nbsp; \ {{quote.author}}</span></p>
-    {% endif %} {% endif %}
+    {% endif %}
+    {% endif %}
 </div>
 
 {% endblock %}

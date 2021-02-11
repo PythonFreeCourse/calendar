@@ -2,12 +2,12 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from app.config import PSQL_ENVIRONMENT
-from app.database import models
-from app.database.database import engine, get_db
-from app.dependencies import logger, MEDIA_PATH, STATIC_PATH, SOUNDS_PATH, templates
+from app import config
+from app.database import engine, models
+from app.dependencies import get_db, logger, MEDIA_PATH, SOUNDS_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
+from app.routers.salary import routes as salary
 
 
 def create_tables(engine, psql_environment):
@@ -21,7 +21,7 @@ def create_tables(engine, psql_environment):
         models.Base.metadata.create_all(bind=engine)
 
 
-create_tables(engine, PSQL_ENVIRONMENT)
+create_tables(engine, config.PSQL_ENVIRONMENT)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
@@ -33,8 +33,8 @@ app.logger = logger
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    agenda, audio, calendar, categories, currency, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    agenda, audio, calendar, categories, celebrity, currency, dayview,
+    email, event, invitation, profile, search, telegram, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -44,12 +44,14 @@ routers_to_include = [
     audio.router,
     calendar.router,
     categories.router,
+    celebrity.router,
     currency.router,
     dayview.router,
     email.router,
     event.router,
     invitation.router,
     profile.router,
+    salary.router,
     search.router,
     telegram.router,
     whatsapp.router,
