@@ -51,8 +51,7 @@ def get_all_categories(db_session: Session = Depends(get_db)) -> List[
 
 @router.get("/")
 def get_categories_by_user_id(user_id: int,
-                              db_session: Session = Depends(get_db)) -> List[
-                              Category]:
+    db_session: Session = Depends(get_db)) -> List[Category]:
     return get_user_categories(db_session, user_id)
 
 

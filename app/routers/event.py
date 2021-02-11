@@ -47,12 +47,12 @@ class EventModel(BaseModel):
     location: str
 
 
-@router.get("/events")
+@router.get("/")
 async def get_events(session=Depends(get_db)):
     return session.query(Event).all()
 
 
-@router.post("/create_event")
+@router.post("/")
 async def create_event_api(event: EventModel, session=Depends(get_db)):
     create_event(db=session,
                  title=event.title,
@@ -61,7 +61,7 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
                  content=event.content,
                  owner_id=event.owner_id,
                  location=event.location)
-    return f'Successfully created {event.title} event'
+    return {'success': True}
 
 
 @router.get("/edit", include_in_schema=False)
