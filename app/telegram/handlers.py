@@ -227,6 +227,7 @@ Welcome to PyLendar telegram client!'''
         answer = f'Title:\n{memo_dict["title"]}\n\n'
         answer += f'Content:\n{memo_dict["content"]}\n\n'
         answer += f'Location:\n{memo_dict["location"]}\n\n'
+        answer += f'All Day:\n{memo_dict["event_type"]}\n\n'
         answer += f'Starts on:\n{start_time}\n\n'
         answer += f'Ends on:\n{date.strftime("%d %b %Y %H:%M")}'
         await telegram_bot.send_message(
@@ -245,6 +246,7 @@ Welcome to PyLendar telegram client!'''
             title=memo_dict['title'],
             start=memo_dict['start'],
             end=memo_dict['end'],
+            all_day=memo_dict['event_type'],
             content=memo_dict['content'],
             owner_id=self.user.id,
             location=memo_dict['location'],
