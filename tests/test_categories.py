@@ -5,8 +5,9 @@ from starlette import status
 from starlette.datastructures import ImmutableMultiDict
 
 from app.database.models import Event
-from app.routers.categories import get_user_categories, \
-    validate_request_params, validate_color_format
+from app.routers.categories import (get_user_categories,
+                                    validate_request_params,
+                                    validate_color_format)
 
 
 class TestCategories:
@@ -43,8 +44,7 @@ class TestCategories:
                                json={"user_id": user.id, "name": "Foo",
                                      "color": "bad format"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert TestCategories.BAD_COLOR_FORMAT in \
-               response.json()["detail"]
+        assert TestCategories.BAD_COLOR_FORMAT in response.json()["detail"]
 
     @staticmethod
     def test_create_event_with_category(category):
@@ -109,14 +109,14 @@ class TestCategories:
     @staticmethod
     @pytest.mark.parametrize('params, expected_result', [
         (ImmutableMultiDict([('user_id', ''), ('name', ''),
-                             ('color', '')]), True),
+                             ('color', 'aabbcc')]), True),
         (ImmutableMultiDict([('user_id', ''), ('name', '')]), True),
-        (ImmutableMultiDict([('user_id', ''), ('color', '')]), True),
+        (ImmutableMultiDict([('user_id', ''), ('color', 'aabbcc')]), True),
         (ImmutableMultiDict([('user_id', '')]), True),
-        (ImmutableMultiDict([('name', ''), ('color', '')]), False),
+        (ImmutableMultiDict([('name', ''), ('color', 'aabbcc')]), False),
         (ImmutableMultiDict([]), False),
-        (ImmutableMultiDict([('user_id', ''), ('name', ''), ('color', ''),
-                             ('bad_param', '')]), False),
+        (ImmutableMultiDict([('user_id', ''), ('name', ''),
+                             ('color', 'aabbcc'), ('bad_param', '')]), False),
     ])
     def test_validate_request_params(params, expected_result):
         assert validate_request_params(params) == expected_result
@@ -126,7 +126,7 @@ class TestCategories:
         ("aabbcc", True),
         ("110033", True),
         ("114b33", True),
-        ("", True),
+        ("", False),
         ("aabbcg", False),
         ("aabbc", False),
     ])

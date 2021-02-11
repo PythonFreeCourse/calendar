@@ -88,11 +88,11 @@ def validate_request_params(query_params: ImmutableMultiDict) -> bool:
 
 def validate_color_format(color: str) -> bool:
     """
-    Validate color is from hex format (without `#`)
+    Validate color is from hex format (without `#`).
     """
     if color:
-        return re.match(HEX_COLOR_FORMAT, color) is not None
-    return True
+        return re.fullmatch(HEX_COLOR_FORMAT, color) is not None
+    return False
 
 
 def get_user_categories(db_session: Session,
