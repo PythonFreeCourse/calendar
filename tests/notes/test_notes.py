@@ -1,9 +1,6 @@
-import json
-
-import pytest
-from starlette.testclient import TestClient
-
 from app.routers.notes import crud
+from starlette.testclient import TestClient
+import json
 
 
 def test_create_note(notes_test_client: TestClient, monkeypatch):
