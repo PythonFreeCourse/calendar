@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Dict, List, Callable, Union
+from typing import Callable, Dict, List, Union
 
 from loguru import logger
 from sqlalchemy.orm import Session

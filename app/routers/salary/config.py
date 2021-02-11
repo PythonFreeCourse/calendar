@@ -1,7 +1,6 @@
 from datetime import time
 from typing import Union
 
-
 MINIMUM_WAGE = 29.12
 ISRAELI_JEWISH = 1  # Revision required after holiday times feature is added
 REGULAR_HOUR_BASIS = 8
