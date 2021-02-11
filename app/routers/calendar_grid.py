@@ -64,6 +64,7 @@ class Day:
     def get_user_local_time(cls) -> datetime:
         greenwich = pytz.timezone('GB')
         return greenwich.localize(datetime.now())
+
     @classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:
         return datetime.strptime(date_string, '%d-%b-%Y')
@@ -145,7 +146,7 @@ class FirstDayMonth(Day):
                 'text-darkblue',
                 'background-lightgray'
             ]),
-            'event': 'event dfds fds werew',
+            'event': 'event',
         }
 
     def __str__(self) -> str:

@@ -24,7 +24,6 @@ ADD_DAYS_ON_SCROLL: int = 42
 async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
     user_local_time = cg.Day.get_user_local_time()
     day = cg.create_day(user_local_time)
-    print(day)
     parasha_obj = lp.get_weekly_parasha(db_session, day)
 
     return templates.TemplateResponse(
@@ -39,12 +38,11 @@ async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
     )
 
 
-
 @router.get("/{date}")
 async def update_calendar(request: Request, date: str) -> HTMLResponse:
     last_day = cg.Day.convert_str_to_date(date)
     next_weeks = cg.create_weeks(cg.get_n_days(last_day, ADD_DAYS_ON_SCROLL))
     template = templates.get_template(
-        'partials/calendar/monthly_view/add_week.html', )
+        'partials/calendar/monthly_view/add_week.html')
     content = template.render(weeks_block=next_weeks)
     return HTMLResponse(content=content, status_code=HTTPStatus.OK)

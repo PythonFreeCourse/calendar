@@ -24,7 +24,7 @@ def add_parashot_to_db(session: Session) -> None:
     parashot_objects = [
     Parasha(
         name=parasha['name'],
-        hebrew=parasha['hebrew'],
+        hebrew_name=parasha['hebrew'],
         link=parasha['link'],
         date=datetime.strptime(parasha['date'], '%Y-%m-%d').date())
     for parasha in parashot

@@ -18,9 +18,9 @@
         {% for p in parasha %}
             {% if p.date.date() == day.date %}
             <div class="parasha">
-                <p>{{p.name}} / {{p.hebrew}}<br>
+                <p>{{p.name}} / {{p.hebrew_name}}<br>
                     <a style="background-color:powderblue;" href={{p.link}} target="_blank">
-                        <b>פירוט בלינק נפרד על {{p.hebrew}}</b></a></p>
+                        <b>פירוט בלינק נפרד על {{p.hebrew_name}}</b></a></p>
             </div>
             {% endif %}
         {% endfor %}

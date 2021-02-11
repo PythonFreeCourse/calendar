@@ -290,7 +290,7 @@ class Parasha(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    hebrew = Column(String, nullable=False)
+    hebrew_name = Column(String, nullable=False)
     link = Column(String, nullable=False)
     date = Column(DateTime, nullable=False)
 

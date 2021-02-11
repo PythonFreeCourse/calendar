@@ -6,7 +6,6 @@ from app.dependencies import get_db
 from app.internal import load_parasha
 
 
-
 router = APIRouter()
 @router.get("/parasha")
 
