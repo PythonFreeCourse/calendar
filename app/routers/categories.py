@@ -44,8 +44,8 @@ def get_categories(request: Request,
 
 
 @router.get("/list")
-def get_all_categories(db_session: Session = Depends(get_db)) -> List[
-    Category]:
+def get_all_categories(
+        db_session: Session = Depends(get_db)) -> List[Category]:
     return db_session.query(Category).all()
 
 
