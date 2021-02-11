@@ -2,8 +2,8 @@ import logging
 
 import pytest
 
-from app.internal.logger_customizer import LoggerCustomizer, LoggerConfigError
 from app import config
+from app.internal.logger_customizer import LoggerConfigError, LoggerCustomizer
 
 
 class TestLogger:

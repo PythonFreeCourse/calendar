@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 from fastapi import status
 import pytest
 
-from tests.asyncio_fixture import today_date
-from tests.client_fixture import get_test_placeholder_user
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.keyboards import DATE_FORMAT
 from app.telegram.models import Bot, Chat
+from tests.asyncio_fixture import today_date
+from tests.client_fixture import get_test_placeholder_user
 
 
 def gen_message(text):
@@ -144,7 +144,7 @@ class TestBotClient:
         assert response.status_code == status.HTTP_200_OK
         assert b'Hello, Moshe!' in response.content
         assert b'To use PyLendar Bot you have to register' \
-            in response.content
+               in response.content
 
     @staticmethod
     @pytest.mark.asyncio

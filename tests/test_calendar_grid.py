@@ -64,8 +64,8 @@ class TestCalendarGrid:
     @pytest.mark.calendar_grid
     def test_get_first_day_month_block(Calendar):
         assert (
-            cg.get_first_day_month_block(DATE)
-            == next(Calendar.itermonthdates(DATE.year, DATE.month))
+                cg.get_first_day_month_block(DATE)
+                == next(Calendar.itermonthdates(DATE.year, DATE.month))
         )
 
     @staticmethod

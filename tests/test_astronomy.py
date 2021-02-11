@@ -1,24 +1,24 @@
 import datetime
+
 import httpx
 import pytest
 import requests
 import responses
 import respx
 
-
-from app.internal.astronomy import get_astronomical_data
 from app.internal.astronomy import ASTRONOMY_URL
+from app.internal.astronomy import get_astronomical_data
 
 RESPONSE_FROM_MOCK = {"location": {
-        "name": "Tel Aviv-Yafo",
-        "region": "Tel Aviv",
-        "country": "Israel",
-        "lat": 32.07,
-        "lon": 34.76,
-        "tz_id": "Asia/Jerusalem",
-        "localtime_epoch": 1611399607,
-        "localtime": "2021-01-23 13:00"
-    },
+    "name": "Tel Aviv-Yafo",
+    "region": "Tel Aviv",
+    "country": "Israel",
+    "lat": 32.07,
+    "lon": 34.76,
+    "tz_id": "Asia/Jerusalem",
+    "localtime_epoch": 1611399607,
+    "localtime": "2021-01-23 13:00"
+},
     "astronomy": {
         "astro": {
             "sunrise": "05:25 AM",

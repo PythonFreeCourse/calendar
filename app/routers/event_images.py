@@ -1,5 +1,5 @@
-import re
 from functools import lru_cache
+import re
 from typing import Optional
 
 from nltk.tokenize import word_tokenize

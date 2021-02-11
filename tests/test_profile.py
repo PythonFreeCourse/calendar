@@ -8,7 +8,6 @@ from app import config
 from app.dependencies import MEDIA_PATH
 from app.routers.profile import get_image_crop_area, get_placeholder_user
 
-
 CROP_RESULTS = [
     (20, 10, (5, 0, 15, 10)),
     (10, 20, (0, 5, 10, 15)),

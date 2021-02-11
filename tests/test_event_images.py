@@ -9,11 +9,10 @@ from app.routers.event_images import (attach_image_to_event,
 
 static = config.STATIC_ABS_PATH
 
-
 lemmatized_words = [
-    ("ran",  f'{static}\\event_flairs\\ran.jpg'),
+    ("ran", f'{static}\\event_flairs\\ran.jpg'),
     ("food", f'{static}\\event_flairs\\food.jpg'),
-    ("i",  f'{static}\\event_flairs\\i.jpg'),
+    ("i", f'{static}\\event_flairs\\i.jpg'),
     ("drank", f'{static}\\event_flairs\\drank.jpg'),
 ]
 

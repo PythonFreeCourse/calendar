@@ -17,7 +17,15 @@
 ## Creating development environment
 ### Prerequisites
 1. Windows or Linux based system - either [WSL on windows](https://docs.microsoft.com/en-us/windows/wsl/install-win10) or full blown linux.
-2. [Python](https://www.python.org/downloads/release/python-385/) 
+2. [Python](https://www.python.org/downloads/release/python-385/)
+3. Install python's requirements:
+```shell
+pip install -r requirements.txt
+```
+4. Install pre-commit hooks:
+```shell
+pre-commit install
+```
 
 ### Running on Windows
 
@@ -53,4 +61,3 @@ pytest -m MARKER_NAME
 
 ## Contributing
 View [contributing guidelines](https://github.com/PythonFreeCourse/calendar/blob/master/CONTRIBUTING.md).
-
