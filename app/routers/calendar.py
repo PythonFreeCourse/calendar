@@ -1,10 +1,13 @@
 from http import HTTPStatus
 
+from app.database.database import get_db
 from app.dependencies import templates
+from app.internal import load_parasha as lp
 from app.routers import calendar_grid as cg
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from starlette.responses import Response
+
 
 router = APIRouter(
     prefix="/calendar/month",
@@ -12,22 +15,27 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+
 ADD_DAYS_ON_SCROLL: int = 42
 
 
 @router.get("/")
-async def calendar(request: Request) -> Response:
+async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
     user_local_time = cg.Day.get_user_local_time()
     day = cg.create_day(user_local_time)
+    parasha_obj = lp.get_weekly_parasha(db_session, day)
+
     return templates.TemplateResponse(
         "calendar/calendar.html",
         {
             "request": request,
             "day": day,
             "week_days": cg.Week.DAYS_OF_THE_WEEK,
-            "weeks_block": cg.get_month_block(day)
+            "weeks_block": cg.get_month_block(day),
+            "parasha": parasha_obj
         }
     )
+
 
 
 @router.get("/{date}")

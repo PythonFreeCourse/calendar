@@ -10,6 +10,7 @@ from app.database.models import Quote, Zodiac
 from app.internal import daily_quotes, zodiac
 
 
+
 def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
     """This function reads all of the data from a specific JSON file.
     The json file consists of list of dictionaries"""

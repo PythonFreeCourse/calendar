@@ -15,6 +15,15 @@
         {% for event in day.events %}
         <div class="{{day.css['event']}}"><b>{{event[0]}}</b> {{event[1]}}</div>
         {% endfor %}
+        {% for p in parasha %}
+            {% if p.date.date() == day.date %}
+            <div class="parasha">
+                <p>{{p.name}} / {{p.hebrew}}<br>
+                    <a style="background-color:powderblue;" href={{p.link}} target="_blank">
+                        <b>פירוט בלינק נפרד על {{p.hebrew}}</b></a></p>
+            </div>
+            {% endif %}
+        {% endfor %}
     </div>
     {% endfor %}
 </div>

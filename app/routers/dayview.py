@@ -111,5 +111,5 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
         "events": events_n_attrs,
         "month": day.strftime("%B").upper(),
         "day": day.day,
-        "zodiac": zodiac_obj
+        "zodiac": zodiac_obj,
         })

@@ -176,3 +176,12 @@ class Zodiac(Base):
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
         )
+
+class Parasha(Base):
+    __tablename__ = "parashot"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    hebrew = Column(String, nullable=False)
+    link = Column(String, nullable=False)
+    date = Column(DateTime, nullable=False)

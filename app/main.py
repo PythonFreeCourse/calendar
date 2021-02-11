@@ -6,10 +6,10 @@ from app.config import PSQL_ENVIRONMENT
 from app.database import models
 from app.database.database import engine, get_db
 from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
-from app.internal import daily_quotes, json_data_loader
+from app.internal import daily_quotes, json_data_loader, load_parasha
 from app.routers import (
     agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp
+    event, invitation, profile, parasha, search, telegram, whatsapp
 )
 from app.telegram.bot import telegram_bot
 
@@ -31,6 +31,8 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 
 json_data_loader.load_to_db(next(get_db()))
+load_parasha.load_parashot(next(get_db()))
+
 
 app.logger = logger
 
@@ -42,6 +44,7 @@ routers_to_include = [
     email.router,
     event.router,
     invitation.router,
+    parasha.router,
     profile.router,
     search.router,
     telegram.router,
@@ -63,5 +66,5 @@ async def home(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("home.html", {
         "request": request,
         "message": "Hello, World!",
-        "quote": quote
+        "quote": quote,
     })
