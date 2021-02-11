@@ -1,6 +1,7 @@
 div[data-visible='0'] {
-    display: none;
+  display: none;
 }
+
 div[data-visible='1'] {
-    display: block;
+  display: block;
 }
