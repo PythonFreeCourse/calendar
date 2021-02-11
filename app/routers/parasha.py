@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.internal import load_parasha
 
 

@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional
 
 from httpx import AsyncClient
-import requests
 
 
 class Chat:
@@ -27,6 +26,8 @@ class Chat:
 
 
 class Bot:
+    MEMORY = {}
+
     def __init__(self, bot_api: str, webhook_url: str):
         self.base = self._set_base_url(bot_api)
         self.webhook_setter_url = self._set_webhook_setter_url(webhook_url)
@@ -37,12 +38,14 @@ class Bot:
     def _set_webhook_setter_url(self, webhook_url: str) -> str:
         return f'{self.base}setWebhook?url={webhook_url}/telegram/'
 
-    def set_webhook(self):
-        return requests.get(self.webhook_setter_url)
+    async def set_webhook(self):
+        async with AsyncClient() as ac:
+            return await ac.get(self.webhook_setter_url)
 
-    def drop_webhook(self):
-        data = {'drop_pending_updates': True}
-        return requests.get(url=f'{self.base}deleteWebhook', data=data)
+    async def drop_webhook(self):
+        async with AsyncClient() as ac:
+            data = {'drop_pending_updates': True}
+            return await ac.post(url=f'{self.base}deleteWebhook', data=data)
 
     async def send_message(
             self, chat_id: str,
