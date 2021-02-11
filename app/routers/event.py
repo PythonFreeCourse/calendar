@@ -62,7 +62,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     owner_id = user.id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
-    vc_link = data['vc_url']
+    vc_link = data['vc_link']
     category_id = data.get('category_id')
 
     invited_emails = get_invited_emails(data['invited'])
@@ -70,7 +70,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                                                       title, invited_emails)
 
     if vc_link is not None:
-        validate_zoom_link(vc_link)
+        raise_if_zoom_link_invalid(vc_link)
 
     event = create_event(session, title, start, end, owner_id, content,
                          location, vc_link, invitees=invited_emails,
