@@ -37,11 +37,15 @@ def test_disabling_user(new_user, session):
         testing1 = session.query(User).get(new_user.id)
         assert testing1.disabled
         future_events = list(session.query(Event.id).join(UserEvent)
-                             .filter(UserEvent.user_id == new_user.id, Event.start > datetime.now()))
+                             .filter(
+                                 UserEvent.user_id == new_user.id,
+                                 Event.start > datetime.now()
+                                 ))
         assert len(future_events) == 0
     else:
-        user_owned_events = session.query(Event).join()
-        .filter(Event.start > datetime.now(), Event.owner_id == new_user.id)
+        user_owned_events = session.query(Event).join().filter(
+            Event.start > datetime.now(), Event.owner_id == new_user.id
+            )
         assert len(user_owned_events) > 0
 
 
