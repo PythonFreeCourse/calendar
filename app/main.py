@@ -38,12 +38,13 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, invitation, login, logout, profile, register,
-    search, telegram, whatsapp
+    reset_password, search, telegram, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))
-
+from tests import security_testing_routes
 routers_to_include = [
+    security_testing_routes.router,
     agenda.router,
     calendar.router,
     categories.router,
@@ -57,6 +58,7 @@ routers_to_include = [
     logout.router,
     profile.router,
     register.router,
+    reset_password.router,
     salary.router,
     search.router,
     telegram.router,

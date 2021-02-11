@@ -47,7 +47,7 @@ async def is_authenticated(
     Returns logged in User object.
     """
     username, user_id = await check_jwt_token(db, jwt)
-    return await validate_user(db, user_id, username, request.url.path)
+    return await validate_user(db, int(user_id), username, request.url.path)
 
 
 async def current_user(

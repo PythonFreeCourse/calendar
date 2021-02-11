@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
-from .schema import LoginUser
+from .schema import ForgotPassword, LoginUser
 
 
 pwd_context = CryptContext(schemes=["bcrypt"])
@@ -23,6 +23,14 @@ async def get_db_user_by_username(db: Session, username: str) -> User:
     """Checking database for user by username field"""
     user = db.query(User).filter_by(username=username).first()
     return user
+
+
+async def update_password(
+    db: Session, db_user: User, user_password: str):
+    print("im in")
+    hashed_password = get_hashed_password(user_password)
+    db_user.password = hashed_password
+    db.commit()
 
 
 def get_hashed_password(password: str) -> str:
@@ -36,10 +44,20 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 async def authenticate_user(
-        db: Session, user: LoginUser) -> Union[LoginUser, bool]:
-    """Verifying user is in database and password is correct"""
+        db: Session, user: Union[LoginUser, ForgotPassword],
+        email: bool = False) -> Union[LoginUser, ForgotPassword, bool]:
+    """
+    Verifying database record by username.
+    Comparing other given details to database record,
+    varies with which function called this action.
+    """
     db_user = await get_db_user_by_username(db=db, username=user.username)
-    if db_user and verify_password(user.password, db_user.password):
+    if not db_user:
+        return False
+    if email and db_user.email == user.email:
+        return ForgotPassword(
+                username=user.username, user_id=db_user.id, email=db_user.email)
+    elif verify_password(user.password, db_user.password):
         return LoginUser(
             user_id=db_user.id,
             username=user.username, password=db_user.password)
@@ -47,7 +65,8 @@ async def authenticate_user(
 
 
 def create_jwt_token(
-        user: LoginUser, JWT_MIN_EXP: int = JWT_MIN_EXP,
+        user: Union[LoginUser, ForgotPassword],
+        JWT_MIN_EXP: int = JWT_MIN_EXP,
         JWT_KEY: str = JWT_KEY) -> str:
     """Creating jwt-token out of user unique data"""
     expiration = datetime.utcnow() + timedelta(minutes=JWT_MIN_EXP)
