@@ -1,10 +1,11 @@
 from http import HTTPStatus
 
-from app.dependencies import templates
-from app.routers import calendar_grid as cg
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from starlette.responses import Response
+
+from app.dependencies import templates
+from app.routers import calendar_grid as cg
 
 router = APIRouter(
     prefix="/calendar/month",

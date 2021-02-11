@@ -42,8 +42,8 @@ html {
 }
 
 nav {
-    z-index: 5;
-    padding: 1rem;
+  z-index: 5;
+  padding: 1rem;
 }
 
 .menu {
@@ -56,16 +56,18 @@ nav {
 .fixed-features,
 .user-features,
 #open-features {
-    text-align: center;
+  text-align: center;
 }
 
 .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.user-features {margin-top: 3rem;}
+.user-features {
+  margin-top: 3rem;
+}
 
 .fixed-features div {
     font-size: var(--text_xxl);
@@ -123,7 +125,7 @@ header {
 }
 
 header div {
-    flex: 1;
+  flex: 1;
 }
 
 #logo-div {
@@ -132,10 +134,10 @@ header div {
 
 /* Main Element Grid */
 main {
-    display: flex;
-    flex-flow: row wrap;
-    flex: 1;
-    overflow-y: hidden;
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1;
+  overflow-y: hidden;
 }
 
 .calendar {
@@ -146,9 +148,9 @@ main {
 }
 
 .day-view-visible {
-    flex: 0 1 30%;
-    opacity: 1;
-    transition: all 1s;
+  flex: 0 1 30%;
+  opacity: 1;
+  transition: all 1s;
 }
 
 .calender-days-titles {
@@ -164,14 +166,14 @@ main {
 
 /* The Calendar Grid */
 #calender-grid {
-    flex: 1;
-    display: grid;
-    grid-auto-rows: 20%;
-    grid-template-rows: repeat(5, 20%);
-    overflow: scroll;
-    height: 100%;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  flex: 1;
+  display: grid;
+  grid-auto-rows: 20%;
+  grid-template-rows: repeat(5, 20%);
+  overflow: scroll;
+  height: 100%;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -193,29 +195,35 @@ main {
 }
 
 .day {
-    z-index: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 
     font-size: var(--text_xs);
     padding: 0 var(--space_s);
     border: 0.1rem solid var(--surface);
 
-    overflow-y: auto;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+  overflow-y: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
-.day::-webkit-scrollbar {display: none;}
+.day::-webkit-scrollbar {
+  display: none;
+}
 
-.event {font-weight: 400;}
+.event {
+  font-weight: 400;
+}
 
 .day:hover {border: 0.1rem solid var(--secondary);}
 
 .day:hover .day-number{color: var(--bold_secondary);}
 
-.day:hover .add-small{display: block;}
+.day:hover .add-small {
+  display: block;
+}
 
 .day-number {
     font-weight: 800;
@@ -229,13 +237,17 @@ main {
 }
 
 .month-day-header {
-    display: flex;
-    flex-flow: row wrap;
+  display: flex;
+  flex-flow: row wrap;
 }
 
-.month-day-header div {flex-grow: 2;}
+.month-day-header div {
+  flex-grow: 2;
+}
 
-.month-day-header:last-child{text-align: right;}
+.month-day-header:last-child {
+  text-align: right;
+}
 
 .add-small {
     display: none;
@@ -311,11 +323,17 @@ main {
     backface-visibility: hidden;
 }
 
-.back {transform: rotateX(180deg);}
+.back {
+  transform: rotateX(180deg);
+}
 
-.month-event:hover .front{transform: rotateX(-180deg);}
+.month-event:hover .front {
+  transform: rotateX(-180deg);
+}
 
-.month-event:hover .back{transform: rotateX(0);}
+.month-event:hover .back {
+  transform: rotateX(0);
+}
 
 .daily {
     font-weight: 700;
