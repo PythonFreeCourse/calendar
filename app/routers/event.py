@@ -47,16 +47,15 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                                          lanauge_id=1,
                                          session=session)
     owner_id = user.id
-    location_type = data['location_type']
-    is_zoom = location_type == 'vc_url'
+    vc_link = data['vc_url']
     location = data['location']
     category_id = data.get('category_id')
 
-    if is_zoom:
-        validate_zoom_link(location)
+    if vc_link is not None:
+        validate_zoom_link(vc_link)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, category_id=category_id)
+                         location, vc_link, category_id=category_id)
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event.id),
                             status_code=status.HTTP_302_FOUND)
@@ -81,6 +80,7 @@ UPDATE_EVENTS_FIELDS = {
     'end': datetime,
     'content': (str, type(None)),
     'location': (str, type(None)),
+    'vc_link': (str, type(None)),
     'category_id': (int, type(None))
 }
 
@@ -190,6 +190,7 @@ def update_event(event_id: int, event: Dict, db: Session
 def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
+                 vc_link: str = None,
                  category_id: int = None):
     """Creates an event and an association."""
 
@@ -201,6 +202,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
+        vc_link=vc_link,
         category_id=category_id,
     )
     create_model(

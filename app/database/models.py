@@ -58,6 +58,7 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    vc_link = Column(String)
     color = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
