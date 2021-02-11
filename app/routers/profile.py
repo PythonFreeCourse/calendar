@@ -28,7 +28,6 @@ def get_placeholder_user():
         full_name='My Name',
         language_id=1,
         telegram_id='',
-        language='english',
     )
 
 
@@ -123,7 +122,6 @@ async def upload_user_photo(
 @router.post("/update_telegram_id")
 async def update_telegram_id(
         request: Request, session=Depends(get_db)):
-
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
     new_telegram_id = data['telegram_id']

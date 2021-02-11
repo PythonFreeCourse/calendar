@@ -3,13 +3,8 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app.database.models import User
-from app.internal.email import (
-    mail,
-    send_email_invitation,
-    send_email_file,
-    send,
-    verify_email_pattern
-)
+from app.internal.email import (mail, send, send_email_file,
+                                send_email_invitation, verify_email_pattern)
 from app.internal.utils import create_model, delete_instance
 
 
@@ -180,7 +175,7 @@ def test_send_mail_bad_invitation(client,
                                )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert response.json() == {
-             "detail": "Couldn't send the email!"}
+            "detail": "Couldn't send the email!"}
         assert not outbox
 
 

@@ -11,7 +11,6 @@ from app.routers.salary import routes, utils
 from tests.salary import conftest
 from tests.salary.test_utils import get_event_by_category
 
-
 PATHS = [
     (conftest.ROUTES['new']),
     (conftest.ROUTES['edit_pick']),
@@ -134,7 +133,7 @@ def test_create_settings(salary_test_client: TestClient,
         'second_overtime_pay': utils.DEFAULT_SETTINGS.second_overtime_pay,
         'week_working_hours': utils.DEFAULT_SETTINGS.week_working_hours,
         'daily_transport': utils.DEFAULT_SETTINGS.daily_transport,
-        }
+    }
     response = salary_test_client.post(
         conftest.ROUTES['new'], data=data, allow_redirects=True)
     assert response.ok
@@ -195,7 +194,7 @@ def test_edit_settings(salary_test_client: TestClient, salary_session: Session,
 @mock.patch('app.routers.salary.routes.get_current_user',
             new=get_current_user)
 def test_invalid_category_redirect(
-    salary_test_client: TestClient, wage: SalarySettings, path: str,
+        salary_test_client: TestClient, wage: SalarySettings, path: str,
         message: str) -> None:
     response = salary_test_client.get(path)
     assert any(temp.status_code == status.HTTP_307_TEMPORARY_REDIRECT

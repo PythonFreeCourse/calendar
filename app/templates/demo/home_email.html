@@ -2,27 +2,27 @@
 
 {% block content %}
 
-<div class="container mt-4">
-    <h1>{{message}}</h1>
-</div>
+  <div class="container mt-4">
+    <h1>{{ message }}</h1>
+  </div>
 
-<div>
+  <div>
     <form action="/email/send" method="post">
-        <!-- Example of how to use sending email
-         This is a testing using ids of evenets and users yet with 
-            simple manipulation you could send it how ever you want -->
-        <label for="event_used">Event Id</label><br>
-        <input type="text" value="{{ event_used }}" name="event_used"><br>
-        <label for="user_to_send">User Id</label><br>
-        <input type="text" value="{{user_to_send}}" name="user_to_send">
-        <div>
-            <select class="form-control" name="title">
-                <option value="New Event:">New Event</option>
-                <option value="Reminder:">Reminder</option>
-                <option value="Canceled:">Canceled</option>
-                <option value="Updated">Updated</option>
-            </select>
-        </div>
-        <input type="submit" value="Accept">
+      <!-- Example of how to use sending email
+       This is a testing using ids of evenets and users yet with
+          simple manipulation you could send it how ever you want -->
+      <label for="event_used">Event Id</label><br>
+      <input type="text" value="{{ event_used }}" name="event_used"><br>
+      <label for="user_to_send">User Id</label><br>
+      <input type="text" value="{{ user_to_send }}" name="user_to_send">
+      <div>
+        <select class="form-control" name="title">
+          <option value="New Event:">New Event</option>
+          <option value="Reminder:">Reminder</option>
+          <option value="Canceled:">Canceled</option>
+          <option value="Updated">Updated</option>
+        </select>
+      </div>
+      <input type="submit" value="Accept">
     </form>
-    {% endblock %}
+{% endblock %}

@@ -3,17 +3,13 @@ from typing import Iterator
 from fastapi.testclient import TestClient
 import pytest
 
-from app.database.models import Base, User
 from app import main
-<<<<<<< HEAD
-from app.database.database import Base
 from app.database.models import User
 from app.main import app
 from app.routers import agenda, audio, event, invitation, profile
-=======
+from app.database.models import Base, User
 from app.routers import agenda, event, invitation, profile
 from app.routers.salary import routes as salary
->>>>>>> dfd34f3d5b4f675016d6083462be1607982e1024
 from tests.conftest import get_test_db, test_engine
 
 
@@ -78,19 +74,7 @@ def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.drop_all(bind=test_engine)
 
 
-<<<<<<< HEAD
 def get_test_placeholder_user():
-    return User(
-        username='fake_user',
-        email='fake@mail.fake',
-        password='123456fake',
-        full_name='FakeName',
-        language_id=1,
-        telegram_id='666666'
-    )
-
-
-def get_test_placeholder_user2():
     return User(
         username='new_user',
         email='fake@mail.fake',
@@ -104,12 +88,12 @@ def audio_test_client():
     Base.metadata.create_all(bind=test_engine)
     app.dependency_overrides[audio.get_db] = get_test_db
     app.dependency_overrides[
-        audio.get_placeholder_user] = get_test_placeholder_user2
+        audio.get_placeholder_user] = get_test_placeholder_user
     with TestClient(app) as client:
         yield client
     Base.metadata.drop_all(bind=test_engine)
-=======
+
+
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
->>>>>>> dfd34f3d5b4f675016d6083462be1607982e1024
