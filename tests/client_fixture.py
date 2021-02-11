@@ -4,7 +4,6 @@ from fastapi.testclient import TestClient
 import pytest
 
 from app import main
-from app.database.models import User
 from app.main import app
 from app.routers import agenda, audio, event, invitation, profile
 from app.database.models import Base, User
@@ -74,7 +73,7 @@ def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.drop_all(bind=test_engine)
 
 
-def get_test_placeholder_user():
+def get_test_placeholder_user2():
     return User(
         username='new_user',
         email='fake@mail.fake',
@@ -88,7 +87,7 @@ def audio_test_client():
     Base.metadata.create_all(bind=test_engine)
     app.dependency_overrides[audio.get_db] = get_test_db
     app.dependency_overrides[
-        audio.get_placeholder_user] = get_test_placeholder_user
+        audio.get_placeholder_user] = get_test_placeholder_user2
     with TestClient(app) as client:
         yield client
     Base.metadata.drop_all(bind=test_engine)
