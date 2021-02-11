@@ -8,7 +8,7 @@ from app.main import app
 from app.routers import telegram
 from app.routers.event import create_event
 from tests.client_fixture import get_test_placeholder_user
-from tests.conftest import test_engine, get_test_db
+from tests.conftest import get_test_db, test_engine
 
 
 @pytest.fixture

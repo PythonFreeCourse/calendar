@@ -1,16 +1,15 @@
 import os
 from typing import List, Optional
 
-
-from app.config import (email_conf, templates,
-                        CALENDAR_SITE_NAME, CALENDAR_HOME_PAGE,
-                        CALENDAR_REGISTRATION_PAGE)
-from app.database.models import Event, User
 from fastapi import BackgroundTasks, UploadFile
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import EmailStr
 from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
+
+from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
+                        CALENDAR_SITE_NAME, email_conf, templates)
+from app.database.models import Event, User
 
 mail = FastMail(email_conf)
 
@@ -144,12 +143,12 @@ async def send_internal(subject: str,
         file_attachments = []
 
     message = MessageSchema(
-         subject=subject,
-         recipients=[EmailStr(recipient) for recipient in recipients],
-         body=body,
-         subtype=subtype,
-         attachments=[UploadFile(file_attachment)
-                      for file_attachment in file_attachments])
+        subject=subject,
+        recipients=[EmailStr(recipient) for recipient in recipients],
+        body=body,
+        subtype=subtype,
+        attachments=[UploadFile(file_attachment)
+                     for file_attachment in file_attachments])
 
     return await send_internal_internal(message)
 

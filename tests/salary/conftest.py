@@ -1,4 +1,3 @@
-from tests.conftest import get_test_db
 from typing import Iterator
 
 import pytest
@@ -8,8 +7,8 @@ from app.database.models import Base, SalarySettings, User
 from app.internal.utils import create_model, delete_instance
 from app.routers.salary import config
 from app.routers.salary.routes import router
+from tests.conftest import get_test_db
 from tests.conftest import test_engine
-
 
 MESSAGES = {
     'create_settings': 'Already created your settings?',
