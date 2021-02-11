@@ -66,21 +66,21 @@ for router in routers_to_include:
 @app.middleware("http")
 async def filter_access_to_features(request: Request, call_next):
 
-    # getting the url route path for matching with the database
+    # getting the url route path for matching with the database.
     route = str(request.url).replace(str(request.base_url), '')[:-1]
 
-    # get if feature is enabled
+    # getting access status.
     is_enabled = feature_panel.is_feature_enabled(route=route)
 
     if is_enabled:
-        # in case the feature is enabled
+        # in case the feature is enabled or access is allowed.
         return await call_next(request)
 
     elif 'referer' not in request.headers:
-        # in case request come straight from url line in browser
+        # in case request come straight from url line in browser.
         return RedirectResponse(url=app.url_path_for('home'))
 
-    # in case the feature is disabled
+    # in case the feature is disabled or access isn't allowed.
     return RedirectResponse(url=request.headers['referer'])
 
 

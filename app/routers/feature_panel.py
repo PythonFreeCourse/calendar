@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Request, Depends
-from sqlalchemy import or_
-from sqlalchemy.sql.expression import false
 
 from app.dependencies import get_db, SessionLocal
 from app.database.models import User, UserFeature, Feature
@@ -32,6 +30,29 @@ def create_features_at_startup(session: SessionLocal):
     return {'all': fs}
 
 
+@router.post('/add-feature')
+async def add_feature_to_user(request: Request,
+                              session: SessionLocal = Depends(get_db)):
+
+    form = await request.form()
+
+    user_id = 1  # TODO - get active user id
+    feat = session.query(Feature).filter_by(id=form['feature_id']).first()
+
+    if feat is not None:
+        # in case there is no feature in the database with that same id
+        association = create_association(
+            db=session,
+            feature_id=feat.id,
+            user_id=user_id,
+            is_enable=True
+        )
+
+        return session.query(UserFeature).filter_by(id=association.id).first()
+
+    return 'Done - nothing made.'
+
+
 @router.get('/test-association')
 def testAssociation(request: Request, session: SessionLocal = Depends(get_db)):
     create_association(db=session, feature_id=1, user_id=1, is_enable=True)
@@ -50,8 +71,8 @@ def delete_feature(feature: Feature, session: SessionLocal = Depends(get_db)):
 
 def is_feature_exist_in_db(feature: dict, session: SessionLocal):
     db_feature = session.query(Feature).filter(
-                or_(Feature.name == feature['name'],
-                    Feature.route == feature['route'])).first()
+                    (Feature.name == feature['name']) |
+                    (Feature.route == feature['route'])).first()
 
     if db_feature is not None:
         # Update if found
@@ -154,7 +175,7 @@ def is_feature_exist_in_disabled(user_id: int, feature: Feature,
 def is_feature_enabled(route: str):
     session = SessionLocal()
 
-    # TODO - get active user id
+    # TODO - get active user id.
     user_id = 1
 
     feature = session.query(Feature).filter_by(route=f'/{route}').first()
@@ -162,7 +183,7 @@ def is_feature_enabled(route: str):
     # *This condition must be before line 168 to avoid AttributeError!*
     if feature is None:
         # in case there is no feature exist in
-        # the database that match the route that passed to the request.
+        # the database that match the route that gived by to the request.
         return True
 
     user_pref = session.query(UserFeature).filter_by(
@@ -171,12 +192,12 @@ def is_feature_enabled(route: str):
     ).first()
 
     if user_pref is None:
-        # in case the feature is unlinked to user
+        # in case the feature is unlinked to user.
         return False
     elif user_pref.is_enable:
-        # in case the feature is enabled
+        # in case the feature is enabled.
         return True
-    # in case the feature is disabled
+    # in case the feature is disabled.
     return False
 
 
