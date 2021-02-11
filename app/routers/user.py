@@ -1,6 +1,6 @@
 from typing import List
 
-from datetime import datetime 
+from datetime import datetime
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -77,7 +77,8 @@ def disable_user(session: Session, user_id: int):
     """if user doesn't own any event, we will disable him and remove the user from all of its future events."""
     user_disabled = session.query(User).get(user_id)
     user_disabled.disabled = True
-    future_events_for_user = session.query(UserEvent.id).join(Event, Event.id == UserEvent.event_id).filter(
+    future_events_for_user = session.query(UserEvent.id)
+    .join(Event, Event.id == UserEvent.event_id).filter(
         UserEvent.user_id == user_id, Event.start > datetime.now()).all()
     for event_connection in future_events_for_user:
         session.delete(event_connection)
