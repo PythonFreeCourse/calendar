@@ -44,4 +44,4 @@ async def show_results(
         "results": results,
         "keywords": keywords
     }
-                                      )
+    )

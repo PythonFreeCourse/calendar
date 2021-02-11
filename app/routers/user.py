@@ -43,7 +43,6 @@ def manually_create_user(user: UserModel, session=Depends(get_db)):
 def create_user(username: str,
                 password: str,
                 email: str,
-                language: str,
                 language_id: int,
                 session: Session) -> User:
     """Creates and saves a new user."""
@@ -52,7 +51,6 @@ def create_user(username: str,
         username=username,
         password=password,
         email=email,
-        language=language,
         language_id=language_id
     )
     save(session, user)

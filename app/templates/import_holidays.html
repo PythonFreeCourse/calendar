@@ -4,11 +4,12 @@
 {% block content %}
 
 <form class="m-3" action="update_holidays" method="post" enctype="multipart/form-data">
-    <h5 class="title">Import holidays using ics file</h5>
-    <h6 class="title">Use the upload button to choose ics file</h6>
+    <h1 class="title">Import holidays using ics file</h1>
+    <p class="subtitle">Use the upload button to choose ics file</p>
     <a href="https://www.feiertagskalender.ch/export.php?geo=3542&hl=en#" target="_blank">Check this website to export holidays by country</a>
     <div class="input-group">
-        <input type="file" class="form-control-sm" accept=".ics" name="file">
+            <label for="file"></label>
+            <input type="file" class="form-control-sm" accept=".ics" id="file">
     </div>
     <div class="mt-4">
         <button type="submit" class="btn btn-sm btn-success">Add events from file to calender</button>
