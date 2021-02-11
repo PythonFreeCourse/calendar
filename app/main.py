@@ -7,6 +7,7 @@ from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
+from app.routers.notes import notes
 from app.routers.salary import routes as salary
 
 
@@ -48,6 +49,7 @@ routers_to_include = [
     email.router,
     event.router,
     invitation.router,
+    notes.router,
     profile.router,
     salary.router,
     search.router,
