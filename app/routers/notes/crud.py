@@ -5,5 +5,6 @@ from sqlalchemy.orm.session import Session
 
 
 async def post(session: Session, payload: NoteSchema):
-    note = create_model(session, Note, title=payload.title, description=payload.description)
+    note = create_model(session, Note, title=payload.title,
+                        description=payload.description)
     return note.id
