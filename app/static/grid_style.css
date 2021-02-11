@@ -1,17 +1,18 @@
 :root {
     /* Texts */
-    --text_xs: 0.75rem; /* 12px */
-    --text_s: 1rem;     /* 16px */
-    --text_m: 1.25rem;  /* 20px */
-    --text_l: 1.50rem;  /* 24px */
-    --text_xl: 2rem;    /* 32px */
+    --text_xs: 0.75rem;  /* 12px */
+    --text_s: 1rem;      /* 16px */
+    --text_m: 1.25rem;   /* 20px */
+    --text_l: 1.50rem;   /* 24px */
+    --text_xl: 1.75rem;  /* 28px */
+    --text_xxl: 2rem;    /* 32px */
 
     /* Spaces */
-    --distance_xs: 0.5rem; /* 6px */
-    --distance_s: 0.75rem; /* 12px */
-    --distance_m: 1.25rem; /* 20px */
-    --distance_l: 2rem;    /* 20px */
-    --distance_xl: 4rem;   /* 64px */
+    --space_xs: 0.5rem; /* 6px */
+    --space_s: 0.75rem; /* 12px */
+    --space_m: 1.25rem; /* 20px */
+    --space_l: 2rem;    /* 32px */
+    --space_xl: 4rem;   /* 64px */
 
     /* colors */
     --primary: #F7F7F7;
@@ -30,38 +31,26 @@
 }
 
 html {
-    font-family: "Assistant", "Ariel", sans-serif;
-    font-weight: 400;
-    font-size: 100%;
-    line-height: 1.7;
-    text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
-    background-color: var(--primary);
-    color: var(--secondary);
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
+    font-size: 90%;
 }
 
 /* Grids */
 /* -> Website Structure */
-.container {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, auto) 1fr;
+.pyldr-container {
+    display: flex;
+    height: 100%;
 }
 
 nav {
     z-index: 5;
-    grid-row: 1/3;
+    padding: 1rem;
 }
 
 .menu {
     position: sticky;
     display: flex;
     flex-direction: column;
-    top:var(--distance_s);
+    top:var(--space_s);
 }
 
 .fixed-features,
@@ -70,10 +59,16 @@ nav {
     text-align: center;
 }
 
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .user-features {margin-top: 3rem;}
 
 .fixed-features div {
-    font-size: var(--text_xl);
+    font-size: var(--text_xxl);
     height: 3rem;
 }
 
@@ -85,7 +80,7 @@ nav {
     height: 1.75rem;
     width: 1.75rem;
     font-size: var(--text_m);
-    margin: var(--distance_s) auto auto auto;
+    margin: var(--space_s) auto auto auto;
     color: var(--primary);
     background-color: var(--bold_tertiary);
     border-radius: 0.125rem;
@@ -103,13 +98,12 @@ nav {
 
 #open-features {
     font-size: var(--icon_l);
-    margin-top: var(--distance_s);
+    margin-top: var(--space_s);
 }
 
 #feature-settings {
     visibility: hidden;
     width: 0.1rem;
-    grid-row: 1/3;
 }
 
 .settings-open {
@@ -124,7 +118,7 @@ header {
     top: 0;
     display: flex;
     grid-flow: row wrap;
-    margin: 0 var(--distance_s);
+    margin: 0 var(--space_s);
     background-color: var(--primary);
 }
 
@@ -140,9 +134,16 @@ header div {
 main {
     display: flex;
     flex-flow: row wrap;
+    flex: 1;
+    overflow-y: hidden;
 }
 
-.calendar {flex: 1;}
+.calendar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 
 .day-view-visible {
     flex: 0 1 30%;
@@ -153,28 +154,36 @@ main {
 .calender-days-titles {
     z-index: 4;
     position: sticky;
-    top: var(--distance_xl);
     align-self: flex-start;
-    grid-column: 1/3;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin: var(--distance_s) var(--distance_s) 0 var(--distance_s);
+    margin: var(--space_s) var(--space_s) 0 var(--space_s);
     background-color: var(--primary);
+    align-self: stretch;
 }
 
 /* The Calendar Grid */
 #calender-grid {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin: 0 var(--distance_s);
+    display: grid;
+    grid-auto-rows: 20%;
+    grid-template-rows: repeat(5, 20%);
+    overflow: scroll;
+    height: 100%;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#calender-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .week {
     flex: 1;
     display: grid;
+    margin: 0 var(--space_s);
     grid-template-columns: repeat(7, 1fr);
-    grid-auto-rows: 4.5rem;
     font-weight: 800;
     font-size: var(--text_m);
 }
@@ -190,7 +199,7 @@ main {
     overflow: hidden;
 
     font-size: var(--text_xs);
-    padding: 0 var(--distance_s);
+    padding: 0 var(--space_s);
     border: 0.1rem solid var(--surface);
 
     overflow-y: auto;
@@ -232,21 +241,22 @@ main {
     display: none;
     font-weight: 800;
     font-size: var(--text_m);
-    padding-right: var(--distance_xs);
+    padding-right: var(--space_xs);
 }
 
-/* Dates Navigation */
+/* Months Navigation */
 #months-navigation {
     display: flex;
     flex-flow: column;
-    width: var(--distance_xl);
-    margin: 0 var(--distance_s);
+    width: var(--space_xl);
+    margin: 0 var(--space_s);
+    align-items: center;
 }
 
 #months-navigation * {
     text-align: center;
     text-transform: uppercase;
-    margin-top: var(--distance_s);
+    margin-top: var(--space_s);
 }
 
 #pre-month-title,
@@ -262,7 +272,25 @@ main {
 .sticky {
     z-index: 4;
     position: sticky;
-    top: var(--distance_xl);
+}
+
+#month0 {
+    font-size: var(--text_m);
+    font-weight: 800;
+}
+
+#month-1,
+#month1 {
+    font-size: var(--text_s);
+    opacity: 0.8;
+}
+
+#month-2,
+#month2,
+#month-2 + ion-icon,
+#month1 + ion-icon {
+    font-size: var(--text_xs);
+    opacity: 0.6;
 }
 
 /* Events - Rotation*/
@@ -292,7 +320,7 @@ main {
 .daily {
     font-weight: 700;
     border-radius: 0.25rem;
-    padding: 0 var(--distance_s);
+    padding: 0 var(--space_s);
 }
 
 /* Titles */
@@ -303,8 +331,8 @@ main {
 
 .title {
     font-weight: 800;
-    font-size: var(--text_xl);
-    margin-bottom: calc(var(--distance_s) * -1);
+    font-size: var(--text_xxl);
+    margin-bottom: calc(var(--space_s) * -1);
 }
 
 .sec-title {
@@ -337,11 +365,14 @@ main {
 
 .background-yellow {background-color: var(--bold_primary);}
 
+.background-green {background-color: var(--bold_tertiary);}
+
 /* Buttons */
 
 .button {
     border-radius: 0.15rem;
     font-size: var(--text_s);
+    font-weight: 800;
     padding: 0.15rem 0.25rem;
 }
 

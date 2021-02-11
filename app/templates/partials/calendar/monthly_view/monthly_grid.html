@@ -1,6 +1,3 @@
-{% extends 'calendar/layout.html' %}
-
-{% block main %}
 <div class="calendar">
     <div class="calender-days-titles">
         {% for d in week_days %}
@@ -12,20 +9,25 @@
         {% endfor %}
     </div>
     <div id="calender-grid">
-        {% include 'calendar/add_week.html' %}
+        {% include 'partials/calendar/monthly_view/add_week.html' %}
     </div>
 </div>
 <div>
     <div class="sticky">
         <div id="months-navigation">
-            <a href="#" class="button background-red text-lightgray"> TODAY </a>
-            <a href="" id="pre-month-title"></a>
+            <a href="#{{weeks_block[0].days[0].set_id()}}" class="button background-yellow text-darkblue">
+                TODAY
+            </a>
+            <a id="month-2"></a>
             <ion-icon name="caret-up-outline"></ion-icon>
-            <a href="" id="current-month-title"></a>
+            <a id="month-1"></a>
+            <ion-icon name="caret-up-outline"></ion-icon>
+            <a id="month0"></a>
             <ion-icon name="caret-down-outline"></ion-icon>
-            <a href="" id="aft-month-title"></a>
+            <a id="month1"></a>
+            <ion-icon name="caret-down-outline"></ion-icon>
+            <a id="month2"></a>
         </div>
     </div>
 </div>
 <div id="day-view"></div>
-{% endblock %}
