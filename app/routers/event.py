@@ -56,7 +56,6 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     user = user if user else create_user(username="u",
                                          password="p",
                                          email="e@mail.com",
-                                         language="",
                                          language_id=1,
                                          session=session)
     owner_id = user.id

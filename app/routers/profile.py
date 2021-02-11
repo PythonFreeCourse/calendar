@@ -28,10 +28,9 @@ def get_placeholder_user():
         email='my@email.po',
         password='1a2s3d4f5g6',
         full_name='My Name',
+        is_active_exercise=False,
         language_id=1,
         telegram_id='',
-        is_active_exercise=False,
-        language='english',
     )
 
 
