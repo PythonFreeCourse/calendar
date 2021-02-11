@@ -1,11 +1,11 @@
-from app.internal.utils import save
-from sqlalchemy.orm.session import Session
 from datetime import datetime, time, timedelta
 from typing import Dict, Iterator, Optional, Tuple
 
-from app.database.models import Event, SalarySettings
-from app.routers.salary import config
+from sqlalchemy.orm.session import Session
 
+from app.database.models import Event, SalarySettings
+from app.internal.utils import save
+from app.routers.salary import config
 
 DEFAULT_SETTINGS = SalarySettings(
     wage=config.MINIMUM_WAGE,
@@ -86,8 +86,8 @@ def is_night_shift(start: datetime, end: datetime,
 
 
 def get_relevant_holiday_times(
-    start: datetime, end: datetime, wage: SalarySettings
-        ) -> Tuple[datetime, datetime]:
+        start: datetime, end: datetime, wage: SalarySettings
+) -> Tuple[datetime, datetime]:
     """Returns start and end of holiday times that synchronize with the given
     times, based on the the supplied salary settings.
 
@@ -127,9 +127,9 @@ def get_relevant_holiday_times(
 
 
 def get_total_synchronous_hours(
-    event_1_start: datetime, event_1_end: datetime,
-    event_2_start: datetime, event_2_end: datetime
-        ) -> float:
+        event_1_start: datetime, event_1_end: datetime,
+        event_2_start: datetime, event_2_end: datetime
+) -> float:
     """Returns the total amount of hours that are shared between both events.
 
     Args:
@@ -366,9 +366,9 @@ def get_relevant_weeks(year: int,
 
 
 def get_monthly_overtime(
-    shifts: Tuple[Event, ...],
-    weeks: Iterator[Tuple[datetime, datetime]],
-    wage: SalarySettings
+        shifts: Tuple[Event, ...],
+        weeks: Iterator[Tuple[datetime, datetime]],
+        wage: SalarySettings
 ) -> float:
     """Returns the sum of all weekly overtime for the supplied shifts based on
     the provided weeks.
@@ -412,9 +412,9 @@ def calc_transport(shifts_amount: int, daily_transport: float) -> float:
 
 
 def calc_salary(
-    year: int, month: int, wage: SalarySettings, overtime: bool,
-    bonus: config.NUMERIC = 0, deduction: config.NUMERIC = 0,
-        ) -> Dict[str, config.NUMERIC]:
+        year: int, month: int, wage: SalarySettings, overtime: bool,
+        bonus: config.NUMERIC = 0, deduction: config.NUMERIC = 0,
+) -> Dict[str, config.NUMERIC]:
     """Returns all details and calculation for the given year and month based
     on the provided settings, including specified additions or deductions.
 
@@ -450,7 +450,7 @@ def calc_salary(
         month_weekly_overtime = 0
     transport = calc_transport(len(shifts), wage.daily_transport)
     salary = round(sum((base_salary, bonus,
-                       month_weekly_overtime, transport)), 2)
+                        month_weekly_overtime, transport)), 2)
     if deduction > salary:
         deduction = salary
     salary -= deduction
@@ -464,7 +464,7 @@ def calc_salary(
         'bonus': bonus,
         'deduction': deduction,
         'salary': round(salary, 2),
-        }
+    }
 
 
 def get_settings(session: Session, user_id: int,

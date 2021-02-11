@@ -13,9 +13,10 @@ from starlette.responses import RedirectResponse
 from app.database.models import Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
-  get_invited_emails, get_uninvited_regular_emails,
-  raise_if_zoom_link_invalid,
+    get_invited_emails, get_messages, get_uninvited_regular_emails,
+    raise_if_zoom_link_invalid,
 )
+from app.internal.emotion import get_emotion
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
@@ -100,11 +101,11 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     event = create_event(session, title, start, end, owner_id, content,
                          location, invited_emails, category_id=category_id)
-    message = ''
-    if uninvited_contacts:
-        message = f'Forgot to invite {", ".join(uninvited_contacts)} maybe?'
+
+    messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            + f'?{message}', status_code=status.HTTP_302_FOUND)
+                            + f'messages={"---".join(messages)}',
+                            status_code=status.HTTP_302_FOUND)
 
 
 @router.get("/{event_id}", include_in_schema=False)
@@ -114,12 +115,12 @@ async def eventview(request: Request, event_id: int,
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
-    message = request.query_params.get('message', '')
+    messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
                                        "end_format": end_format,
-                                       "message": message})
+                                       "messages": messages})
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -239,6 +240,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
+        emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         category_id=category_id,
     )
