@@ -1,26 +1,21 @@
 import io
-import re
 
-from datetime import datetime, timedelta
 from loguru import logger
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
-from typing import List, Match
 
 from app import config
-from app.database.models import User, Event, UserEvent
+from app.database.models import User
 from app.dependencies import get_db, MEDIA_PATH, templates
 from app.internal.on_this_day_events import get_on_this_day_events
+from app.internal.import_holidays import get_holidays_from_file, \
+    save_holidays_to_db
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
-REGEX_EXTRACT_HOLIDAYS = re.compile(
-    r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
-    re.MULTILINE)
 
 router = APIRouter(
     prefix="/profile",
@@ -182,57 +177,3 @@ async def update_holidays(
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-
-
-def get_holidays_from_file(file: List[Event], session: Session) -> List[Event]:
-    """
-    This function using regex to extract holiday title
-    and date from standrd ics file
-    :param file:standard ics file
-    :param session:current connection
-    :return:list of holidays events
-    """
-    parsed_holidays = REGEX_EXTRACT_HOLIDAYS.finditer(file)
-    holidays = []
-    for holiday in parsed_holidays:
-        holiday_event = create_holiday_event(
-            holiday, session.query(User).filter_by(id=1).first().id)
-        holidays.append(holiday_event)
-    return holidays
-
-
-def create_holiday_event(holiday: Match[str], owner_id: int) -> Event:
-    valid_ascii_chars_range = 128
-    title = holiday.groupdict()['title'].strip()
-    title_to_save = ''.join(i if ord(i) < valid_ascii_chars_range
-                            else '' for i in title)
-    date = holiday.groupdict()['date'].strip()
-    format_string = '%Y%m%d'
-    holiday = Event(
-        title=title_to_save,
-        start=datetime.strptime(date, format_string),
-        end=datetime.strptime(date, format_string) + timedelta(days=1),
-        content='holiday',
-        owner_id=owner_id
-    )
-    return holiday
-
-
-def save_holidays_to_db(holidays: List[Event], session: Session):
-    """
-    this function saves holiday list into database.
-    :param holidays: list of holidays events
-    :param session: current connection
-    """
-    session.add_all(holidays)
-    session.commit()
-    session.flush(holidays)
-    userevents = []
-    for holiday in holidays:
-        userevent = UserEvent(
-            user_id=holiday.owner_id,
-            event_id=holiday.id
-        )
-        userevents.append(userevent)
-    session.add_all(userevents)
-    session.commit()
