@@ -23,7 +23,6 @@ def test_can_show_calendar_private(session, user):
         username='new_test_username2',
         email='new_test.email2@gmail.com',
         password='passpar_2',
-        language='english',
         language_id=1
     )
     current_user = user
