@@ -4,7 +4,8 @@ import pytest
 from app.routers.user import (
     create_user, disable_user, does_user_exist, enable_user, get_users
 )
-from app.database.models import User, UserEvent, Event
+from app.internal.utils import save
+from app.database.models import UserEvent, Event
 from app.routers.event import create_event
 
 # -----------------------------------------------------
@@ -13,14 +14,75 @@ from app.routers.event import create_event
 
 
 @pytest.fixture
-def new_user(session):
+def user1(session):
+    # a user made for testing who doesn't own any event.
     user = create_user(
         session=session,
         username='new_test_username',
         password='new_test_password',
-        email='new_test.email@gmail.com',
+        email='new2_test.email@gmail.com',
         language_id='english'
     )
+
+    return user
+
+
+@pytest.fixture
+def user2(session):
+    # a user made for testing who already owns an event.
+    user = create_user(
+        session=session,
+        username='new_test_username2',
+        password='new_test_password2',
+        email='new_test_love231.email@gmail.com',
+        language_id='english'
+    )
+
+    data = {
+        'title': 'user2 event',
+        'start': datetime.strptime('2021-05-05 14:59', '%Y-%m-%d %H:%M'),
+        'end': datetime.strptime('2021-05-05 15:01', '%Y-%m-%d %H:%M'),
+        'location': 'https://us02web.zoom.us/j/875384596',
+        'content': 'content',
+        'owner_id': user.id,
+    }
+
+    create_event(session, **data)
+
+    return user
+
+
+@pytest.fixture
+def event1(session, user2):
+    data = {
+        'title': 'test event title',
+        'start': datetime.strptime('2021-05-05 14:59', '%Y-%m-%d %H:%M'),
+        'end': datetime.strptime('2021-05-05 15:01', '%Y-%m-%d %H:%M'),
+        'location': 'https://us02web.zoom.us/j/87538459r6',
+        'content': 'content',
+        'owner_id': user2.id,
+    }
+
+    event = create_event(session, **data)
+    return event
+
+
+@pytest.fixture
+def user3(session, event1):
+    # a user made for testing who participates an event.
+    user = create_user(
+        session=session,
+        username='my_new_test_username2',
+        password='new_test_password2e',
+        email='new_t23est_love.email@gmail.com',
+        language_id='english'
+    )
+
+    association = UserEvent(
+        user_id=user.id,
+        event_id=event1.id
+    )
+    save(association, session)
 
     return user
 
@@ -30,45 +92,40 @@ def new_user(session):
 # -----------------------------------------------------
 
 
-def test_disabling_user(new_user, session):
-    """makes sure user is disabled
-    and doesn't have any future events when disabled.
-    also - makes sure that after a user is disabled,
-    he can be easily enabled"""
-    if disable_user(session, new_user.id):
-        testing1 = session.query(User).get(new_user.id)
-        assert testing1.disabled
-        future_events = list(session.query(Event.id).join(UserEvent)
-                             .filter(
-                                 UserEvent.user_id == new_user.id,
-                                 Event.start > datetime.now()
-                                 ))
-        assert len(future_events) == 0
-        enable_user(session, new_user.id)
-        assert not new_user.disabled
-        # making sure that after disabling the user he can be easily enabled.
-    else:
-        user_owned_events = session.query(Event).join().filter(
-            Event.start > datetime.now(), Event.owner_id == new_user.id
-            )
-        assert len(user_owned_events) > 0
+def test_disabling_no_event_user(session, user1):
+    # users without any future event can disable themselves
+    disable_user(session, user1.id)
+    assert user1.disabled
+    future_events = list(session.query(Event.id).join(UserEvent)
+                         .filter(
+                             UserEvent.user_id == user1.id,
+                             Event.start > datetime.now()
+                             ))
+    assert not future_events
+    enable_user(session, user1.id)
+    assert not user1.disabled
+    # making sure that after disabling the user he can be easily enabled.
 
 
-def test_disabling_event_owning_user(new_user, session):
-    # this test assures that an event-owning user can't disable itself.
-    data = {
-        'title': 'test title',
-        'start': datetime.strptime('2021-01-01 15:59', '%Y-%m-%d %H:%M'),
-        'end': datetime.strptime('2021-01-02 15:01', '%Y-%m-%d %H:%M'),
-        'location': 'https://us02web.zoom.us/j/875384596',
-        'content': 'content',
-        'owner_id': new_user.id,
-    }
+def test_disabling_user_participating_event(session, user3):
+    """making sure only users who only participate in events
+    can disable and enable themselves."""
+    disable_user(session, user3.id)
+    assert user3.disabled
+    future_events = list(session.query(Event.id).join(UserEvent)
+                         .filter(
+                             UserEvent.user_id == user3.id,
+                             Event.start > datetime.now()
+                             ))
+    assert len(future_events) == 0
+    enable_user(session, user3.id)
+    assert not user3.disabled
 
-    create_event(session, **data)
-    assert not disable_user(session, new_user.id)
-    # making sure disabling user fails when it has events
-    assert not new_user.disabled
+
+def test_disabling_event_owning_user(session, user2):
+    # making sure user owning events can't disable itself
+    disable_user(session, user2.id)
+    assert not user2.disabled
 
 
 class TestUser:
