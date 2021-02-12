@@ -305,10 +305,8 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 
 
 def add_user_to_event(session: Session, user_id: int, event_id: int):
-    print(f'inside adding func: event {event_id} user {user_id}')
     user_already_connected = session.query(UserEvent)\
         .filter_by(event_id=event_id, user_id=user_id).all()
-    print(user_already_connected)
     if not user_already_connected:
         """ if user is not registered to the event, the system will add him"""
         association = UserEvent(

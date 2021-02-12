@@ -134,12 +134,11 @@ def new_user(session):
 def test_joining_public_event(session, new_event, new_user):
     """test in order to make sure user is added the first time
     he asks to join event, yet won't join the same user twice"""
-    print(f"user {new_user.id} event {new_event.id}")
     first_join = add_user_to_event(
-        session, event_id=2, user_id=1)
+        session, event_id=new_event.id, user_id=new_user.id)
     assert first_join
     second_join = add_user_to_event(
-        session, event_id=2, user_id=1)
+        session, event_id=new_event.id, user_id=new_user.id)
     assert not second_join
 
 
