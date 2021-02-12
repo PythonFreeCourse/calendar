@@ -9,7 +9,7 @@ from sqlalchemy.orm.session import Session
 
 from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
                         CALENDAR_SITE_NAME, email_conf, templates)
-from app.database.models import Event, User, UserEvent
+from app.database.models import Event, User
 
 mail = FastMail(email_conf)
 
