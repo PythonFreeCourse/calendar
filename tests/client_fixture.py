@@ -74,14 +74,14 @@ def profile_test_client() -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def weekly_tasks_test_client():
     Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[weekly_tasks.get_db] = get_test_db
-    app.dependency_overrides[
+    main.app.dependency_overrides[weekly_tasks.get_db] = get_test_db
+    main.app.dependency_overrides[
         weekly_tasks.get_placeholder_user] = get_test_placeholder_user
 
-    with TestClient(app) as client:
+    with TestClient(main.app) as client:
         yield client
 
-    app.dependency_overrides = {}
+    main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
 
 
