@@ -55,3 +55,21 @@ def test_read_note_incorrect_id(notes_test_client: TestClient, monkeypatch):
     response = notes_test_client.get("/notes/999")
     assert response.status_code == 404
     assert response.json()["detail"] == "Note not found"
+
+
+def test_read_all_notes(notes_test_client: TestClient, monkeypatch):
+    test_data = [
+        {"id": 1, "title": "something",
+            "description": "something else", "timestamp": None},
+        {"id": 2, "title": "someone",
+         "description": "someone else", "timestamp": None},
+    ]
+
+    async def mock_get_all(session):
+        return test_data
+
+    monkeypatch.setattr(notes, "get_all", mock_get_all)
+
+    response = notes_test_client.get("/notes/")
+    assert response.status_code == 200
+    assert response.json() == test_data

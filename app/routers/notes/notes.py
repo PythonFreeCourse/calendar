@@ -1,10 +1,11 @@
-from fastapi.param_functions import Depends
-from sqlalchemy.orm import Session
 from app.database.schemas import NoteDB, NoteSchema
 from app.dependencies import get_db
 from app.internal.notes import notes
 from fastapi import APIRouter
 from fastapi import HTTPException
+from fastapi.param_functions import Depends
+from sqlalchemy.orm import Session
+from typing import List
 
 
 router = APIRouter(
@@ -27,9 +28,9 @@ async def create_note(payload: NoteSchema, session: Session = Depends(get_db)):
     return response_object
 
 
-# @router.get("/")
-# async def get_all_notes():
-#     return fake_notes_db
+@router.get("/", response_model=List[NoteDB])
+async def read_all_notes(session: Session = Depends(get_db)):
+    return await notes.get_all(session)
 
 
 @router.get("/{id}/", response_model=NoteSchema)
