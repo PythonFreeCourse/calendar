@@ -22,6 +22,10 @@
   font-size: small;
 }
 
+.event-title {
+  text-decoration: none;
+}
+
 /** Event availability */
 .busy {
   background-color: rgb(96, 155, 235)
