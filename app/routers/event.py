@@ -106,7 +106,8 @@ async def changeowner(request: Request, event_id: int,
     user_id = db.query(User).filter_by(username=username).first().id
     owner_to_update = {'owner_id': user_id}
     _update_event(db, event_id, owner_to_update)
-    return RedirectResponse(router.url_path_for('eventview', event_id=event_id),
+    return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event_id),
                             status_code=status.HTTP_302_FOUND)
 
 
