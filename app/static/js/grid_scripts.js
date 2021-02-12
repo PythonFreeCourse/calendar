@@ -24,7 +24,7 @@ function isMonthLoaded(monthId) {
 document.addEventListener(
     'DOMContentLoaded', function () {
         const allDays = document.getElementsByClassName('day');
-        setToggle("day", "day-view", "day-view-visible", 0, 42);
+        setToggle("day", "day-view", "day-view-visible", 0, allDays.length);
         weekScroll();
     }
 )
@@ -59,6 +59,7 @@ function loadWeekBefore(day, daysToLoad) {
         document.getElementById("calender-grid").insertAdjacentHTML('afterbegin', html);
         const allDays = document.getElementsByClassName('day');
         setToggle("day", "day-view", "day-view-visible", 0, daysToLoad);
+        jump(day);
     });
 }
 
@@ -72,6 +73,7 @@ function callLoadWeek(daysToLoad = 42, end = true) {
         day = dateToId(getDateInNDays(allDays[0].id, daysToLoad * -1))
         loadWeekBefore(day, daysToLoad);
     }
+    setMonthNav();
 }
 
 function weekScroll() {
@@ -85,6 +87,12 @@ function weekScroll() {
             callLoadWeek();
         }
     )
+    grid.addEventListener('wheel', function () {
+        if (this.scrollTop === 0) {
+            callLoadWeek(42, end = false);
+        }
+        setMonthNav();
+    })
 }
 
 

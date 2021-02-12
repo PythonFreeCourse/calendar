@@ -1,7 +1,8 @@
 function OnlyOnScreen(elements) {
+    const grid = document.getElementById("calender-grid");
     for (let i = 0; i < elements.length; ++i) {
         elementRect = elements[i].getBoundingClientRect();
-        if (elementRect.y > 0 && elementRect.y < 300) {
+        if (elementRect.y > 0) {
             return elements[i];
         }
     }
@@ -107,7 +108,3 @@ document.addEventListener(
         setMonthNavClick();
     }
 )
-
-window.addEventListener('wheel', function () {
-    setMonthNav();
-})

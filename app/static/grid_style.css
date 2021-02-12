@@ -170,7 +170,7 @@ main {
   display: grid;
   grid-auto-rows: 20%;
   grid-template-rows: repeat(5, 20%);
-  overflow: scroll;
+  overflow-y: scroll;
   height: 100%;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
