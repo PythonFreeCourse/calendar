@@ -1,7 +1,8 @@
-from functools import lru_cache
 import os
+from functools import lru_cache
 
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
 from app import config
 from app.database import SessionLocal
@@ -24,7 +25,7 @@ logger = LoggerCustomizer.make_logger(config.LOG_PATH,
                                       config.LOG_FORMAT)
 
 
-def get_db():
+def get_db() -> Session:
     db = SessionLocal()
     try:
         yield db

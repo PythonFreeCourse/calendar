@@ -15,6 +15,7 @@ from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
 )
+from app.internal.emotion import get_emotion
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
@@ -24,9 +25,10 @@ UPDATE_EVENTS_FIELDS = {
     'title': str,
     'start': dt,
     'end': dt,
+    'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
-    'category_id': (int, type(None))
+    'category_id': (int, type(None)),
 }
 
 router = APIRouter(
@@ -49,16 +51,15 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     content = data['description']
     start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
                         TIME_FORMAT)
-    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
-                      TIME_FORMAT)
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'], TIME_FORMAT)
     user = session.query(User).filter_by(id=1).first()
     user = user if user else create_user(username="u",
                                          password="p",
                                          email="e@mail.com",
-                                         language="",
                                          language_id=1,
                                          session=session)
     owner_id = user.id
+    availability = data.get('availability', 'True') == 'True'
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
@@ -74,7 +75,8 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     event = create_event(db=session, title=title, start=start, end=end,
                          owner_id=owner_id, content=content,
                          location=location, invitees=invited_emails,
-                         category_id=category_id)
+                         category_id=category_id,
+                         availability=availability)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -165,7 +167,11 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
                                         ) -> Dict[str, Any]:
     """Remove all keys that are not allowed to update"""
 
-    return {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+    edit_event = {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
+    # Convert `availability` value into boolean.
+    if 'availability' in edit_event.keys():
+        edit_event['availability'] = (edit_event['availability'] == 'True')
+    return edit_event
 
 
 def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
@@ -202,7 +208,8 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  location: str = None,
                  category_id: int = None,
                  invitees: List[str] = None,
-                 is_google_event: bool = False
+                 is_google_event: bool = False,
+                 availability: bool = True
                  ):
     """Creates an event and an association."""
 
@@ -216,14 +223,16 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
+        emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         category_id=category_id,
+        availability=availability,
         is_google_event=is_google_event
     )
     create_model(
         db, UserEvent,
         user_id=owner_id,
-        event_id=event.id
+        event_id=event.id,
     )
     return event
 
@@ -263,8 +272,7 @@ def _delete_event(db: Session, event: Event):
 
 
 @router.delete("/{event_id}")
-def delete_event(event_id: int,
-                 db: Session = Depends(get_db)):
+def delete_event(event_id: int, db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
