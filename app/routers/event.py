@@ -313,7 +313,7 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 
 
 def get_tamplate_to_share_event(event_id: int, user_name: str,
-                                db: Session, request: Request) -> TemplateResponse:
+                                db: Session, request: Request) -> templates:
     """Give yoe nice tamplate of the event that you can share.
     Get event id and the user name that want to send the share message,
     Also needed to give db session and request method (mostly 'get')
@@ -321,11 +321,11 @@ def get_tamplate_to_share_event(event_id: int, user_name: str,
 
     event = by_id(db, event_id)
     html_temp = templates.TemplateResponse("event/share_event.html",
-                                      {"request": request,
-                                        "sender_name": user_name,
-                                        "title": event.title,
-                                        "start_date": event.start,
-                                        "end_date": event.end,
-                                        "location": event.location,
-                                        "vc_link": event.vc_link})
+                                            {"request": request,
+                                            "sender_name": user_name,
+                                            "title": event.title,
+                                            "start_date": event.start,
+                                            "end_date": event.end,
+                                            "location": event.location,
+                                            "vc_link": event.vc_link})
     return html_temp
