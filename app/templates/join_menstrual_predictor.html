@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h3>Please fill in your details</h3>
+        <form method="post">
+            <div class="row">
+                <label for="avg_period_length" class="col-sm-2 col-form-label">Average period length</label>
+                <div class="col-auto">
+                    <!-- 
+                        if form re-renders after validation fails, displays user's last field input
+                     -->
+                    {% if errors %}
+                        <input type="number" class="form-control" name="avg_period_length" id="avg_period_length" value="{{ form_values['avg_period_length'] }}" autofocus><br>
+                    {% else %}
+                        <input type="number" class="form-control" name="avg_period_length" id="avg_period_length"  placeholder="Required" autofocus><br>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <span id="UsernameHelpInline" class="form-text">
+                        Must be between 3 to 20 characters.
+                    </span>
+                </div>
+                <!-- 
+                    if field did not pass validation, prints validation errors for field
+                 -->
+                {% if errors and "username" in errors %}
+                    <small class="error-message">{{ errors['username'] }}</small><br>
+                {% endif %}
+            </div>
+            <div class="row">
+                <label for="last_period_date" class="col-sm-2 col-form-label">Last period date</label>
+                <div class="col-auto">
+                    {% if errors %}
+                        <input type="date" class="form-control" name="last_period_date" id="last_period_date" value="{{ form_values['last_period_date'] }}"><br>
+                    {% else %}
+                        <input type="date" class="form-control" name="last_period_date" id="last_period_date" placeholder="Required"><br>
+                    {% endif %}
+                </div>
+                {% if errors and "full_name" in errors %}
+                    <small class="error-message">{{ errors["full_name"] }}</small><br>
+                {% endif %}
+            </div>
+          
+            <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
+        </form>
+    </div>
+{% endblock %}
