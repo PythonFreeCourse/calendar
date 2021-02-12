@@ -4,14 +4,14 @@ from starlette.status import HTTP_302_FOUND
 from app.routers.notification import get_all_invitations, get_invitation_by_id, router
 
 
-class TestInvitations:
-    NO_INVITATIONS = b"You don't have any invitations."
+class TestNotification:
+    NO_NOTIFICATIONS = b"You don't have any new notifications."
 
-    def test_view_no_invitations(self, notification_test_client):
+    def test_view_no_notifications(self, notification_test_client):
         url = router.url_path_for('view_notifications')
         resp = notification_test_client.get(url)
         assert resp.ok
-        assert self.NO_INVITATIONS in resp.content
+        assert self.NO_NOTIFICATIONS in resp.content
 
     def test_accept_invitations(
             self, user, invitation,

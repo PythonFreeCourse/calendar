@@ -9,17 +9,17 @@ from app.database.database import Base
 
 
 pytest_plugins = [
-    'tests.user_fixture',
-    'tests.event_fixture',
-    'tests.invitation_fixture',
-    'tests.association_fixture',
-    'tests.client_fixture',
-    'tests.asyncio_fixture',
-    'tests.logger_fixture',
-    'tests.category_fixture',
+    'tests.fixtures.user_fixture',
+    'tests.fixtures.event_fixture',
+    'tests.fixtures.invitation_fixture',
+    'tests.fixtures.association_fixture',
+    'tests.fixtures.client_fixture',
+    'tests.fixtures.asyncio_fixture',
+    'tests.fixtures.logger_fixture',
+    'tests.fixtures.category_fixture',
+    'tests.fixtures.quotes_fixture',
+    'tests.fixtures.zodiac_fixture',
     'smtpdfix',
-    'tests.quotes_fixture',
-    'tests.zodiac_fixture'
 ]
 
 # When testing in a PostgreSQL environment please make sure that:
