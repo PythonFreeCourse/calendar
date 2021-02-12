@@ -268,30 +268,28 @@
                 </div>
                 {% endfor %}
             </div>
-
-        </div>
-    </div>
-</div>
-</div>
-
-<!-- Right side -->
-
-<div class="col-4">
-
-    <!-- Meetups -->
-    <div class="card card-profile mb-3" style="height: 18em;">
-        <div class="card-body">
-            <p class="card-title">
-                {{ gettext("Explore MeetUps near you") }}
-            </p>
         </div>
 
-        <!-- Card -->
-        <div class="card card-profile mb-3" style="height: 18em;">
-            <div class="card-body">
-                <p class="card-title">
-                    {{ gettext("Your Card") }}
-                </p>
+        <!-- Right side -->
+
+        <div class="col-4">
+
+            <!-- Meetups -->
+            <div class="card card-profile mb-3" style="height: 18em;">
+                <div class="card-body">
+                    <p class="card-title">
+                        {{ gettext("Explore MeetUps near you") }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div class="card card-profile mb-3" style="height: 18em;">
+                <div class="card-body">
+                    <p class="card-title">
+                        {{ gettext("Your Card") }}
+                    </p>
+                </div>
             </div>
 
 
@@ -301,14 +299,16 @@
                     <p class="card-title">
                         Your Card
                     </p>
-                    <!-- Card -->
-                    <div class="card card-profile mb-3" style="height: 18em;">
-                        <div class="card-body">
-                            {% include "on_this_day.html" %}
-                        </div>
-                    </div>
+                </div>
+            </div>
+            <!-- Card -->
+            <div class="card card-profile mb-3" style="height: 18em;">
+                <div class="card-body">
+                    {% include "on_this_day.html" %}
                 </div>
             </div>
         </div>
     </div>
-    {% include "event/partials/text_editor_partial_body.html" %} {% endblock %}
+</div>
+
+{% include "event/partials/text_editor_partial_body.html" %} {% endblock %}

@@ -96,6 +96,18 @@ async def eventview(request: Request, event_id: int,
                                        "message": message})
 
 
+@router.post("/{event_id}")
+async def changeowner(request: Request, event_id: int,
+                      db: Session = Depends(get_db)):
+    data = await request.form()
+    username = data['username']
+    user_id = db.query(User).filter_by(username=username).first().id
+    owner_to_update = {'owner_id': user_id}
+    _update_event(db, event_id, owner_to_update)
+    return RedirectResponse(router.url_path_for('eventview', event_id=event_id),
+                            status_code=status.HTTP_302_FOUND)
+
+
 def by_id(db: Session, event_id: int) -> Event:
     """Get a single event by id"""
     if not isinstance(db, Session):
@@ -273,7 +285,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
