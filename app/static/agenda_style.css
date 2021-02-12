@@ -1,22 +1,14 @@
-/* .agenda_filters {
+.exact_date {
   display: flex;
 }
-
-.filter {
-  margin-right: 1em;
-} */
 
 #dates {
   text-align: center;
 }
 
-.shown_dates {
-  padding: 1em;
-}
-
 .event_line {
-  width: 50%;
-  margin-left: 3em;
+  width: 80%;
+  margin-left: 2em;
   margin-bottom: 0.5em;
   border: 1px solid black;
   padding: 0.2em;
@@ -28,22 +20,6 @@
 
 .duration {
   font-size: small;
-}
-
-/* .exact_date {
-  display: flex;
-} */
-
-/* .agenda_button {
-  border: 1px solid black;
-  margin: 1em;
-} */
-
-@media only screen and (max-width: 768px) {
-  .event_line {
-    width: 100%;
-    margin: 1em;
-  }
 }
 
 /** Event availability */
