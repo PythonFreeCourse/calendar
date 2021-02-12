@@ -7,9 +7,8 @@ from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
-from app.database.database import get_db
 from app.database.models import User, WeeklyTask
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.internal.weekly_tasks import (
     remove_weekly_task, weekly_task_from_input,
     create_weekly_task, change_weekly_task)

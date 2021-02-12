@@ -2,8 +2,8 @@ from datetime import date, datetime, time
 from typing import Iterator
 from fastapi import Depends
 
-from app.database.database import get_db
 from app.database.models import User, Task, WeeklyTask
+from app.dependencies import get_db
 from sqlalchemy.orm.session import Session
 
 
