@@ -80,13 +80,14 @@ def disable_user(session: Session, user_id: int) -> bool:
         Event, Event.id == UserEvent.event_id
         ).filter(
         UserEvent.user_id == user_id, Event.start > datetime.now()).all()
+    # the query above finds events that user participates in the future.
     for event_connection in future_events_for_user:
         session.delete(event_connection)
     session.commit()
     return True
 
 
-def ensable_user(session: Session, user_id: int):
+def enable_user(session: Session, user_id: int):
     # this functions enables user- doesn't return anything.
 
     user_enabled = session.query(User).get(user_id)

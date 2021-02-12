@@ -25,19 +25,6 @@ def new_user(session):
     return user
 
 
-def new_user2(session):
-    # this function will be used to test interaction between users.
-    user = create_user(
-        session=session,
-        username='new_test_username',
-        password='new_test_password',
-        email='new_test.email@gmail.com',
-        language_id='english'
-    )
-
-    return user
-
-
 # -----------------------------------------------------
 # Tests
 # -----------------------------------------------------
@@ -45,7 +32,9 @@ def new_user2(session):
 
 def test_disabling_user(new_user, session):
     """makes sure user is disabled
-    and doesn't have any future events when disabled."""
+    and doesn't have any future events when disabled.
+    also - makes sure that after a user is disabled,
+    he can be easily enabled"""
     if disable_user(session, new_user.id):
         testing1 = session.query(User).get(new_user.id)
         assert testing1.disabled
@@ -55,8 +44,8 @@ def test_disabling_user(new_user, session):
                                  Event.start > datetime.now()
                                  ))
         assert len(future_events) == 0
-
-        assert enable_user(session, new_user.id)
+        enable_user(session, new_user.id)
+        assert not new_user.disabled
         # making sure that after disabling the user he can be easily enabled.
     else:
         user_owned_events = session.query(Event).join().filter(
@@ -77,7 +66,9 @@ def test_disabling_event_owning_user(new_user, session):
     }
 
     create_event(session, **data)
-    assert disable_user(session, new_user.id)
+    assert not disable_user(session, new_user.id)
+    # making sure disabling user fails when it has events
+    assert not new_user.disabled
 
 
 class TestUser:
