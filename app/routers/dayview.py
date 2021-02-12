@@ -5,12 +5,11 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import and_, or_
 
-from app.database.database import get_db
 from app.database.models import Event, User
-from app.dependencies import TEMPLATES_PATH
+from app.dependencies import get_db, TEMPLATES_PATH
+from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
-
 
 router = APIRouter()
 
@@ -100,13 +99,15 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     day_end = day + timedelta(hours=24)
     events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
-            or_(and_(Event.start >= day, Event.start < day_end),
-                and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))
+        or_(and_(Event.start >= day, Event.start < day_end),
+            and_(Event.end >= day, Event.end < day_end),
+            and_(Event.start < day_end, day_end < Event.end)))
     events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
+    zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
         "month": day.strftime("%B").upper(),
-        "day": day.day
-        })
+        "day": day.day,
+        "zodiac": zodiac_obj
+    })

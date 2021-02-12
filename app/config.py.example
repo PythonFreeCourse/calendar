@@ -27,7 +27,13 @@ MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
 
+
+# DEFAULT WEBSITE LANGUAGE
+WEBSITE_LANGUAGE = "en"
+
 # API-KEYS
+# Get a free API KEY for Astronomy feature @ www.weatherapi.com/signup.aspx
+ASTRONOMY_API_KEY = os.getenv('ASTRONOMY_API_KEY')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
 # EXPORT
@@ -62,8 +68,21 @@ VALID_FILE_EXTENSION = (".txt", ".csv", ".ics")  # Can import only these files.
 EVENT_VALID_YEARS = 20
 EVENT_HEADER_NOT_EMPTY = 1  # 1- for not empty, 0- for empty.
 EVENT_HEADER_LIMIT = 50  # Max characters for event header.
-EVENT_CONTENT_LIMIT = 500  # Max characters for event characters.
+EVENT_CONTENT_LIMIT = 500  # Max characters for event content.
 MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
+LOCATION_LIMIT = 50  # Max characters for Location.
+EVENT_DURATION_LIMIT = 2  # the max duration in days for an event.
+
+# EMOTION
+"""
+Emotion will appear if the level of significance is
+equal to or above this constraint
+"""
+LEVEL_OF_SIGNIFICANCE = 0.45
+# The weight of emotion based on the event title
+TITLE_WEIGHTS = 0.6
+# The weight of emotion based on the event content
+CONTENT_WEIGHTS = 1 - TITLE_WEIGHTS
 
 # PATHS
 STATIC_ABS_PATH = os.path.abspath("static")

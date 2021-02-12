@@ -2,16 +2,12 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-from app.config import PSQL_ENVIRONMENT
-from app.database import models
-from app.database.database import engine, get_db
-from app.dependencies import (logger, MEDIA_PATH, STATIC_PATH, templates)
-from app.internal.quotes import daily_quotes, load_quotes
-from app.routers import (
-    agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, weekly_tasks, whatsapp
-)
-from app.telegram.bot import telegram_bot
+from app import config
+from app.database import engine, models
+from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
+from app.internal import daily_quotes, json_data_loader
+from app.internal.languages import set_ui_language
+from app.routers.salary import routes as salary
 
 
 def create_tables(engine, psql_environment):
@@ -25,24 +21,35 @@ def create_tables(engine, psql_environment):
         models.Base.metadata.create_all(bind=engine)
 
 
-create_tables(engine, PSQL_ENVIRONMENT)
+create_tables(engine, config.PSQL_ENVIRONMENT)
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
-
-load_quotes.load_daily_quotes(next(get_db()))
-
 app.logger = logger
+
+# This MUST come before the app.routers imports.
+set_ui_language()
+
+from app.routers import (  # noqa: E402
+    agenda, calendar, categories, celebrity, currency, dayview,
+    email, event, invitation, profile, search, telegram, weekly_tasks, whatsapp
+)
+
+json_data_loader.load_to_db(next(get_db()))
 
 routers_to_include = [
     agenda.router,
     calendar.router,
     categories.router,
+    celebrity.router,
+    currency.router,
     dayview.router,
     email.router,
     event.router,
     invitation.router,
     profile.router,
+    salary.router,
     search.router,
     telegram.router,
     weekly_tasks.router,
@@ -51,8 +58,6 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
-
-telegram_bot.set_webhook()
 
 
 # TODO: I add the quote day to the home page
@@ -63,6 +68,5 @@ async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("home.html", {
         "request": request,
-        "message": "Hello, World!",
-        "quote": quote
+        "quote": quote,
     })
