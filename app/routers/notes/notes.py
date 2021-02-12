@@ -18,12 +18,11 @@ router = APIRouter(
 @router.post("/", response_model=NoteDB, status_code=201)
 async def create_note(payload: NoteSchema, session: Session = Depends(get_db)):
     note_id = await notes.post(session, payload)
-
     response_object = {
         "id": note_id,
         "title": payload.title,
         "description": payload.description,
-        "timestamp": payload.timestamp
+        "timestamp": payload.timestamp,
     }
     return response_object
 
@@ -40,25 +39,27 @@ async def read_note(id: int, session: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Note not found")
     return note
 
-# @router.put(
-#     "/{note_id}",
-#     tags=["custom"],
-#     responses={403: {"description": "Operation forbidden"}},
-# )
-# async def update_note(note_id: str):
-#     if note_id != "plumbus":
-#         raise HTTPException(
-#             status_code=403, detail="You can only update the item: plumbus"
-#         )
-#     return {"note_id": note_id, "name": "The great Plumbus"}
+
+@router.put("/{id}/", response_model=NoteDB)
+async def update_note(id: int, payload: NoteSchema,
+                      session: Session = Depends(get_db)):
+    note = await notes.get(session, id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    note_id = await notes.put(session, id, payload)
+    response_object = {
+        "id": note_id,
+        "title": payload.title,
+        "description": payload.description,
+        "timestamp": payload.timestamp,
+    }
+    return response_object
 
 
-# @router.delete("/{note_id}",
-#                response_model=Status,
-#                responses={404: {"description": "Item not found"}})
-# async def delete_note(note_id: str):
-#     deleted_count = await Note.filter(id=note_id).delete()
-#     if not deleted_count:
-#         raise HTTPException(
-#             status_code=404, detail=f"Note {note_id} not found")
-#     return Status(message=f"Deleted note {note_id}")
+@router.delete("/{id}/", response_model=NoteDB)
+async def delete_note(id: int, session: Session = Depends(get_db)):
+    note = await notes.get(session, id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    await notes.delete(session, id)
+    return note
