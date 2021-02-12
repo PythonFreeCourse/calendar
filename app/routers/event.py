@@ -4,8 +4,9 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.sql.elements import Null
 from starlette import status
 from starlette.responses import RedirectResponse
 
@@ -16,10 +17,17 @@ from app.internal.event import (
     raise_if_zoom_link_invalid,
 )
 from app.internal.emotion import get_emotion
+# TODO add this when the user system is merged (PR#195)
+# from app.internal.security.dependancies import (
+# current_user, CurrentUser)
 from app.internal.utils import create_model
 from app.routers.user import create_user
+from dictalchemy import asdict
+
 
 TIME_FORMAT = '%Y-%m-%d %H:%M'
+
+PRIVATE = 'Private'
 
 UPDATE_EVENTS_FIELDS = {
     'title': str,
@@ -63,6 +71,9 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     is_zoom = location_type == 'vc_url'
     location = data['location']
     category_id = data.get('category_id')
+    privacy = data['privacy']
+    if privacy not in ['Public', 'Private', 'Hidden']:
+        privacy = 'Public'
 
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
@@ -71,28 +82,90 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     if is_zoom:
         raise_if_zoom_link_invalid(location)
 
-    event = create_event(session, title, start, end, owner_id, content,
+    event = create_event(session, title, start, end, owner_id, privacy, content,
                          location, invited_emails, category_id=category_id)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            + f'messages={"---".join(messages)}',
+                            + f'?messages={"---".join(messages)}',
                             status_code=status.HTTP_302_FOUND)
+
+
+def nonexisting_event(event_id: int) -> None:
+    error_message = f"Event ID does not exist. ID: {event_id}"
+    logger.exception(error_message)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=error_message)
 
 
 @router.get("/{event_id}")
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
+    event_to_show = can_show_event(event, session)
+    if not event_to_show:
+        nonexisting_event(event.id)
     start_format = '%A, %d/%m/%Y %H:%M'
     end_format = ('%H:%M' if event.start.date() == event.end.date()
                   else start_format)
     messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event": event,
+                                      {"request": request, "event": event_to_show,
                                        "start_format": start_format,
                                        "end_format": end_format,
                                        "messages": messages})
+
+
+class PrivateEvent:
+    """Represents a private event to show a non-owner of private event"""
+    def __init__(self, start, end, owner_id) -> None:
+        self.title = PRIVATE
+        self.start = start
+        self.end = end
+        self.privacy = PRIVATE
+        self.content = PRIVATE
+        self.owner_id = owner_id
+        self.location = PRIVATE
+        self.color = Null
+        self.invitees = PRIVATE
+        self.category_id = Null
+        self.emotion = Null
+
+
+def check_event_owner(
+    event: Event,
+    session: Depends(get_db),
+    user: Optional[User]=None,
+    # TODO after user system is merged (PR#195):
+    # CurrentUser = Depends(current_user)
+) -> bool:
+    if not user:
+        user = session.query(User).filter_by(id=1).first()
+        user = user if user else create_user(username="u",
+                                            password="p",
+                                            email="e@mail.com",
+                                            language_id=1,
+                                            session=session)
+    # TODO use current_user after user system merge
+    is_owner = event.owner_id == user.id
+    return is_owner
+
+
+def can_show_event(event: Event, session: Depends(get_db), user: Optional[User]=None) -> Optional[Event]:
+    """Check the given events privacy and return
+    event/fixed event/ nothing (hidden) accordingly"""
+    if event.privacy == PRIVATE and not check_event_owner(event, session, user):
+        private_event = PrivateEvent(
+            start=event.start,
+            end=event.end,
+            owner_id=event.owner_id,
+        )
+        return private_event
+    elif event.privacy == 'Hidden' and not check_event_owner(event, session, user):
+        return    
+    elif event.privacy == 'Public' or check_event_owner(event, session, user):
+        return event
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -109,11 +182,7 @@ def by_id(db: Session, event_id: int) -> Event:
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
-        error_message = f"Event ID does not exist. ID: {event_id}"
-        logger.exception(error_message)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=error_message)
+        nonexisting_event(event_id)
     except MultipleResultsFound:
         error_message = (
             f'Multiple results found when getting event. Expected only one. '
@@ -196,6 +265,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
+                 privacy: str = 'Public',
                  content: str = None,
                  location: str = None,
                  invitees: List[str] = None,
@@ -209,6 +279,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         title=title,
         start=start,
         end=end,
+        privacy=privacy,
         content=content,
         owner_id=owner_id,
         location=location,

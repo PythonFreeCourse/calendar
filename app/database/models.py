@@ -59,6 +59,7 @@ class Event(Base):
     color = Column(String, nullable=True)
     emotion = Column(String, nullable=True)
     invitees = Column(String)
+    privacy = Column(String, default='Public', nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     color = Column(String, nullable=True)

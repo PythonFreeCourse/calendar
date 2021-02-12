@@ -4,14 +4,15 @@ from fastapi import HTTPException
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
 
 from app.database.models import Event
 from app.dependencies import get_db
 from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
-                               by_id, check_change_dates_allowed, delete_event,
-                               is_date_before, update_event)
+                               by_id, check_change_dates_allowed, delete_event, eventview,
+                               is_date_before, update_event, can_show_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -24,7 +25,7 @@ CORRECT_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public',
+    'privacy': 'Public',
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -39,7 +40,7 @@ WRONG_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public',
+    'privacy': 'Public',
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -54,7 +55,7 @@ BAD_EMAILS_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public',
+    'privacy': 'Public',
     'invited': 'a@a.com,b@b.com,ccc'
 }
 
@@ -69,7 +70,7 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public',
+    'privacy': 'Public',
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -84,7 +85,7 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public',
+    'privacy': 'Public',
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -331,6 +332,33 @@ def test_successful_deletion(event_test_client, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_can_show_event_public(event, session, sender, user):
+    assert can_show_event(event, session) == event
+    assert can_show_event(event, session, user) == event
+
+
+def test_can_show_event_hidden(event, session, sender, user):
+    event.privacy = 'Hidden'
+    assert can_show_event(event, session, user) is None
+    assert can_show_event(event, session) == event
+
+
+def test_can_show_event_private(event, session, sender, user):
+    event.privacy = 'Private'
+    private_event = can_show_event(event=event, session=session, user=user)
+    private_attributes = [
+        private_event.title, private_event.location,
+        private_event.content, private_event.invitees
+    ]
+    null_attributes = [
+        private_event.color, private_event.emotion,
+        private_event.category_id
+    ]
+    is_private_attributes = [attr == 'Private' for attr in private_attributes]
+    is_null_attributes = [attr is Null for attr in null_attributes]
+    assert all(is_private_attributes) and all(is_null_attributes)
 
 
 class TestApp:
