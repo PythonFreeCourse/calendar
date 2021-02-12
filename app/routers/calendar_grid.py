@@ -20,6 +20,7 @@ class Day:
         date    (datetime): A single datetime date.
         sday         (str): The day name.
         dailyevents (List): List of tuples represent daily event information.
+                            EX:  [("Front Info", "Back Info")]
         events      (List): List of tuples represent time event name.
                             EX: [("09AP", "Meeting with yam")]
         css         (Dict): All css classes represent day.
@@ -28,8 +29,8 @@ class Day:
     def __init__(self, date: datetime):
         self.date: datetime = date
         self.sday: str = self.date.strftime("%A")
-        self.dailyevents: List[Tuple] = [("front info", "back info")]
-        self.events: List[Tuple] = [("09AP", "Meeting with yam")]
+        self.dailyevents: List[Tuple] = []
+        self.events: List[Tuple] = []
         self.css: Dict[str, str] = {
             'day_container': 'day',
             'date': 'day-number',
