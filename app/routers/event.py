@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session, session
+from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.sql.elements import Null
 from starlette import status
@@ -105,7 +105,7 @@ def nonexisting_event(event_id: int) -> None:
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
-    event_to_show = can_show_event(event, session)
+    event_to_show = can_show_event(event, db)
     if not event_to_show:
         nonexisting_event(event.id)
     start_format = '%A, %d/%m/%Y %H:%M'
