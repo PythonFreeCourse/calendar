@@ -1,28 +1,4 @@
-import pytest
-
 from app.routers.user import create_user, does_user_exist, get_users
-
-# -----------------------------------------------------
-# Fixtures
-# -----------------------------------------------------
-
-@pytest.fixture
-def new_user(session):
-    user = create_user(
-        session=session,
-        username='new_test_username',
-        password='new_test_password',
-        email='new_test.email@gmail.com',
-        language_id='english'
-    )
-
-    return user
-
-
-
-# -----------------------------------------------------
-# Tests
-# -----------------------------------------------------
 
 
 class TestUser:

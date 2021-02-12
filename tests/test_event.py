@@ -11,9 +11,9 @@ from app.dependencies import get_db
 from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
                                by_id, check_change_dates_allowed, delete_event,
-                               create_event, is_date_before, update_event)
-from app.routers.event import add_user_to_event
-from tests.test_user import new_user
+                               is_date_before, update_event,
+                               add_user_to_event)
+from app.routers.user import create_user
 
 
 CORRECT_EVENT_FORM_DATA = {
@@ -102,10 +102,9 @@ INVALID_FIELD_UPDATE = [
 ]
 
 
-#-------------------------------------------------
+# -------------------------------------------------
 # fixtures
-#-------------------------------------------------
-
+# -------------------------------------------------
 
 
 @pytest.fixture
@@ -114,17 +113,33 @@ def new_event(session, new_user):
     return event
 
 
-#-------------------------------------------------
+@pytest.fixture
+def new_user(session):
+    user = create_user(
+        session=session,
+        username='new_test_username',
+        password='new_test_password',
+        email='new_test.email@gmail.com',
+        language_id='english'
+    )
+
+    return user
+
+
+# -------------------------------------------------
 # tests
-#-------------------------------------------------
+# -------------------------------------------------
+
 
 def test_joining_public_event(session, new_event, new_user):
-    """test in order to make sure user is added the first time he asks to join event,
-    yet won't join the same user twice"""
+    """test in order to make sure user is added the first time
+    he asks to join event, yet won't join the same user twice"""
     print(f"user {new_user.id} event {new_event.id}")
-    first_join = add_user_to_event(session,event_id=new_event.id, user_id=new_user.id)
+    first_join = add_user_to_event(
+        session, event_id=2, user_id=1)
     assert first_join
-    second_join = add_user_to_event(session,event_id=new_event.id, user_id=new_user.id)
+    second_join = add_user_to_event(
+        session, event_id=2, user_id=1)
     assert not second_join
 
 
