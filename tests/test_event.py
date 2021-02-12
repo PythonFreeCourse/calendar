@@ -24,6 +24,20 @@ CORRECT_EVENT_FORM_DATA = {
     'event_type': 'on'
 }
 
+CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public'
+}
+
 WRONG_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
@@ -68,9 +82,31 @@ def test_eventview_with_id(event_test_client, session, event):
             f'{event_detail} not in view event page'
 
 
+def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
+    event_id = all_day_event.id
+    event_details = [all_day_event.title, all_day_event.content, all_day_event.location, all_day_event.start,
+                     all_day_event.end, all_day_event.all_day, all_day_event.color, all_day_event.category_id]
+    response = event_test_client.get(f"/event/{event_id}")
+    assert response.ok
+    assert b"View Event" in response.content
+
+
 def test_eventedit_post_correct(client, user):
     """
     Test create new event successfully.
+    """
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
+def test_eventedit_post_without_event_type(client, user):
+    """
+    Test create new event successfully,
+    When the event type is not defined by the user.
     """
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)

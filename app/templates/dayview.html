@@ -18,7 +18,9 @@
                 <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Zodiac-sign: {{zodiac.name}}" target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}" alt="zodiac sign" width="14em" height="13em"></a>
             </div>
             {% endif %}
-            {% for event, attr in all_day_events %}
+        </div>
+        <div class="all_day_events">
+            {% for event in all_day_events %}
                 <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
             {% endfor %}
         </div>

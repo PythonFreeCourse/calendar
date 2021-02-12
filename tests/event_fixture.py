@@ -100,3 +100,18 @@ def old_event(sender: User, session: Session) -> Event:
         content='test event',
         owner_id=sender.id,
     )
+
+
+@pytest.fixture
+def all_day_event(sender: User, category: Category, session: Session) -> Event:
+    return create_event(
+        db=session,
+        title='event',
+        start=today_date,
+        end=today_date,
+        all_day=True,
+        content='test event',
+        owner_id=sender.id,
+        location="Some random location",
+        category_id=category.id,
+    )

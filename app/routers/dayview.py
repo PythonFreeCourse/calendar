@@ -101,23 +101,22 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     day_end = day + timedelta(hours=24)
     events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
-            Event.all_day is False).filter(
+            Event.all_day == False).filter(
                 or_(and_(Event.start >= day, Event.start < day_end),
                     and_(Event.end >= day, Event.end < day_end),
-                    and_(Event.start < day_end, day_end < Event.end)))
+                    and_(Event.start < day_end, day_end < Event.end))).all()
     all_day_events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
-            Event.all_day is True).filter(
+            Event.all_day == True).filter(
                 or_(and_(Event.start >= day, Event.start < day_end),
                     and_(Event.end >= day, Event.end < day_end),
-                    and_(Event.start < day_end, day_end < Event.end)))
+                    and_(Event.start < day_end, day_end < Event.end))).all()
     events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
-    all_day_events_n_attrs = [(event, DivAttributes(event, day)) for event in all_day_events] 
     zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
-        "all_day_events": all_day_events_n_attrs,
+        "all_day_events": all_day_events,
         "month": day.strftime("%B").upper(),
         "day": day.day,
         "zodiac": zodiac_obj

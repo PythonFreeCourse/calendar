@@ -50,8 +50,6 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     all_day = data['event_type']
     if all_day == "on":
         all_day = True
-    else:
-        all_day = False
     category_id = data.get('category_id')
 
     if is_zoom:
@@ -195,7 +193,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
-                all_day: bool,
+                all_day: bool = False,
                 content: str = None,
                 location: str = None,
                 category_id: int = None):
