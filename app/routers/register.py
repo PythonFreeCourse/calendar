@@ -1,8 +1,10 @@
 from typing import Dict
+
 from app.internal.security.ouath2 import get_hashed_password
 from app.database import schemas
 from app.database import models
 from app.dependencies import get_db, templates
+
 from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
@@ -17,7 +19,7 @@ router = APIRouter(
 )
 
 
-async def user_create(
+async def create_user(
         db: Session, user: schemas.UserCreate) -> models.User:
     """
     creating a new User object in the database, with hashed password
@@ -54,7 +56,7 @@ async def check_unique_fields(
 
 
 def get_error_messages_by_fields(errors: [list]) -> Dict[str, str]:
-    '''Getting validation errors by fields from pydantic ValidationError'''
+    """Getting validation errors by fields from pydantic ValidationError"""
     errors_by_fields = {error['loc'][0]: error['msg'] for error in errors}
     return {
         field_name: f"{field_name.capitalize()} {error_message}"
@@ -95,5 +97,5 @@ async def register(
             "request": request,
             "errors": errors,
             "form_values": form_dict})
-    await user_create(db=db, user=new_user)
+    await create_user(db=db, user=new_user)
     return RedirectResponse('/profile', status_code=HTTP_302_FOUND)

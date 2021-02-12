@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional
 
 from app.dependencies import get_db
 from app.database.models import User
@@ -6,6 +6,7 @@ from app.internal.security.ouath2 import (
     Depends, Session, check_jwt_token,
     get_authorization_cookie, HTTP_401_UNAUTHORIZED,
     HTTPException)
+
 from starlette.requests import Request
 
 
@@ -43,24 +44,24 @@ async def logged_in_user(
         db: Session = Depends(get_db),
         jwt: str = Depends(get_authorization_cookie)) -> User:
     """
-    A dependency function protecting routes for only logged in user.
     Returns logged in User object.
+    A dependency function protecting routes for only logged in user.
     """
     username, user_id = await check_jwt_token(db, jwt)
     return await get_user(db, user_id, username, request.url.path)
 
 
 async def optional_logged_in_user(
-    request: Request,
-        db: Session = Depends(get_db)) -> Union[User, type(None)]:
-    """
+    request: Request, db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Return the currently logged in user.
+
+    Return logged in User object if exists, None if not.
     A dependency function.
-    Returns logged in User object if exists.
-    None if not.
     """
     if 'Authorization' in request.cookies:
         jwt = request.cookies['Authorization']
     else:
-        return None
+        return False
     username, user_id = await check_jwt_token(db, jwt)
     return await get_user(db, user_id, username, request.url.path)

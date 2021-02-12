@@ -42,7 +42,6 @@ from app.routers import (  # noqa: E402
 )
 
 json_data_loader.load_to_db(next(get_db()))
-
 routers_to_include = [
     agenda.router,
     calendar.router,

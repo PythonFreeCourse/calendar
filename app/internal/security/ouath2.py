@@ -3,6 +3,7 @@ from typing import Union
 
 from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
 from app.database.models import User
+
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -30,8 +31,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 async def authenticate_user(
-        db: Session, new_user: schema.LoginUser
-            ) -> Union[schema.LoginUser, bool]:
+    db: Session, new_user: schema.LoginUser,
+) -> Union[schema.LoginUser, bool]:
     """Verifying user is in database and password is correct"""
     db_user = await User.get_by_username(db=db, username=new_user.username)
     if db_user and verify_password(new_user.password, db_user.password):
