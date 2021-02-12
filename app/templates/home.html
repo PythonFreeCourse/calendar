@@ -1,21 +1,56 @@
 {% extends "partials/index/index_base.html" %}
 
 {% block content %}
+<script>
+        function hiddenDifference() {
+            if (document.getElementById("endDate").value == '') {
+                alert("Expected end date");
+                return;
+            }
+            var date1 = document.getElementById("startDate").value;
+            var date2 = new Date(document.getElementById("endDate").value);
+            if (date1 != '') {
+                date1 = new Date(date1);
+                const diffTime = Math.abs(date2 - date1);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById("demo").innerHTML = "The difference: " + (diffDays) + " days";
+            }
+            else {
+                date1 = Date.now()
+                const diffTime = Math.abs(date2 - date1);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                document.getElementById("demo").innerHTML = "The difference: " + (diffDays) + " day";
+            }
+        }
 
 
-  <div class="container mt-4">
-  </div>
+</script>
+
+<div class="container mt-4">
+</div>
 
 
-  <!-- I chose to add the quote day to the home page until the relavent calendar view will be developed.  -->
-  <div>
+<!-- I chose to add the quote day to the home page until the relavent calendar view will be developed.  -->
+<div>
     {% if quote %}
-      {% if not quote.author %}
-        <p><i>"{{ quote.text }}"</i></p>
-      {% else %}
-        <p><i>"{{ quote.text }}"</i> <span style="font-size: small;">&nbsp; \ {{ quote.author }}</span></p>
-      {% endif %}
+    {% if not quote.author %}
+    <p><i>"{{ quote.text }}"</i></p>
+    {% else %}
+    <p><i>"{{ quote.text }}"</i> <span style="font-size: small;">&nbsp; \ {{ quote.author }}</span>
+    </p>
     {% endif %}
-  </div>
-
+    {% endif %}
+</div>
+<div class="form-style">
+    <h3>Time calculator:</h3>
+    <form>
+        <label for="startDate">Start date:</label>
+        <input id="startDate" name="date1" type="date">
+        <br>
+        <label for="endDate">End date:<em>&#x2a;</em></label>
+        <input id="endDate" name="date2" type="date">
+    </form>
+    <button type="button" onclick="hiddenDifference()">Calculate</button>
+    <h3 id="demo"></h3>
+</div>
 {% endblock %}
