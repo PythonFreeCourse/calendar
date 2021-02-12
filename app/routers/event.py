@@ -22,7 +22,6 @@ from app.internal.emotion import get_emotion
 # current_user, CurrentUser)
 from app.internal.utils import create_model
 from app.routers.user import create_user
-from dictalchemy import asdict
 
 
 TIME_FORMAT = '%Y-%m-%d %H:%M'
@@ -83,7 +82,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     if is_zoom:
         raise_if_zoom_link_invalid(location)
 
-    event = create_event(session, title, start, end, owner_id, privacy, 
+    event = create_event(session, title, start, end, owner_id, privacy,
                          content, location, invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
@@ -114,7 +113,8 @@ async def eventview(request: Request, event_id: int,
                   else start_format)
     messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event": event_to_show,
+                                      {"request": request,
+                                       "event": event_to_show,
                                        "start_format": start_format,
                                        "end_format": end_format,
                                        "messages": messages})
@@ -139,35 +139,40 @@ class PrivateEvent:
 def check_event_owner(
     event: Event,
     session: Depends(get_db),
-    user: Optional[User]=None,
+    user: Optional[User] = None,
     # TODO after user system is merged (PR#195):
     # CurrentUser = Depends(current_user)
 ) -> bool:
     if not user:
         user = session.query(User).filter_by(id=1).first()
         user = user if user else create_user(username="u",
-                                            password="p",
-                                            email="e@mail.com",
-                                            language_id=1,
-                                            session=session)
+                                             password="p",
+                                             email="e@mail.com",
+                                             language_id=1,
+                                             session=session)
     # TODO use current_user after user system merge
     is_owner = event.owner_id == user.id
     return is_owner
 
 
-def can_show_event(event: Event, session: Depends(get_db), user: Optional[User]=None) -> Optional[Event]:
+def can_show_event(
+    event: Event,
+    session: Depends(get_db),
+    user: Optional[User]=None
+) -> Optional[Event]:
     """Check the given events privacy and return
     event/fixed event/ nothing (hidden) accordingly"""
-    if event.privacy == PRIVATE and not check_event_owner(event, session, user):
+    is_owner = check_event_owner(event, session, user)
+    if event.privacy == PRIVATE and not is_owner:
         private_event = PrivateEvent(
-            start=event.start,
-            end=event.end,
-            owner_id=event.owner_id,
+            start = event.start,
+            end = event.end,
+            owner_id = event.owner_id,
         )
         return private_event
-    elif event.privacy == 'Hidden' and not check_event_owner(event, session, user):
-        return    
-    elif event.privacy == 'Public' or check_event_owner(event, session, user):
+    elif event.privacy == 'Hidden' and not is_owner:
+        return
+    elif event.privacy == 'Public' or is_owner:
         return event
 
 
