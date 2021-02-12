@@ -209,7 +209,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
                  availability: bool = True,
-                ):
+                 ):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
