@@ -2,8 +2,8 @@
     /* Texts */
     --text_xs: 0.75rem;  /* 12px */
     --text_s: 1rem;      /* 16px */
-    --text_m: 1.25rem;   /* 20px */
-    --text_l: 1.50rem;   /* 24px */
+    --text_m: 1.2rem;   /* 19px */
+    --text_l: 1.5rem;   /* 24px */
     --text_xl: 1.75rem;  /* 28px */
     --text_xxl: 2rem;    /* 32px */
 
@@ -31,7 +31,7 @@
 }
 
 html {
-    font-size: 90%;
+    font-size: 100%;
 }
 
 /* Grids */
@@ -349,7 +349,7 @@ main {
 
 .title {
     font-weight: 800;
-    font-size: var(--text_xxl);
+    font-size: var(--text_xl);
     margin-bottom: calc(var(--space_s) * -1);
 }
 
