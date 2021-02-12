@@ -30,7 +30,9 @@ async def calendar(request: Request) -> Response:
 
 
 @router.get("/add/{date}")
-async def update_calendar(request: Request, date: str, days: int) -> HTMLResponse:
+async def update_calendar(
+    request: Request, date: str, days: int
+) -> HTMLResponse:
     last_day = cg.Day.convert_str_to_date(date)
     next_weeks = cg.create_weeks(cg.get_n_days(last_day, days))
     template = templates.get_template(
