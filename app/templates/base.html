@@ -18,8 +18,8 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/">{{ gettext("Calendar") }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+      <span class="navbar-toggler-icon"></span>
+    </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
@@ -36,7 +36,7 @@
                     </li>
                     <li class="nav-item">
                         <!-- new button for the agenda page. should be available after login
-                        place will change later according to the web design -->
+          place will change later according to the web design -->
                         <a class="nav-link" href="{{ url_for('agenda') }}">{{ gettext("Agenda") }}</a>
                     </li>
                     <li class="nav-item">
@@ -44,6 +44,12 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/search">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/celebrity">Celebrities Born Today</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('salary_home') }}">Salary</a>
                     </li>
                 </ul>
             </div>
@@ -56,7 +62,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
     <script src="{{ url_for('static', path='/horoscope.js') }}"></script>
-
 
 </body>
 
