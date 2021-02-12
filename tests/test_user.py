@@ -2,10 +2,10 @@ from datetime import datetime
 import pytest
 
 from app.routers.user import (
-    create_user, disable_user, does_user_exist, get_users
+    create_user, disable_user, does_user_exist, enable_user, get_users
 )
 from app.database.models import User, UserEvent, Event
-
+from app.routers.event import create_event
 
 # -----------------------------------------------------
 # Fixtures
@@ -14,6 +14,19 @@ from app.database.models import User, UserEvent, Event
 
 @pytest.fixture
 def new_user(session):
+    user = create_user(
+        session=session,
+        username='new_test_username',
+        password='new_test_password',
+        email='new_test.email@gmail.com',
+        language_id='english'
+    )
+
+    return user
+
+
+def new_user2(session):
+    # this function will be used to test interaction between users.
     user = create_user(
         session=session,
         username='new_test_username',
@@ -42,11 +55,29 @@ def test_disabling_user(new_user, session):
                                  Event.start > datetime.now()
                                  ))
         assert len(future_events) == 0
+
+        assert enable_user(session, new_user.id)
+        # making sure that after disabling the user he can be easily enabled.
     else:
         user_owned_events = session.query(Event).join().filter(
             Event.start > datetime.now(), Event.owner_id == new_user.id
             )
         assert len(user_owned_events) > 0
+
+
+def test_disabling_event_owning_user(new_user, session):
+    # this test assures that an event-owning user can't disable itself.
+    data = {
+        'title': 'test title',
+        'start': datetime.strptime('2021-01-01 15:59', '%Y-%m-%d %H:%M'),
+        'end': datetime.strptime('2021-01-02 15:01', '%Y-%m-%d %H:%M'),
+        'location': 'https://us02web.zoom.us/j/875384596',
+        'content': 'content',
+        'owner_id': new_user.id,
+    }
+
+    create_event(session, **data)
+    assert disable_user(session, new_user.id)
 
 
 class TestUser:

@@ -1,6 +1,5 @@
-from typing import List
-
 from datetime import datetime
+from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -26,7 +25,7 @@ def create_user(username: str,
 
 
 def get_users(session: Session, **param):
-    """Returns all users filter by param."""
+    # Returns all users filtered by param.
 
     try:
         users = list(session.query(User).filter_by(**param))
@@ -62,27 +61,35 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
     )
 
 
-def disable_user(session: Session, user_id: int):
+def disable_user(session: Session, user_id: int) -> bool:
     """this functions changes user status to disabled.
     returns:
     True if function worked properly
     False if it didn't."""
 
     events_user_owns = list(session.query(Event).filter_by(owner_id=user_id))
-    """if user owns any event, he won't be able to disable himself."""
+    # if user owns any event, he won't be able to disable himself.
     if events_user_owns:
         return False
 
-    """if user doesn't own any event,
-    we will disable him and remove the user from all of its future events."""
+    # if user doesn't own any event,
+    # we will disable him and remove the user from all of its future events.
     user_disabled = session.query(User).get(user_id)
     user_disabled.disabled = True
     future_events_for_user = session.query(UserEvent.id).join(
         Event, Event.id == UserEvent.event_id
         ).filter(
-        UserEvent.user_id == user_id, Event.start > datetime.now()
-        ).all()
+        UserEvent.user_id == user_id, Event.start > datetime.now()).all()
     for event_connection in future_events_for_user:
         session.delete(event_connection)
+    session.commit()
+    return True
+
+
+def ensable_user(session: Session, user_id: int):
+    # this functions enables user- doesn't return anything.
+
+    user_enabled = session.query(User).get(user_id)
+    user_enabled.disabled = False
     session.commit()
     return True
