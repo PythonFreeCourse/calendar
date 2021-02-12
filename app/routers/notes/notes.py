@@ -2,8 +2,10 @@ from fastapi.param_functions import Depends
 from sqlalchemy.orm import Session
 from app.database.schemas import NoteDB, NoteSchema
 from app.dependencies import get_db
-from app.routers.notes import crud
+from app.internal.notes import notes
 from fastapi import APIRouter
+from fastapi import HTTPException
+
 
 router = APIRouter(
     prefix="/notes",
@@ -14,12 +16,13 @@ router = APIRouter(
 
 @router.post("/", response_model=NoteDB, status_code=201)
 async def create_note(payload: NoteSchema, session: Session = Depends(get_db)):
-    note_id = await crud.post(session, payload)
+    note_id = await notes.post(session, payload)
 
     response_object = {
         "id": note_id,
         "title": payload.title,
         "description": payload.description,
+        "timestamp": payload.timestamp
     }
     return response_object
 
@@ -29,12 +32,12 @@ async def create_note(payload: NoteSchema, session: Session = Depends(get_db)):
 #     return fake_notes_db
 
 
-# @router.get("/{note_id}")
-# async def get_note_by_id(note_id: str):
-#     if note_id not in fake_notes_db:
-#         raise HTTPException(status_code=404, detail="Item not found")
-#     return {"name": fake_notes_db[note_id]["name"], "note_id": note_id}
-
+@router.get("/{id}/", response_model=NoteSchema)
+async def read_note(id: int, session: Session = Depends(get_db)):
+    note = await notes.get(session, id)
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    return note
 
 # @router.put(
 #     "/{note_id}",

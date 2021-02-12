@@ -1,18 +1,21 @@
-from app.routers.notes import crud
+from app.internal.notes import notes
 from starlette.testclient import TestClient
 import json
 
 
 def test_create_note(notes_test_client: TestClient, monkeypatch):
-    test_request_payload = {"title": "something",
-                            "description": "something else"}
+    test_request_payload = {
+        "title": "something", "description": "something else"
+    }
     test_response_payload = {
-        "id": 1, "title": "something", "description": "something else"}
+        "id": 1, "title": "something", "description": "something else",
+        "timestamp": None
+    }
 
     async def mock_post(session, payload):
         return 1
 
-    monkeypatch.setattr(crud, "post", mock_post)
+    monkeypatch.setattr(notes, "post", mock_post)
 
     response = notes_test_client.post(
         "/notes/", data=json.dumps(test_request_payload),)
@@ -23,5 +26,32 @@ def test_create_note(notes_test_client: TestClient, monkeypatch):
 
 def test_create_note_invalid_json(notes_test_client: TestClient):
     response = notes_test_client.post(
-        "/notes/", data=json.dumps({"title": "something"}))
+        "/notes/", data=json.dumps({"titles": "something"}))
     assert response.status_code == 422
+
+
+def test_read_note(notes_test_client: TestClient, monkeypatch):
+    test_data = {
+        "title": "something", "description": "something else",
+        "timestamp": None
+    }
+
+    async def mock_get(session, id):
+        return test_data
+
+    monkeypatch.setattr(notes, "get", mock_get)
+
+    response = notes_test_client.get("/notes/1")
+    assert response.status_code == 200
+    assert response.json() == test_data
+
+
+def test_read_note_incorrect_id(notes_test_client: TestClient, monkeypatch):
+    async def mock_get(session, id):
+        return None
+
+    monkeypatch.setattr(notes, "get", mock_get)
+
+    response = notes_test_client.get("/notes/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Note not found"
