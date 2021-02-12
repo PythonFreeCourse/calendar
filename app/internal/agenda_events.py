@@ -1,3 +1,4 @@
+import datetime
 from datetime import date, timedelta
 from typing import Iterator, List, Optional, Union
 
@@ -64,26 +65,19 @@ def filter_dates(
         end: Union[None, date] = None,
 ) -> Iterator[Event]:
     """Returns all events in a time frame.
+
     if "start_date" or "end_date" are None,
     it will ignore that parameter when filtering.
 
     for example:
     if start_date = None and end_date = datetime.now().date,
-    then the function will return all events that ends before end_date."""
+    then the function will return all events that ends before end_date.
+    """
+    start = start or datetime.date.min
+    end = end or datetime.date.max
 
     for event in events:
-        if start and end:
-            if start <= event.start.date() <= end:
-                yield event
-
-        elif start:
-            if start <= event.start.date():
-                yield event
-
-        elif end:
-            if end >= event.start.date():
-                yield event
-        else:
+        if start <= event.start.date() <= end:
             yield event
 
 
@@ -93,6 +87,5 @@ def get_events_in_time_frame(
         user_id: int, db: Session
 ) -> Iterator[Event]:
     """Yields all user's events in a time frame."""
-
     events = get_all_user_events(db, user_id)
     yield from filter_dates(events, start_date, end_date)

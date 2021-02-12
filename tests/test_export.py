@@ -4,7 +4,7 @@ from icalendar import vCalAddress
 
 from app.config import ICAL_VERSION, PRODUCT_ID
 from app.internal.agenda_events import filter_dates
-from app.routers.export import (
+from app.internal.export import (
     create_ical_calendar, create_ical_event,
     event_to_ical
 )
