@@ -57,9 +57,7 @@ function loadWeekBefore(day, daysToLoad) {
         return response.text();
     }).then(function (html) {
         document.getElementById("calender-grid").insertAdjacentHTML('afterbegin', html);
-        const allDays = document.getElementsByClassName('day');
         setToggle("day", "day-view", "day-view-visible", 0, daysToLoad);
-        jump(day);
     });
 }
 
@@ -73,7 +71,7 @@ function callLoadWeek(daysToLoad = 42, end = true) {
         day = dateToId(getDateInNDays(allDays[0].id, daysToLoad * -1))
         loadWeekBefore(day, daysToLoad);
     }
-    setMonthNav();
+    setTimeout(setMonthNav, 200);
 }
 
 function weekScroll() {
@@ -91,8 +89,5 @@ function weekScroll() {
         if (this.scrollTop === 0) {
             callLoadWeek(42, end = false);
         }
-        setMonthNav();
     })
 }
-
-

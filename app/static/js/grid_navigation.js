@@ -1,5 +1,4 @@
 function OnlyOnScreen(elements) {
-    const grid = document.getElementById("calender-grid");
     for (let i = 0; i < elements.length; ++i) {
         elementRect = elements[i].getBoundingClientRect();
         if (elementRect.y > 0) {
@@ -39,9 +38,6 @@ function displayMonthYear(id) {
 function setMonthNav() {
     const allFirst = document.querySelectorAll('*[id^="01"]');
     const currentMonth = OnlyOnScreen(allFirst);
-    if (!(currentMonth)) {
-        return false;
-    }
     for (let i = -2; i < 3; ++i) {
         const date = getDateInNMonths(currentMonth.id, i);
         const dateId = dateToId(date);
@@ -72,7 +68,7 @@ function loadDaysIfNeeded(dateId, link) {
     const allFirst = Array.from(document.querySelectorAll('*[id^="01"]'));
     const allId = allFirst.map(x => x.id);
     if (allId.includes(dateId)) {
-        return true;
+        return false;
     }
     let deltaDays = 0;
     const targetDay = stringToDate(dateId);

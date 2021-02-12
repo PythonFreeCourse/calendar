@@ -1,56 +1,56 @@
 :root {
-    /* Texts */
-    --text_xs: 0.75rem;  /* 12px */
-    --text_s: 1rem;      /* 16px */
-    --text_m: 1.2rem;   /* 19px */
-    --text_l: 1.5rem;   /* 24px */
-    --text_xl: 1.75rem;  /* 28px */
-    --text_xxl: 2rem;    /* 32px */
+  /* Texts */
+  --text_xs: 0.75rem;  /* 12px */
+  --text_s: 1rem;      /* 16px */
+  --text_m: 1.2rem;   /* 19px */
+  --text_l: 1.5rem;   /* 24px */
+  --text_xl: 1.75rem;  /* 28px */
+  --text_xxl: 2rem;    /* 32px */
 
-    /* Spaces */
-    --space_xs: 0.5rem; /* 6px */
-    --space_s: 0.75rem; /* 12px */
-    --space_m: 1.25rem; /* 20px */
-    --space_l: 2rem;    /* 32px */
-    --space_xl: 4rem;   /* 64px */
+  /* Spaces */
+  --space_xs: 0.5rem; /* 6px */
+  --space_s: 0.75rem; /* 12px */
+  --space_m: 1.25rem; /* 20px */
+  --space_l: 2rem;    /* 32px */
+  --space_xl: 4rem;   /* 64px */
 
-    /* colors */
-    --primary: #F7F7F7;
-    --secondary: #222831;
-    --surface: #e9ecef;
-    --up_surface: #adb5bd;
-    --bold_primary: #FFDE4D;
-    --bold_secondary: #F24726;
-    --bold_tertiary: #0CA789;
+  /* colors */
+  --primary: #F7F7F7;
+  --secondary: #222831;
+  --surface: #e9ecef;
+  --up_surface: #adb5bd;
+  --bold_primary: #FFDE4D;
+  --bold_secondary: #F24726;
+  --bold_tertiary: #0CA789;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html {
-    font-size: 100%;
+  font-size: 100%;
 }
 
 /* Grids */
 /* -> Website Structure */
 .pyldr-container {
-    display: flex;
-    height: 100%;
+  display: flex;
+  height: 100%;
 }
 
 nav {
   z-index: 5;
-  padding: 1rem;
+  padding: var(--space_xs);
 }
 
 .menu {
-    position: sticky;
-    display: flex;
-    flex-direction: column;
-    top:var(--space_s);
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  top:var(--space_s);
 }
 
 .fixed-features,
@@ -70,42 +70,42 @@ nav {
 }
 
 .fixed-features div {
-    font-size: var(--text_xxl);
-    height: 3rem;
+  font-size: var(--text_xxl);
+  height: 3rem;
 }
 
 .fixed-features div:hover {
-    color: var(--bold_primary);
+  color: var(--bold_primary);
 }
 
 .user-features div {
-    height: 1.75rem;
-    width: 1.75rem;
-    font-size: var(--text_m);
-    margin: var(--space_s) auto auto auto;
-    color: var(--primary);
-    background-color: var(--bold_tertiary);
-    border-radius: 0.125rem;
+  height: 1.75rem;
+  width: 1.75rem;
+  font-size: var(--text_m);
+  margin: var(--space_s) auto auto auto;
+  color: var(--primary);
+  background-color: var(--bold_tertiary);
+  border-radius: 0.125rem;
 }
 
 .user-features div:hover {
-    color: var(--secondary);
-    background-color: var(--bold_primary);
+  color: var(--secondary);
+  background-color: var(--bold_primary);
 }
 
 .user-features div:visited:active {
-    color: var(--secondary);
-    background-color: var(--bold_primary);
+  color: var(--secondary);
+  background-color: var(--bold_primary);
 }
 
 #open-features {
-    font-size: var(--icon_l);
-    margin-top: var(--space_s);
+  font-size: var(--icon_l);
+  margin-top: var(--space_s);
 }
 
 #feature-settings {
-    visibility: hidden;
-    width: 0.1rem;
+  visibility: hidden;
+  width: 0.1rem;
 }
 
 .settings-open {
@@ -115,13 +115,13 @@ nav {
 img {fill: var(--primary);}
 
 header {
-    z-index: 5;
-    position: sticky;
-    top: 0;
-    display: flex;
-    grid-flow: row wrap;
-    margin: 0 var(--space_s);
-    background-color: var(--primary);
+  z-index: 5;
+  position: sticky;
+  top: 0;
+  display: flex;
+  grid-flow: row wrap;
+  margin: 0 var(--space_s);
+  background-color: var(--primary);
 }
 
 header div {
@@ -129,7 +129,7 @@ header div {
 }
 
 #logo-div {
-    text-align: end;
+  text-align: end;
 }
 
 /* Main Element Grid */
@@ -141,10 +141,10 @@ main {
 }
 
 .calendar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .day-view-visible {
@@ -154,14 +154,14 @@ main {
 }
 
 .calender-days-titles {
-    z-index: 4;
-    position: sticky;
-    align-self: flex-start;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin: var(--space_s) var(--space_s) 0 var(--space_s);
-    background-color: var(--primary);
-    align-self: stretch;
+  z-index: 4;
+  position: sticky;
+  align-self: flex-start;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin: var(--space_s) var(--space_s) 0 var(--space_s);
+  background-color: var(--primary);
+  align-self: stretch;
 }
 
 /* The Calendar Grid */
@@ -182,16 +182,16 @@ main {
 }
 
 .week {
-    flex: 1;
-    display: grid;
-    margin: 0 var(--space_s);
-    grid-template-columns: repeat(7, 1fr);
-    font-weight: 800;
-    font-size: var(--text_m);
+  flex: 1;
+  display: grid;
+  margin: 0 var(--space_s);
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: 800;
+  font-size: var(--text_m);
 }
 
 .week:hover {
-    box-shadow: -0.25rem 0 0 0 var(--bold_primary);
+  box-shadow: -0.25rem 0 0 0 var(--bold_primary);
 }
 
 .day {
@@ -200,9 +200,9 @@ main {
   flex-direction: column;
   overflow: hidden;
 
-    font-size: var(--text_xs);
-    padding: 0 var(--space_s);
-    border: 0.1rem solid var(--surface);
+  font-size: var(--text_xs);
+  padding: 0 var(--space_s);
+  border: 0.095rem solid var(--surface);
 
   overflow-y: auto;
   -ms-overflow-style: none; /* IE and Edge */
@@ -226,14 +226,14 @@ main {
 }
 
 .day-number {
-    font-weight: 800;
-    font-size: var(--text_m);
-    text-align: left;
+  font-weight: 800;
+  font-size: var(--text_m);
+  text-align: left;
 }
 
 .day_current {
-    background-color: var(--bold_primary);
-    color: white;
+  background-color: var(--bold_primary);
+  color: white;
 }
 
 .month-day-header {
@@ -250,77 +250,77 @@ main {
 }
 
 .add-small {
-    display: none;
-    font-weight: 800;
-    font-size: var(--text_m);
-    padding-right: var(--space_xs);
+  display: none;
+  font-weight: 800;
+  font-size: var(--text_m);
+  padding-right: var(--space_xs);
 }
 
 /* Months Navigation */
 #months-navigation {
-    display: flex;
-    flex-flow: column;
-    width: var(--space_xl);
-    margin: 0 var(--space_s);
-    align-items: center;
+  display: flex;
+  flex-flow: column;
+  width: var(--space_xl);
+  margin: 0 var(--space_s);
+  align-items: center;
 }
 
 #months-navigation * {
-    text-align: center;
-    text-transform: uppercase;
-    margin-top: var(--space_s);
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: var(--space_s);
 }
 
 #pre-month-title,
 #aft-month-title {
-    font-size: var(--text_s);
+  font-size: var(--text_s);
 }
 
 #current-month-title {
-    font-weight: 800;
-    font-size: var(--text_m);
+  font-weight: 800;
+  font-size: var(--text_m);
 }
 
 .sticky {
-    z-index: 4;
-    position: sticky;
+  z-index: 4;
+  position: sticky;
 }
 
 #month0 {
-    font-size: var(--text_m);
-    font-weight: 800;
+  font-size: var(--text_m);
+  font-weight: 800;
 }
 
 #month-1,
 #month1 {
-    font-size: var(--text_s);
-    opacity: 0.8;
+  font-size: var(--text_s);
+  opacity: 0.8;
 }
 
 #month-2,
 #month2,
 #month-2 + ion-icon,
 #month1 + ion-icon {
-    font-size: var(--text_xs);
-    opacity: 0.6;
+  font-size: var(--text_xs);
+  opacity: 0.6;
 }
 
 /* Events - Rotation*/
 .month-event {
-    position: relative;
-    perspective: 94rem;
-    -moz-perspective: 94rem;
-    height: 1.5rem;
+  position: relative;
+  perspective: 94rem;
+  -moz-perspective: 94rem;
+  height: 1.5rem;
 }
 
 .month-event div{
-    height: 1.5rem;
-    width: 100%;
-    transition: all 0.3s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-    backface-visibility: hidden;
+  height: 1.5rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
 }
 
 .back {
@@ -336,26 +336,26 @@ main {
 }
 
 .daily {
-    font-weight: 700;
-    border-radius: 0.25rem;
-    padding: 0 var(--space_s);
+  font-weight: 700;
+  border-radius: 0.25rem;
+  padding: 0 var(--space_s);
 }
 
 /* Titles */
 .day-title {
-    font-weight: 600;
-    font-size: var(--text_m);
+  font-weight: 600;
+  font-size: var(--text_m);
 }
 
 .title {
-    font-weight: 800;
-    font-size: var(--text_xl);
-    margin-bottom: calc(var(--space_s) * -1);
+  font-weight: 800;
+  font-size: var(--text_xl);
+  margin-bottom: calc(var(--space_s) * -1);
 }
 
 .sec-title {
-    font-weight: 500;
-    font-size: var(--text_s);
+  font-weight: 500;
+  font-size: var(--text_s);
 }
 
 /* Text Colors */
@@ -388,12 +388,12 @@ main {
 /* Buttons */
 
 .button {
-    border-radius: 0.15rem;
-    font-size: var(--text_s);
-    font-weight: 800;
-    padding: 0.15rem 0.25rem;
+  border-radius: 0.15rem;
+  font-size: var(--text_s);
+  font-weight: 800;
+  padding: 0.15rem 0.25rem;
 }
 
 .button:hover {
-    font-weight: 700;
+  font-weight: 700;
 }
