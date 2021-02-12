@@ -325,3 +325,14 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+def get_tamplate_to_share_event(event_id: int, user_name: str, db: Session) -> templates:
+    event = by_id(db, event_id)
+    return templates.TemplateResponse("event/shareevent.html",
+                                      {"sender_name": user_name,
+                                        "title": event.title,
+                                        "start_date": event.start,
+                                        "end_date": event.end,
+                                        "location": event.location,
+                                        "vc_link": event.vc_link})

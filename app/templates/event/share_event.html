@@ -1,0 +1,27 @@
+
+<div class="share_event">
+    <span>
+        Hi! {{ sender_name }} want you to know about event he have,
+    </span>
+    <div class="event_info">
+        <div>The event {{ title }},</div>
+        <div>will take place on a date {{ start_date }} until {{ end_date }}</div>
+        <div>
+            {% if location is not none %}
+            in {{ location }}
+            {% endif %}
+        </div>
+        <div>
+            {% if vc_link is not none %}
+            <a href="{{ vc_link }}">Link to vc here</a>
+            {% endif %}
+        </div>
+        <!-- TODO: get link to register page -->
+        <div>
+            This app was built by <a href="https://github.com/PythonFreeCourse">"PythonFreeCourse"</a>
+            <div>
+                <a href="linktoregister">Join to the app!</a>
+            </div>
+        </div>
+    </div>
+</div>
