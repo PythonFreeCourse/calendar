@@ -9,7 +9,7 @@ from sqlalchemy.orm.session import Session
 
 from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
                         CALENDAR_SITE_NAME, email_conf, templates)
-from app.database.models import Event, User
+from app.database.models import Event, User, UserEvent
 
 mail = FastMail(email_conf)
 
@@ -52,39 +52,38 @@ def send(
     return True
 
 
-def send_email_with_body(
-        session: Session, event_used: int, user_to_send: int,
-        title: str, body_content: str, background_tasks: BackgroundTasks = BackgroundTasks
+def send_email_to_event_participants(
+        session: Session, event_id: int, email_to_send: List[str],
+        title: str, content: str,
+        background_tasks: BackgroundTasks = BackgroundTasks
 ) -> bool:
-    """This function is the altered version of the function above,
-    that allows adaptable email content.
-    It takes an event, user and email content and sends the event to the user.
+    """This function is being used to send emails in the background.
+    It takes an event and a user and it sends the event to the user.
 
     Args:
         session(Session): The session to redirect to the database.
         title (str): Title of the email that is being sent.
         event_used (int): Id number of the event that is used.
         user_to_send (int): Id number of user that we want to notify.
-        body_content (string): the content of the email sent to the user.
         background_tasks (BackgroundTasks): Function from fastapi that lets
             you apply tasks in the background.
-        
 
     Returns:
-        bool: Returns True if the email was sent, else returns False.
+        bool: Returns True if emails were sent, False if none.
     """
-    event_used = session.query(Event).filter(
-        Event.id == event_used).first()
-    user_to_send = session.query(User).filter(
-        User.id == user_to_send).first()
-    if not user_to_send or not event_used:
-        return False
-    if not verify_email_pattern(user_to_send.email):
-        return False
+    mailing_list = session.query(User.email).join(
+        UserEvent, User.id == UserEvent.user_id
+        ).filter(
+            event_id == event_id).all()
+    # making sure app doesn't crash cause emails are invalid
+    valid_mailing_list = list(filter(verify_email_pattern, mailing_list))
 
-    subject = f"{title} {event_used.title}"
-    recipients = {"email": [user_to_send.email]}.get("email")
-    body = f"begins at:{event_used.start} : {event_used.content} \n {body_content}"
+    if not valid_mailing_list:
+        return False
+    event = session.query(Event).get(event_id)
+    subject = f"{event.title}: {title}"
+    recipients = valid_mailing_list
+    body = content
 
     background_tasks.add_task(send_internal,
                               subject=subject,

@@ -86,8 +86,10 @@ class UserEvent(Base):
     __tablename__ = "user_event"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column('user_id', Integer, ForeignKey('users.id'), nullable=False)
-    event_id = Column('event_id', Integer, ForeignKey('events.id'), nullable=False)
+    user_id = Column('user_id', Integer, ForeignKey(
+        'users.id'), nullable=False)
+    event_id = Column('event_id', Integer, ForeignKey(
+        'events.id'), nullable=False)
 
     events = relationship("Event", back_populates="participants")
     participants = relationship("User", back_populates="events")
