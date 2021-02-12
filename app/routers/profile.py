@@ -154,6 +154,7 @@ async def update_calendar_privacy(
     url = router.url_path_for("profile")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
+
 @router.get("/holidays/import")
 def import_holidays(request: Request):
     return templates.TemplateResponse("import_holidays.html", {
