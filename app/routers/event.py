@@ -102,10 +102,16 @@ async def eventview(request: Request, event_id: int,
 async def changeowner(request: Request, event_id: int,
                       db: Session = Depends(get_db)):
     data = await request.form()
-    username = data['username']
-    user_id = db.query(User).filter_by(username=username).first().id
-    owner_to_update = {'owner_id': user_id}
-    _update_event(db, event_id, owner_to_update)
+    if 'username' in data:
+        username = data['username']
+        try:
+            user_id = db.query(User).filter_by(username=username).first().id
+        except KeyError:
+            return RedirectResponse(router.url_path_for('eventview',
+                                                        event_id=event_id),
+                                    status_code=status.HTTP_302_FOUND)
+        owner_to_update = {'owner_id': user_id}
+        _update_event(db, event_id, owner_to_update)
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event_id),
                             status_code=status.HTTP_302_FOUND)

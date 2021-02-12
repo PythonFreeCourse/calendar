@@ -10,8 +10,9 @@ from app.database.models import Event
 from app.dependencies import get_db
 from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
-                               by_id, check_change_dates_allowed, delete_event,
-                               is_date_before, update_event, create_event)
+                               by_id, changeowner, check_change_dates_allowed,
+                               delete_event, is_date_before, update_event,
+                               create_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -268,8 +269,8 @@ def test_not_check_change_dates_allowed(event):
     data = {"start": "20.01.2020"}
     with pytest.raises(HTTPException):
         assert (
-                check_change_dates_allowed(event, data).status_code ==
-                status.HTTP_400_BAD_REQUEST
+            check_change_dates_allowed(event, data).status_code ==
+            status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -320,9 +321,9 @@ def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
         assert (
-                update_event(event_id=event.id, event=data,
-                             db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            update_event(event_id=event.id, event=data,
+                         db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -340,11 +341,11 @@ def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
         assert (
-                _update_event(
-                    event_id=event.id,
-                    event_to_update=data,
-                    db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            _update_event(
+                event_id=event.id,
+                event_to_update=data,
+                db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -356,16 +357,16 @@ def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
         response = delete_event(event_id=1, db=None)
         assert (
-                response.status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            response.status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
         assert (
-                _delete_event(event=event, db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            _delete_event(event=event, db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -375,6 +376,23 @@ def test_successful_deletion(event_test_client, session, event):
     with pytest.raises(HTTPException):
         assert "Event ID does not exist. ID: 1" in by_id(
             db=session, event_id=1).content
+
+
+def test_changeowner(event_test_client, user, session, event):
+    """
+    Test change owner of an event
+    """
+    event_id = event.id
+    event_details = [event.title, event.content, event.location, event.start,
+                     event.end, event.color, event.category_id]
+
+    response = event_test_client.post(f"/event/{event_id}")
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response.ok
+    assert b"View Event" not in response.content
+    for event_detail in event_details:
+        assert str(event_detail).encode('utf-8') not in response.content, \
+            f'{event_detail} not in view event page'
 
 
 def test_deleting_an_event_does_not_exist(event_test_client, event):
@@ -391,7 +409,9 @@ class TestApp:
         "start": date_test_data[0],
         "end": date_test_data[1],
         "content": "Any Words",
-        "owner_id": 123}
+        "owner_id": 123,
+        'invitees': 'user1, user2'
+    }
 
     @staticmethod
     def test_get_db():
