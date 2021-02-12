@@ -169,9 +169,9 @@ def get_events_duration_statistics(
             and_(Event.start <= start, Event.end >= end))).all()
     if events_duration_statistics[0][0]:
         return {"events_duration_statistics":
-                    {"shortest_event": round(events_duration_statistics[0][0]),
-                     "longest_event": round(events_duration_statistics[0][1]),
-                     "average_event": round(events_duration_statistics[0][2])}}
+                {"shortest_event": round(events_duration_statistics[0][0]),
+                    "longest_event": round(events_duration_statistics[0][1]),
+                    "average_event": round(events_duration_statistics[0][2])}}
     return {"events_duration_statistics":
             {"shortest_event": 0, "longest_event": 0, "average_event": 0}}
 
