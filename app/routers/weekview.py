@@ -6,9 +6,8 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm.session import Session
 
-from app.database.database import get_db
 from app.database.models import Event, User
-from app.dependencies import TEMPLATES_PATH
+from app.dependencies import get_db, TEMPLATES_PATH
 from app.routers.dayview import (
     DivAttributes, dayview, get_events_and_attributes
 )

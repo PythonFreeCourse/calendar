@@ -207,8 +207,8 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  location: Optional[str] = None,
                  color: Optional[str] = None,
                  invitees: List[str] = None,
-                 category_id: Optional[int] = None
-                 availability: bool = True
+                 category_id: Optional[int] = None,
+                 availability: bool = True,
                 ):
     """Creates an event and an association."""
 
