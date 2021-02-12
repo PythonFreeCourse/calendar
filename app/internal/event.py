@@ -79,7 +79,7 @@ def find_pattern(session, event):
 
 def get_messages(session: Session,
                  event: Event,
-                 uninvited_contacts: List[str]) -> List[str]:
+                 uninvited_contacts: Set[str]) -> List[str]:
     messages = []
     if uninvited_contacts:
         messages.append(f'Forgot to invite '
