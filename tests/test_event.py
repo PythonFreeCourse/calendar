@@ -10,7 +10,7 @@ from app.database.models import Event
 from app.dependencies import get_db
 from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
-                               by_id, changeowner, check_change_dates_allowed,
+                               by_id, check_change_dates_allowed,
                                delete_event, is_date_before, update_event,
                                create_event)
 
