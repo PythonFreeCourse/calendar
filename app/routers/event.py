@@ -158,16 +158,16 @@ def check_event_owner(
 def can_show_event(
     event: Event,
     session: Depends(get_db),
-    user: Optional[User]=None
+    user: Optional[User] = None
 ) -> Optional[Event]:
     """Check the given events privacy and return
     event/fixed event/ nothing (hidden) accordingly"""
     is_owner = check_event_owner(event, session, user)
     if event.privacy == PRIVATE and not is_owner:
         private_event = PrivateEvent(
-            start = event.start,
-            end = event.end,
-            owner_id = event.owner_id,
+            start=event.start,
+            end=event.end,
+            owner_id=event.owner_id,
         )
         return private_event
     elif event.privacy == 'Hidden' and not is_owner:
