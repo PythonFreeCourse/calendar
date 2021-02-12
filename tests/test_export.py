@@ -13,7 +13,7 @@ from app.routers.user import get_all_user_events
 
 class TestExport:
 
-    def test_export(self, client, sender):
+    def test_export(self, client, sender, today_event):
         resp = client.get('/export?start_date=&end_date=')
         assert isinstance(resp.content, bytes)
         assert resp.ok

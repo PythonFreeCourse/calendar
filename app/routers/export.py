@@ -33,4 +33,5 @@ def export(
         headers={
             # change filename to "pylendar.ics"
             "Content-Disposition": "attachment;filename=pylendar.ics"
-        })
+        },
+    )
