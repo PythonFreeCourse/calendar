@@ -9,8 +9,9 @@ from sqlalchemy.orm.session import Session
 from app.database.database import get_db
 from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH
-from app.routers.dayview import (dayview, get_events_and_attributes,
-                                 DivAttributes)
+from app.routers.dayview import (
+    DivAttributes, dayview, get_events_and_attributes
+)
 
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)

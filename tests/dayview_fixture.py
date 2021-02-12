@@ -57,7 +57,7 @@ def multiday_event():
 def weekdays():
     return [
      'Sunday', 'Monday', 'Tuesday',
-     'Wednesday', 'Thursday', 'Friday', 'Saturday'
+     'Wednesday', 'Thursday', 'Friday', 'Saturday',
     ]
 
 

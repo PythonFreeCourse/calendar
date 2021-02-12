@@ -18,7 +18,7 @@ def create_weekview_event(events, session, user):
 
 
 def test_get_week_dates(weekdays, sunday):
-    week_dates = get_week_dates(sunday)
+    week_dates = list(get_week_dates(sunday))
     for i in range(6):
         assert week_dates[i].strftime('%A') == weekdays[i]
 
@@ -35,7 +35,7 @@ def test_weekview_day_dates(session, user, client, sunday):
     response = client.get("/week/2021-1-3")
     soup = BeautifulSoup(response.content, 'html.parser')
     day_divs = soup.find_all("span", {"class": 'date-nums'})
-    week_dates = get_week_dates(sunday)
+    week_dates = list(get_week_dates(sunday))
     for i in range(6):
         time_str = f'{week_dates[i].day} / {week_dates[i].month}'
         assert time_str in day_divs[i]
