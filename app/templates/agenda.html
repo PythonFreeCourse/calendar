@@ -32,11 +32,11 @@
     </div>
   </div>
 
-  <div class="pt-5 px-5">
+  <div class="pt-4 px-5">
     {% if start_date > end_date %}
-      <p class="message">{{ gettext("Start date is greater than end date") }}</p>
+      <p>{{ gettext("Start date is greater than end date") }}</p>
     {% elif events | length == 0 %}
-      <p class="message">{{ gettext("No events found...") }}</p>
+      <p>{{ gettext("No events found...") }}</p>
     {% elif start_date == end_date %}
       <h1 id="dates">{{ start_date.strftime("%d/%m/%Y") }}</h1>
     {% else %}
