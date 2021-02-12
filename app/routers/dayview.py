@@ -145,4 +145,3 @@ async def dayview(
         "zodiac": zodiac_obj,
         "view": view
     })
-
