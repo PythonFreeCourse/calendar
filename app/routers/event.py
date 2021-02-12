@@ -28,6 +28,7 @@ UPDATE_EVENTS_FIELDS = {
     'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
+    'vc_link': (str, type(None)),
     'category_id': (int, type(None)),
 }
 
@@ -61,20 +62,15 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     owner_id = user.id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
+    vc_link = data['vc_link']
     category_id = data.get('category_id')
-    vc_link = data['vc_url']
-
-    event = create_event(session, title, start, end, owner_id, content,
-                         location, vc_link, category_id=category_id)
-    return RedirectResponse(router.url_path_for('eventview',
-                                                event_id=event.id),
 
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
 
     if vc_link is not None:
-        validate_zoom_link(vc_link)
+        raise_if_zoom_link_invalid(vc_link)
 
     event = create_event(session, title, start, end, owner_id, content,
                          location, vc_link, invitees=invited_emails,
@@ -98,19 +94,8 @@ async def eventview(request: Request, event_id: int,
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request, "event": event,
                                        "start_format": start_format,
-                                        "end_format": end_format,
+                                       "end_format": end_format,
                                        "messages": messages})
-
-
-UPDATE_EVENTS_FIELDS = {
-    'title': str,
-    'start': datetime,
-    'end': datetime,
-    'content': (str, type(None)),
-    'location': (str, type(None)),
-    'vc_link': (str, type(None)),
-    'category_id': (int, type(None))
-}
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -327,12 +312,20 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-def get_tamplate_to_share_event(event_id: int, user_name: str, db: Session) -> templates:
+def get_tamplate_to_share_event(event_id: int, user_name: str,
+                                db: Session, request: Request) -> TemplateResponse:
+    """Give yoe nice tamplate of the event that you can share.
+    Get event id and the user name that want to send the share message,
+    Also needed to give db session and request method (mostly 'get')
+    return TemplateResponse that incloud all the ditails on the event"""
+
     event = by_id(db, event_id)
-    return templates.TemplateResponse("event/share_event.html",
-                                      {"sender_name": user_name,
+    html_temp = templates.TemplateResponse("event/share_event.html",
+                                      {"request": request,
+                                        "sender_name": user_name,
                                         "title": event.title,
                                         "start_date": event.start,
                                         "end_date": event.end,
                                         "location": event.location,
                                         "vc_link": event.vc_link})
+    return html_temp

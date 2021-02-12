@@ -1,20 +1,19 @@
 from datetime import datetime, timedelta
 
 import pytest
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from starlette import status
-from sqlalchemy.orm import Session
 
 
 from app.main import app
 from app.database.models import Event
 from app.dependencies import get_db
-from app.main import app
 from app.routers.event import (_delete_event, _update_event, add_new_event,
                                by_id, check_change_dates_allowed, delete_event,
-                               is_date_before, update_event, create_event)
+                               is_date_before, update_event, create_event,
+                               get_tamplate_to_share_event)
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -22,8 +21,8 @@ CORRECT_EVENT_FORM_DATA = {
     'start_time': '12:59',
     'end_date': '2021-01-28',
     'end_time': '15:01',
-    'location_type': 'vc_url',
-    'location': 'https://us02web.zoom.us/j/875384596',
+    'location': 'fake city',
+    'vc_link': 'https://us02web.zoom.us/j/875384596',
     'description': 'content',
     'color': 'red',
     'availability': 'True',
@@ -37,8 +36,8 @@ WRONG_EVENT_FORM_DATA = {
     'start_time': '15:59',
     'end_date': '2021-01-27',
     'end_time': '15:01',
-    'location_type': 'vc_url',
-    'location': 'not a zoom link',
+    'location': 'fake city',
+    'vc_link': 'not a zoom link',
     'description': 'content',
     'color': 'red',
     'availability': 'True',
@@ -52,8 +51,8 @@ BAD_EMAILS_FORM_DATA = {
     'start_time': '15:59',
     'end_date': '2021-01-27',
     'end_time': '15:01',
-    'location_type': 'vc_url',
-    'location': 'https://us02web.zoom.us/j/875384596',
+    'location': 'fake city',
+    'vc_link': 'https://us02web.zoom.us/j/875384596',
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
@@ -67,8 +66,8 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'start_time': '12:59',
     'end_date': '2021-02-04',
     'end_time': '15:01',
-    'location_type': 'vc_url',
-    'location': 'https://us02web.zoom.us/j/875384596',
+    'location': 'fake city',
+    'vc_link': 'https://us02web.zoom.us/j/875384596',
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
@@ -82,8 +81,8 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'start_time': '12:59',
     'end_date': '2021-02-11',
     'end_time': '15:01',
-    'location_type': 'vc_url',
-    'location': 'https://us02web.zoom.us/j/875384596',
+    'location': 'fake city',
+    'vc_link': 'https://us02web.zoom.us/j/875384596',
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
@@ -110,7 +109,8 @@ def test_eventedit(event_test_client):
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
-    event_details = [event.title, event.content, event.location, event.start,
+    event_details = [event.title, event.content, event.location,
+                     event.vc_link, event.start,
                      event.end, event.color, event.category_id]
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
@@ -128,7 +128,7 @@ def test_create_event_with_default_availability(client, user, session):
         'title': 'test title',
         'start': datetime.strptime('2021-01-01 15:59', '%Y-%m-%d %H:%M'),
         'end': datetime.strptime('2021-01-02 15:01', '%Y-%m-%d %H:%M'),
-        'location': 'https://us02web.zoom.us/j/875384596',
+        'vc_link': 'https://us02web.zoom.us/j/875384596',
         'content': 'content',
         'owner_id': user.id,
     }
@@ -145,7 +145,7 @@ def test_create_event_with_free_availability(client, user, session):
         'title': 'test title',
         'start': datetime.strptime('2021-01-01 15:59', '%Y-%m-%d %H:%M'),
         'end': datetime.strptime('2021-01-02 15:01', '%Y-%m-%d %H:%M'),
-        'location': 'https://us02web.zoom.us/j/875384596',
+        'vc_link': 'https://us02web.zoom.us/j/875384596',
         'content': 'content',
         'owner_id': user.id,
         'availability': False,
@@ -385,13 +385,20 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_get_tamplate_to_share_event(event, session):
+    html_template = get_tamplate_to_share_event(
+        event_id=1, user_name='michael', db=session, request=Request.get)
+    print(html_template)
+    assert html_template is not None
+
+
 class TestApp:
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
         'title': "Test Title",
         "location": "Fake City",
-        "vc_link": "https://fakelink.com",
+        'vc_link': 'https://us02web.zoom.us/j/875384596',
         "start": date_test_data[0],
         "end": date_test_data[1],
         "content": "Any Words",

@@ -19,6 +19,7 @@ def event(sender: User, category: Category, session: Session) -> Event:
         content='test event',
         owner_id=sender.id,
         location="Some random location",
+        vc_link=None,
         category_id=category.id,
     )
 
