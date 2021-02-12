@@ -1,14 +1,13 @@
-import pytest
 from iso639 import languages
+import pytest
 from textblob import TextBlob
 
-from app.internal.translation import (
-    translate_text,
-    translate_text_for_user,
-    _get_user_language,
-    _lang_full_to_short,
-    _detect_text_language
-)
+from fastapi import HTTPException
+from starlette import status
+
+from app.internal.translation import (_detect_text_language,
+                                      _get_user_language, _lang_full_to_short,
+                                      translate_text, translate_text_for_user)
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang",
@@ -152,3 +151,11 @@ def test_get_user_language_for_bed_user(user, session):
     user_id = user.id + 1
     answer = _get_user_language(user_id, session=session)
     assert not answer
+
+
+def test_get_user_language_for_bed_language(user, session):
+    user.language_id = 3
+    session.commit()
+    with pytest.raises(HTTPException):
+        answer = _get_user_language(user.id, session=session)
+        assert answer.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

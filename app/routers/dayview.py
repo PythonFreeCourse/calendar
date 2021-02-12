@@ -5,15 +5,12 @@ from typing import Tuple, Union, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
-from app.database.database import get_db
 from app.database.models import Event, User
-from app.routers.user import get_all_user_events, create_user
-from app.routers.event import create_event
-from app.dependencies import TEMPLATES_PATH
+from app.dependencies import get_db, TEMPLATES_PATH
+from app.routers.user import get_all_user_events
 from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
-
 
 router = APIRouter()
 
@@ -148,3 +145,4 @@ async def dayview(
         "zodiac": zodiac_obj,
         "view": view
     })
+
