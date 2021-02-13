@@ -223,13 +223,15 @@ async def update_location_coordinates(event_to_update: Dict):
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
-                 content: str = None,
-                 location: str = None,
-                 latitude=None, longitude=None,
-                 color='none',
+                 content: Optional[str] = None,
+                 location: Optional[str] = None,
+                 latitude: Optional[str] = None,
+                 longitude: Optional[str] = None,
+                 color: Optional[str] = None,
                  invitees: List[str] = None,
-                 category_id: int = None,
-                 availability: bool = True):
+                 category_id: Optional[int] = None,
+                 availability: bool = True,
+                 ):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
