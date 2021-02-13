@@ -8,8 +8,9 @@ from typing import Dict, List, Optional
 
 def get_parashot_from_json() -> List[Dict[str, Optional[str]]]:
     """Reading all parashot from the a JSON file that have been copied from:
-    'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&month=x&ss=on
-    &mf=on&c=on&geo=geoname&geonameid=293397&m=50&s=on'
+    'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&
+    nx=on&year=now&month=x&ss=on&mf=on&c=on&
+    geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on'
     Each year the Json file will need to be re-updated
     according to this API in this way:
 
@@ -22,7 +23,7 @@ def get_parashot_from_json() -> List[Dict[str, Optional[str]]]:
     def get_all_parashot():
     r = requests.get('https://www.hebcal.com/hebcal?v=1&cfg=json&
     maj=on&min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&
-    geo=geoname&geonameid=293397&m=50&s=on')
+    geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on')
     items = r.json()['items']
     all_para = list(filter(lambda i: 'Parashat' in i['title'], items))
     return [relevent_details(p) for p in all_para]
