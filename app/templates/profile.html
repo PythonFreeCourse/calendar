@@ -16,28 +16,28 @@
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li class="list-group-item no-border">
                                 <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal" data-bs-target="#updateNameModal">
-                  Update full name
-                </button>
+                    Update full name
+                  </button>
                             </li>
                             <li class="list-group-item no-border">
                                 <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal" data-bs-target="#updateEmailModal">
-                  Update email adress
-                </button>
+                    Update email adress
+                  </button>
                             </li>
                             <li class="list-group-item no-border">
                                 <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal" data-bs-target="#updatePhotoModal">
-                  Update profile photo
-                </button>
+                    Update profile photo
+                  </button>
                             </li>
                             <li class="list-group-item no-border">
                                 <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal" data-bs-target="#updateDescriptionModal">
-                  Update profile status
-                </button>
+                    Update profile status
+                  </button>
                             </li>
                             <li class="list-group-item no-border">
                                 <button type="button" class="btn text-secondary p-1 dropdown-item" data-bs-toggle="modal" data-bs-target="#telegramModal">
-                  Register telegram Id
-                </button>
+                    Register telegram Id
+                  </button>
                             </li>
                         </ul>
                     </div>
@@ -168,11 +168,11 @@
                     <p class="card-title">
                         <div class="btn-group">
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              daily horoscope
-            </button>
+                daily horoscope
+              </button>
                             <div class="dropdown-menu dropdown-menu-right" id='signs'>
                                 {% for sign in signs %}
-                                <button class="dropdown-item sign" type="button" id="sign" name="{{sign}}">{{sign}}</button> {% endfor %}
+                                <button class="dropdown-item sign" type="button" id="sign" name="{{ sign }}">{{ sign }}</button> {% endfor %}
                             </div>
                         </div>
 
@@ -198,6 +198,9 @@
                         {% endif %}
                         <li class="list-group-item list-group-item-action no-border">
                             <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
+                        </li>
+                        <li class="list-group-item list-group-item-action no-border">
+                            <a class="text-decoration-none text-secondary" href="{{ url_for('import_holidays') }}">Add holidays to calendar</a>
                         </li>
                         <li class="list-group-item list-group-item-action no-border">
                             <a class="text-decoration-none text-secondary" href="#">Your feature</a>
@@ -309,6 +312,4 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    {% include "event/partials/text_editor_partial_body.html" %} {% endblock %}
+            {% include "event/partials/text_editor_partial_body.html" %} {% endblock %}
