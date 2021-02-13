@@ -1,23 +1,23 @@
 {% extends "./partials/base.html" %}
 {% block head %}
-{{super()}}
+  {{ super() }}
 
-<!-- CSS -->
-<link href="{{ url_for('static', path='/grid_style.css') }}" rel="stylesheet" type="text/css">
+  <!-- CSS -->
+  <link href="{{ url_for('static', path='/grid_style.css') }}" rel="stylesheet" type="text/css">
 
-<!-- Scripts -->
-<script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
+  <!-- Scripts -->
+  <script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
 {% endblock head %}
 {% block page_name %}Month View{% endblock page_name %}
 {% block body %}
-<div class="pyldr-container">
-  {% include 'partials/calendar/navigation.html' %}
-  <div class="background-lightgray" id="feature-settings">
-    {% include 'partials/calendar/feature_settings/example.html' %}
+  <div class="pyldr-container">
+    {% include 'partials/calendar/navigation.html' %}
+    <div class="background-lightgray" id="feature-settings">
+      {% include 'partials/calendar/feature_settings/example.html' %}
+    </div>
+    <div class="content">
+      {% block content %}
+      {% endblock content %}
+    </div>
   </div>
-  <div class="content">
-    {% block content %}
-    {% endblock content %}
-  </div>
-</div>
 {% endblock body %}
