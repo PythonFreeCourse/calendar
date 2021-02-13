@@ -16,7 +16,6 @@ def event(sender: User, category: Category, session: Session) -> Event:
         title='event',
         start=today_date,
         end=today_date,
-        all_day=False,
         content='test event',
         owner_id=sender.id,
         location="Some random location",

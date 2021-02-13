@@ -40,7 +40,8 @@ CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'public'
+    'privacy': 'public',
+    'event_type': 'on'
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -55,7 +56,8 @@ WRONG_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'True',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'event_type': 'on'
 }
 
 BAD_EMAILS_FORM_DATA = {
@@ -70,7 +72,8 @@ BAD_EMAILS_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com,ccc'
+    'invited': 'a@a.com,b@b.com,ccc',
+    'event_type': 'on'
 }
 
 WEEK_LATER_EVENT_FORM_DATA = {
@@ -101,7 +104,8 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'event_type': 'on'
 }
 
 NONE_UPDATE_OPTIONS = [

@@ -153,7 +153,7 @@ async def dayview(
           request: Request, date: str, session=Depends(get_db), view='day',
       ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username='test_username').first()
+    user = session.query(User).first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:

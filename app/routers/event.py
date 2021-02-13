@@ -63,11 +63,12 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
-    all_day = data['event_type']
-    if all_day == "on":
-        all_day = True
-    else:
-        all_day = False
+    if data['event_type']:
+        all_day = data['event_type']
+        if all_day == "on":
+            all_day = True
+        else:
+            all_day = False
     category_id = data.get('category_id')
 
     invited_emails = get_invited_emails(data['invited'])
