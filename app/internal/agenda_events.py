@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from typing import List, Optional, Union, Iterator
+from typing import Iterator, List, Optional, Union
 
 import arrow
 from sqlalchemy.orm import Session
