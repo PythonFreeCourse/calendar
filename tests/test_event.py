@@ -110,12 +110,12 @@ INVALID_FIELD_UPDATE = [
 
 
 def test_get_events(event_test_client, session, event):
-    response = event_test_client.get(f"/event/")
+    response = event_test_client.get("/event/")
     assert response.ok
 
 
 def test_create_event_api(event_test_client, session, event):
-    response = event_test_client.post(f"/event/",
+    response = event_test_client.post("/event/",
                                       data=json.dumps(CORRECT_ADD_EVENT_DATA))
     assert response.ok
 
