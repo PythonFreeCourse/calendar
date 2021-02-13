@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', path='/currency.css') }}">
+  <title>currency</title>
+</head>
+
+<body>
+<div id="showCurrency" data-visible="0">
+  <p style="margin: 1rem;">
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample">
+      Currency
+    </button>
+  <div class="row" style="margin: 1rem; width: 14rem;">
+    <div class="col">
+      <div class="collapse multi-collapse" id="collapseExample">
+        <ul class="list-group list-group-flush" id="currencyView">
+          <!-- JS currency content -->
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="{{ url_for('static', path='/currency.js') }}"></script>
+<script type="text/javascript">
+  getCurrency("{{ base | safe }}", "{{ date | safe }}");
+  document.getElementById("currencyView").addEventListener("click", function (e) {
+    if (e.target && e.target.nodeName == "A") {
+      getCurrency(e.target.id, "{{ date | safe }}");
+    }
+  }, false);
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

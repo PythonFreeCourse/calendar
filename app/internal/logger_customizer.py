@@ -1,7 +1,7 @@
+from pathlib import Path
 import sys
 
-from pathlib import Path
-from loguru import logger, _Logger as Logger
+from loguru import _Logger as Logger, logger
 
 
 class LoggerConfigError(Exception):

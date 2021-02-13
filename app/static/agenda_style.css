@@ -1,30 +1,41 @@
 .agenda_filters {
-    display: flex;
-    padding: 1em;
+  display: flex;
+  padding: 1em;
 }
 
 .filter {
-    margin-right: 1em;
+  margin-right: 1em;
 }
 
 .shown_dates {
-    padding: 1em;
+  padding: 1em;
 }
 
 .event_line {
-    margin-left: 3em;
-    margin-right: 3em;
-    margin-bottom: 1em;
-    border: 1px solid black;
-    display: block;
-    padding: 0.2em;
+  margin-left: 3em;
+  margin-right: 3em;
+  margin-bottom: 1em;
+  border: 1px solid black;
+  padding: 0.2em;
+  display: grid;
+  grid-template-columns: 1em 1fr;
+  grid-gap: 0.6em;
 }
 
 .exact_date {
-    display: flex;
+  display: flex;
 }
 
 .agenda_button {
-    border: 1px solid black;
-    margin: 1em;
+  border: 1px solid black;
+  margin: 1em;
+}
+
+/** Event availability */
+.busy {
+  background-color: rgb(96, 155, 235)
+}
+
+.free {
+  background-color: rgba(241, 243, 244, 0.74)
 }
