@@ -52,6 +52,7 @@ class TestGeolocation:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("location", CORRECT_LOCATIONS)
     async def test_get_location_coordinates_correct(location):
+        # Test geolocation search using valid locations.
         location = await get_location_coordinates(location)
         assert all(list(location))
 
@@ -59,12 +60,14 @@ class TestGeolocation:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("location", WRONG_LOCATIONS)
     async def test_get_location_coordinates_wrong(location):
+        # Test geolocation search using invalid locations.
         location = await get_location_coordinates(location)
         assert location == location
 
     @staticmethod
     @pytest.mark.asyncio
     async def test_event_location_correct(event_test_client, session):
+        # Test handling with location available on geopy servers.
         response = event_test_client.post(
             "event/edit",
             data=TestGeolocation.CORRECT_LOCATION_EVENT
@@ -82,6 +85,7 @@ class TestGeolocation:
 
     @staticmethod
     def test_event_location_wrong(event_test_client, session):
+        # Test handling with location not available on geopy servers.
         address = TestGeolocation.WRONG_LOCATION_EVENT['location']
         response = event_test_client.post(
             "event/edit",
