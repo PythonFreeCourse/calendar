@@ -1,7 +1,7 @@
 from app.internal import load_parasha as lp
 
 
-EXAMPLE=[{'name': 'Parashat Vayechi', 'hebrew': 'פרשת ויחי', " \
+EXAMPLE= [{'name': 'Parashat Vayechi', 'hebrew': 'פרשת ויחי', " \
             "'link': 'https://www.hebcal.com/sedrot/vayechi-20210102?i=on&utm_source=js&utm_medium=api', " \
             "'date': '2021-01-02'}]
 
