@@ -30,6 +30,8 @@ UPDATE_EVENTS_FIELDS = {
     'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
+    'latitude': (str, type(None)),
+    'longitude': (str, type(None)),
     'category_id': (int, type(None)),
 }
 
@@ -75,10 +77,15 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     if is_zoom:
         raise_if_zoom_link_invalid(location)
     else:
-        latitude, longitude, location = get_location_coordinates(location)
+        location = await get_location_coordinates(location)
+        if type(location) is not str:
+            latitude = location.latitude
+            longitude = location.longitude
+            location = location.location
     event = create_event(session, title, start, end, owner_id, content,
-                         location, invitees=invited_emails,
+                         location=location, invitees=invited_emails,
                          latitude=latitude, longitude=longitude,
+                         color=color,
                          category_id=category_id,
                          availability=availability)
 
@@ -169,7 +176,7 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
 
 def get_event_with_editable_fields_only(event: Dict[str, Any]
                                         ) -> Dict[str, Any]:
-    """Remove all keys that are not allowed to update"""
+    """Remove all keys that are not allowed to  """
 
     edit_event = {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
     # Convert `availability` value into boolean.
@@ -181,11 +188,6 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
 def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
     try:
         # Update database
-        print(event_to_update)
-        location = get_location_coordinates(event_to_update.get('location'))
-        if location is not None:
-            for i, field in enumerate(location._fields):
-                event_to_update[field] = location[i]
         db.query(Event).filter(Event.id == event_id).update(
             event_to_update, synchronize_session=False)
 
@@ -207,9 +209,17 @@ def update_event(event_id: int, event: Dict, db: Session
     check_change_dates_allowed(old_event, event_to_update)
     if not event_to_update:
         return None
+    update_location_coordinates(event_to_update)
     event_updated = _update_event(db, event_id, event_to_update)
     # TODO: Send emails to recipients.
     return event_updated
+
+
+async def update_location_coordinates(event_to_update: Dict):
+    location = await get_location_coordinates(event_to_update.get('location'))
+    if location is not None:
+        for i, field in enumerate(location._fields):
+            event_to_update[field] = location[i]
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,

@@ -16,7 +16,7 @@ class TestGeolocation:
         'location': 'אדר 11, אשדוד',
         'description': 'test1',
         'color': 'red',
-        'invited': 'None',
+        'invited': 'a@gmail.com',
         'availability': 'busy',
         'privacy': 'public'
     }
@@ -30,7 +30,7 @@ class TestGeolocation:
         'location_type': 'address',
         'location': 'not a real location with coords',
         'description': 'test1',
-        'invited': 'None',
+        'invited': 'a@gmail.com',
         'color': 'red',
         'availability': 'busy',
         'privacy': 'public'
@@ -49,17 +49,22 @@ class TestGeolocation:
     ]
 
     @staticmethod
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("location", CORRECT_LOCATIONS)
-    def test_get_location_coordinates_correct(location):
-        assert all(get_location_coordinates(location))
+    async def test_get_location_coordinates_correct(location):
+        location = await get_location_coordinates(location)
+        assert all(list(location))
 
     @staticmethod
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("location", WRONG_LOCATIONS)
-    def test_get_location_coordinates_wrong(location):
-        assert not all(get_location_coordinates(location))
+    async def test_get_location_coordinates_wrong(location):
+        location = await get_location_coordinates(location)
+        assert location == location
 
     @staticmethod
-    def test_event_location_correct(event_test_client, session):
+    @pytest.mark.asyncio
+    async def test_event_location_correct(event_test_client, session):
         response = event_test_client.post(
             "event/edit",
             data=TestGeolocation.CORRECT_LOCATION_EVENT
@@ -69,10 +74,10 @@ class TestGeolocation:
         url = event_test_client.app.url_path_for('eventview',
                                                  event_id=event_id)
         response = event_test_client.get(url)
-        _, _, address = get_location_coordinates(
+        location = await get_location_coordinates(
             TestGeolocation.CORRECT_LOCATION_EVENT['location']
         )
-        address = address.split()[0]
+        address = location.location.split(" ")[0]
         assert bytes(address, "utf-8") in response.content
 
     @staticmethod

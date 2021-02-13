@@ -1,7 +1,7 @@
+from collections import namedtuple
 import logging
 import re
-from collections import namedtuple
-from typing import List, NamedTuple, Set
+from typing import List, NamedTuple, Set, Union
 
 from loguru import logger
 
@@ -16,6 +16,13 @@ from starlette.status import HTTP_400_BAD_REQUEST
 
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
 LOCATION_TIMEOUT = 20
+
+
+class Location(NamedTuple):
+    # Location type hint class.
+    latitude: str
+    longitude: str
+    location: str
 
 
 def raise_if_zoom_link_invalid(location):
@@ -92,10 +99,10 @@ def get_messages(session: Session,
     return messages
 
 
-def get_location_coordinates(
+async def get_location_coordinates(
         address: str,
         timeout: float = LOCATION_TIMEOUT
-        ) -> NamedTuple:
+        ) -> Union[Location, str]:
     """Return location coordinates and accurate
     address of the specified location."""
     Location = namedtuple('Location', 'latitude, longitude, location')
@@ -109,4 +116,4 @@ def get_location_coordinates(
             return location
     except (GeocoderTimedOut, GeocoderUnavailable) as e:
         logger.exception(str(e))
-    return None, None, address
+    return address
