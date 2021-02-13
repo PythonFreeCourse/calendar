@@ -28,12 +28,16 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+
+json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
+
 from app.routers import (  # noqa: E402
-    agenda, calendar, categories, celebrity, currency, dayview, email,
-    event, four_o_four, invitation, profile, search, telegram, whatsapp
+    agenda, calendar, categories, celebrity, currency, dayview, 
+    email, event, four_o_four, invitation, profile, search,
+    weekview, telegram, whatsapp,
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -45,6 +49,7 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    weekview.router,
     email.router,
     event.router,
     four_o_four.router,
