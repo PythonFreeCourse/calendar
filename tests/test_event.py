@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
-
+import json
 import pytest
+
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
@@ -88,6 +89,15 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'invited': 'a@a.com,b@b.com'
 }
 
+CORRECT_ADD_EVENT_DATA = {
+    "title": "test",
+    "start": "2021-02-13T09:03:49.560Z",
+    "end": "2021-02-13T09:03:49.560Z",
+    "content": "test",
+    "owner_id": 0,
+    "location": "test"
+}
+
 NONE_UPDATE_OPTIONS = [
     {}, {"test": "test"},
 ]
@@ -97,6 +107,17 @@ INVALID_FIELD_UPDATE = [
     {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
     {"start": datetime(2030, 2, 2)}, {"end": datetime(1990, 1, 1)},
 ]
+
+
+def test_get_events(event_test_client, session, event):
+    response = event_test_client.get(f"/event/")
+    assert response.ok
+
+
+def test_create_event_api(event_test_client, session, event):
+    response = event_test_client.post(f"/event/",
+                                      data=json.dumps(CORRECT_ADD_EVENT_DATA))
+    assert response.ok
 
 
 def test_eventedit(event_test_client):
