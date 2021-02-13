@@ -72,7 +72,8 @@ async def set_task_done(task_id: int, session=Depends(get_db)):
     task = by_id(session, task_id)
     task.is_done = True
     session.commit()
-    return RedirectResponse(f"/day/{task.date.strftime('%Y-%m-%d')}", status_code=303)
+    return RedirectResponse(f"/day/{task.date.strftime('%Y-%m-%d')}",
+                            status_code=303)
 
 
 @router.post("/setUndone/{task_id}")
@@ -80,4 +81,5 @@ async def set_task_undone(task_id: int, session=Depends(get_db)):
     task = by_id(session, task_id)
     task.is_done = False
     session.commit()
-    return RedirectResponse(f"/day/{task.date.strftime('%Y-%m-%d')}", status_code=303)
+    return RedirectResponse(f"/day/{task.date.strftime('%Y-%m-%d')}",
+                            status_code=303)

@@ -36,7 +36,7 @@ def task2(session, user):
 @pytest.fixture
 def test1(session):
     user_example = create_model(
-        session, User, username="test1", email="test@something.com",
+        session, User, username="test1", email="test@gmail.com",
         password="123456", full_name="My test", language="English"
     )
     yield user_example
@@ -80,12 +80,11 @@ def test_if_task_edited(home_test_client, session, task2: Task):
     assert task2.is_important == task_ex.is_important
 
 
-def test_if_task_has_done(home_test_client, session, task: Task):
-    response = home_test_client.post(f"/task/setDone/{task.id}",
-                                     data={"task_id": task.id,
-                                           "session": session})
+def test_if_task_has_done(home_test_client, session, task2: Task):
+    response = home_test_client.post(f"/task/setDone/{task2.id}",
+                                     data={"task_id": task2.id})
     assert response.status_code == 303
-    task_ex = by_id(session, task.id)
+    task_ex = by_id(session, task2.id)
     assert task_ex.is_done is True
 
 
