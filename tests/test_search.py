@@ -108,7 +108,6 @@ class TestSearch:
                                  owner_id=event['owner_id'])
 
     @staticmethod
-    @pytest.mark.search
     def test_search_page_exists(client):
         resp = client.get(TestSearch.SEARCH)
         assert resp.status_code == status.HTTP_200_OK
@@ -117,7 +116,6 @@ class TestSearch:
 
 @pytest.mark.skipif(not PSQL_ENVIRONMENT, reason="Not PSQL environment")
 @pytest.mark.parametrize('data, string', TestSearch.GOOD_KEYWORDS)
-@pytest.mark.search
 def test_search_good_keywords(data, string, client, session):
     ts = TestSearch()
     ts.create_data(session)
@@ -127,7 +125,6 @@ def test_search_good_keywords(data, string, client, session):
 
 @pytest.mark.skipif(not PSQL_ENVIRONMENT, reason="Not PSQL environment")
 @pytest.mark.parametrize('data, string', TestSearch.BAD_KEYWORDS)
-@pytest.mark.search
 def test_search_bad_keywords(data, string, client, session):
     ts = TestSearch()
     ts.create_data(session)
@@ -137,7 +134,6 @@ def test_search_bad_keywords(data, string, client, session):
 
 @pytest.mark.skipif(PSQL_ENVIRONMENT, reason="PSQL environment")
 @pytest.mark.parametrize('data, string', TestSearch.NOT_PSQL_ENV_KEYWORDS)
-@pytest.mark.search
 def test_search_not_psql_env_keywords(data, string, client, session):
     ts = TestSearch()
     ts.create_data(session)
@@ -147,7 +143,6 @@ def test_search_not_psql_env_keywords(data, string, client, session):
 
 @pytest.mark.skipif(PSQL_ENVIRONMENT, reason="Not PSQL environment")
 @pytest.mark.parametrize('input_string', TestSearch.KEYWORDS_FOR_FUNC)
-@pytest.mark.search
 def test_get_results_by_keywords_func(input_string, client, session):
     ts = TestSearch()
     ts.create_data(session)
@@ -163,12 +158,10 @@ STRIPPED_KEYWORDS = [
 
 
 @pytest.mark.parametrize('input_string, output_string', STRIPPED_KEYWORDS)
-@pytest.mark.search
 def test_search_stripped_keywords(input_string, output_string):
     assert get_stripped_keywords(input_string) == output_string
 
 
-@pytest.mark.search
 def test_events_tsv_column_exists():
     column_created = True
 

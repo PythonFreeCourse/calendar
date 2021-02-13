@@ -15,7 +15,6 @@ CROP_RESULTS = [
 ]
 
 
-@pytest.mark.profile
 def test_get_placeholder_user():
     user = get_placeholder_user()
     assert user.username == 'new_user'
@@ -25,12 +24,10 @@ def test_get_placeholder_user():
 
 
 @pytest.mark.parametrize('width, height, result', CROP_RESULTS)
-@pytest.mark.profile
 def test_get_image_crop_area(width, height, result):
     assert get_image_crop_area(width, height) == result
 
 
-@pytest.mark.profile
 def test_profile_page(profile_test_client):
     profile = profile_test_client.get('/profile')
     data = profile.content
@@ -41,7 +38,6 @@ def test_profile_page(profile_test_client):
     assert b'On This Day' in data
 
 
-@pytest.mark.profile
 def test_update_user_fullname(profile_test_client):
     new_name_data = {
         'fullname': 'Peter'
@@ -59,7 +55,6 @@ def test_update_user_fullname(profile_test_client):
     assert b'Peter' in data
 
 
-@pytest.mark.profile
 def test_update_user_email(profile_test_client):
     new_email = {
         'email': 'very@new.email'
@@ -77,7 +72,6 @@ def test_update_user_email(profile_test_client):
     assert b'very@new.email' in data
 
 
-@pytest.mark.profile
 def test_update_user_description(profile_test_client):
     new_description = {
         'description': "FastAPI Developer"
@@ -95,7 +89,6 @@ def test_update_user_description(profile_test_client):
     assert b"FastAPI Developer" in data
 
 
-@pytest.mark.profile
 def test_update_telegram_id(profile_test_client):
     new_telegram_id = {
         'telegram_id': "12345"
@@ -113,7 +106,6 @@ def test_update_telegram_id(profile_test_client):
     assert b"12345" in data
 
 
-@pytest.mark.profile
 def test_upload_user_photo(profile_test_client):
     example_new_photo = f"{MEDIA_PATH}/example.png"
 

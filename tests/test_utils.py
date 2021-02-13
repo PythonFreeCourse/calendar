@@ -1,19 +1,15 @@
 from sqlalchemy.orm import Session
 
-import pytest
-
 from app.database.models import User
 from app.internal import utils
 
 
 class TestUtils:
 
-    @pytest.mark.utils
     def test_save_success(self, user: User, session: Session) -> None:
         user.username = 'edit_username'
         assert utils.save(session, user)
 
-    @pytest.mark.utils
     def test_save_failure(self, session: Session) -> None:
         user = 'not a user instance'
         assert not utils.save(session, user)

@@ -1,7 +1,5 @@
 from icalendar import vCalAddress
 
-import pytest
-
 from app.config import ICAL_VERSION, PRODUCT_ID
 from app.routers.export import (
     create_ical_calendar, create_ical_event, event_to_ical
@@ -10,19 +8,16 @@ from app.routers.export import (
 
 class TestExport:
 
-    @pytest.mark.export
     def test_create_ical_calendar(self):
         cal = create_ical_calendar()
         assert cal.get('version') == ICAL_VERSION
         assert cal.get('prodid') == PRODUCT_ID
 
-    @pytest.mark.export
     def test_create_ical_event(self, event):
         ical_event = create_ical_event(event)
         assert event.owner.email in ical_event.get('organizer')
         assert ical_event.get('summary') == event.title
 
-    @pytest.mark.export
     def test_add_attendees(self, event, user):
         ical_event = create_ical_event(event)
         ical_event.add(
@@ -33,7 +28,6 @@ class TestExport:
         attendee = vCalAddress(f'MAILTO:{user.email}')
         assert attendee == ical_event.get('attendee')
 
-    @pytest.mark.export
     def test_event_to_ical(self, user, event):
         ical_event = event_to_ical(event, [user.email])
 

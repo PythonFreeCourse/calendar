@@ -49,14 +49,17 @@ uvicorn app.main:app --reload
 ```
 ### Running tests
 ```shell
+python -m pytest --cov-report term-missing --cov=app tests
+```
+
+### Running tox
+```shell
 # Standard tests: 'coverage' and 'flake8'
 tox
 # Only flake8 tests
 tox -e flake8
 # Coverage withe html reports
 tox -e rep
-# Marked function tests
-pytest -m MARKER_NAME
 ```
 
 ## Contributing

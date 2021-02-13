@@ -34,7 +34,6 @@ ERROR_RESPONSE_FROM_MOCK = {"error": {"message": "Error Text"}}
 
 
 @pytest.mark.asyncio
-@pytest.mark.astronomy
 async def test_get_astronomical_data(httpx_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
     httpx_mock.add_response(method="GET", json=RESPONSE_FROM_MOCK)
@@ -44,7 +43,6 @@ async def test_get_astronomical_data(httpx_mock):
 
 @respx.mock
 @pytest.mark.asyncio
-@pytest.mark.astronomy
 async def test_astronomical_data_error_from_api():
     requested_date = datetime.datetime(day=4, month=4, year=2021)
     route = respx.get(ASTRONOMY_URL)
@@ -55,7 +53,6 @@ async def test_astronomical_data_error_from_api():
 
 @respx.mock
 @pytest.mark.asyncio
-@pytest.mark.astronomy
 async def test_astronomical_exception_from_api(httpx_mock):
     requested_date = datetime.datetime.now() + datetime.timedelta(days=3)
     respx.get(ASTRONOMY_URL).mock(return_value=httpx.Response(500))
@@ -65,7 +62,6 @@ async def test_astronomical_exception_from_api(httpx_mock):
 
 @responses.activate
 @pytest.mark.asyncio
-@pytest.mark.astronomy
 async def test_astronomical_no_response_from_api():
     requested_date = datetime.datetime(day=11, month=1, year=2020)
     responses.add(responses.GET, ASTRONOMY_URL, status=500)

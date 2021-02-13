@@ -24,11 +24,9 @@ class TestAgenda:
     ]
 
     @pytest.mark.parametrize('start, end, diff', dates)
-    @pytest.mark.agenda_internal
     def test_get_time_delta_string(self, start, end, diff):
         assert agenda_events.get_time_delta_string(start, end) == diff
 
-    @pytest.mark.agenda_internal
     def test_get_events_per_dates_success(self, today_event, session):
         events = get_events_per_dates(
             session=session,
@@ -38,7 +36,6 @@ class TestAgenda:
         )
         assert list(events) == [today_event]
 
-    @pytest.mark.agenda_internal
     def test_get_events_per_dates_failure(self, yesterday_event, session):
         events = get_events_per_dates(
             session=session,

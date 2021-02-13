@@ -1,11 +1,8 @@
-import pytest
-
 from app.database.models import WikipediaEvents
 from app.internal.on_this_day_events import (get_on_this_day_events,
                                              insert_on_this_day_data)
 
 
-@pytest.mark.on_this_day_events
 def test_insert_on_this_day_data(session):
     is_exists_data = session.query(WikipediaEvents).all()
     assert not is_exists_data
@@ -14,7 +11,6 @@ def test_insert_on_this_day_data(session):
     assert is_exists_data is not None
 
 
-@pytest.mark.on_this_day_events
 def test_get_on_this_day_events(session):
     data = get_on_this_day_events(session)
     assert isinstance(data, dict)
@@ -22,7 +18,6 @@ def test_get_on_this_day_events(session):
     assert isinstance(data.get('wikipedia'), str)
 
 
-@pytest.mark.on_this_day_events
 def test_get_on_this_day_events_exists(session):
     fake_object = WikipediaEvents(
         events=['fake'], wikipedia="www.fake.com", date_="not a date string")

@@ -1,11 +1,7 @@
-import pytest
-
-
 CURRENCY = '/currency'
 CUSTOM_DATE = "/2021-1-3"
 
 
-@pytest.mark.currency
 def test_router_good(client):
     resp = client.get(CURRENCY)
     assert resp.ok
