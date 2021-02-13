@@ -76,10 +76,10 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     if is_zoom:
         raise_if_zoom_link_invalid(location)
-    event = create_event(session, title, start, end, owner_id, all_day, content,
-                         location, invitees=invited_emails,
-                         category_id=category_id,
-                         availability=availability)
+    event = create_event(session, title, start, end, owner_id, all_day,
+                        content, location, invitees=invited_emails,
+                        category_id=category_id,
+                        availability=availability)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -93,8 +93,9 @@ async def eventview(request: Request, event_id: int,
     event = by_id(db, event_id)
     if event.all_day is False:
         start_format = '%A, %d/%m/%Y %H:%M'
-        end_format = ('%H:%M' if event.start.date() == event.end.date()
-                            else start_format)
+        end_format = ('%H:%M' 
+                        if event.start.date() == event.end.date()
+                        else start_format)
     else:
         start_format = '%A, %d/%m/%Y'
         end_format = ""

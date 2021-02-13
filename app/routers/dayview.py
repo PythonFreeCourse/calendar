@@ -117,7 +117,7 @@ def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
 
 def all_day_event_in_day(
     event: Event, day: datetime, day_end: datetime
-    ) -> bool:
+) -> bool:
     if event.all_day is True:
         return (
             (event.start >= day and event.start < day_end) or
