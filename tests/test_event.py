@@ -135,8 +135,6 @@ def test_eventview_with_id(event_test_client, session, event):
 
 def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
     event_id = all_day_event.id
-    event_details = [all_day_event.title, all_day_event.content, all_day_event.location, all_day_event.start,
-                     all_day_event.end, all_day_event.all_day, all_day_event.color, all_day_event.category_id]
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"View Event" in response.content

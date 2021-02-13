@@ -94,7 +94,7 @@ async def eventview(request: Request, event_id: int,
     if event.all_day is False:
         start_format = '%A, %d/%m/%Y %H:%M'
         end_format = ('%H:%M' if event.start.date() == event.end.date()
-                    else start_format)
+                            else start_format)
     else:
         start_format = '%A, %d/%m/%Y'
         end_format = ""

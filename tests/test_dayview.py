@@ -57,6 +57,8 @@ def multiday_event():
     end = datetime(year=2021, month=2, day=3, hour=13)
     return Event(title='test_multiday', content='test',
                  start=start, end=end, owner_id=1, color='blue', all_day=False)
+
+
 def create_dayview_event(events, session, user):
     for event in events:
         create_event(
