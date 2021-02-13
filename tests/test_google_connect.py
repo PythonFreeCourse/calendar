@@ -337,7 +337,7 @@ def test_get_credentials(mocker, session, user, credentials):
 
     assert google_connect.get_credentials(user=user,
                                           session=session) == credentials
-    
+
     mocker.patch(
         'app.routers.google_connect.get_credentials',
         return_value=credentials
