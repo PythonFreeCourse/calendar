@@ -285,9 +285,30 @@ def test_get_credentials_from_consent_screen(mocker, session,
                                                 'running server'))
         })
     )
+
+    mocker.patch(
+        'app.routers.google_connect.is_client_secret_none',
+        return_value=False
+    )
+
     assert google_connect.get_credentials_from_consent_screen(
                                                 user, session) == credentials
 
+
+@pytest.mark.usefixtures("session", 'user', 'credentials')
+def test_get_credentials_from_consent_screen(mocker, session,
+                                             user, credentials):
+    mocker.patch(
+        'google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file',
+        return_value=mocker.Mock(name='flow', **{
+            "credentials": credentials,
+            "run_local_server": mocker.Mock(name='run_local_server',
+                                            return_value=logger.debug(
+                                                'running server'))
+        })
+    )
+    assert google_connect.get_credentials_from_consent_screen(
+        user, session) == credentials
 
 @pytest.mark.usefixtures("session")
 def test_get_active_user(session):
