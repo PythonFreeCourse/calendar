@@ -421,9 +421,12 @@ def test_view_comments(event_test_client: TestClient, event: Event,
 def test_delete_comment(event_test_client: TestClient, session: Session,
                         event: Event, comment: Comment) -> None:
     assert session.query(Comment).first()
-    path = evt.router.url_path_for('delete_comment', event_id=event.id,
-                                   comment_id=comment.id)
-    response = event_test_client.get(path)
+    path = evt.router.url_path_for('delete_comment')
+    data = {
+        'event_id': event.id,
+        'comment_id': comment.id,
+    }
+    response = event_test_client.post(path, data=data, allow_redirects=True)
     assert response.ok
     assert 'Post Comment' in response.text
     assert session.query(Comment).first() is None

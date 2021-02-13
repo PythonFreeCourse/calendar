@@ -370,14 +370,16 @@ async def view_comments(request: Request, event_id: int,
                                        "end_format": end_format})
 
 
-@router.get("/{event_id}/comments/{comment_id}")
-@router.delete("/{event_id}/comments/{comment_id}")
-async def delete_comment(request: Request, event_id: int, comment_id: int,
+@router.post("/comments/delete")
+async def delete_comment(request: Request,
                          db: Session = Depends(get_db)) -> Response:
     """Deletes a comment instance from the db.
 
     Redirects back to the event's comments tab upon deletion.
     """
+    form = await request.form()
+    comment_id = form['comment_id']
+    event_id = form['event_id']
     cmt.delete_comment(db, comment_id)
-    return RedirectResponse(router.url_path_for('view_comments',
-                                                event_id=event_id))
+    path = router.url_path_for('view_comments', event_id=event_id)
+    return RedirectResponse(path, status_code=303)
