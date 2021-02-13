@@ -330,7 +330,7 @@ def test_successful_update(event, session):
         "title": "successful",
         "start": datetime(2021, 1, 20),
         "end": datetime(2021, 1, 21),
-        "availability": False,
+        "availability": "False",
     }
     assert isinstance(update_event(1, data, session), Event)
     updated_event = update_event(event_id=event.id, event=data, db=session)
