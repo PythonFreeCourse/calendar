@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="{{ url_for('static', path='/about.css') }}" rel="stylesheet">
+    <title>About Us</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg bg-transparent">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">{{ gettext("Calendar") }}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">{{ gettext("Home") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">{{ gettext("Profile") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{{ gettext("Sign in") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{{ gettext("Sign up") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('agenda') }}">{{ gettext("Agenda") }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/celebrity">Celebrities Born Today</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('salary_home') }}">Salary</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+    <div class="container">
+        <h1 class="moving-words">About The Project</h1>
+        <!--  credit for the animation goes to FrankieDoodie -->
+        <div>
+            <h3>Do you have a dream? Do you know what to do in order to get there?</h3>
+            <p class="abouttext">
+                I have one, but I know its not an easy road therefore I have to act in these ways:</p>
+            <ul>
+                <li> I MUST organize myself.</li>
+                <li>I MUST be well prepend for the future.</li>
+                <li>I MUST plan ahead.</li>
+            </ul>
+
+            <p class="abouttext">We started this project as a course project but step by step it became our dream, this calendar is built by programmers.<br> One of his many traits is the ability to add features.</p>
+            <ul>
+                <li> want to follow your expenses? We got it.</li>
+                <li>You want to organize a zoom meeting while still under quarantine? We got it.</li>
+            </ul>
+            <p class="abouttext"> The cool thing about it is that you can develop your own feature and add it to the calendar. This calendar is an open source project developed in Python mostly as an ending to an extraordinary course.
+                <br> When we developed the calendar we thought to ourself what would be unique and we each began our journy to make this thought a thing.
+                <br> if you like what you just read, please <a href="login">sign in</a>
+            </p>
+        </div>
+        <h1 class="moving-words">Our Story</h1>
+        <div>
+            <p class="abouttext"> Would you believe us if we told you that in the beginning, we did not even know how to print <em>"Hello World"</em>?<br> So, you should believe, this project was created as a last project in the “python free course” by <a href="https://www.linkedin.com/in/mesicka/">Yam Mesicka</a>,
+                a course that has helped us set foot in the world of programming.The course took us from complete newbies to a decent programmers. The curriculum of the course is in the infographic below.<br> <strong><a href="https://github.com/PythonFreeCourse/Notebooks">GitHub for the first 8 weeks</a></strong>
+            </p>
+        </div>
+        <div>
+            <img class="infographic" src="{{ url_for('media', path='free-python-course-4k.png') }}" alt="Course infographic">
+        </div>
+
+        <div>
+            <h2> We thank you for reading and we hope you will enjoy our project.</h2>
+            <p>If you do enjoy please consider giving us a star in our <a href="https://github.com/PythonFreeCourse/calendar">GitHub repository.</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
