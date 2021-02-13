@@ -36,10 +36,12 @@ async def add_feature_to_user(request: Request,
 
     form = await request.form()
 
-    user_id = 1  # TODO - get active user id
+    user_id = form['user_id']  # TODO - get active user id
     feat = session.query(Feature).filter_by(id=form['feature_id']).first()
 
-    if feat is not None:
+    is_exist = is_association_exist_in_db(form=form, session=session)
+
+    if feat is not None and not is_exist:
         # in case there is no feature in the database with that same id
         association = create_association(
             db=session,
@@ -53,8 +55,18 @@ async def add_feature_to_user(request: Request,
     return 'Done - nothing made.'
 
 
-@router.get('/test-association')
-def testAssociation(request: Request, session: SessionLocal = Depends(get_db)):
+def is_association_exist_in_db(form: dict, session: SessionLocal):
+    db_association = session.query(UserFeature).filter_by(
+        feature_id=int(form['feature_id']),
+        user_id=int(form['user_id'])
+    ).first()
+
+    if db_association is not None:
+        return True
+    return False
+
+
+def testAssociation(session: SessionLocal = Depends()):
     create_association(db=session, feature_id=1, user_id=1, is_enable=True)
     create_association(db=session, feature_id=3, user_id=1, is_enable=False)
 
@@ -178,12 +190,12 @@ def is_feature_enabled(route: str):
     # TODO - get active user id.
     user_id = 1
 
-    feature = session.query(Feature).filter_by(route=f'/{route}').first()
+    feature = session.query(Feature).filter_by(route=route).first()
 
     # *This condition must be before line 168 to avoid AttributeError!*
     if feature is None:
-        # in case there is no feature exist in
-        # the database that match the route that gived by to the request.
+        # in case there is no feature exist in the database that match the
+        # route that gived by to the request.
         return True
 
     user_pref = session.query(UserFeature).filter_by(

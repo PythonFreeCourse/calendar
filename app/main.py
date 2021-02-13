@@ -67,7 +67,7 @@ for router in routers_to_include:
 async def filter_access_to_features(request: Request, call_next):
 
     # getting the url route path for matching with the database.
-    route = str(request.url).replace(str(request.base_url), '')[:-1]
+    route = '/' + str(request.url).replace(str(request.base_url), '')
 
     # getting access status.
     is_enabled = feature_panel.is_feature_enabled(route=route)
@@ -77,7 +77,7 @@ async def filter_access_to_features(request: Request, call_next):
         return await call_next(request)
 
     elif 'referer' not in request.headers:
-        # in case request come straight from url line in browser.
+        # in case request come straight from address bar in browser.
         return RedirectResponse(url=app.url_path_for('home'))
 
     # in case the feature is disabled or access isn't allowed.
