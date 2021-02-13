@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Body, Depends
 
-from app.database.database import get_db
 from app.database.models import User
+from app.dependencies import get_db
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.models import Chat
-
 
 router = APIRouter(
     prefix="/telegram",

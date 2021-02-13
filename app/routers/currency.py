@@ -1,10 +1,11 @@
 import datetime
 
-from app.dependencies import templates
 from fastapi import APIRouter, Request
 
+from app.dependencies import templates
 
 router = APIRouter()
+
 
 # TODO: Add this as a feature to the calendar view/
 #           day view/features panel frontend
