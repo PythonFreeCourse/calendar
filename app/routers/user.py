@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.database.models import User, UserEvent, Event
+from app.database.models import Event, User, UserEvent
 from app.internal.utils import save
 
 
@@ -11,6 +11,7 @@ def create_user(username: str,
                 password: str,
                 email: str,
                 language: str,
+                language_id: int,
                 session: Session) -> User:
     """Creates and saves a new user."""
 
@@ -18,9 +19,10 @@ def create_user(username: str,
         username=username,
         password=password,
         email=email,
-        language=language
+        language=language,
+        language_id=language_id
     )
-    save(user, session=session)
+    save(session, user)
     return user
 
 
