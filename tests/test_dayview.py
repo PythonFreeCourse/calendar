@@ -23,8 +23,8 @@ def user():
 def event1():
     start = datetime(year=2021, month=2, day=1, hour=7, minute=5)
     end = datetime(year=2021, month=2, day=1, hour=9, minute=15)
-    return Event(title='test1', content='test',
-                 start=start, end=end, owner_id=1, all_day=False)
+    return Event(owner_id=1, title='test1', start=start,
+                 end=end, content='test', all_day=False)
 
 
 @pytest.fixture
