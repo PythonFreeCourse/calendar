@@ -2,12 +2,10 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
-from starlette.templating import _TemplateResponse
 
 from app.database.models import User
 from app.dependencies import get_db
 from app.dependencies import templates
-from app.internal.utils import create_model
 
 
 router = APIRouter(tags=["weight"],)
@@ -19,7 +17,7 @@ async def weight_form(
         session: Session = Depends(get_db),
         target: float = None,
         current_weight: float = None,
-    ):
+        ):
     user = session.query(User).filter_by(id=1).first()
     target = user.target_weight
     if current_weight:
@@ -30,6 +28,7 @@ async def weight_form(
         "current_weight": current_weight,
         }
     )
+
 
 @router.post("/weight")
 async def weight(
@@ -54,7 +53,7 @@ async def weight(
         way_to_go = abs(way_to_go)
         way_message = f"Weight to add: {way_to_go} Kg"
     else:
-        way_message = f"Congratulations! You have reached your goal: {target} Kg"
+        way_message = f"Great! You have reached your goal: {target} Kg"
 
     return templates.TemplateResponse("weight.html", {
         "request": request,

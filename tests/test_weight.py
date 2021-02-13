@@ -1,6 +1,3 @@
-from app.routers import weight
-from fastapi import status
-
 
 def test_ok(client):
     resp = client.get('/weight')

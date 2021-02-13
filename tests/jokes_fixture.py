@@ -5,7 +5,6 @@ from app.database.models import Joke
 from app.internal.utils import create_model, delete_instance
 
 
-
 def add_joke(session: Session, id_joke: int, text: str) -> Joke:
     joke = create_model(session, Joke, id=id_joke, text=text)
     yield joke
