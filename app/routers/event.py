@@ -203,11 +203,9 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
-                 content: str = None,
-                 location: str = None,
-                 vc_link: str = None,
                  content: Optional[str] = None,
                  location: Optional[str] = None,
+                 vc_link: str = None,
                  color: Optional[str] = None,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
