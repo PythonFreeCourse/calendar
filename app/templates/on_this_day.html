@@ -1,0 +1,12 @@
+<div class="container">
+  <p class="card-title">On This Day</p>
+  <ul>
+    {% for event in on_this_day_data.events[1::-1] %}
+      <li>
+        ({{ event.year }}) {{ event.description }}
+        <a href="{{ event.wikipedia[0].wikipedia }}" target="_blank">></a>
+      </li>
+    {% endfor %}
+  </ul>
+  <a href="{{ on_this_day_data.wikipedia }}" target="_blank">Explore More ...</a>
+</div>

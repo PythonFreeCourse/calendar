@@ -1,0 +1,7 @@
+div[data-visible='0'] {
+  display: none;
+}
+
+div[data-visible='1'] {
+  display: block;
+}
