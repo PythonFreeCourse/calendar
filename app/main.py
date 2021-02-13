@@ -28,12 +28,16 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+
+json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
+
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, exercise, invitation, profile, search, telegram, whatsapp
+    email, event, exercise, four_o_four, invitation, profile, search,
+    weekview, telegram, whatsapp,
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -45,9 +49,11 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    weekview.router,
     email.router,
     event.router,
     exercise.router,
+    four_o_four.router,
     invitation.router,
     profile.router,
     salary.router,
@@ -66,7 +72,7 @@ for router in routers_to_include:
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "quote": quote,
     })
