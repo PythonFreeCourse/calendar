@@ -1,7 +1,7 @@
 from datetime import datetime
 
-import pytest
 from fastapi import status
+import pytest
 
 from app.config import PSQL_ENVIRONMENT
 from app.database.models import Event, User
@@ -44,7 +44,10 @@ class TestSearch:
 
     @staticmethod
     def create_user(session):
-        user = User(username='testuser', email='test@abc.com', password='1234')
+        user = User(username='testuser',
+                    email='test@abc.com',
+                    password='1234',
+                    language_id=1)
         session.add(user)
         session.commit()
         return user
@@ -66,37 +69,37 @@ class TestSearch:
     def create_data(session):
         TestSearch.create_user(session)
         events = [
-                    {
-                        'title': "My first event",
-                        'content': 'I am so excited',
-                        'owner_id': 1
-                    },
-                    {
-                        'title': "My second event",
-                        'content': 'I am very emotional',
-                        'owner_id': 1
-                    },
-                    {
-                        'title': "Pick up my nephews",
-                        'content': 'Very important',
-                        'owner_id': 1
-                    },
-                    {
-                        'title': "Solve this ticket",
-                        'content': 'I can do this',
-                        'owner_id': 1
-                    },
-                    {
-                        'title': "Jam with my friends",
-                        'content': "Jamming is fun",
-                        'owner_id': 1
-                    },
-                    {
-                        'title': 'test',
-                        'content': 'love string',
-                        'owner_id': 1
-                    }
-                 ]
+            {
+                'title': "My first event",
+                'content': 'I am so excited',
+                'owner_id': 1
+            },
+            {
+                'title': "My second event",
+                'content': 'I am very emotional',
+                'owner_id': 1
+            },
+            {
+                'title': "Pick up my nephews",
+                'content': 'Very important',
+                'owner_id': 1
+            },
+            {
+                'title': "Solve this ticket",
+                'content': 'I can do this',
+                'owner_id': 1
+            },
+            {
+                'title': "Jam with my friends",
+                'content': "Jamming is fun",
+                'owner_id': 1
+            },
+            {
+                'title': 'test',
+                'content': 'love string',
+                'owner_id': 1
+            }
+        ]
 
         for event in events:
             TestSearch.add_event(session,
