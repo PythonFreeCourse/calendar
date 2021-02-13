@@ -26,6 +26,30 @@
   <input type="text" id="invited" name="invited" placeholder="Invited emails, separated by commas">
 </div>
 
+<p>
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#SharedListCollapse" aria-expanded="false" aria-controls="SharedListCollapse">
+    Add a shared list
+  </button>
+</p>
+<div class="collapse" id="SharedListCollapse">
+  <div class="card card-body" id="SharedList">
+    <input type="text" class="form-control" name="shared_list_title" placeholder="Title">
+    <div id="Items">
+      <div class="form_row" id="Item">
+        <input type="text" class="form-control" name="item_name" placeholder="Item name" required>
+        <input type="text" class="form-control" name="item_amount" placeholder="Amount" required>
+        <input type="text" class="form-control" name="item_participant" placeholder="Participant" required>
+        <button type="button" class="btn btn-labeled btn-danger" id="btnRemoveItem">
+            <span class="btn-label"><i class="fa fa-minus-circle"></i></span>
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btnAddItem" type="button">
+      Add an item
+    </button>
+  </div>
+</div>
+
 <div class="form_row textarea">
   <textarea name="description" placeholder="Description"></textarea>
 </div>
@@ -39,15 +63,28 @@
     </select>
   </div>
 
-
-    <div class="form_row_end">
-        <select name="availability">
-            <option value="False">Free</option>
-            <option value="True" selected>Busy</option>
-        </select>
-        <select name="privacy">
-            <option value="private">Private</option>
-            <option value="public" selected>Public</option>
-        </select>
-    </div>
+  <div class="form_row_end">
+      <select name="availability">
+          <option value="False">Free</option>
+          <option value="True" selected>Busy</option>
+      </select>
+      <select name="privacy">
+          <option value="private">Private</option>
+          <option value="public" selected>Public</option>
+      </select>
+  </div>
 </div>
+
+<script>
+  var item_id = 0;
+  $("#btnAddItem").click(function () {
+    // item_id++;
+    $("#Item").clone(false).appendTo("#Items");
+    // ele.attr("id", "Item" + item_id);
+  });
+</script>
+<script>
+  $("#btnRemoveItem").click(function() {
+    $(this).closest('div').remove();
+  });
+</script>

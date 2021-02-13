@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Union
@@ -64,12 +65,10 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     is_zoom = location_type == 'vc_url'
     location = data['location']
     category_id = data.get('category_id')
-
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
-    shared_list = data.get('shared_list')
-    shared_list = create_shared_list(shared_list, session)
+    shared_list = extract_shared_list_from_data(data, session)
 
     if is_zoom:
         raise_if_zoom_link_invalid(location)
@@ -211,6 +210,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  color: Optional[str] = None,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
+                 shared_list: Optional[SharedList] = None,
                  availability: bool = True,
                  ):
     """Creates an event and an association."""
@@ -229,6 +229,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         category_id=category_id,
+        shared_list=shared_list,
         availability=availability,
     )
     create_model(
@@ -316,7 +317,42 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-def create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]], db: Session) -> SharedList:
+def extract_shared_list_from_data(data, db):
+    Item = namedtuple("Item", ["name", "amount", "participant"])
+    shared_list_raw = {
+        'item_name': data.getlist('item_name'),
+        'item_amount': data.getlist('item_amount'),
+        'item_participant': data.getlist('item_participant')
+    }
+    shared_list = {"title": data.get("title"),
+                   "items": []}
+    for i in range(len(shared_list_raw['item_name'])):
+        try:
+            item = Item(
+                name=shared_list_raw["item_name"][i],
+                amount=shared_list_raw["item_amount"][i],
+                participant=shared_list_raw["item_participant"][i]
+            )
+            if _check_item_is_valid(item):
+                item_dict = item._asdict()
+                item_dict["amount"] = float(item_dict["amount"])
+                shared_list["items"].append(item_dict)
+        except KeyError:
+            continue
+    return _create_shared_list(shared_list, db)
+
+
+def _check_item_is_valid(item):
+    if (
+        item.name == '' 
+        or item.amount.isnumeric() is False
+        or item.participant == ''
+    ):
+        return False
+    return True
+
+
+def _create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]], db: Session) -> SharedList:
     try:
         title = raw_shared_list.get('title')
         if title is None:
