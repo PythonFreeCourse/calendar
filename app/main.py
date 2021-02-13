@@ -36,7 +36,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, invitation, profile, search, telegram, whatsapp,
-    feature_panel
+    features
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -56,7 +56,7 @@ routers_to_include = [
     search.router,
     telegram.router,
     whatsapp.router,
-    feature_panel.router,
+    features.router,
 ]
 
 for router in routers_to_include:
@@ -70,7 +70,7 @@ async def filter_access_to_features(request: Request, call_next):
     route = '/' + str(request.url).replace(str(request.base_url), '')
 
     # getting access status.
-    is_enabled = feature_panel.is_feature_enabled(route=route)
+    is_enabled = features.is_feature_enabled(route=route)
 
     if is_enabled:
         # in case the feature is enabled or access is allowed.
@@ -87,7 +87,7 @@ async def filter_access_to_features(request: Request, call_next):
 @app.on_event("startup")
 async def startup_event():
     session = SessionLocal()
-    feature_panel.create_features_at_startup(session=session)
+    features.create_features_at_startup(session=session)
     session.close()
 
 

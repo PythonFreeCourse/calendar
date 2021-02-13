@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Request, Depends
 
 from app.dependencies import get_db, SessionLocal
-from app.database.models import User, UserFeature, Feature
+from app.database.models import UserFeature, Feature
 from app.internal.utils import create_model
-from app.features.features import features
+from app.features.index import features
 
 
 router = APIRouter(
@@ -52,13 +52,81 @@ async def add_feature_to_user(request: Request,
 
         return session.query(UserFeature).filter_by(id=association.id).first()
 
-    return 'Done - nothing made.'
+    return False
+
+
+@router.post('/remove-feature')
+async def delete_user_feature_association(
+    request: Request,
+    session: SessionLocal = Depends(get_db)
+):
+
+    form = await request.form()
+
+    user_id = form['user_id']  # TODO - get active user id
+    feature_id = form['feature_id']
+
+    is_exist = is_association_exist_in_db(form=form, session=session)
+
+    if is_exist:
+        session.query(UserFeature).filter_by(
+            feature_id=feature_id,
+            user_id=user_id
+        ).delete()
+        session.commit()
+
+        return True
+
+    return False
+
+
+@router.post('/on')
+async def enable_feature(request: Request,
+                         session: SessionLocal = Depends(get_db)):
+
+    form = await request.form()
+
+    is_exist = is_association_exist_in_db(form=form, session=session)
+
+    if is_exist:
+        db_association = session.query(UserFeature).filter_by(
+            feature_id=form['feature_id'],
+            user_id=form['user_id']
+        ).first()
+
+        db_association.is_enable = True
+        session.commit()
+
+        return True
+    return False
+
+
+@router.post('/off')
+async def disable_feature(request: Request,
+                          session: SessionLocal = Depends(get_db)):
+
+    form = await request.form()
+    print(form['user_id'], form['feature_id'])
+    is_exist = is_association_exist_in_db(form=form, session=session)
+    print(is_exist)
+    if is_exist:
+        db_association = session.query(UserFeature).filter_by(
+            feature_id=form['feature_id'],
+            user_id=form['user_id']
+        ).first()
+        print(db_association)
+
+        db_association.is_enable = False
+        session.commit()
+
+        return True
+    return False
 
 
 def is_association_exist_in_db(form: dict, session: SessionLocal):
     db_association = session.query(UserFeature).filter_by(
-        feature_id=int(form['feature_id']),
-        user_id=int(form['user_id'])
+        feature_id=form['feature_id'],
+        user_id=form['user_id']
     ).first()
 
     if db_association is not None:
@@ -66,12 +134,13 @@ def is_association_exist_in_db(form: dict, session: SessionLocal):
     return False
 
 
-def testAssociation(session: SessionLocal = Depends()):
+def testAssociation():
+    session = SessionLocal()
     create_association(db=session, feature_id=1, user_id=1, is_enable=True)
     create_association(db=session, feature_id=3, user_id=1, is_enable=False)
 
     associations = session.query(UserFeature).all()
-
+    session.close()
     return {'all': associations}
 
 
@@ -142,8 +211,11 @@ def get_user_disabled_features(session: SessionLocal = Depends(get_db)):
 
 
 @router.get('/unlinked')
-def get_user_unlinked_features(user_id: int = 1,
-                               session: SessionLocal = Depends(get_db)):
+def get_user_unlinked_features(session: SessionLocal = Depends(get_db)):
+
+    # TODO - get active user id
+    user_id = 1
+
     data = []
     all_features = session.query(Feature).all()
 
