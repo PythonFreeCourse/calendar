@@ -4,7 +4,7 @@ from typing import Dict, Iterator, Optional, Tuple
 from sqlalchemy.orm.session import Session
 
 from app.database.models import Event, SalarySettings
-from app.internal.utils import save
+from app.internal.utils import get_time_from_string, save
 from app.routers.salary import config
 
 DEFAULT_SETTINGS = SalarySettings(
@@ -485,25 +485,6 @@ def get_settings(session: Session, user_id: int,
         user_id=user_id, category_id=category_id).first()
     session.close()
     return settings
-
-
-def get_time_from_string(string: str) -> time:
-    """Converts time string to a time object.
-
-    Args:
-        string (str): Time string.
-
-    Returns:
-        datetime.time: Time object.
-
-    raises:
-        ValueError: If string is not of format %H:%M:%S' or '%H:%M',
-                    or if string is an invalid time.
-    """
-    try:
-        return datetime.strptime(string, config.HOUR_FORMAT).time()
-    except ValueError:
-        return datetime.strptime(string, config.ALT_HOUR_FORMAT).time()
 
 
 def update_settings(session: Session, wage: SalarySettings,

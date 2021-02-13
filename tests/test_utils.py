@@ -1,7 +1,16 @@
+from datetime import time
+
+import pytest
 from sqlalchemy.orm import Session
 
 from app.database.models import User
 from app.internal import utils
+
+
+TIMES = [
+    ('13:30', time(13, 30)),
+    ('15:42:00', time(15, 42))
+]
 
 
 class TestUtils:
@@ -34,3 +43,8 @@ class TestUtils:
         assert session.query(User).filter_by(id=1).first() is None
         utils.get_current_user(session)
         assert session.query(User).filter_by(id=1).first()
+
+    @pytest.mark.parametrize('string, formatted_time', TIMES)
+    def test_get_time_from_string(self, string: str,
+                                  formatted_time: time) -> None:
+        assert utils.get_time_from_string(string) == formatted_time

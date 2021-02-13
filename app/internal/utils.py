@@ -1,4 +1,5 @@
-from typing import Any, Dict
+from datetime import date, datetime, time
+from typing import Any, Dict, Optional, Union
 
 from sqlalchemy.orm import Session
 
@@ -42,3 +43,29 @@ def get_current_user(session: Session) -> User:
         user = session.query(User).first()
 
     return user
+
+
+def get_time_from_string(string: str) -> Optional[Union[date, time]]:
+    """Converts time string to a date or time object.
+
+    Args:
+        string (str): Time string.
+
+    Returns:
+        datetime.time | datetime.date | None: Date or Time object if valid,
+                                              None otherwise.
+
+    raises:
+        ValueError: If string is not of format %H:%M:%S' or '%H:%M',
+                    or if string is an invalid time.
+    """
+    try:
+        return datetime.strptime(string, '%Y-%m-%d').date()
+    except ValueError:
+        try:
+            return datetime.strptime(string, '%H:%M').time()
+        except ValueError:
+            try:
+                return datetime.strptime(string, '%H:%M:%S').time()
+            except ValueError:
+                return None

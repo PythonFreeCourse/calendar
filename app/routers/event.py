@@ -59,7 +59,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                                          language_id=1,
                                          session=session)
     owner_id = user.id
-    availability = data.get('availability', 'True') == 'True'
+    availability = data.get('availability', 'False') == 'True'
     location_type = data['location_type']
     is_zoom = location_type == 'vc_url'
     location = data['location']
@@ -79,7 +79,7 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            + f'messages={"---".join(messages)}',
+                            + f'?messages={"---".join(messages)}',
                             status_code=status.HTTP_302_FOUND)
 
 

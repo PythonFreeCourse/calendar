@@ -33,7 +33,7 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, invitation, profile, search, telegram, whatsapp
+    email, event, invitation, meds, profile, search, telegram, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -48,6 +48,7 @@ routers_to_include = [
     email.router,
     event.router,
     invitation.router,
+    meds.router,
     profile.router,
     salary.router,
     search.router,
