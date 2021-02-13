@@ -31,7 +31,7 @@ app.logger = logger
 
 
 json_data_loader.load_to_db(next(get_db()))
-load_parasha.load_parashot(next(get_db()))
+load_parasha.load_parashot_if_table_empty(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 

@@ -24,7 +24,7 @@ ADD_DAYS_ON_SCROLL: int = 42
 async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
     user_local_time = cg.Day.get_user_local_time()
     day = cg.create_day(user_local_time)
-    parasha_obj = lp.get_weekly_parasha(db_session, day)
+    parasha_obj = lp.get_weekly_parasha(db_session)
 
     return templates.TemplateResponse(
         "calendar_monthly_view.html",
