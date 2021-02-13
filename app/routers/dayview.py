@@ -1,17 +1,16 @@
+from bisect import bisect_left
 from datetime import datetime, timedelta
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import and_, or_
 
-from app.database.database import get_db
 from app.database.models import Event, User
-from app.dependencies import TEMPLATES_PATH
+from app.dependencies import get_db, TEMPLATES_PATH
+from app.routers.user import get_all_user_events
 from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
-
 
 router = APIRouter()
 
@@ -27,6 +26,8 @@ class DivAttributes:
     DEFAULT_COLOR = 'grey'
     DEFAULT_FORMAT = "%H:%M"
     MULTIDAY_FORMAT = "%d/%m %H:%M"
+    CLASS_SIZES = ('title_size_tiny', 'title_size_Xsmall', 'title_size_small')
+    LENGTH_SIZE_STEP = (30, 45, 90)
 
     def __init__(self, event: Event,
                  day: Union[bool, datetime] = False) -> None:
@@ -36,6 +37,8 @@ class DivAttributes:
         self.start_multiday, self.end_multiday = self._check_multiday_event()
         self.color = self._check_color(event.color)
         self.total_time = self._set_total_time()
+        self.total_time_visible = self._set_total_time_visiblity()
+        self.title_size_class = self._set_title_size()
         self.grid_position = self._set_grid_position()
 
     def _check_color(self, color: str) -> str:
@@ -74,13 +77,21 @@ class DivAttributes:
         for multiday in [self.start_multiday, self.end_multiday]:
             yield self.MULTIDAY_FORMAT if multiday else self.DEFAULT_FORMAT
 
-    def _set_total_time(self) -> None:
+    def _set_total_time(self) -> str:
         length = self.end_time - self.start_time
         self.length = length.seconds / 60
         format_gen = self._get_time_format()
         start_time_str = self.start_time.strftime(next(format_gen))
         end_time_str = self.end_time.strftime(next(format_gen))
         return ' '.join([start_time_str, '-', end_time_str])
+
+    def _set_total_time_visiblity(self) -> bool:
+        return self.length > 60
+
+    def _set_title_size(self) -> Optional[str]:
+        i = bisect_left(self.LENGTH_SIZE_STEP, self.length)
+        if i < len(self.CLASS_SIZES):
+            return self.CLASS_SIZES[i]
 
     def _check_multiday_event(self) -> Tuple[bool]:
         start_multiday, end_multiday = False, False
@@ -93,23 +104,44 @@ class DivAttributes:
         return (start_multiday, end_multiday)
 
 
-@router.get('/day/{date}')
-async def dayview(request: Request, date: str, db_session=Depends(get_db)):
-    # TODO: add a login session
-    user = db_session.query(User).filter_by(username='test1').first()
-    day = datetime.strptime(date, '%Y-%m-%d')
+def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
+    return (
+        (event.start >= day and event.start < day_end) or
+        (event.end >= day and event.end < day_end) or
+        (event.start < day_end < event.end)
+        )
+
+
+def get_events_and_attributes(
+    day: datetime, session, user_id: int,
+) -> Tuple[Event, DivAttributes]:
+    events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
-    events = db_session.query(Event).filter(
-        Event.owner_id == user.id).filter(
-            or_(and_(Event.start >= day, Event.start < day_end),
-                and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))
-    events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
-    zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
+    for event in events:
+        if event_in_day(event=event, day=day, day_end=day_end):
+            yield (event, DivAttributes(event, day))
+
+
+@router.get('/day/{date}')
+async def dayview(
+          request: Request, date: str, session=Depends(get_db), view='day',
+      ):
+    # TODO: add a login session
+    user = session.query(User).filter_by(username='test_username').first()
+    try:
+        day = datetime.strptime(date, '%Y-%m-%d')
+    except ValueError as err:
+        raise HTTPException(status_code=404, detail=f"{err}")
+    zodiac_obj = zodiac.get_zodiac_of_day(session, day)
+    events_n_attrs = get_events_and_attributes(
+        day=day, session=session, user_id=user.id,
+    )
+    month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
-        "month": day.strftime("%B").upper(),
+        "month": month,
         "day": day.day,
-        "zodiac": zodiac_obj
-        })
+        "zodiac": zodiac_obj,
+        "view": view
+    })
