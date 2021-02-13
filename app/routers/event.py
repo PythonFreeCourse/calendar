@@ -3,6 +3,7 @@ from operator import attrgetter
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+# File, UploadFile
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -12,7 +13,9 @@ from starlette.responses import RedirectResponse
 from app.database.models import Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
-    get_invited_emails, get_messages, get_uninvited_regular_emails,
+    get_invited_emails,
+    get_messages,
+    get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
 )
 from app.internal.emotion import get_emotion
@@ -32,19 +35,21 @@ UPDATE_EVENTS_FIELDS = {
 }
 
 router = APIRouter(
-    prefix="/event",
-    tags=["event"],
-    responses={404: {"description": "Not found"}},
+    prefix='/event',
+    tags=['event'],
+    responses={404: {
+        'description': 'Not found'
+    }},
 )
 
 
-@router.get("/edit")
+@router.get('/edit')
 async def eventedit(request: Request):
-    return templates.TemplateResponse("event/eventedit.html",
-                                      {"request": request})
+    return templates.TemplateResponse('event/eventedit.html',
+                                      {'request': request})
 
 
-@router.post("/edit")
+@router.post('/edit')
 async def create_new_event(request: Request, session=Depends(get_db)):
     data = await request.form()
     title = data['title']
@@ -53,9 +58,9 @@ async def create_new_event(request: Request, session=Depends(get_db)):
                         TIME_FORMAT)
     end = dt.strptime(data['end_date'] + ' ' + data['end_time'], TIME_FORMAT)
     user = session.query(User).filter_by(id=1).first()
-    user = user if user else create_user(username="u",
-                                         password="p",
-                                         email="e@mail.com",
+    user = user if user else create_user(username='u',
+                                         password='p',
+                                         email='e@mail.com',
                                          language_id=1,
                                          session=session)
     owner_id = user.id
@@ -66,65 +71,72 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     category_id = data.get('category_id')
 
     invited_emails = get_invited_emails(data['invited'])
-    uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
-                                                      title, invited_emails)
+    uninvited_contacts = get_uninvited_regular_emails(session, owner_id, title,
+                                                      invited_emails)
 
     if is_zoom:
         raise_if_zoom_link_invalid(location)
 
-    event = create_event(session, title, start, end, owner_id, content,
-                         location, invitees=invited_emails,
+    event = create_event(session,
+                         title,
+                         start,
+                         end,
+                         owner_id,
+                         content,
+                         location,
+                         invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
 
     messages = get_messages(session, event, uninvited_contacts)
-    return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            + f'messages={"---".join(messages)}',
-                            status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(
+        router.url_path_for('eventview', event_id=event.id) +
+        f'messages={"---".join(messages)}',
+        status_code=status.HTTP_302_FOUND)
 
 
-@router.get("/{event_id}")
-async def eventview(request: Request, event_id: int,
+@router.get('/{event_id}')
+async def eventview(request: Request,
+                    event_id: int,
                     db: Session = Depends(get_db)):
     event = by_id(db, event_id)
     start_format = '%A, %d/%m/%Y %H:%M'
-    end_format = ('%H:%M' if event.start.date() == event.end.date()
-                  else start_format)
-    messages = request.query_params.get('messages', '').split("---")
-    return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event": event,
-                                       "start_format": start_format,
-                                       "end_format": end_format,
-                                       "messages": messages})
+    end_format = ('%H:%M'
+                  if event.start.date() == event.end.date() else start_format)
+    messages = request.query_params.get('messages', '').split('---')
+    return templates.TemplateResponse(
+        'event/eventview.html', {
+            'request': request,
+            'event': event,
+            'start_format': start_format,
+            'end_format': end_format,
+            'messages': messages
+        })
 
 
 def by_id(db: Session, event_id: int) -> Event:
     """Get a single event by id"""
     if not isinstance(db, Session):
-        error_message = (
-            f'Could not connect to database. '
-            f'db instance type received: {type(db)}')
+        error_message = (f'Could not connect to database. '
+                         f'db instance type received: {type(db)}')
         logger.critical(error_message)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_message)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=error_message)
 
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
-        error_message = f"Event ID does not exist. ID: {event_id}"
+        error_message = f'Event ID does not exist. ID: {event_id}'
         logger.exception(error_message)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=error_message)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=error_message)
     except MultipleResultsFound:
         error_message = (
             f'Multiple results found when getting event. Expected only one. '
             f'ID: {event_id}')
         logger.critical(error_message)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_message)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=error_message)
     return event
 
 
@@ -143,9 +155,8 @@ def check_change_dates_allowed(old_event: Event, event: Dict[str, Any]):
     except TypeError:
         allowed = 0
     if allowed == 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid times")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='Invalid times')
 
 
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
@@ -154,16 +165,16 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     for field_name, field_type in to_check.items():
         if types[field_name] and not isinstance(field_type, types[field_name]):
             errors.append(
-                f"{field_name} is '{type(field_type).__name__}' and"
-                + f"it should be from type '{types[field_name].__name__}'")
+                f"{field_name} is '{type(field_type).__name__}' and" +
+                f"it should be from type '{types[field_name].__name__}'")
             logger.warning(errors)
     if errors:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=errors)
 
 
-def get_event_with_editable_fields_only(event: Dict[str, Any]
-                                        ) -> Dict[str, Any]:
+def get_event_with_editable_fields_only(
+        event: Dict[str, Any]) -> Dict[str, Any]:
     """Remove all keys that are not allowed to update"""
 
     edit_event = {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
@@ -183,13 +194,11 @@ def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail='Internal server error')
 
 
-def update_event(event_id: int, event: Dict, db: Session
-                 ) -> Optional[Event]:
+def update_event(event_id: int, event: Dict, db: Session) -> Optional[Event]:
     # TODO Check if the user is the owner of the event.
     old_event = by_id(db, event_id)
     event_to_update = get_event_with_editable_fields_only(event)
@@ -202,20 +211,26 @@ def update_event(event_id: int, event: Dict, db: Session
     return event_updated
 
 
-def create_event(db: Session, title: str, start, end, owner_id: int,
-                 content: Optional[str] = None,
-                 location: Optional[str] = None,
-                 color: Optional[str] = None,
-                 invitees: List[str] = None,
-                 category_id: Optional[int] = None,
-                 availability: bool = True,
-                 ):
+def create_event(
+    db: Session,
+    title: str,
+    start,
+    end,
+    owner_id: int,
+    content: Optional[str] = None,
+    location: Optional[str] = None,
+    color: Optional[str] = None,
+    invitees: List[str] = None,
+    category_id: Optional[int] = None,
+    availability: bool = True,
+):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
 
     event = create_model(
-        db, Event,
+        db,
+        Event,
         title=title,
         start=start,
         end=end,
@@ -229,7 +244,8 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         availability=availability,
     )
     create_model(
-        db, UserEvent,
+        db,
+        UserEvent,
         user_id=owner_id,
         event_id=event.id,
     )
@@ -246,11 +262,12 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
     """Returns a list of all the email address of the event invited users,
         by event id."""
-    return [email[0] for email in
-            db.query(User.email).select_from(Event).join(
-                UserEvent, UserEvent.event_id == Event.id).join(
+    return [
+        email[0] for email in db.query(User.email).select_from(Event).join(
+            UserEvent, UserEvent.event_id == Event.id).join(
                 User, User.id == UserEvent.user_id).filter(
-                Event.id == event_id).all()]
+                    Event.id == event_id).all()
+    ]
 
 
 def _delete_event(db: Session, event: Event):
@@ -265,12 +282,11 @@ def _delete_event(db: Session, event: Event):
 
     except (SQLAlchemyError, AttributeError) as e:
         logger.exception(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Deletion failed")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail='Deletion failed')
 
 
-@router.delete("/{event_id}")
+@router.delete('/{event_id}')
 def delete_event(event_id: int, db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
@@ -280,8 +296,7 @@ def delete_event(event_id: int, db: Session = Depends(get_db)):
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
-    return RedirectResponse(
-        url="/calendar", status_code=status.HTTP_200_OK)
+    return RedirectResponse(url='/calendar', status_code=status.HTTP_200_OK)
 
 
 def is_date_before(start_time: dt, end_time: dt) -> bool:
@@ -302,11 +317,10 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
     try:
         new_event = create_model(db, Event, **values)
-        create_model(
-            db, UserEvent,
-            user_id=values['owner_id'],
-            event_id=new_event.id
-        )
+        create_model(db,
+                     UserEvent,
+                     user_id=values['owner_id'],
+                     event_id=new_event.id)
         return new_event
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
