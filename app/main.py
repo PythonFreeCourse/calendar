@@ -3,11 +3,11 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app import config
-from app.config import PSQL_ENVIRONMENT
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader, load_parasha
 from app.internal.languages import set_ui_language
+from app.routers.salary import routes as salary
 
 
 def create_tables(engine, psql_environment):
@@ -29,7 +29,6 @@ app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
 
-
 json_data_loader.load_to_db(next(get_db()))
 load_parasha.load_parashot_if_table_empty(next(get_db()))
 # This MUST come before the app.routers imports.
@@ -38,11 +37,8 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, four_o_four, invitation,parasha, profile, search,
-    weekview, telegram, whatsapp,
-)
-from app.routers.salary import routes as salary
-
+    email, event, four_o_four, invitation, parasha, profile, search,
+    weekview, telegram, whatsapp)
 
 
 routers_to_include = [

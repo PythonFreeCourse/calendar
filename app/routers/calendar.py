@@ -9,7 +9,6 @@ from fastapi.responses import HTMLResponse
 from starlette.responses import Response
 
 
-
 router = APIRouter(
     prefix="/calendar/month",
     tags=["calendar"],

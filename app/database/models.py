@@ -285,6 +285,7 @@ class Zodiac(Base):
             f'{self.end_day_in_month}/{self.end_month}>'
         )
 
+
 class Parasha(Base):
     __tablename__ = "parashot"
 
