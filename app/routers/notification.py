@@ -7,12 +7,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_302_FOUND
 
-from app.database.database import get_db
 from app.database.models import Invitation, Message
-from app.dependencies import templates
-from app.internal.utils import mark_as_read
+from app.dependencies import templates, get_db
+from app.internal.utils import mark_as_read, create_model
 from app.routers.share import accept, decline
-from tests.utils import create_model
 
 NOTIFICATION_TYPE = Union[Invitation, Message]
 

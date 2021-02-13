@@ -1,0 +1,45 @@
+# This workflow will extract new translatable strings from files under /app and /tests into a base.pot file,
+# and update the 'en' and 'he' base.po and base.mo files.
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: update-translations
+
+on:
+  # Trigger the workflow on push request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+
+jobs:
+  update-translations:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install prerequesits
+        run: |
+          python -m pip install --upgrade pip
+          pip install Babel Jinja2
+
+      - name: Create base.pot file
+        run: pybabel extract --mapping-file=app/babel_mapping.ini app tests -o app/locales/base.pot -c i18n
+
+      - name: Update all language base.po files
+        run: pybabel update -i app/locales/base.pot -d app/locales -D base
+
+      - name: Update all .mo files
+        run: pybabel compile -d app/locales -D base
+
+      # https://github.com/stefanzweifel/git-auto-commit-action
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply automatic translatable string changes

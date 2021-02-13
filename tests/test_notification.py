@@ -1,7 +1,9 @@
 
 from starlette.status import HTTP_302_FOUND
 
-from app.routers.notification import get_all_invitations, get_invitation_by_id, router
+from app.routers.notification import (
+    get_all_invitations, get_invitation_by_id, router
+)
 
 
 class TestNotification:

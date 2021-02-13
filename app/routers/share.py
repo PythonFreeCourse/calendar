@@ -1,9 +1,9 @@
-from typing import List, Dict
+from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, UserEvent
-from app.internal.utils import save, mark_as_read
+from app.internal.utils import save
 from app.routers.export import event_to_ical
 from app.routers.user import does_user_exist, get_users
 
@@ -66,7 +66,7 @@ def decline(invitation: Invitation, session: Session) -> None:
     """"""
 
     invitation.status = 'declined'
-    save(invitation, session=session)
+    save(invitation, session)
 
 
 def accept(invitation: Invitation, session: Session) -> None:
@@ -78,8 +78,9 @@ def accept(invitation: Invitation, session: Session) -> None:
         user_id=invitation.recipient.id,
         event_id=invitation.event.id
     )
-    mark_as_read(session, invitation)
-    save(association, session=session)
+    invitation.status = 'accepted'
+    save(session, invitation)
+    save(session, association)
 
 
 def share(event: Event, participants: List[str], session: Session) -> bool:

@@ -43,9 +43,9 @@
                                 </button>
                             </form>
                             {% if n.link %}
-                                <a href="{{ n.link }}">{{ n.id }} - {{ n.body }}</a>
+                                <a href="{{ n.link }}">{{ n.body }}</a>
                             {% else %}
-                                <span>{{ n.id }} - {{ n.body }}</span>
+                                <span>{{n.status}}-{{ n.body }}</span>
                             {% endif %}
                         </div>
 

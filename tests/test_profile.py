@@ -8,7 +8,6 @@ from app import config
 from app.dependencies import MEDIA_PATH
 from app.routers.profile import get_image_crop_area, get_placeholder_user
 
-
 CROP_RESULTS = [
     (20, 10, (5, 0, 15, 10)),
     (10, 20, (0, 5, 10, 15)),
@@ -36,6 +35,7 @@ def test_profile_page(profile_test_client):
     assert b'profile.png' in data
     assert b'FakeName' in data
     assert b'Happy new user!' in data
+    assert b'On This Day' in data
 
 
 def test_update_user_fullname(profile_test_client):

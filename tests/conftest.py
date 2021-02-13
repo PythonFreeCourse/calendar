@@ -1,12 +1,11 @@
 import calendar
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
 from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
-
+from app.database.models import Base
 
 pytest_plugins = [
     'tests.fixtures.user_fixture',
