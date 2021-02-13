@@ -1,11 +1,12 @@
-from app.database.database import get_db
-from app.internal.email import send as internal_send
-from app.internal.email import send_email_invitation
 from fastapi import APIRouter, BackgroundTasks, Depends, Form, HTTPException
 from pydantic import BaseModel, EmailStr
 from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
+
+from app.dependencies import get_db
+from app.internal.email import send as internal_send
+from app.internal.email import send_email_invitation
 
 router = APIRouter(
     prefix="/email",
@@ -16,12 +17,12 @@ router = APIRouter(
 
 @router.post("/send")
 async def send(
-    db: Session = Depends(get_db),
-    send_to: str = "/",
-    title: str = Form(...),
-    event_used: str = Form(...),
-    user_to_send: str = Form(...),
-    background_tasks: BackgroundTasks = BackgroundTasks
+        db: Session = Depends(get_db),
+        send_to: str = "/",
+        title: str = Form(...),
+        event_used: str = Form(...),
+        user_to_send: str = Form(...),
+        background_tasks: BackgroundTasks = BackgroundTasks
 ) -> RedirectResponse:
     if not internal_send(
             title=title, event_used=event_used,

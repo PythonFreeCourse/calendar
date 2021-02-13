@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container col col-sm-7 col-md-5 col-lg-4 col-xl-3 mt-3">
+    <h1>
+      {% if edit %}
+        Edit Settings
+      {% else %}
+        View Salary
+      {% endif %}
+    </h1>
+    <form method="post">
+      <div class="input-group mb-2">
+        <select class="form-control" name="category_id" id="category-select" required>
+          <option value="">--Please choose a category--</option>
+          {% for id, category in categories.items() %}
+            <option value="{{ id }}">{{ category }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-sm btn-primary">
+        {% if edit %}
+          Edit settings
+        {% else %}
+          View salary
+        {% endif %}
+      </button>
+    </form>
+
+    <div>
+      <p class="text-muted">Want to create salary settings for a different category? <a href="{{ url_for('create_settings') }}">Create settings here</a></p>
+    </div>
+  </div>
+{% endblock content %}

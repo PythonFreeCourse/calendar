@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from app.database.models import User, Category
+from app.database.models import Category, User
 
 
 @pytest.fixture
