@@ -27,14 +27,14 @@
     </div>
   </div>
 </div>
-<script type="text/javascript" src="{{ url_for('static', path='/currency.js')}}"></script>
+<script type="text/javascript" src="{{ url_for('static', path='/currency.js') }}"></script>
 <script type="text/javascript">
-        getCurrency("{{ base | safe }}", "{{ date | safe }}");
-        document.getElementById("currencyView").addEventListener("click", function (e) {
-            if (e.target && e.target.nodeName == "A") {
-                getCurrency(e.target.id, "{{ date | safe }}");
-            }
-        }, false);
+  getCurrency("{{ base | safe }}", "{{ date | safe }}");
+  document.getElementById("currencyView").addEventListener("click", function (e) {
+    if (e.target && e.target.nodeName == "A") {
+      getCurrency(e.target.id, "{{ date | safe }}");
+    }
+  }, false);
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
