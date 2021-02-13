@@ -8,11 +8,6 @@ from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader, load_parasha
 from app.internal.languages import set_ui_language
-set_ui_language()
-from app.routers import agenda, calendar, categories, celebrity, currency, dayview, email, \
-    event, invitation, profile, parasha, search, telegram, whatsapp
-from app.routers.salary import routes as salary
-from app.telegram.bot import telegram_bot
 
 
 def create_tables(engine, psql_environment):
@@ -33,8 +28,21 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+
+
 json_data_loader.load_to_db(next(get_db()))
 load_parasha.load_parashot(next(get_db()))
+# This MUST come before the app.routers imports.
+set_ui_language()
+
+
+from app.routers import (  # noqa: E402
+    agenda, calendar, categories, celebrity, currency, dayview,
+    email, event, four_o_four, invitation,parasha, profile, search,
+    weekview, telegram, whatsapp,
+)
+from app.routers.salary import routes as salary
+
 
 
 routers_to_include = [
@@ -44,8 +52,10 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    weekview.router,
     email.router,
     event.router,
+    four_o_four.router,
     invitation.router,
     parasha.router,
     profile.router,
@@ -65,7 +75,7 @@ for router in routers_to_include:
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "message": "Hello, World!",
         "quote": quote,
