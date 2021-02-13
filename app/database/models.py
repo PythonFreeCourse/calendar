@@ -7,7 +7,8 @@ from typing import Dict, Any
 from app.config import PSQL_ENVIRONMENT
 from app.database.database import Base
 from sqlalchemy import (DDL, Boolean, Column, DateTime, ForeignKey, Index,
-                        Integer, String, event, UniqueConstraint, JSON)
+                        Integer, String, event, UniqueConstraint, JSON,
+                        Numeric)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import relationship, Session
@@ -169,6 +170,20 @@ class WikipediaEvents(Base):
     wikipedia = Column(String, nullable=False)
     events = Column(JSON, nullable=True)
     date_inserted = Column(DateTime, default=datetime.utcnow)
+
+
+class CoronaStats(Base):
+    __tablename__ = "corona_stats"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(DateTime, nullable=False)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
+    vaccinated = Column(Integer, nullable=False)
+    vaccinated_cum = Column(Integer, nullable=False)
+    vaccinated_population_perc = Column(Integer, nullable=False)
+    vaccinated_seconde_dose = Column(Integer, nullable=False)
+    vaccinated_seconde_dose_cum = Column(Integer, nullable=False)
+    vaccinated_seconde_dose_population_perc: Column(Numeric, nullable=False)
 
 
 class Quote(Base):
