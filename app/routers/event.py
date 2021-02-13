@@ -206,9 +206,13 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: str = None,
                  location: str = None,
                  vc_link: str = None,
+                 content: Optional[str] = None,
+                 location: Optional[str] = None,
+                 color: Optional[str] = None,
                  invitees: List[str] = None,
-                 category_id: int = None,
-                 availability: bool = True):
+                 category_id: Optional[int] = None,
+                 availability: bool = True,
+                 ):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
@@ -222,6 +226,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         owner_id=owner_id,
         location=location,
         vc_link=vc_link,
+        color=color,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         category_id=category_id,
