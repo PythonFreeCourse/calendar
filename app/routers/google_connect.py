@@ -1,5 +1,5 @@
 from datetime import datetime
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Request
 from starlette.responses import RedirectResponse
 
 from google.auth.transport.requests import Request as google_request
@@ -9,7 +9,6 @@ from googleapiclient.discovery import build
 
 from app.database.models import Event, User, OAuthCredentials, UserEvent
 from app.dependencies import get_db, SessionLocal
-from app.routers.profile import router as profile_router
 from app.config import CLIENT_SECRET_FILE
 from app.routers.event import create_event
 from loguru import logger
@@ -24,36 +23,48 @@ router = APIRouter(
 
 
 @router.get("/sync")
-async def google_sync(session=Depends(get_db)) -> RedirectResponse:
+async def google_sync(request: Request,
+                      session=Depends(get_db)) -> RedirectResponse:
     '''Sync with Google - if user never synced with google this funcion will take
     the user to a consent screen to use his google calendar data with the app.
     '''
 
-    user = get_active_user(session)
-    credentials, status = get_credentials_from_db(user)
+    user = get_active_user(session)  # getting active user
 
-    if status:
+    # getting valid credentials
+    credentials = get_credentials(user=user, session=session)
+
+    if credentials is None:
+        # in case credentials is none, this is mean there isn't a client_secret
+        logger.error("GoogleSync isn't available - missing client_secret.json")
+
+    # fetch and save the events com from Google Calendar
+    fetch_save_events(credentials=credentials, user=user, session=session)
+
+    return RedirectResponse(url=request.headers['referer'])
+
+
+def get_credentials(user: User,
+                    session: SessionLocal = Depends()) -> Credentials:
+    credentials = get_credentials_from_db(user)
+
+    if credentials is not None:
         credentials = refresh_token(credentials, session, user)
+        return credentials
 
-    elif not status:
-        if is_client_secret_not_none():  # if there is no client_secrets.json
-            logger.error(
-                'Google Sync is not available - missing client_secret.json')
-            url = profile_router.url_path_for("profile")
-            return RedirectResponse(url=url)
+    credentials = get_credentials_from_consent_screen(
+        user=user,
+        session=session
+    )
+    return credentials
 
-        credentials = get_credentials_from_consent_screen(
-                            user=user,
-                            session=session
-                        )
 
-    clean_up_old_credentials_from_db(session=session)
+def fetch_save_events(credentials: Credentials, user: User,
+                      session: SessionLocal = Depends()) -> None:
 
-    events = get_current_year_events(credentials, user, session)
-    push_events_to_db(events, user, session)
-
-    url = profile_router.url_path_for("profile")
-    return RedirectResponse(url=url)
+    if credentials is not None:
+        events = get_current_year_events(credentials, user, session)
+        push_events_to_db(events, user, session)
 
 
 def clean_up_old_credentials_from_db(
@@ -65,13 +76,29 @@ def clean_up_old_credentials_from_db(
 def get_credentials_from_consent_screen(user: User,
                                         session: SessionLocal = Depends()
                                         ) -> Credentials:
-    flow = InstalledAppFlow.from_client_secrets_file(
-        client_secrets_file=CLIENT_SECRET_FILE,
-        scopes=SCOPES
-    )
+    credentials = None
 
-    flow.run_local_server(prompt='consent')
-    credentials = flow.credentials
+    if not is_client_secret_none():  # if there is no client_secrets.json
+        flow = InstalledAppFlow.from_client_secrets_file(
+            client_secrets_file=CLIENT_SECRET_FILE,
+            scopes=SCOPES
+        )
+
+        flow.run_local_server(prompt='consent')
+        credentials = flow.credentials
+
+        push_credentials_to_db(
+            credentials=credentials, user=user, session=session
+        )
+
+        clean_up_old_credentials_from_db(session=session)
+
+    return credentials
+
+
+def push_credentials_to_db(credentials: Credentials, user: User,
+                           session: SessionLocal = Depends()
+                           ) -> OAuthCredentials:
 
     oauth_credentials = OAuthCredentials(
         owner=user,
@@ -85,7 +112,6 @@ def get_credentials_from_consent_screen(user: User,
 
     session.add(oauth_credentials)
     session.commit()
-    print('end')
     return credentials
 
 
@@ -95,7 +121,7 @@ def get_active_user(session: SessionLocal = Depends()) -> User:
     return user
 
 
-def is_client_secret_not_none():
+def is_client_secret_none() -> bool:
     return CLIENT_SECRET_FILE is None
 
 
@@ -163,8 +189,9 @@ def push_events_to_db(events: list, user: User,
     return True
 
 
-def create_google_event(title: str, start: datetime, end: datetime, user: User,
-                        location: str, session: SessionLocal = Depends()):
+def create_google_event(title: str, start: datetime,
+                        end: datetime, user: User, location: str,
+                        session: SessionLocal = Depends()) -> Event:
     return create_event(
         # creating an event obj and pushing it into the db
         db=session,
@@ -196,7 +223,6 @@ def get_credentials_from_db(user: User) -> tuple:
     and save the credential in the db'''
 
     credentials = None
-    status = False
 
     if user.oauth_credentials is not None:
         db_credentials = user.oauth_credentials
@@ -209,8 +235,7 @@ def get_credentials_from_db(user: User) -> tuple:
             expiry=db_credentials.expiry
         )
 
-        status = True
-    return credentials, status
+    return credentials
 
 
 def refresh_token(credentials: Credentials,

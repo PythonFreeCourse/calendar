@@ -97,7 +97,7 @@ def test_push_events_to_db(google_events_mock, user, session):
 
 
 @pytest.mark.usefixtures("user", "session", "google_events_mock")
-def test_clean_up(google_events_mock, user, session):
+def test_db_cleanup(google_events_mock, user, session):
     for event in google_events_mock:
         location = None
         title = event['summary']
@@ -160,7 +160,7 @@ def test_get_credentials_from_db(session):
     assert user.oauth_credentials is not None
     session.close()
     return_val = google_connect.get_credentials_from_db(user)
-    assert return_val[1]
+    assert return_val
 
 
 @pytest.mark.usefixtures("session", "user", "credentials")
@@ -223,41 +223,9 @@ def test_get_current_year_events(mocker, user, session, credentials):
     assert google_connect.get_current_year_events(credentials, user, session)
 
 
-@pytest.mark.usefixtures("session", "google_connect_test_client",
-                         "credentials", "google_events_mock")
-def test_google_sync(mocker, google_connect_test_client,
-                     session, credentials, google_events_mock):
-    create_user(session=session,
-                username='new_test_username',
-                password='new_test_password',
-                email='new_test.email@gmail.com',
-                language_id=1)
-
-    mocker.patch(
-        'app.routers.google_connect.get_credentials_from_db',
-        return_value=(credentials, True)
-    )
-    mocker.patch(
-        'app.routers.google_connect.get_current_year_events',
-        return_value=google_events_mock
-    )
-    mocker.patch(
-        'app.routers.google_connect.push_events_to_db',
-        return_value=True
-    )
-    mocker.patch(
-        'app.routers.google_connect.refresh_token',
-        return_value=credentials
-    )
-
-    connect = google_connect_test_client.get('/google/sync')
-    assert connect.ok
-
-
 @pytest.mark.usefixtures("user", "session",
                          "google_connect_test_client", "credentials")
-def test_google_sync_second_path(mocker, google_connect_test_client,
-                                 session, credentials):
+def test_google_sync(mocker, google_connect_test_client, session, credentials):
     create_user(session=session,
                 username='new_test_username',
                 password='new_test_password',
@@ -265,59 +233,36 @@ def test_google_sync_second_path(mocker, google_connect_test_client,
                 language_id=1)
 
     mocker.patch(
-        'app.routers.google_connect.get_credentials_from_db',
-        return_value=(credentials, False)
+        'app.routers.google_connect.get_credentials',
+        return_value=credentials
     )
     mocker.patch(
-        'app.routers.google_connect.is_client_secret_not_none',
-        return_value=True
+        'app.routers.google_connect.fetch_save_events',
+        return_value=None
     )
-    connect = google_connect_test_client.get('google/sync')
-    assert connect.ok
-
-
-@pytest.mark.usefixtures("session", "google_events_mock",
-                         "credentials", "google_connect_test_client")
-def test_google_sync_third_path(mocker, google_connect_test_client,
-                                session, credentials, google_events_mock):
-    create_user(session=session,
-                username='new_test_username',
-                password='new_test_password',
-                email='new_test.email@gmail.com',
-                language_id=1)
-
-    mocker.patch(
-        'app.routers.google_connect.get_credentials_from_db',
-        return_value=(credentials, False)
-    )
-    mocker.patch(
-        'app.routers.google_connect.is_client_secret_not_none',
-        return_value=False
-    )
-    mocker.patch(
-        'app.routers.google_connect.get_current_year_events',
-        return_value=google_events_mock
-    )
-    mocker.patch(
-        'app.routers.google_connect.push_events_to_db',
-        return_value=True
-    )
-    mocker.patch(
-        'google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file',
-        return_value=mocker.Mock(name='flow', **{
-            "credentials": credentials,
-            "run_local_server": mocker.Mock(name='run_local_server',
-                                            return_value=logger.debug(
-                                                'running server'))
+    connect = google_connect_test_client.get(
+        'google/sync',
+        headers={
+            "referer": 'http://testserver/'
         })
+    assert connect.ok
+
+    # second case
+    mocker.patch(
+        'app.routers.google_connect.get_credentials',
+        return_value=None
     )
 
-    connect = google_connect_test_client.get('google/sync')
+    connect = google_connect_test_client.get(
+        'google/sync',
+        headers={
+            "referer": 'http://testserver/'
+        })
     assert connect.ok
 
 
-def test_is_client_secret_not_none():
-    answer = google_connect.is_client_secret_not_none()
+def test_is_client_secret_none():
+    answer = google_connect.is_client_secret_none()
     assert answer is not None
 
 
@@ -373,3 +318,53 @@ def test_create_google_event(session):
             )
 
     assert event.title == 'title'
+
+
+@pytest.mark.usefixtures("session", "user", 'credentials')
+def test_get_credentials(mocker, session, user, credentials):
+    user = create_user(
+        session=session,
+        username='new_test_username',
+        password='new_test_password',
+        email='new_test.email@gmail.com',
+        language_id=1
+    )
+
+    mocker.patch(
+        'app.routers.google_connect.get_credentials_from_consent_screen',
+        return_value=credentials
+    )
+
+    assert google_connect.get_credentials(user=user,
+                                          session=session) == credentials
+    
+    mocker.patch(
+        'app.routers.google_connect.get_credentials',
+        return_value=credentials
+    )
+    mocker.patch(
+        'app.routers.google_connect.refresh_token',
+        return_value=credentials
+    )
+
+    assert google_connect.get_credentials(user=user,
+                                          session=session) == credentials
+
+
+@pytest.mark.usefixtures("session", "user",
+                         'credentials', 'google_events_mock')
+def test_fetch_save_events(mocker, session, user, credentials,
+                           google_events_mock):
+
+    mocker.patch(
+        'app.routers.google_connect.get_current_year_events',
+        return_value=google_events_mock
+    )
+
+    assert google_connect.fetch_save_events(credentials,
+                                            user, session) is None
+
+
+@pytest.mark.usefixtures("session", "user", 'credentials')
+def test_push_credentials_to_db(session, user, credentials):
+    assert google_connect.push_credentials_to_db(credentials, user, session)
