@@ -14,7 +14,7 @@ TIME = time(20, 0)
 @pytest.fixture
 def task(session, user):
     task_example = create_model(
-        session, Task, id=1, title="Test", description="test my create",
+        session, Task, title="Test", description="test my create",
         is_done=False, is_important=False, date=DATE, time=TIME,
         owner_id=1, owner=user
     )
@@ -25,7 +25,7 @@ def task(session, user):
 @pytest.fixture
 def task2(session, user):
     task_example = create_model(
-        session, Task, id=1, title="Test2", description="test my create2",
+        session, Task, title="Test2", description="test my create2",
         is_done=False, is_important=True, date=DATE, time=TIME,
         owner_id=1, owner=user
     )
@@ -34,9 +34,13 @@ def task2(session, user):
 
 
 @pytest.fixture
-def test1():
-    return User(username='test1', email='blala@something.com',
-                password='123456', full_name='any name')
+def test1(session):
+    user_example = create_model(
+        session, User, username="test1", email="test@something.com",
+        password="123456", full_name="My test", language="English"
+    )
+    yield user_example
+    delete_instance(session, user_example)
 
 
 def test_if_task_deleted(home_test_client, task: Task, session):
@@ -47,7 +51,6 @@ def test_if_task_deleted(home_test_client, task: Task, session):
 
 
 def test_if_task_created(home_test_client, session, task: Task, test1):
-    session.add(test1)
     response = home_test_client.post("/task/add",
                                      data={"title": task.title,
                                            "description": task.description,
