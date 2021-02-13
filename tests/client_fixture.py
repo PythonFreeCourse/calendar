@@ -85,5 +85,6 @@ def weekly_tasks_test_client():
     Base.metadata.drop_all(bind=test_engine)
 
 
+@pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
