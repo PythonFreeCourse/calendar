@@ -104,6 +104,7 @@ header div {
 
 #logo-div {
   text-align: end;
+  margin-right: var(--space_s);
 }
 
 /* Main Element Grid */
@@ -316,10 +317,6 @@ main {
 }
 
 /* Titles */
-.day-title {
-  font-weight: 600;
-  font-size: var(--text_m);
-}
 
 .title {
   font-weight: 800;
@@ -327,8 +324,12 @@ main {
   margin-bottom: calc(var(--space_s) * -1);
 }
 
-.sec-title {
-  font-weight: 500;
+.m-title {
+  font-weight: 600;
+  font-size: var(--text_m);
+}
+
+.s-title {
   font-size: var(--text_s);
 }
 

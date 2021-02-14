@@ -50,17 +50,32 @@ a {
     color: inherit;
 }
 
+
+/* Feature Panel */
 #features {
   display: flex;
   flex-flow: row wrap;
   width: 100%;
-  margin-top: var(--space_l);
+  margin: var(--space_s);
 }
 
 #features div {
   flex: 1;
+  overflow-y: scroll;
 }
 
-.border {
-  border: 2px solid black;
+#features div:first-child {
+  width: 50%;
+}
+
+.feature-row {
+  width: 90%;
+  display: flex;
+  flex-flow: row wrap;
+  background-color: var(--surface);
+  margin: var(--space_s) 0;
+}
+
+.feature div {
+  flex: 1;
 }
