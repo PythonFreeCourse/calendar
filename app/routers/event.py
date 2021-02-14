@@ -62,12 +62,10 @@ async def create_new_event(request: Request,
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
-    if data['event_type']:
-        all_day = data['event_type']
-        if all_day == "on":
-            all_day = True
-        else:
-            all_day = False
+    # if data['event_type']:
+    #     all_day = data['event_type']
+    #     all_day = all_day == "on"
+    all_day = data['event_type'] and data['event_type'] == 'on'
 
     vc_link = data['vc_link']
     category_id = data.get('category_id')
@@ -79,7 +77,8 @@ async def create_new_event(request: Request,
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(session, title, start, end, owner_id, all_day, content,
+    event = create_event(session, title, start, end,
+                         owner_id, all_day, content,
                          location, vc_link, invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)

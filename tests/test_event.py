@@ -319,8 +319,7 @@ def test_update_event_availability(event, session):
     original_availability = event.availability
     data = {
         "availability": not original_availability
-    answer = evt.update_event(
-        event_id=event.id, event=data, db=session)
+    }
     assert original_availability is not evt.update_event(
         event_id=event.id, event=data, db=session).availability
 

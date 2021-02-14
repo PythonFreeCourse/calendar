@@ -105,27 +105,26 @@ class DivAttributes:
 
 
 def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
-    if event.all_day is False:
-        return (
-            (event.start >= day and event.start < day_end) or
-            (event.end >= day and event.end < day_end) or
-            (event.start < day_end < event.end)
-            )
-    else:
+    if event.all_day:
         return None
+    return (
+        (event.start >= day and event.start < day_end) or
+        (event.end >= day and event.end < day_end) or
+        (event.start < day_end < event.end)
+        )
 
 
 def all_day_event_in_day(
     event: Event, day: datetime, day_end: datetime
 ) -> bool:
-    if event.all_day is True:
-        return (
-            (event.start >= day and event.start < day_end) or
-            (event.end >= day and event.end < day_end) or
-            (event.start < day_end < event.end)
-            )
-    else:
+    if not event.all_day:
         return None
+    return (
+        (event.start >= day and event.start < day_end) or
+        (event.end >= day and event.end < day_end) or
+        (event.start < day_end < event.end)
+        )
+
 
 
 def get_events_and_attributes(
