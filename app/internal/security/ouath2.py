@@ -1,9 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Union
 
-from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
-from app.database.models import User
-
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
@@ -14,6 +11,9 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
 from . import schema
+
+from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
+from app.database.models import User
 
 
 pwd_context = CryptContext(schemes=["bcrypt"])
@@ -37,7 +37,7 @@ async def authenticate_user(
     db_user = await User.get_by_username(db=db, username=new_user.username)
     if db_user and verify_password(new_user.password, db_user.password):
         return schema.LoginUser(
-            user_id=db_user.id,
+            user_id=db_user.id, is_manager=db_user.is_manager,
             username=new_user.username, password=db_user.password)
     return False
 
@@ -50,6 +50,7 @@ def create_jwt_token(
     jwt_payload = {
         "sub": user.username,
         "user_id": user.user_id,
+        "is_manager": user.is_manager,
         "exp": expiration}
     jwt_token = jwt.encode(
         jwt_payload, jwt_key, algorithm=JWT_ALGORITHM)
@@ -58,7 +59,8 @@ def create_jwt_token(
 
 async def check_jwt_token(
     db: Session,
-        token: str = Depends(oauth_schema), path: bool = None) -> User:
+        token: str = Depends(oauth_schema), path: bool = None,
+        manager: bool = False) -> User:
     """
     Check whether JWT token is correct.
     Returns jwt payloads if correct.
@@ -67,7 +69,14 @@ async def check_jwt_token(
     try:
         jwt_payload = jwt.decode(
             token, JWT_KEY, algorithms=JWT_ALGORITHM)
-        return jwt_payload.get("sub"), jwt_payload.get("user_id")
+        if not manager:
+            return True
+        if jwt_payload.get("is_manager"):
+            return True
+        raise HTTPException(
+                status_code=HTTP_401_UNAUTHORIZED,
+                headers=path,
+                detail="You don't have a permition to enter this page")
     except InvalidSignatureError:
         raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,

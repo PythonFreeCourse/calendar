@@ -9,6 +9,7 @@ class LoginUser(BaseModel):
     Returns a User object for signing in.
     """
     user_id: Optional[int]
+    is_manager: Optional[bool]
     username: str
     password: str
 

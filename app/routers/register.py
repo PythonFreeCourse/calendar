@@ -1,15 +1,15 @@
 from typing import Dict
 
-from app.internal.security.ouath2 import get_hashed_password
-from app.database import schemas
-from app.database import models
-from app.dependencies import get_db, templates
-
 from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+
+from app.internal.security.ouath2 import get_hashed_password
+from app.database import schemas
+from app.database import models
+from app.dependencies import get_db, templates
 
 
 router = APIRouter(
