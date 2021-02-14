@@ -42,6 +42,7 @@ class User(Base):
     salary_settings = relationship(
         "SalarySettings", cascade="all, delete", back_populates="user",
     )
+    comments = relationship("Comment", back_populates="user")
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -69,6 +70,7 @@ class Event(Base):
     participants = relationship(
         "UserEvent", cascade="all, delete", back_populates="events",
     )
+    comments = relationship("Comment", back_populates="event")
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -266,6 +268,22 @@ class Quote(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+
+
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    content = Column(String, nullable=False)
+    time = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="comments")
+    event = relationship("Event", back_populates="comments")
+
+    def __repr__(self):
+        return f'<Comment {self.id}>'
 
 
 class Zodiac(Base):
