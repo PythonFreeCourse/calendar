@@ -7,7 +7,8 @@ from app import config
 from app.database import engine, models
 from app.dependencies import (get_db, logger, MEDIA_PATH,
                               STATIC_PATH, templates, SessionLocal)
-from app.internal import daily_quotes, json_data_loader
+from app.internal import (
+    daily_quotes, json_data_loader, features as internal_features)
 from app.internal.languages import set_ui_language
 from app.routers.salary import routes as salary
 
@@ -75,16 +76,19 @@ async def filter_access_to_features(request: Request, call_next):
     route = '/' + str(request.url).replace(str(request.base_url), '')
 
     # getting access status.
-    is_enabled = features.is_feature_enabled(route=route)
-
+    is_enabled = internal_features.is_feature_enabled(route=route)
+    print(is_enabled)
     if is_enabled:
         # in case the feature is enabled or access is allowed.
+        print('in')
         return await call_next(request)
 
     elif 'referer' not in request.headers:
+        print('elif')
         # in case request come straight from address bar in browser.
         return RedirectResponse(url=app.url_path_for('home'))
 
+    print('ddd')
     # in case the feature is disabled or access isn't allowed.
     return RedirectResponse(url=request.headers['referer'])
 
@@ -92,7 +96,8 @@ async def filter_access_to_features(request: Request, call_next):
 @app.on_event("startup")
 async def startup_event():
     session = SessionLocal()
-    features.create_features_at_startup(session=session)
+    internal_features.create_features_at_startup(session=session)
+    print('done')
     session.close()
 
 
