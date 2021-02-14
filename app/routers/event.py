@@ -334,11 +334,7 @@ def get_tamplate_to_share_event(event_id: int, user_name: str,
     html_temp = templates.TemplateResponse("event/share_event.html",
                                            {"request": request,
                                             "sender_name": user_name,
-                                            "title": event.title,
-                                            "start_date": event.start,
-                                            "end_date": event.end,
-                                            "location": event.location,
-                                            "vc_link": event.vc_link})
+                                            "event": event})
     return html_temp
 
 

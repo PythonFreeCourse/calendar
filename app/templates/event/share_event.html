@@ -14,20 +14,20 @@
             <h6 class="card-subtitle mb-2 text-muted">{{ sender_name }} want you to know about event he have,</h6>
         <div class="event_info card-body">
             <div>
-                The event {{ title }}
+                The event {{ event.title }}
             </div>
             <div>
-                will take place from {{ start_date }} until {{ end_date }}
+                will take place from {{ event.start_date }} until {{ event.end_date }}
             </div>
             <div>
                 {% if location is not none %}
-                in {{ location }}
+                in {{ event.location }}
                 {% endif %}
-                {% if vc_link is not none %}
-                <a href="{{ vc_link }}" class="card-link">Link to vc here</a>
+                {% if event.vc_link is not none %}
+                <a href="{{ event.vc_link }}" class="card-link">Link to vc here</a>
                 {% endif %}
                 <!-- TODO get link to the event -->
-                <p>See the event <a href="--" class="card-link">here</a> </p>
+                <!-- <p>See the event <a href="--" class="card-link">here</a> </p> -->
             </div>
             <!-- TODO: get link to register page -->
             <div class="card-footer text-muted">
