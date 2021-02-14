@@ -25,7 +25,7 @@
   <address>VC link<a href="{{ event.vc_link }}">VC URL</a></address>
 </div>
 {% if event.invitees %}
-<form method="POST" action="/event/{{event.id}}">
+<form method="POST" action="/event/{{event.id}}/owner_changed">
     <div class="mb-3"></div>
     <label for="username">{{ gettext('Choose user') }}</label>
     <select id="username" name="username">
