@@ -9,6 +9,7 @@ class LoginUser(BaseModel):
     Returns a User object for signing in.
     """
     user_id: Optional[int]
+    is_manager: Optional[bool]
     username: str
     password: str
 
@@ -25,10 +26,10 @@ class ForgotPassword(BaseModel):
     email: str
     user_id: Optional[str] = None
     token: Optional[str] = None
+    is_manager: Optional[bool] = False
 
     class Config:
         orm_mode = True
-    
 
     @validator('username')
     def password_length(cls, username: str) -> Union[ValueError, str]:
@@ -53,7 +54,6 @@ class ResetPassword(BaseModel):
     class Config:
         orm_mode = True
 
-
     @validator('confirm_password')
     def passwords_match(
             cls, confirm_password: str,
@@ -62,7 +62,6 @@ class ResetPassword(BaseModel):
         if 'password' in values and confirm_password != values['password']:
             raise ValueError
         return confirm_password
-
 
     @validator('password')
     def password_length(cls, password: str) -> Union[ValueError, str]:

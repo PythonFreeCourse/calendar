@@ -57,6 +57,8 @@ email_conf = ConnectionConfig(
 JWT_KEY = "JWT_KEY_PLACEHOLDER"
 JWT_ALGORITHM = "HS256"
 JWT_MIN_EXP = 60 * 24 * 7
+CALENDAR_RESET_PASSWORD_PAGE = "calendar.pythonic.guru/reset-password"
+
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
 # application name

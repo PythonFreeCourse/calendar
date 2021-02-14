@@ -1,6 +1,10 @@
 import pytest
-from app.internal.security.ouath2 import create_jwt_token, LoginUser
+
 from starlette.status import HTTP_302_FOUND
+
+from app.database.models import User
+from app.internal.security.ouath2 import create_jwt_token
+from app.internal.security.schema import LoginUser
 
 
 def test_login_route_ok(security_test_client):
@@ -52,7 +56,6 @@ def test_is_logged_in_dependency_with_logged_in_user(
     security_test_client.post('/register', data=REGISTER_DETAIL)
     security_test_client.post('/login', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
-    print(res)
     assert res.json() == {"user": True}
 
 
@@ -63,24 +66,25 @@ def test_is_logged_in_dependency_without_logged_in_user(
     assert b'Please log in' in res.content
 
 
-def test_current_user_dependency_exists(session, security_test_client):
+def test_is_manager_in_dependency_with_logged_in_regular_user(
+        session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
-    res = security_test_client.post('/login', data=LOGIN_DATA)
-    res = security_test_client.get('/test_user')
-    assert res.json() == {"user": 'correct_user'}
+    security_test_client.post('/login', data=LOGIN_DATA)
+    res = security_test_client.get('/manager')
+    assert b"have a permition" in res.content
 
 
-def test_is_authenticated_dependency_exists(session, security_test_client):
+def test_is_manager_in_dependency_with_logged_in_manager(
+        session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
-    res = security_test_client.post('/login', data=LOGIN_DATA)
-    res = security_test_client.get('/is_authenticated')
-    assert res.json() == {"user": 'correct_user'}
-
-
-def test_is_authenticated_dependency_not_exists(session, security_test_client):
-    res = security_test_client.get('/logout')
-    res = security_test_client.get('/is_authenticated')
-    assert b'Please log in' in res.content
+    manager = session.query(User).filter(
+        User.username == 'correct_user').first()
+    manager.is_manager = True
+    session.commit()
+    security_test_client.post('/login', data=LOGIN_DATA)
+    res = security_test_client.get('/manager')
+    print(res.content)
+    assert res.json() == {"manager": True}
 
 
 def test_logout(session, security_test_client):
@@ -88,15 +92,9 @@ def test_logout(session, security_test_client):
     assert b'Login' in res.content
 
 
-def test_current_user_dependency_not_exists(
-        session, security_test_client):
-    res = security_test_client.get('/test_user')
-    assert res.json() == {"user": "No logged in user"}
-
-
 def test_incorrect_secret_key_in_token(session, security_test_client):
     user = LoginUser(**LOGIN_DATA)
-    incorrect_token = create_jwt_token(user, JWT_KEY="wrong secret key")
+    incorrect_token = create_jwt_token(user, jwt_key="wrong secret key")
     security_test_client.post('/register', data=REGISTER_DETAIL)
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)
@@ -104,20 +102,10 @@ def test_incorrect_secret_key_in_token(session, security_test_client):
     assert b'Your token is incorrect' in res.content
 
 
-def test_wrong_details_in_token(session, security_test_client):
-    user = LoginUser(**WRONG_LOGIN_DATA)
-    incorrect_token = create_jwt_token(user)
-    security_test_client.post('/register', data=REGISTER_DETAIL)
-    url = f"/login?existing_jwt={incorrect_token}"
-    security_test_client.post(f'{url}', data=LOGIN_DATA)
-    res = security_test_client.get('/is_authenticated')
-    assert b'Your token is incorrect' in res.content
-
-
 def test_expired_token(session, security_test_client):
     security_test_client.get('/logout')
     user = LoginUser(**LOGIN_DATA)
-    incorrect_token = create_jwt_token(user, JWT_MIN_EXP=-1)
+    incorrect_token = create_jwt_token(user, jwt_min_exp=-1)
     security_test_client.post('/register', data=REGISTER_DETAIL)
     url = f"/login?existing_jwt={incorrect_token}"
     security_test_client.post(f'{url}', data=LOGIN_DATA)
@@ -133,10 +121,3 @@ def test_corrupted_token(session, security_test_client):
     security_test_client.post(f'{url}', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
     assert b'Your token is incorrect' in res.content
-
-
-def test_forbidden_route_for_logged_in_user(session, security_test_client):
-    security_test_client.post('/register', data=REGISTER_DETAIL)
-    security_test_client.post('/login', data=LOGIN_DATA)
-    res = security_test_client.get('/login')
-    assert b'Login' not in res.content

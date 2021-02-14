@@ -1,19 +1,20 @@
-from typing import Optional, Union
+from typing import Optional
 
-from app.dependencies import get_db, templates
-from app.internal.security.dependancies import is_authenticated
-from app.internal.security.ouath2 import (
-    authenticate_user, check_jwt_token,
-    create_jwt_token, update_password)
-from app.internal.security.reset_password import (
-    BackgroundTasks ,send_mail)
-from app.internal.security.schema import (
-    ForgotPassword, LoginUser, ResetPassword)
 from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+
+from app.database.models import User
+from app.dependencies import get_db, templates
+from app.internal.security.ouath2 import (
+    authenticate_user, check_jwt_token,
+    create_jwt_token, update_password)
+from app.internal.security.reset_password import (
+    BackgroundTasks, send_mail)
+from app.internal.security.schema import (
+    ForgotPassword, ResetPassword)
 
 
 router = APIRouter(
@@ -35,7 +36,7 @@ async def forgot_password_form(
 @router.post('/forgot-password')
 async def forgot_password(
         request: Request, background_tasks: BackgroundTasks,
-            db: Session = Depends(get_db)) -> templates:
+        db: Session = Depends(get_db)) -> templates:
     """
     Validaiting form data fields.
     Validaiting form data against database records.
@@ -51,9 +52,9 @@ async def forgot_password(
     except ValidationError:
         user = False
     if user:
-        user =  await authenticate_user(db, user, email=True)
+        user = await authenticate_user(db, user, email=True)
         if user:
-            user.token = create_jwt_token(user, JWT_MIN_EXP=15)
+            user.token = create_jwt_token(user, jwt_min_exp=15)
             await send_mail(db, user, background_tasks)
             return templates.TemplateResponse("forgot_password.html", {
                 "request": request,
@@ -90,14 +91,15 @@ async def reset_password(
     Receives form data, and validates all fields are correct.
     Validating token.
     validatting form data against database records.
-    validatting jwt details against database records.
     If all validations succeed, hashing new password and updating database.
     '''
+    await check_jwt_token(db, token)
     form = await request.form()
     form_dict = dict(form)
-    db_user = await is_authenticated(request=request, db = db, jwt = token)
+    db_user = await User.get_by_username(
+        db=db, username=form_dict['username'])
     validated = True
-    if not form_dict['username'] == db_user.username:
+    if not db_user:
         validated = False
     try:
         # validating form data by creating pydantic schema object
@@ -106,9 +108,8 @@ async def reset_password(
         validated = False
     if not validated:
         return templates.TemplateResponse("reset_password.html", {
-        "request": request,
-        "message": 'Please check your credentials'
-    })
+            "request": request,
+            "message": 'Please check your credentials'})
     await update_password(db, db_user, user.password)
     return RedirectResponse(
         url="/login?message=Success reset password",

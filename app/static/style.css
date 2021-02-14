@@ -71,3 +71,9 @@ body {
     padding-left: 12.5rem;
 }
 
+.forgot-password{
+    line-height: 0;
+    color: rgb(188, 7, 194);
+    padding-left: 8rem;
+}
+

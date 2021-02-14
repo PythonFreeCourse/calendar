@@ -42,9 +42,8 @@ from app.routers import (  # noqa: E402
 )
 
 json_data_loader.load_to_db(next(get_db()))
-from tests import security_testing_routes
+
 routers_to_include = [
-    security_testing_routes.router,
     agenda.router,
     calendar.router,
     categories.router,

@@ -1,12 +1,15 @@
-from app.internal import user
-from app.database.schemas import UserCreate
-from app.dependencies import get_db, templates
+from typing import Dict
+
 from fastapi import APIRouter, Depends, Request
 from pydantic import ValidationError
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
+
+from app.internal.security.ouath2 import get_hashed_password
+from app.database import schemas
+from app.database import models
+from app.dependencies import get_db, templates
 
 
 router = APIRouter(
@@ -16,19 +19,49 @@ router = APIRouter(
 )
 
 
-async def render_registration_error(
-        db: Session, new_user: UserCreate) -> dict:
-    """After registering new user fails, defines relevant errors"""
-    db.rollback()
+async def create_user(
+        db: Session, user: schemas.UserCreate) -> models.User:
+    """
+    creating a new User object in the database, with hashed password
+    """
+    unhashed_password = user.password.encode('utf-8')
+    hashed_password = get_hashed_password(unhashed_password)
+    user_details = {
+        'username': user.username,
+        'full_name': user.full_name,
+        'email': user.email,
+        'password': hashed_password,
+        'description': user.description,
+    }
+    db_user = models.User(**user_details)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+async def check_unique_fields(
+        db: Session, new_user: schemas.UserCreate) -> dict:
+    """Verifying new user details are unique. Return relevant errors"""
     errors = {}
-    db_user_email = user.get_by_mail(db, email=new_user.email)
-    db_user_username = user.get_by_username(
-        db, username=new_user.username)
-    if db_user_username:
+    if db.query(
+        db.query(models.User).filter(
+            models.User.username == new_user.username).exists()).scalar():
         errors['username'] = "That username is already taken"
-    if db_user_email:
+    if db.query(
+        db.query(models.User).filter(
+            models.User.email == new_user.email).exists()).scalar():
         errors['email'] = "Email already registered"
     return errors
+
+
+def get_error_messages_by_fields(errors: [list]) -> Dict[str, str]:
+    """Getting validation errors by fields from pydantic ValidationError"""
+    errors_by_fields = {error['loc'][0]: error['msg'] for error in errors}
+    return {
+        field_name: f"{field_name.capitalize()} {error_message}"
+        for field_name, error_message in errors_by_fields.items()
+    }
 
 
 @router.get("/register")
@@ -50,32 +83,19 @@ async def register(
     try:
         # creating pydantic schema object out of form data
 
-        new_user = UserCreate(**form_dict)
+        new_user = schemas.UserCreate(**form_dict)
     except ValidationError as e:
         # if pydantic validations fails, rendering errors to register.html
-
-        errors_dict = {error['loc'][0]: error['msg'] for error in e.errors()}
-        errors = {
-            field: " ".join((
-                field.capitalize(), error_message)
-                ) for field, error_message in errors_dict.items()}
-
+        errors = get_error_messages_by_fields(e.errors())
         return templates.TemplateResponse("register.html", {
             "request": request,
             "errors": errors,
             "form_values": form_dict})
-    try:
-        # attempt creating User Model object, and saving to database
-
-        user.create(db=db, user=new_user)
-
-        # if user registration fails due to database unique fields -
-        # rendering errors to register.html
-
-    except IntegrityError:
-        errors = await render_registration_error(db, new_user)
+    errors = await check_unique_fields(db, new_user)
+    if errors:
         return templates.TemplateResponse("register.html", {
             "request": request,
             "errors": errors,
             "form_values": form_dict})
+    await create_user(db=db, user=new_user)
     return RedirectResponse('/profile', status_code=HTTP_302_FOUND)
