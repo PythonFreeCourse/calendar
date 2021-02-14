@@ -317,6 +317,7 @@ class HebrewView(Base):
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
 # https://stackoverflow.com/questions/17461251
 
+
 def insert_data(target, session: Session, **kw):
     session.execute(
         target.insert(),
