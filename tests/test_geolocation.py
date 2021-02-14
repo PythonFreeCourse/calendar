@@ -1,6 +1,6 @@
 import pytest
 
-from app.routers.event import get_location_coordinates
+from app.internal.event import get_location_coordinates
 from app.database.models import Event
 from sqlalchemy.sql import func
 
