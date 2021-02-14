@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 from typing import Tuple, Union
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import and_, or_
+from starlette import status
 
 from app.database.database import get_db
 from app.database.models import Event, User
@@ -11,7 +12,6 @@ from app.dependencies import TEMPLATES_PATH
 from app.internal import zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
-
 
 router = APIRouter()
 
@@ -97,13 +97,18 @@ class DivAttributes:
 async def dayview(request: Request, date: str, db_session=Depends(get_db)):
     # TODO: add a login session
     user = db_session.query(User).filter_by(username='test1').first()
+    if not user:
+        error_message = 'User not found.'
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=error_message)
     day = datetime.strptime(date, '%Y-%m-%d')
     day_end = day + timedelta(hours=24)
     events = db_session.query(Event).filter(
         Event.owner_id == user.id).filter(
-            or_(and_(Event.start >= day, Event.start < day_end),
-                and_(Event.end >= day, Event.end < day_end),
-                and_(Event.start < day_end, day_end < Event.end)))
+        or_(and_(Event.start >= day, Event.start < day_end),
+            and_(Event.end >= day, Event.end < day_end),
+            and_(Event.start < day_end, day_end < Event.end)))
     events_n_attrs = [(event, DivAttributes(event, day)) for event in events]
     zodiac_obj = zodiac.get_zodiac_of_day(db_session, day)
     return templates.TemplateResponse("dayview.html", {
@@ -112,4 +117,4 @@ async def dayview(request: Request, date: str, db_session=Depends(get_db)):
         "month": day.strftime("%B").upper(),
         "day": day.day,
         "zodiac": zodiac_obj
-        })
+    })
