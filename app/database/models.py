@@ -68,7 +68,9 @@ class Event(Base):
     participants = relationship(
         "UserEvent", cascade="all, delete", back_populates="events",
     )
-    shared_list = relationship("SharedList", uselist=False, back_populates="event")
+    shared_list = relationship("SharedList",
+                               uselist=False,
+                               back_populates="event")
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -323,11 +325,12 @@ class SharedList(Base):
             f'<Shared list {self.id}: '
             f'Items: {self.items}>'
         )
-# insert language data
 
-# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
-# https://stackoverflow.com/questions/17461251
+
 def insert_data(target, session: Session, **kw):
+    """insert language data
+    Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+    https://stackoverflow.com/questions/17461251"""
     session.execute(
         target.insert(),
         {'id': 1, 'name': 'English'}, {'id': 2, 'name': 'עברית'})

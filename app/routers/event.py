@@ -1,24 +1,24 @@
 from collections import namedtuple
 from datetime import datetime as dt
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Union
 
+from app.database.models import (Event, SharedList, SharedListItem, User,
+                                 UserEvent)
+from app.dependencies import get_db, logger, templates
+from app.internal.emotion import get_emotion
+from app.internal.event import (get_invited_emails, get_messages,
+                                get_uninvited_regular_emails,
+                                raise_if_zoom_link_invalid)
+from app.internal.utils import create_model
+from app.routers.user import create_user
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
+from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse
-
-from app.database.models import Event, SharedList, SharedListItem, User, UserEvent
-from app.dependencies import get_db, logger, templates
-from app.internal.event import (
-    get_invited_emails, get_messages, get_uninvited_regular_emails,
-    raise_if_zoom_link_invalid,
-)
-from app.internal.emotion import get_emotion
-from app.internal.utils import create_model
-from app.routers.user import create_user
 
 TIME_FORMAT = '%Y-%m-%d %H:%M'
 
@@ -37,6 +37,13 @@ router = APIRouter(
     tags=["event"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class Item(NamedTuple):
+    # Custom type, based on typing.NamedTuple.
+    name: str
+    amount: float
+    participant: str
 
 
 @router.get("/edit")
@@ -69,7 +76,6 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
     shared_list = extract_shared_list_from_data(data, session)
-
     if is_zoom:
         raise_if_zoom_link_invalid(location)
 
@@ -317,7 +323,13 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-def extract_shared_list_from_data(data, db):
+def extract_shared_list_from_data(data: ImmutableMultiDict,
+                                  db: Session) -> Optional[SharedList]:
+    """Extract shared list items from POST data.
+    Return:
+        SharedList: SharedList object stored in the database.
+    """
+
     Item = namedtuple("Item", ["name", "amount", "participant"])
     shared_list_raw = {
         'item_name': data.getlist('item_name'),
@@ -326,7 +338,7 @@ def extract_shared_list_from_data(data, db):
     }
     shared_list = {"title": data.get("title"),
                    "items": []}
-    for i in range(len(shared_list_raw['item_name'])):
+    for i in range(len(shared_list_raw.get('item_name'))):
         try:
             item = Item(
                 name=shared_list_raw["item_name"][i],
@@ -337,14 +349,14 @@ def extract_shared_list_from_data(data, db):
                 item_dict = item._asdict()
                 item_dict["amount"] = float(item_dict["amount"])
                 shared_list["items"].append(item_dict)
-        except KeyError:
+        except (KeyError, IndexError):
             continue
     return _create_shared_list(shared_list, db)
 
 
-def _check_item_is_valid(item):
+def _check_item_is_valid(item: Item) -> bool:
     if (
-        item.name == '' 
+        item.name == ''
         or item.amount.isnumeric() is False
         or item.participant == ''
     ):
@@ -352,7 +364,8 @@ def _check_item_is_valid(item):
     return True
 
 
-def _create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]], db: Session) -> SharedList:
+def _create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]],
+                        db: Session) -> Optional[SharedList]:
     try:
         title = raw_shared_list.get('title')
         if title is None:
@@ -362,6 +375,6 @@ def _create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]], 
             item = create_model(db, SharedListItem, **item)
             shared_list.items.append(item)
         return shared_list
-    except (AssertionError, AttributeError, TypeError) as e:
+    except (AssertionError, AttributeError, TypeError, KeyError) as e:
         logger.exception(e)
         return None
