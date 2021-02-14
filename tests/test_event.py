@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
 import pytest
