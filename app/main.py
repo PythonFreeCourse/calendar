@@ -43,7 +43,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, export, four_o_four, invitation, profile, search,
-    weekview, telegram, user whatsapp,
+    weekview, telegram, user, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))

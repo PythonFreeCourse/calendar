@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime as dt
 import json
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
@@ -28,8 +28,8 @@ TIME_FORMAT = '%Y-%m-%d %H:%M'
 START_FORMAT = '%A, %d/%m/%Y %H:%M'
 UPDATE_EVENTS_FIELDS = {
     'title': str,
-    'start': datetime,
-    'end': datetime,
+    'start': dt,
+    'end': dt,
     'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
@@ -75,15 +75,16 @@ async def eventedit(request: Request) -> Response:
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request})
 
+
 @router.post("/edit", include_in_schema=False)
 async def create_new_event(request: Request,
                            session=Depends(get_db)) -> Response:
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
+    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
                               TIME_FORMAT)
-    end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
                             TIME_FORMAT)
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
@@ -154,8 +155,8 @@ def by_id(db: Session, event_id: int) -> Event:
     return event
 
 
-def is_end_date_before_start_date(start_date: datetime,
-                                  end_date: datetime) -> bool:
+def is_end_date_before_start_date(start_date: dt,
+                                  end_date: dt) -> bool:
     """Check if the start date is earlier than the end date"""
     return start_date > end_date
 
@@ -311,7 +312,7 @@ def delete_event(event_id: int,
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
     _delete_event(db, event)
-    if participants and event.start > datetime.now():
+    if participants and event.start > dt.now():
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
@@ -319,7 +320,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
@@ -358,7 +359,7 @@ async def add_comment(request: Request, event_id: int,
         'user_id': get_current_user(session).id,
         'event_id': event_id,
         'content': form['comment'],
-        'time': datetime.now(),
+        'time': dt.now(),
     }
     create_model(session, Comment, **data)
     path = router.url_path_for('view_comments', event_id=event_id)
