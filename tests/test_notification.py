@@ -1,4 +1,3 @@
-
 from starlette.status import HTTP_302_FOUND, HTTP_200_OK
 
 from app.routers.notification import (
@@ -72,10 +71,14 @@ class TestNotification:
             invitation.id, session=session)
         assert get_invitation == invitation
 
-    def test_repr(self, invitation):
+    def test_invitation_repr(self, invitation):
         invitation_repr = (
             f'<Invitation '
             f'({invitation.event.owner}'
             f'to {invitation.recipient})>'
         )
         assert invitation.__repr__() == invitation_repr
+
+    def test_message_repr(self, invitation):
+        message_repr = f'<Message> {invitation.id}>'
+        assert invitation.__repr__() == message_repr

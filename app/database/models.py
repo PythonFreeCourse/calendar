@@ -192,7 +192,7 @@ class Message(Base):
     recipient = relationship("User")
 
     def __repr__(self):
-        return f'<Notification {self.id}>'
+        return f'<Message> {self.id}>'
 
 
 class SalarySettings(Base):
