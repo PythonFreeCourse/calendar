@@ -53,7 +53,6 @@ async def decline_invitations(
 ):
     data = await request.form()
     invite_id = list(data.values())[0]
-
     invitation = get_invitation_by_id(invite_id, session=db)
     decline(invitation, db)
 

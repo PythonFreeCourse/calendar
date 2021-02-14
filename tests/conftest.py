@@ -11,6 +11,7 @@ pytest_plugins = [
     'tests.fixtures.user_fixture',
     'tests.fixtures.event_fixture',
     'tests.fixtures.invitation_fixture',
+    'tests.fixtures.message_fixture',
     'tests.fixtures.association_fixture',
     'tests.fixtures.client_fixture',
     'tests.fixtures.asyncio_fixture',
