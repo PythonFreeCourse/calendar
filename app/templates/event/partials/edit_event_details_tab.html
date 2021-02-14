@@ -81,7 +81,6 @@
     item.id = item.id + String(items_num);
     items_num++;
     for (i = 0; i < item.children.length; i++ ) {
-      console.log(item.children[i]);
       if (item.children[i].tagName == 'INPUT') {
         item.children[i].setAttribute('required', 'required');
       }
