@@ -99,4 +99,4 @@ LOG_FORMAT = ("<level>{level: <8}</level>"
               " - <level>{message}</level>")
 
 # EXERCISE_FILE_PATH
-EXERCISE_FILE = "images/exercises/Exercise_{num}.png"
+EXERCISE_FILE = "web_page/exercises/Exercise_{num}.htm"
