@@ -58,6 +58,7 @@ def send_email_to_event_participants(
         background_tasks: BackgroundTasks = BackgroundTasks
 ) -> bool:
     """This function is being used to send emails in the background.
+    it uses the main elements of the func writen above.
     It takes an event and a user and it sends the event to the user.
     Args:
         session(Session): The session to redirect to the database.
@@ -73,7 +74,7 @@ def send_email_to_event_participants(
         UserEvent, User.id == UserEvent.user_id
         ).filter(
             event_id == event_id).all()
-    # making sure app doesn't crash cause emails are invalid
+    # making sure app doesn't crash if emails are invalid
     valid_mailing_list = list(filter(verify_email_pattern, mailing_list))
     if not valid_mailing_list:
         return False
