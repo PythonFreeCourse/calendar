@@ -32,6 +32,7 @@ UPDATE_EVENTS_FIELDS = {
     'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
+    'vc_link': (str, type(None)),
     'category_id': (int, type(None)),
 }
 
@@ -60,20 +61,19 @@ async def create_new_event(request: Request,
                             TIME_FORMAT)
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
-    location_type = data['location_type']
-    is_zoom = location_type == 'vc_url'
     location = data['location']
+    vc_link = data['vc_link']
     category_id = data.get('category_id')
 
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
 
-    if is_zoom:
-        raise_if_zoom_link_invalid(location)
+    if vc_link is not None:
+        raise_if_zoom_link_invalid(vc_link)
 
     event = create_event(session, title, start, end, owner_id, content,
-                         location, invitees=invited_emails,
+                         location, vc_link, invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
 
@@ -205,6 +205,7 @@ def update_event(event_id: int, event: Dict, db: Session
 def create_event(db: Session, title: str, start, end, owner_id: int,
                  content: Optional[str] = None,
                  location: Optional[str] = None,
+                 vc_link: str = None,
                  color: Optional[str] = None,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
@@ -222,6 +223,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         content=content,
         owner_id=owner_id,
         location=location,
+        vc_link=vc_link,
         color=color,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
