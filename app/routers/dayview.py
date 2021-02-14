@@ -21,7 +21,7 @@ class DivAttributes:
     FULL_GRID_BAR = 4
     MIN_MINUTES = 0
     MAX_MINUTES = 15
-    BASE_GRID_BAR = 5
+    BASE_GRID_BAR = 3
     FIRST_GRID_BAR = 1
     LAST_GRID_BAR = 101
     DEFAULT_COLOR = 'grey'
