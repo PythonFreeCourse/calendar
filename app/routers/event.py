@@ -1,15 +1,14 @@
 import json
 from datetime import datetime
 from operator import attrgetter
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-from app.database.models import (Comment, Event,
-                                 User, UserEvent)
+from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
-from app.internal.event import (get_invited_emails, get_location_coordinates, get_messages,
-                                get_uninvited_regular_emails,
+from app.internal.event import (get_invited_emails, get_location_coordinates,
+                                get_messages, get_uninvited_regular_emails,
                                 raise_if_zoom_link_invalid)
 from app.internal.utils import create_model, get_current_user
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -18,7 +17,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse, Response
-
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
@@ -77,16 +75,14 @@ async def create_new_event(request: Request,
             latitude = location_details.latitude
             longitude = location_details.longitude
 
-    
     event = create_event(session, title, start, end, owner_id, content,
-                        location=location,
-                        latitude=latitude,
-                        longitude=longitude,
-                        vc_link=vc_link,
-                        color=color, invitees=invited_emails,
-                        category_id=category_id,
-                        availability=availability)
-
+                         location=location,
+                         latitude=latitude,
+                         longitude=longitude,
+                         vc_link=vc_link,
+                         color=color, invitees=invited_emails,
+                         category_id=category_id,
+                         availability=availability)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
