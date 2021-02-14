@@ -35,8 +35,9 @@ set_ui_language()
 
 
 from app.routers import (  # noqa: E402
+
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, four_o_four, notification, profile, search,
+    notification, email, event, export, four_o_four, profile, search,
     weekview, telegram, whatsapp,
 )
 
@@ -53,6 +54,7 @@ routers_to_include = [
     email.router,
     event.router,
     notification.router,
+    export.router,
     four_o_four.router,
     profile.router,
     salary.router,

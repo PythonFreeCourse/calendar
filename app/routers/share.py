@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, UserEvent
 from app.internal.utils import save
-from app.routers.export import event_to_ical
+from app.internal.export import event_to_ical
 from app.routers.user import does_user_exist, get_users
 
 
