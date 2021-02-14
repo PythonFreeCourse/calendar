@@ -1,8 +1,7 @@
 import datetime
-from datetime import date, timedelta
+from datetime import date
 from typing import Iterator, List, Optional, Union
 
-import arrow
 from sqlalchemy.orm import Session
 
 from app.database.models import Event
@@ -31,32 +30,6 @@ def get_events_per_dates(
             end,
         )
     )
-
-
-def build_arrow_delta_granularity(diff: timedelta) -> List[str]:
-    """Builds the granularity for the arrow module string"""
-    granularity = []
-    if diff.days > 0:
-        granularity.append("day")
-    hours, remainder = divmod(diff.seconds, 60 * 60)
-    if hours > 0:
-        granularity.append("hour")
-    minutes, _ = divmod(remainder, 60)
-    if minutes > 0:
-        granularity.append("minute")
-    return granularity
-
-
-def get_time_delta_string(start: date, end: date) -> str:
-    """Builds a string of the event's duration- days, hours and minutes."""
-    arrow_start = arrow.get(start)
-    arrow_end = arrow.get(end)
-    diff = end - start
-    granularity = build_arrow_delta_granularity(diff)
-    duration_string = arrow_end.humanize(
-        arrow_start, only_distance=True, granularity=granularity
-    )
-    return duration_string
 
 
 def filter_dates(
