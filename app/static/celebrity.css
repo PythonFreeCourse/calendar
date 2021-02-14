@@ -1,0 +1,20 @@
+.celebs {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.top-div {
+  display: flex;
+  width: 11.250em;
+  margin: 0.2rem;
+  text-align: center;
+}
+
+.div-footer {
+  padding: 0.063em;
+  text-align: center;
+}
+
+.div-job {
+  display: inline;
+}
