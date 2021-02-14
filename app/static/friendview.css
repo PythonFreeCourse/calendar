@@ -1,0 +1,15 @@
+
+.friendview {
+    display: block;
+    margin-top: -20px;
+    margin-left: 20px;
+  }
+
+
+  .event_line {
+    margin-left: 3em;
+    margin-right: 3em;
+    margin-bottom: 1em;
+    border: 1px solid black;
+    padding: 0.2em;
+  }
