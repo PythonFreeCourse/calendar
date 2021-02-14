@@ -9,7 +9,7 @@ import pytz
 
 MONTH_BLOCK: int = 6
 
-locale.setlocale(locale.LC_TIME, ("en", "UTF-8"))
+locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 
 class Day:
