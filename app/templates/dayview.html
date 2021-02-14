@@ -36,7 +36,8 @@
             </div>
             <div class="eventgrid">
               {% if current_time.is_viewed %}
-                <div class="name" style="grid-row: {{ current_time.grid_position }}; background-color: red;">
+                <div class="sub-eventgrid" style="grid-row: {{ current_time.grid_position }}; background-color: red;">
+                  <div></div>
                 </div>
               {% endif %}
                 {% for event, attr in events %}
