@@ -13,7 +13,8 @@ NEXT_N_DAYS = [
     calendar_grid.Day(datetime.date(1988, 5, 5)),
     calendar_grid.Day(datetime.date(1988, 5, 6))
 ]
-DAY_TYPES = [calendar_grid.Day, calendar_grid.DayWeekend, calendar_grid.Today, calendar_grid.FirstDayMonth]
+DAY_TYPES = [calendar_grid.Day, calendar_grid.DayWeekend,
+             calendar_grid.Today, calendar_grid.FirstDayMonth]
 WEEK_DAYS = calendar_grid.Week.WEEK_DAYS
 
 
@@ -53,7 +54,8 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_date_before_n_days():
-        assert calendar_grid.get_date_before_n_days(DATE, N_DAYS) == N_DAYS_BEFORE
+        assert calendar_grid.get_date_before_n_days\
+                   (DATE, N_DAYS) == N_DAYS_BEFORE
 
     @staticmethod
     def test_get_first_day_month_block(Calendar):
@@ -70,7 +72,9 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_create_weeks():
-        week = calendar_grid.create_weeks(NEXT_N_DAYS, calendar_grid.Week.WEEK_DAYS)
+        week = calendar_grid.create_weeks(
+            NEXT_N_DAYS,calendar_grid.Week.WEEK_DAYS
+        )
         assert week
         assert isinstance(week[0], calendar_grid.Week)
         assert isinstance(week[0].days[0], calendar_grid.Day)
@@ -80,7 +84,8 @@ class TestCalendarGrid:
     def test_get_month_block(Calendar):
         month_weeks = calendar_grid.create_weeks(
             Calendar.itermonthdates(1988, 5), WEEK_DAYS)
-        get_block = calendar_grid.get_month_block(calendar_grid.Day(DATE), n=len(month_weeks))
+        get_block = calendar_grid.get_month_block(
+            calendar_grid.Day(DATE), n=len(month_weeks))
 
         for i in range(len(month_weeks)):
             for j in range(calendar_grid.Week.WEEK_DAYS):
