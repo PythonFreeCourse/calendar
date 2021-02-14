@@ -6,6 +6,7 @@ from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
+
 from app.internal.languages import set_ui_language
 from app.routers.salary import routes as salary
 
@@ -35,6 +36,7 @@ set_ui_language()
 
 
 from app.routers import (  # noqa: E402
+
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, export, four_o_four, friendview, invitation, profile, search,
     weekview, telegram, whatsapp,
@@ -53,6 +55,7 @@ routers_to_include = [
     weekview.router,
     email.router,
     event.router,
+    export.router,
     four_o_four.router,
     invitation.router,
     profile.router,
