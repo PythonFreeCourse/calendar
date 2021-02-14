@@ -1,18 +1,11 @@
-from datetime import datetime, date, time
 from operator import attrgetter
-from typing import List, Dict, Optional, Any
+from typing import List
 
-from fastapi import HTTPException
-from requests import Session
-from sqlalchemy.exc import SQLAlchemyError
-from starlette import status
-
-from app.database.models import Task, User
-from app.dependencies import logger
+from app.database.models import Task
 from app.internal.utils import create_model
 
 
-def create_task(db, title, description, date, time, owner_id,
+def create_task(db, title, description, datestr, timestr, owner_id,
                 is_important) -> Task:
     """Creates and saves a new task."""
 
@@ -20,8 +13,8 @@ def create_task(db, title, description, date, time, owner_id,
         db, Task,
         title=title,
         description=description,
-        date=date,
-        time=time,
+        date=datestr,
+        time=timestr,
         owner_id=owner_id,
         is_important=is_important,
         is_done=False
