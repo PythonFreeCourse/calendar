@@ -103,8 +103,8 @@ async def changeowner(request: Request, event_id: int,
     form = await request.form()
     if 'username' not in form:
         return RedirectResponse(router.url_path_for('eventview',
-                                                event_id=event_id),
-                            status_code=status.HTTP_302_FOUND)
+                                                    event_id=event_id),
+                                status_code=status.HTTP_302_FOUND)
     username = form['username']
     user = db.query(User).filter_by(username=username).first()
     try:
@@ -114,7 +114,7 @@ async def changeowner(request: Request, event_id: int,
         logger.exception(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail= error_message)
+            detail=error_message)
     owner_to_update = {'owner_id': user_id}
     _update_event(db, event_id, owner_to_update)
     return RedirectResponse(router.url_path_for('eventview',
