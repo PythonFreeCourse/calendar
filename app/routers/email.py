@@ -8,6 +8,7 @@ from app.dependencies import get_db
 from app.internal.email import send as internal_send
 from app.internal.email import send_email_invitation
 
+
 router = APIRouter(
     prefix="/email",
     tags=["email"],
@@ -69,18 +70,3 @@ def send_invitation(invitation: InvitationParams,
             background_tasks=background_task):
         raise HTTPException(status_code=422, detail="Couldn't send the email!")
     return RedirectResponse(invitation.send_to, status_code=303)
-
-
-# def send_email_to_event_participants(
-#         session: Session,
-#         event_id: int,
-#         email_content: str,
-#         title: str):
-#     """ this function sents emails to all of the event participants.
-#     the function gets the event id and the content of the email,
-#     then sends emails. even if the sending of
-#     one of the email fails the function will keep running."""
-
-#     for person in get_participants_emails_by_event(session, event_id):
-#         send_email_with_body(session, event_id, person.user_id,
-#                              title, email_content)
