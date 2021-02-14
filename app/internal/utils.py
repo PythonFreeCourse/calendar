@@ -1,17 +1,14 @@
-from typing import Any, Dict
-from typing import Union
+from typing import Any, Union
 
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, User
-from app.database.models import Message, Invitation
+from app.database.models import Base, User, Message, Invitation
 from app.routers.profile import get_placeholder_user
 
 
 def save(session: Session, instance: Base) -> bool:
     """Commits an instance to the db.
     source: app.database.models.Base"""
-
     if issubclass(instance.__class__, Base):
         session.add(instance)
         session.commit()
@@ -20,9 +17,8 @@ def save(session: Session, instance: Base) -> bool:
 
 
 def create_model(session: Session, model_class: Base,
-                 **kw: Dict[str, Any]) -> Base:
+                 **kw: Any) -> Base:
     """Creates and saves a db model."""
-
     instance = model_class(**kw)
     save(session, instance)
     return instance
@@ -32,7 +28,7 @@ def mark_as_read(
         session: Session,
         message: Union[Message, Invitation]
 ) -> None:
-    """"""
+    """Marks a message as read."""
     message.status = 'read'
     save(session, message)
 

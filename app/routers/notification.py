@@ -24,9 +24,10 @@ router = APIRouter(
 
 @router.get("/")
 async def view_notifications(request: Request, db: Session = Depends(get_db)):
+    user_id = 1
     return templates.TemplateResponse("notification.html", {
         "request": request,
-        "notifications": get_all_notifications(session=db, user_id=1),
+        "notifications": get_unread_notifications(session=db, user_id=user_id),
     })
 
 
@@ -93,13 +94,18 @@ async def get_message_by_id(
 ) -> Union[Message, None]:
     """Returns a invitation by an id.
     if id does not exist, returns None."""
-
     return session.query(Message).filter_by(id=message_id).one()
 
 
-def get_all_notifications(session: Session, user_id: int):
-    """"""
+def get_unread_notifications(session: Session, user_id: int):
+    return list(filter(
+        lambda x: x.status == 'unread',
+        get_all_notifications(session, user_id)
+    ))
 
+
+def get_all_notifications(session: Session, user_id: int):
+    """Returns all notifications."""
     invitations: List[Invitation] = (
         get_all_invitations(session, recipient_id=user_id))
 
@@ -115,19 +121,17 @@ def sort_notifications(
         notification: List[NOTIFICATION_TYPE]
 ) -> List[NOTIFICATION_TYPE]:
     """Sorts the notifications by the creation date."""
-
     temp = notification.copy()
     return sorted(temp, key=attrgetter('creation'), reverse=True)
 
 
-def create_notification(
+def create_message(
         session: Session,
         msg: str,
         recipient_id: int,
         link=None
 ) -> None:
-    """"""
-
+    """Creates a new message."""
     create_model(
         session,
         Message,
@@ -141,15 +145,13 @@ def get_all_messages(
         session: Session,
         recipient_id: int
 ) -> List[Message]:
-    """"""
-
+    """Returns all messages."""
     condition = Message.recipient_id == recipient_id
     return session.query(Message).filter(condition).all()
 
 
 def get_all_invitations(session: Session, **param) -> List[Invitation]:
     """Returns all invitations filter by param."""
-
     try:
         invitations = list(session.query(Invitation).filter_by(**param))
     except SQLAlchemyError:
@@ -163,5 +165,4 @@ def get_invitation_by_id(
 ) -> Union[Invitation, None]:
     """Returns a invitation by an id.
     if id does not exist, returns None."""
-
     return session.query(Invitation).filter_by(id=invitation_id).first()

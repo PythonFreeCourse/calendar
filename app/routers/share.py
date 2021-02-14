@@ -63,10 +63,9 @@ def send_in_app_invitation(
 
 
 def decline(invitation: Invitation, session: Session) -> None:
-    """"""
-
+    """decline an invitation."""
     invitation.status = 'declined'
-    save(invitation, session)
+    save(session, invitation)
 
 
 def accept(invitation: Invitation, session: Session) -> None:

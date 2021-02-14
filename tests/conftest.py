@@ -18,6 +18,7 @@ pytest_plugins = [
     'tests.fixtures.category_fixture',
     'tests.fixtures.quotes_fixture',
     'tests.fixtures.zodiac_fixture',
+    'tests.fixtures.dayview_fixture',
     'smtpdfix',
 ]
 
