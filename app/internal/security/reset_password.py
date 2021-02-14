@@ -1,4 +1,5 @@
-from app.config import (CALENDAR_RESET_PASSWORD_PAGE, CALENDAR_SITE_NAME, email_conf, templates)
+from app.config import (CALENDAR_RESET_PASSWORD_PAGE, CALENDAR_SITE_NAME, email_conf)
+from app.dependencies import templates
 from app.dependencies import get_db
 from app.internal.security.schema import ForgotPassword
 from fastapi import BackgroundTasks
@@ -20,6 +21,6 @@ async def send_mail(
           email=user.email)
      message = MessageSchema(
           subject=f"{CALENDAR_SITE_NAME} reset password",
-          recipients=[user.email],body = html,subtype='html')
+          recipients=[user.email], body = html, subtype='html')
      background_tasks.add_task(mail.send_message, message)
      return True
