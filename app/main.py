@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
-from app.internal import daily_quotes, json_data_loader
+from app.internal import daily_quotes, json_data_loader, load_hebrew_view
 
 from app.internal.languages import set_ui_language
 from app.routers.salary import routes as salary
@@ -31,6 +31,7 @@ app.logger = logger
 
 
 json_data_loader.load_to_db(next(get_db()))
+load_hebrew_view.load_hebrew_view_if_table_empty(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
@@ -38,7 +39,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
 
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, export, four_o_four, invitation, profile, search,
+    email, event, export, four_o_four, hebrew_date, invitation, profile, search,
     weekview, telegram, whatsapp,
 )
 
@@ -51,6 +52,7 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    hebrew_date.router,
     weekview.router,
     email.router,
     event.router,

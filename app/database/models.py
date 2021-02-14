@@ -305,6 +305,13 @@ class Zodiac(Base):
         )
 
 
+class HebrewView(Base):
+    __tablename__ = "hebrewView"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(DateTime, nullable=False)
+    hebrew_date = Column(String, nullable=False)
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
