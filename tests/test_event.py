@@ -11,10 +11,6 @@ from starlette import status
 from app.main import app
 from app.database.models import Comment, Event
 from app.dependencies import get_db
-from app.routers.event import (_delete_event, _update_event, add_new_event,
-                               by_id, check_change_dates_allowed, delete_event,
-                               is_date_before, update_event, create_event,
-                               get_tamplate_to_share_event)
 from app.internal.utils import delete_instance
 from app.routers import event as evt
 
@@ -388,7 +384,7 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 
 
 def test_get_tamplate_to_share_event(event, session):
-    html_template = get_tamplate_to_share_event(
+    html_template = evt.get_tamplate_to_share_event(
         event_id=1, user_name='michael', db=session, request=Request.get)
     print(html_template)
     assert html_template is not None
