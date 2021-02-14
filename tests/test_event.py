@@ -8,7 +8,6 @@ from starlette import status
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
-from app.internal.utils import delete_instance
 from app.main import app
 
 from app.routers import event as evt
