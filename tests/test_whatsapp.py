@@ -1,6 +1,7 @@
 from app.routers import whatsapp
 import pytest
 
+
 def test_whatsapp_send():
     # Redirects you directly to the specified contact and the message will
     #  already be there (or to whatsapp web if the call is from the web)
@@ -39,6 +40,7 @@ def test_no_number():
 
 @pytest.mark.asyncio
 async def test_end_to_end_testing(client):
-    resp = await client.get('/whatsapp?phone_number=972536106106&message=testing')
+    resp = await client.get(
+        '/whatsapp?phone_number=972536106106&message=testing')
     assert resp.ok
     assert resp.json
