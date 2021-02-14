@@ -2,7 +2,7 @@ from datetime import datetime
 import pytest
 from loguru import logger
 
-import app.routers.google_connect as google_connect
+import app.internal.google_connect as google_connect
 from app.routers.event import create_event
 from app.database.models import OAuthCredentials
 from app.routers.user import create_user
@@ -135,7 +135,8 @@ def test_db_cleanup(google_events_mock, user, session):
             is_google_event=True
         )
 
-        assert google_connect.db_cleanup(user, session)
+        assert google_connect.cleanup_user_google_calendar_events(
+            user, session)
 
 
 @pytest.mark.usefixtures("session")
@@ -287,7 +288,7 @@ def test_get_credentials_from_consent_screen(mocker, session,
     )
 
     mocker.patch(
-        'app.routers.google_connect.is_client_secret_none',
+        'app.internal.google_connect.is_client_secret_none',
         return_value=False
     )
 
@@ -337,7 +338,7 @@ def test_get_credentials(mocker, session, user, credentials):
     )
 
     mocker.patch(
-        'app.routers.google_connect.get_credentials_from_consent_screen',
+        'app.internal.google_connect.get_credentials_from_consent_screen',
         return_value=credentials
     )
 
@@ -345,11 +346,11 @@ def test_get_credentials(mocker, session, user, credentials):
                                           session=session) == credentials
 
     mocker.patch(
-        'app.routers.google_connect.get_credentials',
+        'app.internal.google_connect.get_credentials',
         return_value=credentials
     )
     mocker.patch(
-        'app.routers.google_connect.refresh_token',
+        'app.internal.google_connect.refresh_token',
         return_value=credentials
     )
 
@@ -363,7 +364,7 @@ def test_fetch_save_events(mocker, session, user, credentials,
                            google_events_mock):
 
     mocker.patch(
-        'app.routers.google_connect.get_current_year_events',
+        'app.internal.google_connect.get_current_year_events',
         return_value=google_events_mock
     )
 
