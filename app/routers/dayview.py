@@ -145,7 +145,7 @@ async def dayview(
         day=day, session=session, user_id=user.id,
     )
     month = day.strftime("%B").upper()
-    return templates.TemplateResponse("dayview.html", {
+    return templates.TemplateResponse("calendar_day_view.html", {
         "request": request,
         "events": events_n_attrs,
         "month": month,
