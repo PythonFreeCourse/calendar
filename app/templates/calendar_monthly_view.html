@@ -1,0 +1,17 @@
+{% extends "partials/calendar/calendar_base.html" %}
+{% block content %}
+  <header>
+    <div>
+      <div class="title">{{ day.display() }}</div>
+      <div class="sec-title">Location 0<sup>o</sup>c 00:00</div>
+    </div>
+    <div id="logo-div">
+      <a href="/calendar/month">
+        <h1 class="title">PYLENDAR</h1>
+      </a>
+    </div>
+  </header>
+  <main>
+    {% include 'partials/calendar/monthly_view/monthly_grid.html' %}
+  </main>
+{% endblock content %}

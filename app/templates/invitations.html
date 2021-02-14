@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+  <div class="container mt-4">
+    <h1>{{ message }}</h1>
+  </div>
+
+  {% if invitations %}
+    <div>
+      {% for i in invitations %}
+        <form action="{{ url_for('view_invitations') }}" method="post">
+          <span>{{ i.event.owner.username }} - {{ i.event.title }} ({{ i.event.start }}) ({{ i.status }})</span>
+          <input type="hidden" value="{{ i.id }}" name="invite_id">
+          <input type="submit" value="Accept">
+        </form>
+      {% endfor %}
+    </div>
+  {% else %}
+    <span>You don't have any invitations.</span>
+  {% endif %}
+
+{% endblock %}

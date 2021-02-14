@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+  <div class="container mt-4">
+    <h1>Hello, {{ username }}</h1>
+    <form name="searchForm" action="/search" onsubmit="return validateForm()" method="POST" required>
+      <div class="form-row align-items-center">
+        <div class="col-sm-2 my-1">
+          <label for="keywords" class="sr-only">Search event by keyword</label>
+          <input type="text" id="keywords" name="keywords" class="form-control" placeholder="Keywords"
+                 value="{{ keywords }}" onfocus="this.value=''" required>
+        </div>
+        <div class="col my-1">
+          <input type="submit" class="btn btn-primary" value="Search">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {% if message %}
+    <div class="container mt-4">
+      {{ message }}
+    </div>
+  {% endif %}
+
+  <!-- Results -->
+  {% if results %}
+    <div class="container mt-4">
+    <div class="my-4">
+      Showing results for '{{ keywords }}':
+    </div>
+    <!-- Center -->
+    <div class="col-5">
+      <div class="mb-3">
+        {% for result in results %}
+          <!-- Events card -->
+          <div class="card card-event mb-2 pb-0">
+            <div class="card-header d-flex justify-content-between">
+              <small>
+                <i>{{ loop.index }}. {{ result.title }}</i>
+              </small>
+            </div>
+            <div class="card-body pb-1">
+              <p class="card-text">
+                {{ result.content }}
+              </p>
+              <hr class="mb-0">
+              <small class="event-posted-time text-muted">{{ result.date }}</small>
+            </div>
+          </div>
+          <!-- End Events card -->
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+<!-- Form field validation script -->
+<script>
+  function validateForm() {
+    var x = document.forms["searchForm"]["keywords"].value;
+    if (x == "") {
+      alert("Name must be filled out");
+      return false;
+    }
+  }
+
+</script>
+<!-- End script -->
+{% endblock %}
