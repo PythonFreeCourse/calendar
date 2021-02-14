@@ -26,7 +26,7 @@
     <div class="schedule">
         <div class="container times bg-primeary position">
             {% if view == 'day'%}
-                {% for i in range(25)%}
+                {% for hour in range(25)%}
                 <div class='hour-block'>
                     <div class="row bg-transparent hourmark">
                         {% set hour = hour|string() %}

@@ -31,7 +31,7 @@ def test_minutes_position_calculation(event_with_no_minutes_modified):
 def test_div_attributes(event1):
     div_attr = DivAttributes(event1)
     assert div_attr.total_time == '07:05 - 09:15'
-    assert div_attr.grid_position == '34 / 42'
+    assert div_attr.grid_position == '32 / 40'
     assert div_attr.length == 130
     assert div_attr.color == 'grey'
 
@@ -57,11 +57,11 @@ def test_font_size_attribute(minutes, css_class, visiblity):
 
 def test_div_attr_multiday(multiday_event):
     day = datetime(year=2021, month=2, day=1)
-    assert DivAttributes(multiday_event, day).grid_position == '57 / 101'
+    assert DivAttributes(multiday_event, day).grid_position == '55 / 101'
     day += timedelta(hours=24)
     assert DivAttributes(multiday_event, day).grid_position == '1 / 101'
     day += timedelta(hours=24)
-    assert DivAttributes(multiday_event, day).grid_position == '1 / 57'
+    assert DivAttributes(multiday_event, day).grid_position == '1 / 55'
 
 
 def test_div_attributes_with_costume_color(event2):
@@ -85,9 +85,9 @@ def test_dayview_html(event1, event2, event3, session, user, client):
     assert soup.find("div", {"id": "event3"}) is None
 
 
-@pytest.mark.parametrize("day,grid_position", [("2021-2-1", '57 / 101'),
+@pytest.mark.parametrize("day,grid_position", [("2021-2-1", '55 / 101'),
                                                ("2021-2-2", '1 / 101'),
-                                               ("2021-2-3", '1 / 57')])
+                                               ("2021-2-3", '1 / 55')])
 def test_dayview_html_with_multiday_event(multiday_event, session,
                                           user, client, day, grid_position):
     create_dayview_event([multiday_event], session=session, user=user)

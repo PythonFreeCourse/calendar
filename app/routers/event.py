@@ -371,7 +371,7 @@ async def view_comments(request: Request, event_id: int,
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
-    return templates.TemplateResponse("event/eventview.html",
+    return templates.TemplateResponse("eventview.html",
                                       {"request": request,
                                        "event": event,
                                        "comments": comments,

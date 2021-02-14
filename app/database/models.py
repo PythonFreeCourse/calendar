@@ -56,7 +56,7 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     content = Column(String)
-    location = Column(String)
+    location = Column(String, nullable=True)
     vc_link = Column(String)
     color = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
