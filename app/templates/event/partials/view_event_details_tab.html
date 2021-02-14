@@ -29,6 +29,7 @@
     <div class="mb-3"></div>
     <label for="username">{{ gettext('Choose user') }}</label>
     <select id="username" name="username">
+        <option value="x">x</option>
         {% for username in event.invitees.split(',') %}
       <option value="{{username}}">{{username}}</option>
       {% endfor %}

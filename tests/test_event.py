@@ -377,22 +377,23 @@ def test_successful_deletion(event_test_client, session, event):
         assert "Event ID does not exist. ID: 1" in by_id(
             db=session, event_id=1).content
 
-
-def test_changeowner(event_test_client, user, session, event):
+def test_changeowner(client, event_test_client, user, session, event):
     """
     Test change owner of an event
     """
     event_id = event.id
     event_details = [event.title, event.content, event.location, event.start,
                      event.end, event.color, event.category_id]
-
-    response = event_test_client.post(f"/event/{event_id}")
+    response = event_test_client.post(f"/event/{event_id}", data=None)
     assert response.status_code == status.HTTP_302_FOUND
     assert response.ok
     assert b"View Event" not in response.content
     for event_detail in event_details:
         assert str(event_detail).encode('utf-8') not in response.content, \
             f'{event_detail} not in view event page'
+    response = event_test_client.post(f"/event/{event_id}", data= {'username': "worng_username"})
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert b'Username does not exist.' in response.content
 
 
 def test_deleting_an_event_does_not_exist(event_test_client, event):

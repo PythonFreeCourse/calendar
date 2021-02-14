@@ -101,17 +101,23 @@ async def eventview(request: Request, event_id: int,
 @router.post("/{event_id}")
 async def changeowner(request: Request, event_id: int,
                       db: Session = Depends(get_db)):
-    data = await request.form()
-    if 'username' in data:
-        username = data['username']
-        try:
-            user_id = db.query(User).filter_by(username=username).first().id
-        except KeyError:
-            return RedirectResponse(router.url_path_for('eventview',
-                                                        event_id=event_id),
-                                    status_code=status.HTTP_302_FOUND)
-        owner_to_update = {'owner_id': user_id}
-        _update_event(db, event_id, owner_to_update)
+    form = await request.form()
+    if 'username' not in form:
+        return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event_id),
+                            status_code=status.HTTP_302_FOUND)
+    username = form['username']
+    user = db.query(User).filter_by(username=username).first()
+    try:
+        user_id = user.id
+    except AttributeError as e:
+        error_message = f"Username does not exist. {form['username']}"
+        logger.exception(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail= error_message)
+    owner_to_update = {'owner_id': user_id}
+    _update_event(db, event_id, owner_to_update)
     return RedirectResponse(router.url_path_for('eventview',
                                                 event_id=event_id),
                             status_code=status.HTTP_302_FOUND)
