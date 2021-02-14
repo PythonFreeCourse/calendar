@@ -9,7 +9,16 @@ from app.routers import telegram
 from app.routers.event import create_event
 from tests.client_fixture import get_test_placeholder_user
 from tests.conftest import get_test_db, test_engine
+from app.routers import reset_password
 
+# @pytest.fixture
+# async def reset_password_client():
+#     Base.metadata.create_all(bind=test_engine)
+#     app.dependency_overrides[reset_password.get_db] = get_test_db
+#     async with AsyncClient(app=app, base_url="http://test") as ac:
+#         yield ac
+#     app.dependency_overrides = {}
+#     Base.metadata.drop_all(bind=test_engine)
 
 @pytest.fixture
 async def telegram_client():
