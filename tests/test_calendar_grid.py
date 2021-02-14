@@ -54,8 +54,8 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_date_before_n_days():
-        assert calendar_grid.get_date_before_n_days\
-                   (DATE, N_DAYS) == N_DAYS_BEFORE
+        assert calendar_grid.get_date_before_n_days(
+            DATE, N_DAYS) == N_DAYS_BEFORE
 
     @staticmethod
     def test_get_first_day_month_block(Calendar):
@@ -73,7 +73,7 @@ class TestCalendarGrid:
     @staticmethod
     def test_create_weeks():
         week = calendar_grid.create_weeks(
-            NEXT_N_DAYS,calendar_grid.Week.WEEK_DAYS
+            NEXT_N_DAYS, calendar_grid.Week.WEEK_DAYS
         )
         assert week
         assert isinstance(week[0], calendar_grid.Week)
