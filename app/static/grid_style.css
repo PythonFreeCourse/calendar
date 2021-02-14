@@ -80,6 +80,7 @@ nav {
 #feature-settings {
   visibility: hidden;
   width: 0.1rem;
+  background-color: var(--surface);
 }
 
 .settings-open {

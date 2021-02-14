@@ -1,6 +1,6 @@
 function setToggle(
     elementClass, targetElement, classToAdd,
-    index, elementsToLoad
+    index, elementsToLoad,
 ) {
     const allElements = document.getElementsByClassName(elementClass);
     const target = document.getElementById(targetElement);
@@ -12,7 +12,7 @@ function setToggle(
 }
 
 function isMonthLoaded(monthId) {
-    const allFirst = document.querySelectorAll('*[id^="01"]');
+    const allFirst = document.querySelectorAll('[id^="01"]');
     for (let i = 0; i < allFirst.length; ++i) {
         if (allFirst[i].id === monthId) {
             return true;
@@ -29,13 +29,12 @@ document.addEventListener(
     }
 )
 
-function loadWeekAfter(day, index, daysToLoad) {
+function loadWeekAfter(baseUrl, day, index, daysToLoad) {
     if (day.dataset.last === "false") {
         return false;
     }
     day.dataset.last = false;
-
-    let path = new URL('/calendar/month/add/' + day.id, 'http://127.0.0.1:8000/');
+    let path = new URL('/calendar/month/add/' + day.id, baseUrl);
     params = { days: daysToLoad };
     Object.keys(params).forEach(key => path.searchParams.append(key, params[key]))
 
@@ -45,11 +44,10 @@ function loadWeekAfter(day, index, daysToLoad) {
         document.getElementById("calender-grid").insertAdjacentHTML('beforeEnd', html);
         setToggle("day", "day-view", "day-view-visible", index, daysToLoad);
     });
-
 }
 
-function loadWeekBefore(day, daysToLoad) {
-    let path = new URL('/calendar/month/add/' + day, 'http://127.0.0.1:8000/');
+function loadWeekBefore(baseUrl, day, daysToLoad) {
+    let path = new URL('/calendar/month/add/' + day, baseUrl);
     params = { days: daysToLoad };
     Object.keys(params).forEach(key => path.searchParams.append(key, params[key]))
 
@@ -63,13 +61,14 @@ function loadWeekBefore(day, daysToLoad) {
 
 function callLoadWeek(daysToLoad = 42, end = true) {
     let day = null;
+    const baseUrl = window.location.origin;
     const allDays = document.getElementsByClassName('day');
     if (end) {
         day = allDays[allDays.length - 1];
-        loadWeekAfter(day, allDays.length, daysToLoad);
+        loadWeekAfter(baseUrl, day, allDays.length, daysToLoad);
     } else {
         day = dateToId(getDateInNDays(allDays[0].id, daysToLoad * -1))
-        loadWeekBefore(day, daysToLoad);
+        loadWeekBefore(baseUrl, day, daysToLoad);
     }
     setTimeout(setMonthNav, 200);
 }
