@@ -1,16 +1,15 @@
 from bisect import bisect_left
 from datetime import datetime, timedelta
-from typing import Tuple, Union, Optional
+from typing import Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import and_, or_
 from starlette import status
 
 from app.database.models import Event, User
 from app.dependencies import get_db, TEMPLATES_PATH
-from app.routers.user import get_all_user_events
 from app.internal import zodiac
+from app.routers.user import get_all_user_events
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
