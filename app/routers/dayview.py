@@ -126,7 +126,6 @@ def all_day_event_in_day(
         )
 
 
-
 def get_events_and_attributes(
     day: datetime, session, user_id: int,
 ) -> Tuple[Event, DivAttributes]:
