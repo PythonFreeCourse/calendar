@@ -58,7 +58,7 @@ python -m pytest --cov-report term-missing --cov=app tests
 tox
 # Only flake8 tests
 tox -e flake8
-# Coverage withe html reports
+# Coverage with html reports
 tox -e rep
 ```
 
