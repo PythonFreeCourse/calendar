@@ -8,6 +8,7 @@ from starlette import status
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
+from app.internal.utils import delete_instance
 from app.main import app
 
 from app.routers import event as evt
@@ -388,6 +389,10 @@ def test_changeowner(client, event_test_client, user, session, event):
     response = event_test_client.post(f"/event/{event_id}", data=data)
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert b'Username does not exist.' in response.content
+    data = {'username': user.username}
+    response = event_test_client.post(f"/event/{event_id}", data=data)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
 
 
 def test_deleting_an_event_does_not_exist(event_test_client, event):
@@ -403,6 +408,11 @@ def test_add_comment(event_test_client: TestClient, session: Session,
     data = {'comment': content}
     response = event_test_client.post(path, data=data, allow_redirects=True)
     assert response.ok
+    if 'username' in data:
+        assert content in response.text
+        comment = session.query(Comment).first()
+        assert comment
+        delete_instance(session, comment)
 
 
 def test_get_event_data(session: Session, event: Event,
