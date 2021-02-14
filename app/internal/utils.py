@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from sqlalchemy.orm import Session
 
@@ -42,3 +42,9 @@ def get_current_user(session: Session) -> User:
         user = session.query(User).first()
 
     return user
+
+
+def get_available_users(session: Session) -> List:
+    # this function return all availible users.
+    all_available_users = session.query(User).filter(not User.disabled).all()
+    return all_available_users
