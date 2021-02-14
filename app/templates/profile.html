@@ -196,39 +196,42 @@
               </div>
             </div>
 
-            </p>
+                <!-- Features card -->
+                <div class="card card-profile">
+                    <div class="card-body">
+                        <p class="card-title">
+                            Explore more features
+                        </p>
+                        <ul class="list-group">
+                            {% if not user.telegram_id %}
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-success" href="https://t.me/pylander_bot" target="_blank">
+                                    <strong>Try PyLander bot</strong>
+                                </a>
+                            </li>
+                            {% endif %}
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-secondary" href="{{ url_for('import_holidays') }}">Add holidays to calendar</a>
+                            </li>
+                            <li class="list-group-item list-group-item-action no-border">
+                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- End Features card -->
+
+            </div>
+
+            <!-- Center -->
+          <div class="col-5">
             <div class="container" id="daily_horoscope">
             </div>
           </div>
         </div>
-
-        <!-- Features card -->
-        <div class="card card-profile">
-          <div class="card-body">
-            <p class="card-title">
-              Explore more features
-            </p>
-            <ul class="list-group">
-              {% if not user.telegram_id %}
-                <li class="list-group-item list-group-item-action no-border">
-                  <a class="text-decoration-none text-success" href="https://t.me/pylander_bot" target="_blank">
-                    <strong>Try PyLander bot</strong>
-                  </a>
-                </li>
-              {% endif %}
-              <li class="list-group-item list-group-item-action no-border">
-                <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
-              </li>
-              <li class="list-group-item list-group-item-action no-border">
-                <a class="text-decoration-none text-secondary" href="{{ url_for('import_holidays') }}">Add holidays to calendar</a>
-              </li>
-              <li class="list-group-item list-group-item-action no-border">
-                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <!-- End Features card -->
       </div>
 
       <!-- Center -->
