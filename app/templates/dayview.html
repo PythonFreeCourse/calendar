@@ -35,6 +35,10 @@
                 {% endif %}
             </div>
             <div class="eventgrid">
+              {% if current_time.is_viewed %}
+                <div class="name" style="grid-row: {{ current_time.grid_position }}; background-color: red;">
+                </div>
+              {% endif %}
                 {% for event, attr in events %}
                     <div id="event{{event.id}}" class="text-truncate px-2 d-flex flex-column justify-content-evenly event" style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
                         <p class="text-truncate my-0 {{ attr.title_size_class }}">{{ event.title }}</p>
