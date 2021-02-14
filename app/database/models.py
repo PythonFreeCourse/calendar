@@ -68,6 +68,7 @@ class Feature(Base):
     route = Column(String, nullable=False)
     creator = Column(String, nullable=True)
     description = Column(String, nullable=False)
+    icon = Column(String, nullable=False)
 
     users = relationship("User", secondary=UserFeature.__tablename__)
 

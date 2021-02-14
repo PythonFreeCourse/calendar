@@ -11,6 +11,40 @@
 '''
 
 '''
+All icons come from https://ionicons.com/.
+
+If you want your feature to have an icon Go To: https://ionicons.com/
+and follow the next steps:
+
+1. pick an icon and press on it, copy the name.
+2. create dict in the icons list below.
+3. copy and paste your feature name and your
+    icon name you copied earlier (follow the example).
+
+4. And You Are Done. the icon will show automaticly.
+
+If you dont pick an icon your feature will have a default icon.
+
+Example to feature icon stracture:
+
+{
+    .
+    .
+    .
+    "<feature name>": '<icon name>',
+    .
+    .
+    .
+}
+'''
+
+# Add to last!
+icons = {
+    'feature-panel': 'albums-outline'
+    }
+
+
+'''
 Example to feature stracture:
 
 {

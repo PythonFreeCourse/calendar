@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.features.index import features
+from app.features.index import features, icons
 from app.database.models import UserFeature, Feature
 from app.internal.utils import create_model
 from app.dependencies import get_db, SessionLocal
@@ -10,7 +10,8 @@ def create_features_at_startup(session: SessionLocal):
 
     for feat in features:
         if not is_feature_exist_in_db(feature=feat, session=session):
-            create_feature(**feat, db=session)
+            icon = icons.get(feat['name'])
+            create_feature(**feat, icon=icon, db=session)
 
     return True
 
@@ -53,6 +54,12 @@ def update_feature(feature: Feature, new_feature_obj: dict,
     feature.route = new_feature_obj['route']
     feature.description = new_feature_obj['description']
     feature.creator = new_feature_obj['creator']
+
+    icon = icons.get(feature.name)
+    if icon is None:
+        icon = "extension-puzzle"
+
+    feature.icon = icon
     session.commit()
 
     return feature
@@ -110,18 +117,24 @@ def is_feature_enabled(route: str):
 
 
 def create_feature(name: str, route: str,
-                   description: str, creator: str = None,
+                   description: str,
+                   icon: str,
+                   creator: str = None,
                    db: SessionLocal = Depends()):
     """Creates a feature."""
 
     db = SessionLocal()
+
+    if icon is None:
+        icon = "extension-puzzle"
 
     feature = create_model(
         db, Feature,
         name=name,
         route=route,
         creator=creator,
-        description=description
+        description=description,
+        icon=icon
     )
     return feature
 
