@@ -318,9 +318,9 @@ def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
         assert (
-                evt.update_event(event_id=event.id, event=data,
-                                 db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            evt.update_event(event_id=event.id, event=data,
+                             db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -339,11 +339,11 @@ def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
         assert (
-                evt._update_event(
-                    event_id=event.id,
-                    event_to_update=data,
-                    db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            evt._update_event(
+                event_id=event.id,
+                event_to_update=data,
+                db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -363,8 +363,8 @@ def test_no_connection_to_db_in_delete(event):
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
         assert (
-                evt._delete_event(event=event, db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            evt._delete_event(event=event, db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -374,6 +374,7 @@ def test_successful_deletion(event_test_client, session, event):
     with pytest.raises(HTTPException):
         assert "Event ID does not exist. ID: 1" in evt.by_id(
             db=session, event_id=1).content
+
 
 def test_changeowner(client, event_test_client, user, session, event):
     """
@@ -389,7 +390,8 @@ def test_changeowner(client, event_test_client, user, session, event):
     for event_detail in event_details:
         assert str(event_detail).encode('utf-8') not in response.content, \
             f'{event_detail} not in view event page'
-    response = event_test_client.post(f"/event/{event_id}", data= {'username': "worng_username"})
+    data = {'username': "worng_username"}
+    response = event_test_client.post(f"/event/{event_id}", data=data)
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert b'Username does not exist.' in response.content
 
