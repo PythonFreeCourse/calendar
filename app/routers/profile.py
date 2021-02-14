@@ -1,5 +1,4 @@
 import io
-import re
 
 from loguru import logger
 from fastapi import APIRouter, Depends, File, Request, UploadFile
