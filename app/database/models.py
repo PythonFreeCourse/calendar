@@ -302,6 +302,7 @@ class Task(Base):
 
     owner = relationship("User", back_populates="tasks")
 
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu

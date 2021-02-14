@@ -8,11 +8,6 @@ from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.routers.salary import routes as salary
-from app.routers import (
-    agenda, calendar, categories, dayview, email,
-    event, invitation, profile, search, telegram, whatsapp, todo_list
-)
-from app.telegram.bot import telegram_bot
 
 
 def create_tables(engine, psql_environment):
@@ -42,7 +37,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, four_o_four, invitation, profile, search,
-    weekview, telegram, whatsapp,
+    weekview, telegram, whatsapp, todo_list,
 )
 
 json_data_loader.load_to_db(next(get_db()))

@@ -1,13 +1,14 @@
 from datetime import datetime
 
 from fastapi import Depends, APIRouter, Form
+from fastapi.encoders import jsonable_encoder
 from requests import Session
 from sqlalchemy.exc import SQLAlchemyError
 from starlette import status
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, JSONResponse
 
 from app.config import templates
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.database.models import User
 from app.internal.todo_list import create_task, by_id
 
@@ -44,10 +45,10 @@ async def add_task(title: str = Form(...), description: str = Form(...),
                    datestr: str = Form(...), timestr: str = Form(...),
                    is_important: bool = Form(False), session=Depends(get_db)):
     # TODO: add a login session
-    user = session.query(User).filter_by(username='test1').first()
+    user = session.query(User).filter_by(username='test_username').first()
     create_task(session, title, description,
                 datetime.strptime(datestr, '%Y-%m-%d')
-                .date(), datetime.strptime(timestr, '%H:%M:%S').time(),
+                .date(), datetime.strptime(timestr, '%H:%M').time(),
                 user.id, is_important)
     return RedirectResponse(f"/day/{datestr}", status_code=303)
 
@@ -83,3 +84,10 @@ async def set_task_undone(task_id: int, session=Depends(get_db)):
     session.commit()
     return RedirectResponse(f"/day/{task.date.strftime('%Y-%m-%d')}",
                             status_code=303)
+
+
+@router.get("/{task_id}")
+async def get_task(task_id, session=Depends(get_db)):
+    task = by_id(session, task_id)
+    data = jsonable_encoder(task)
+    return JSONResponse(content=data)
