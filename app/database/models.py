@@ -57,6 +57,7 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    vc_link = Column(String)
     color = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
     invitees = Column(String)
