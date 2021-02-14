@@ -20,9 +20,9 @@ router = APIRouter(
 
 
 @router.post("/delete")
-def delete_task(taskId: int = Form(...), db: Session = Depends(get_db)):
+def delete_task(task_id: int = Form(...), db: Session = Depends(get_db)):
     # TODO: Check if the user is the owner of the task.
-    task = by_id(db, taskId)
+    task = by_id(db, task_id)
     datestr = task.date.strftime('%Y-%m-%d')
     try:
         # Delete task
@@ -32,7 +32,7 @@ def delete_task(taskId: int = Form(...), db: Session = Depends(get_db)):
 
     except (SQLAlchemyError, TypeError):
         return templates.TemplateResponse(
-            "dayview.html", {"task_id": taskId},
+            "dayview.html", {"task_id": task_id},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # TODO: Send them a cancellation notice
         # if the deletion is successful
