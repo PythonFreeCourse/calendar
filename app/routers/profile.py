@@ -17,9 +17,6 @@ from app.internal.import_holidays import (get_holidays_from_file,
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
-REGEX_EXTRACT_HOLIDAYS = re.compile(
-    r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
-    re.MULTILINE)
 
 router = APIRouter(
     prefix="/profile",
