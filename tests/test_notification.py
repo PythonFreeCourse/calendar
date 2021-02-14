@@ -79,6 +79,6 @@ class TestNotification:
         )
         assert invitation.__repr__() == invitation_repr
 
-    def test_message_repr(self, invitation):
-        message_repr = f'<Message> {invitation.id}>'
-        assert invitation.__repr__() == message_repr
+    def test_message_repr(self, message):
+        message_repr = f'<Message {message.id}>'
+        assert message.__repr__() == message_repr
