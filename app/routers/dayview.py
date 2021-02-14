@@ -160,8 +160,7 @@ async def dayview(
         day=day, session=session, user_id=user.id,
     )
     current_time_n_attrs = CurrentTimeAttributes(date=day)
-    print(current_time_n_attrs.is_viewed)
-    print(day.date())
+    print(current_time_n_attrs.sub_grid_position)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,

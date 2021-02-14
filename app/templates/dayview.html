@@ -36,8 +36,9 @@
             </div>
             <div class="eventgrid">
               {% if current_time.is_viewed %}
-                <div class="sub-eventgrid" style="grid-row: {{ current_time.grid_position }}; background-color: red;">
-                  <div></div>
+                <div class="sub-eventgrid" style="grid-row: {{ current_time.grid_position }}; border: 1px solid rgba(165, 42, 42, 0.39);">
+                    <div class="just_a_class_name" style="grid-row: {{ current_time.sub_grid_position}}; border-bottom: 1px dotted rgba(165, 42, 42, 0.39); margin: 0 6%;">
+                    </div>
                 </div>
               {% endif %}
                 {% for event, attr in events %}
@@ -53,6 +54,7 @@
                 {% for i in range(25)%}
                     <div class="hourbar {{i}} row text-white border-bottom">---</div>
                 {% endfor %}
+                <div class="hourbar 17 row text-red border-bottom">---</div>
             </div>
             <div class="actiongrid">
                 
