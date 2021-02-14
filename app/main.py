@@ -6,6 +6,7 @@ from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
+
 from app.internal.languages import set_ui_language
 from app.routers.salary import routes as salary
 
@@ -28,12 +29,17 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+
+json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
+
 from app.routers import (  # noqa: E402
+
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, invitation, profile, search, telegram, whatsapp
+    email, event, export, four_o_four, invitation, profile, search,
+    weekview, telegram, whatsapp,
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -45,8 +51,11 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    weekview.router,
     email.router,
     event.router,
+    export.router,
+    four_o_four.router,
     invitation.router,
     profile.router,
     salary.router,
@@ -65,7 +74,7 @@ for router in routers_to_include:
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "quote": quote,
     })
