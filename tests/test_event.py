@@ -317,14 +317,10 @@ def test_update_event_availability(event, session):
     Test update event's availability.
     """
     original_availability = event.availability
-    print(f"our print:{original_availability}")
     data = {
         "availability": not original_availability
-    }
-    print(f"our print:{data}")
     answer = evt.update_event(
         event_id=event.id, event=data, db=session)
-    print(f"our print:{answer}")
     assert original_availability is not evt.update_event(
         event_id=event.id, event=data, db=session).availability
 
