@@ -15,7 +15,8 @@ def get_hebrew_view_from_json() -> List[Dict[str, Optional[str]]]:
     according to this API in this way:
 
     def relevent_details(p):
-    hebrew_dates_dict = {'date_gregorian': p['date'], 'date_hebrew': p['hebrew']}
+    hebrew_dates_dict = {'date_gregorian': p['date'],
+     'date_hebrew': p['hebrew']}
     return hebrew_dates_dict
 
 
@@ -25,7 +26,8 @@ def get_hebrew_view_from_json() -> List[Dict[str, Optional[str]]]:
     geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on')
     items = r.json()['items']
 
-    all_hebrew_dates = list(filter(lambda i: 'hebdate' in i['category'], items))
+    all_hebrew_dates = list(filter(
+    lambda i: 'hebdate' in i['category'], items))
     return [relevent_details(p) for p in all_hebrew_dates]
     """
 
@@ -42,7 +44,8 @@ def add_hebrew_dates_to_db(session: Session) -> None:
     hebrew_dates = get_hebrew_view_from_json()
     hebrew_dates_objects = [
         HebrewView(
-            date=datetime.strptime(hebrew_date['date_gregorian'], '%Y-%m-%d').date(),
+            date=datetime.strptime(hebrew_date['date_gregorian'],
+                                   '%Y-%m-%d').date(),
             hebrew_date=hebrew_date['date_hebrew']
         )
         for hebrew_date in hebrew_dates
