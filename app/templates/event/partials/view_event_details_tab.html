@@ -25,9 +25,15 @@
 <div class="event_info_row">
   <span class="icon">ICON</span>
   <address>{{ event.location }}</address>
-  <!--    <address>LOCATION / <a href="#">VC URL</a></address>-->
+  <address>VC link<a href="{{ event.vc_link }}">VC URL</a></address>
 </div>
 
 <p class="event_info_row">
   {{ event.content }}
 </p>
+
+<div class="event_info_buttons_row event_info_row_end">
+    <!-- Buttons could and should be replaced with button-like anchors if need so -->
+    <button type="button">Duplicate</button>
+    <button type="button">Edit</button>
+</div>
