@@ -2,8 +2,10 @@ from datetime import datetime
 import pytest
 
 from app.routers.user import (
-    create_user, disable_user, does_user_exist, enable_user, get_users
+    create_user, does_user_exist, get_users
 )
+from app.internal.user.disable import disable_user
+from app.internal.user.enable import enable_user
 from app.internal.utils import save
 from app.database.models import UserEvent, Event
 from app.routers.event import create_event
