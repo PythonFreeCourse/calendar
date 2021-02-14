@@ -9,7 +9,7 @@ from sqlalchemy.orm.session import Session
 from app.database.models import Event, User
 from app.dependencies import get_db, TEMPLATES_PATH
 from app.routers.dayview import (
-    DivAttributes, dayview, get_events_and_attributes
+    CurrentTimeAttributes, EventsAttributes, dayview, get_events_and_attributes
 )
 
 
@@ -22,7 +22,8 @@ router = APIRouter()
 class DayEventsAndAttrs(NamedTuple):
     day: datetime
     template: Jinja2Templates.TemplateResponse
-    events_and_attrs: Tuple[Event, DivAttributes]
+    events_and_attrs: Tuple[Event, EventsAttributes]
+    current_time_and_attrs: CurrentTimeAttributes
 
 
 def get_week_dates(firstday: datetime) -> Iterator[datetime]:
@@ -42,7 +43,8 @@ async def get_day_events_and_attributes(
     )
     events_and_attrs = get_events_and_attributes(
             day=day, session=session, user_id=user.id)
-    return DayEventsAndAttrs(day, template, events_and_attrs)
+    current_time_and_attrs = CurrentTimeAttributes(date=day)
+    return DayEventsAndAttrs(day, template, events_and_attrs, current_time_and_attrs)
 
 
 @router.get('/week/{firstday}')

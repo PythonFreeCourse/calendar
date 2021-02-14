@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import pytest
 
 from app.database.models import Event
-from app.routers.dayview import DivAttributes
+from app.routers.dayview import CurrentTimeAttributes, DivAttributes, EventsAttributes
 from app.routers.event import create_event
 
 
@@ -21,20 +21,32 @@ def create_dayview_event(events, session, user):
 
 
 def test_minutes_position_calculation(event_with_no_minutes_modified):
-    div_attr = DivAttributes(event_with_no_minutes_modified)
+    div_attr = EventsAttributes(event_with_no_minutes_modified)
     assert div_attr._minutes_position(div_attr.start_time.minute) is None
     assert div_attr._minutes_position(div_attr.end_time.minute) is None
     assert div_attr._minutes_position(0) is None
-    assert div_attr._minutes_position(60) == 4
+    assert div_attr._minutes_position(60)['min_position'] == 4
 
 
-def test_div_attributes(event1):
-    div_attr = DivAttributes(event1)
+def test_event_attributes(event1):
+    div_attr = EventsAttributes(event1)
     assert div_attr.total_time == '07:05 - 09:15'
     assert div_attr.grid_position == '34 / 42'
     assert div_attr.length == 130
     assert div_attr.color == 'grey'
 
+
+def test_current_time_gets_today_attributes():
+    today = datetime.now()
+    current_attr = CurrentTimeAttributes(today)
+    assert current_attr.dayview_date == today.date()
+    assert current_attr.is_viewed is True
+
+
+def test_current_time_gets_not_today_attributes(not_today):
+    current_attr = CurrentTimeAttributes(not_today)
+    assert str(current_attr.dayview_date) == '2012-12-12'
+    assert current_attr.is_viewed is False
 
 @pytest.mark.parametrize(
     "minutes,css_class,visiblity", [
@@ -50,22 +62,22 @@ def test_font_size_attribute(minutes, css_class, visiblity):
         title='test', content='test',
         start=start, end=end, owner_id=1
     )
-    div_attr = DivAttributes(event)
+    div_attr = EventsAttributes(event)
     assert div_attr.title_size_class == css_class
     assert div_attr.total_time_visible == visiblity
 
 
 def test_div_attr_multiday(multiday_event):
     day = datetime(year=2021, month=2, day=1)
-    assert DivAttributes(multiday_event, day).grid_position == '57 / 101'
+    assert EventsAttributes(multiday_event, day).grid_position == '57 / 101'
     day += timedelta(hours=24)
-    assert DivAttributes(multiday_event, day).grid_position == '1 / 101'
+    assert EventsAttributes(multiday_event, day).grid_position == '1 / 101'
     day += timedelta(hours=24)
-    assert DivAttributes(multiday_event, day).grid_position == '1 / 57'
+    assert EventsAttributes(multiday_event, day).grid_position == '1 / 57'
 
 
 def test_div_attributes_with_costume_color(event2):
-    div_attr = DivAttributes(event2)
+    div_attr = EventsAttributes(event2)
     assert div_attr.color == 'blue'
 
 

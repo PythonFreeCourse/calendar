@@ -40,13 +40,19 @@ html {
   grid-column: 1 / -1;
   grid-template-rows: repeat(100, 0.375rem);
   z-index: 39;
-  .sub-eventgrid {
-    display: grid;
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    grid-template-rows: repeat(15, 0.375rem);
-    z-index: 39;
-  }
+}
+
+.timegrid {
+  display: grid;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  grid-template-rows: repeat(100, 0.375rem);
+  z-index: 43;
+}
+
+.sub-timegrid {
+  display: grid;
+  grid-template-rows: repeat(15, 1fr);
 }
 
 

@@ -11,12 +11,13 @@
     <body>
         <div id="week-view">
             <div id="week-schedule" class="d-flex justify-content-between">
-                {% for day, dayview, events_and_attr in week %}
+                {% for day, dayview, events_and_attr, current_time_and_attrs in week %}
                     <div class="day m-0 flex-fill" style="width: 100%;">
                         <div class="day-name sticky-top">{{ day.strftime('%A').upper()[:3] }}</div>
                         {% set month = day.month %}
                         {% set day = day.day %}
                         {% set events = events_and_attr%}
+                        {% set current_time = current_time_and_attrs%}
                         <div>{% include dayview.template %}</div>
                     </div>
                 {% endfor %}

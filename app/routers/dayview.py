@@ -28,8 +28,6 @@ class DivAttributes:
     CLASS_SIZES = ('title_size_tiny', 'title_size_Xsmall', 'title_size_small')
     LENGTH_SIZE_STEP = (30, 45, 90)
 
-    def __init__(self) -> None:
-        pass
 
     def _minutes_position(self, minutes: int) -> Union[int, None]:
         min_minutes = self.MIN_MINUTES
@@ -160,7 +158,6 @@ async def dayview(
         day=day, session=session, user_id=user.id,
     )
     current_time_n_attrs = CurrentTimeAttributes(date=day)
-    print(current_time_n_attrs.sub_grid_position)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,

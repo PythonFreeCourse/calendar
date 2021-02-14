@@ -54,6 +54,12 @@ def multiday_event():
 
 
 @pytest.fixture
+def not_today():
+    date = datetime(year=2012, month=12, day=12, hour=12, minute=12)
+    return date
+
+
+@pytest.fixture
 def weekdays():
     return [
      'Sunday', 'Monday', 'Tuesday',

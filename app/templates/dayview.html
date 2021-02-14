@@ -35,12 +35,6 @@
                 {% endif %}
             </div>
             <div class="eventgrid">
-              {% if current_time.is_viewed %}
-                <div class="sub-eventgrid" style="grid-row: {{ current_time.grid_position }}; border: 1px solid rgba(165, 42, 42, 0.39);">
-                    <div class="just_a_class_name" style="grid-row: {{ current_time.sub_grid_position}}; border-bottom: 1px dotted rgba(165, 42, 42, 0.39); margin: 0 6%;">
-                    </div>
-                </div>
-              {% endif %}
                 {% for event, attr in events %}
                     <div id="event{{event.id}}" class="text-truncate px-2 d-flex flex-column justify-content-evenly event" style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
                         <p class="text-truncate my-0 {{ attr.title_size_class }}">{{ event.title }}</p>
@@ -54,7 +48,6 @@
                 {% for i in range(25)%}
                     <div class="hourbar {{i}} row text-white border-bottom">---</div>
                 {% endfor %}
-                <div class="hourbar 17 row text-red border-bottom">---</div>
             </div>
             <div class="actiongrid">
                 
@@ -64,6 +57,14 @@
                         <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}" width="15em" height="15em"></a>
                     </div>
                 {% endfor %}
+            </div>
+            <div class="timegrid">
+                {% if current_time.is_viewed %}
+                  <div class="sub-timegrid" style="grid-row: {{ current_time.grid_position }};">
+                      <div style="grid-row: {{ current_time.sub_grid_position}}; border-bottom: 2.5px dotted rgba(255, 0, 0, 0.808);">
+                      </div>
+                  </div>
+                {% endif %}
             </div>
         </div>
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
