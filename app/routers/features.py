@@ -100,15 +100,13 @@ async def disable_feature(request: Request,
                           session: SessionLocal = Depends(get_db)):
 
     form = await request.form()
-    print(form['user_id'], form['feature_id'])
     is_exist = is_association_exist_in_db(form=form, session=session)
-    print(is_exist)
+
     if is_exist:
         db_association = session.query(UserFeature).filter_by(
             feature_id=form['feature_id'],
             user_id=form['user_id']
         ).first()
-        print(db_association)
 
         db_association.is_enable = False
         session.commit()

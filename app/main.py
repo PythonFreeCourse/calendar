@@ -5,8 +5,8 @@ from starlette.responses import RedirectResponse
 
 from app import config
 from app.database import engine, models
-from app.dependencies import (get_db, logger, MEDIA_PATH,
-                              STATIC_PATH, templates, SessionLocal)
+from app.dependencies import (
+    get_db, logger, MEDIA_PATH, STATIC_PATH, templates, SessionLocal)
 from app.internal import (
     daily_quotes, json_data_loader, features as internal_features)
 from app.internal.languages import set_ui_language
@@ -38,8 +38,9 @@ set_ui_language()
 
 
 from app.routers import (  # noqa: E402
+
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, four_o_four, invitation, profile, search,
+    email, event, export, four_o_four, invitation, profile, search,
     weekview, telegram, whatsapp, features
 )
 
@@ -55,6 +56,7 @@ routers_to_include = [
     weekview.router,
     email.router,
     event.router,
+    export.router,
     four_o_four.router,
     invitation.router,
     profile.router,
@@ -77,18 +79,14 @@ async def filter_access_to_features(request: Request, call_next):
 
     # getting access status.
     is_enabled = internal_features.is_feature_enabled(route=route)
-    print(is_enabled)
     if is_enabled:
         # in case the feature is enabled or access is allowed.
-        print('in')
         return await call_next(request)
 
     elif 'referer' not in request.headers:
-        print('elif')
         # in case request come straight from address bar in browser.
         return RedirectResponse(url=app.url_path_for('home'))
 
-    print('ddd')
     # in case the feature is disabled or access isn't allowed.
     return RedirectResponse(url=request.headers['referer'])
 
@@ -97,7 +95,6 @@ async def filter_access_to_features(request: Request, call_next):
 async def startup_event():
     session = SessionLocal()
     internal_features.create_features_at_startup(session=session)
-    print('done')
     session.close()
 
 
