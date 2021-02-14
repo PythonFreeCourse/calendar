@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, Optional, List
 
 from sqlalchemy.orm import Session
 
@@ -27,7 +27,7 @@ def create_model(session: Session, model_class: Base,
 
 
 def delete_instance(session: Session, instance: Base) -> None:
-    """Deletes an instant from the db."""
+    """Deletes an instance from the db."""
     session.delete(instance)
     session.commit()
 
@@ -48,3 +48,19 @@ def get_available_users(session: Session) -> List:
     # this function return all availible users.
     all_available_users = session.query(User).filter(not User.disabled).all()
     return all_available_users
+
+
+def get_user(session: Session, user_id: int) -> Optional[User]:
+    """Returns User instance for `user_id` if exists, None otherwise.
+
+    Args:
+        session (Session): DB session.
+        user_id (int): ID of user to return.
+
+    Returns:
+        (User | None): User instance for `user_id` if exists, None otherwise.
+
+    Raises:
+        None
+    """
+    return session.query(User).filter_by(id=user_id).first()
