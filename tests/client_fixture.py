@@ -5,7 +5,7 @@ import pytest
 
 from app import main
 from app.database.models import Base, User
-from app.routers import agenda, event, invitation, profile
+from app.routers import agenda, event, invitation, meds, profile
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 
@@ -74,3 +74,8 @@ def profile_test_client() -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
+
+
+@pytest.fixture(scope="session")
+def meds_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(meds.get_db)

@@ -20,19 +20,19 @@ router = APIRouter(
     dependencies=[Depends(get_db)],
 )
 
+FORM_TUPLE = Tuple[str, time, int, time, time, time, time, str, datetime,
+                   datetime]
+
 ERRORS = {
     'finish': 'Finish Date must must be later than or equal to Start Date',
     'max': 'Maximal Interval must must be larger than or equal to Minimal \
         Interval',
-    'range': 'Reminders time range must must be larger than or equal to \
-        Minimal Interval',
     'amount': 'Interval between Earliest Reminder and Latest Reminder not \
         long enough for Daily Amount with Minimal Interval'
 }
 
 
-def trans_form(form: Dict[str, str]) -> Tuple[str, time, int, time, time, time,
-                                              time, str, datetime, datetime]:
+def trans_form(form: Dict[str, str]) -> FORM_TUPLE:
     name = form['name']
     start_date = get_time_from_string(form['start'])
     first = get_time_from_string(form['first'])
@@ -42,9 +42,9 @@ def trans_form(form: Dict[str, str]) -> Tuple[str, time, int, time, time, time,
     late = get_time_from_string(form['late'])
     minimum = get_time_from_string(form['min'])
     maximum = get_time_from_string(form['max'])
-    first_time = first if first else minimum
+    first_time = first if first else early
     start = datetime.combine(start_date, first_time)
-    end = datetime.combine(end_date, maximum)
+    end = datetime.combine(end_date, late)
     note = form['note']
     return (
         name, first, amount, early, late, minimum, maximum, note, start, end)
@@ -81,8 +81,6 @@ def validate_form(form: Dict[str, str]) -> List[str]:
         errors.append(ERRORS['finish'])
     if maximum < minimum:
         errors.append(ERRORS['max'])
-    if get_interval_in_minutes(early, late) < convert_time_to_minutes(minimum):
-        errors.append(ERRORS['range'])
     if not validate_amount(amount, minimum, early, late):
         errors.append(ERRORS['amount'])
 
@@ -128,7 +126,8 @@ def validate_datetime(t: datetime, day: date, early: time, late: time) -> bool:
     return early_datetime <= t <= late_datetime
 
 
-def get_first_day_reminders(form: Dict[str, str], times: List[time]):
+def get_first_day_reminders(form: Dict[str, str],
+                            times: List[time]) -> List[datetime]:
     _, _, amount, early, late, minimum, maximum, _, start, _ = trans_form(form)
     datetimes = []
     datetimes.append(start)
@@ -155,14 +154,12 @@ def get_first_day_reminders(form: Dict[str, str], times: List[time]):
 
 
 def get_reminder_datetimes(form: Dict[str, str]) -> List[datetime]:
-    (_, first, amount, early, late, minimum,
-     maximum, _, start, end) = trans_form(form)
+    _, first, _, early, _, _, _, _, start, end = trans_form(form)
     times = get_reminder_times(form)
     datetimes = []
     for day in range((end.date() - start.date()).days + 1):
         if day == 0 and first:
-            datetimes.extend(get_first_day_reminders(amount, late,
-                                                     minimum, maximum))
+            datetimes.extend(get_first_day_reminders(form, times))
         else:
             for t in times:
                 extra = 1 if t < early else 0

@@ -54,10 +54,6 @@ def get_time_from_string(string: str) -> Optional[Union[date, time]]:
     Returns:
         datetime.time | datetime.date | None: Date or Time object if valid,
                                               None otherwise.
-
-    raises:
-        ValueError: If string is not of format %H:%M:%S' or '%H:%M',
-                    or if string is an invalid time.
     """
     try:
         return datetime.strptime(string, '%Y-%m-%d').date()

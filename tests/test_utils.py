@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import date, time
 
 import pytest
 from sqlalchemy.orm import Session
@@ -8,8 +8,12 @@ from app.internal import utils
 
 
 TIMES = [
+    ('2021-01-14', date(2021, 1, 14)),
     ('13:30', time(13, 30)),
-    ('15:42:00', time(15, 42))
+    ('15:42:00', time(15, 42)),
+    ('15', None),
+    ('2021-01', None),
+    ('15:42:00.5', None),
 ]
 
 
