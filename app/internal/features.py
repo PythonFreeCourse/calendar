@@ -12,9 +12,7 @@ def create_features_at_startup(session: SessionLocal):
         if not is_feature_exist_in_db(feature=feat, session=session):
             create_feature(**feat, db=session)
 
-    fs = session.query(Feature).all()
-
-    return {'all': fs}
+    return True
 
 
 def is_association_exist_in_db(form: dict, session: SessionLocal):
@@ -26,16 +24,6 @@ def is_association_exist_in_db(form: dict, session: SessionLocal):
     if db_association is not None:
         return True
     return False
-
-
-def testAssociation():
-    session = SessionLocal()
-    create_association(db=session, feature_id=1, user_id=1, is_enable=True)
-    create_association(db=session, feature_id=3, user_id=1, is_enable=False)
-
-    associations = session.query(UserFeature).all()
-    session.close()
-    return {'all': associations}
 
 
 def delete_feature(feature: Feature, session: SessionLocal = Depends(get_db)):
@@ -70,7 +58,7 @@ def update_feature(feature: Feature, new_feature_obj: dict,
     return feature
 
 
-def is_feature_exist_in_enabled(user_id: int, feature: Feature,
+def is_feature_exist_in_enabled(feature: Feature,
                                 session: SessionLocal = Depends(get_db)):
     enable_features = get_user_enabled_features(session=session)
 
@@ -81,7 +69,7 @@ def is_feature_exist_in_enabled(user_id: int, feature: Feature,
     return False
 
 
-def is_feature_exist_in_disabled(user_id: int, feature: Feature,
+def is_feature_exist_in_disabled(feature: Feature,
                                  session: SessionLocal = Depends(get_db)):
     disable_features = get_user_disabled_features(session=session)
 

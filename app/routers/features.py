@@ -19,7 +19,7 @@ router = APIRouter(
 
 
 @router.get('/')
-def index(request: Request, session: SessionLocal = Depends(get_db)):
+async def index(request: Request, session: SessionLocal = Depends(get_db)):
     features = session.query(Feature).all()
     return features
 
@@ -129,18 +129,18 @@ def show_user_disabled_features(session: SessionLocal = Depends(get_db)):
 def get_user_unlinked_features(session: SessionLocal = Depends(get_db)):
 
     # TODO - get active user id
-    user_id = 1
+    # user_id = 1
 
     data = []
     all_features = session.query(Feature).all()
 
     for feat in all_features:
         in_disabled = is_feature_exist_in_disabled(
-            user_id=user_id, feature=feat, session=session
+            feature=feat, session=session
         )
 
         in_enabled = is_feature_exist_in_enabled(
-            user_id=user_id, feature=feat, session=session
+            feature=feat, session=session
         )
 
         if not in_enabled and not in_disabled:
