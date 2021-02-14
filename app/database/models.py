@@ -315,8 +315,8 @@ class Task(Base):
     description = Column(String)
     is_done = Column(Boolean, nullable=False)
     is_important = Column(Boolean, nullable=False)
-    date = Column(Date, nullable = False)
-    time = Column(Time, nullable = False)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="tasks")
