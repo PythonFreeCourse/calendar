@@ -10,7 +10,7 @@ from sqlalchemy.orm.session import Session
 from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
                         CALENDAR_SITE_NAME, email_conf, templates)
 from app.database.models import Event, User, UserEvent
-
+from app.internal.utils import get_current_user
 mail = FastMail(email_conf)
 
 
@@ -53,7 +53,7 @@ def send(
 
 
 def send_email_to_event_participants(
-        session: Session, event_id: int, email_to_send: List[str],
+        session: Session, event_id: int,
         title: str, content: str,
         background_tasks: BackgroundTasks = BackgroundTasks
 ) -> bool:
@@ -70,14 +70,18 @@ def send_email_to_event_participants(
     Returns:
         bool: Returns True if emails were sent, False if none.
     """
+    event_owner = session.query(Event.owner).filter(id == event_id).first()
+    if event_owner != get_current_user(session):
+        return False
+    # makes sure only event owner can send an email via this func.
     mailing_list = session.query(User.email).join(
         UserEvent, User.id == UserEvent.user_id
         ).filter(
             event_id == event_id).all()
-    # making sure app doesn't crash if emails are invalid
     valid_mailing_list = list(filter(verify_email_pattern, mailing_list))
     if not valid_mailing_list:
         return False
+    # making sure app doesn't crash if emails are invalid
     event = session.query(Event).get(event_id)
     subject = f"{event.title}: {title}"
     recipients = valid_mailing_list
