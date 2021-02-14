@@ -385,7 +385,6 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 def test_get_tamplate_to_share_event(event, session):
     html_template = evt.get_tamplate_to_share_event(
         event_id=1, user_name='michael', db=session, request=Request.get)
-    print(html_template)
     assert html_template is not None
 
 
