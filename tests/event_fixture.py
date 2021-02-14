@@ -94,7 +94,7 @@ def old_event(sender: User, session: Session) -> Event:
         title='event 6',
         color="red",
         start=today_date - timedelta(days=5),
-        end=today_date,
+        end=today_date - timedelta(days=1),
         content='test event',
         owner_id=sender.id,
     )

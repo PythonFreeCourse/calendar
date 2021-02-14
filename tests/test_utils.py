@@ -34,3 +34,7 @@ class TestUtils:
         assert session.query(User).filter_by(id=1).first() is None
         utils.get_current_user(session)
         assert session.query(User).filter_by(id=1).first()
+
+    def test_get_user(self, user: User, session: Session) -> None:
+        assert utils.get_user(session, user.id) == user
+        assert utils.get_user(session, 2) is None

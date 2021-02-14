@@ -19,7 +19,8 @@ pytest_plugins = [
     'tests.category_fixture',
     'smtpdfix',
     'tests.quotes_fixture',
-    'tests.zodiac_fixture'
+    'tests.zodiac_fixture',
+    'tests.comment_fixture',
 ]
 
 # When testing in a PostgreSQL environment please make sure that:

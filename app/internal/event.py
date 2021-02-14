@@ -25,8 +25,8 @@ class Location(NamedTuple):
     location: str
 
 
-def raise_if_zoom_link_invalid(location):
-    if ZOOM_REGEX.search(location) is None:
+def raise_if_zoom_link_invalid(vc_link):
+    if ZOOM_REGEX.search(vc_link) is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="VC type with no valid zoom link")
 

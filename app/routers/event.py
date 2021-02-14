@@ -1,37 +1,36 @@
-from datetime import datetime as dt
+import json
+from datetime import datetime
 from operator import attrgetter
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
+from app.database.models import (Comment, Event,
+                                 User, UserEvent)
+from app.dependencies import get_db, logger, templates
+from app.internal import comment as cmt
+from app.internal.emotion import get_emotion
+from app.internal.event import (get_invited_emails, get_location_coordinates, get_messages,
+                                get_uninvited_regular_emails,
+                                raise_if_zoom_link_invalid)
+from app.internal.utils import create_model, get_current_user
 from fastapi import APIRouter, Depends, HTTPException, Request
-from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
-from starlette.responses import RedirectResponse
-
-from app.database.models import Event, User, UserEvent
-from app.dependencies import get_db, templates
-from app.internal.event import (
-    get_invited_emails, get_location_coordinates, get_messages,
-    get_uninvited_regular_emails, raise_if_zoom_link_invalid,
-)
-from app.internal.emotion import get_emotion
-from app.internal.utils import create_model
-from app.routers.user import create_user
+from starlette.responses import RedirectResponse, Response
 
 
+EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
-
+START_FORMAT = '%A, %d/%m/%Y %H:%M'
 UPDATE_EVENTS_FIELDS = {
     'title': str,
-    'start': dt,
-    'end': dt,
+    'start': datetime,
+    'end': datetime,
     'availability': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
-    'latitude': (str, type(None)),
-    'longitude': (str, type(None)),
+    'vc_link': (str, type(None)),
     'category_id': (int, type(None)),
 }
 
@@ -43,51 +42,51 @@ router = APIRouter(
 
 
 @router.get("/edit")
-async def eventedit(request: Request):
+async def eventedit(request: Request) -> Response:
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request})
 
 
 @router.post("/edit")
-async def create_new_event(request: Request, session=Depends(get_db)):
+async def create_new_event(request: Request,
+                           session=Depends(get_db)) -> Response:
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
-                        TIME_FORMAT)
-    end = dt.strptime(data['end_date'] + ' ' + data['end_time'], TIME_FORMAT)
-    user = session.query(User).filter_by(id=1).first()
-    user = user if user else create_user(username="u",
-                                         password="p",
-                                         email="e@mail.com",
-                                         language_id=1,
-                                         session=session)
-    owner_id = user.id
+    start = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
+                              TIME_FORMAT)
+    end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
+                            TIME_FORMAT)
+    owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
-    location_type = data['location_type']
-    is_zoom = location_type == 'vc_url'
     location = data['location']
-    color = data['color'] if data['color'] else None
-    latitude, longitude = None, None
+    vc_link = data.get('vc_link')
     category_id = data.get('category_id')
+    color = data['color']
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
+    latitude, longitude = None, None
 
-    if is_zoom:
-        raise_if_zoom_link_invalid(location)
+    if vc_link is not None:
+        raise_if_zoom_link_invalid(vc_link)
     else:
-        location = await get_location_coordinates(location)
-        if type(location) is not str:
-            latitude = location.latitude
-            longitude = location.longitude
-            location = location.location
+        location_details = await get_location_coordinates(location)
+        if type(location_details) is not str:
+            location = location_details.location
+            latitude = location_details.latitude
+            longitude = location_details.longitude
+
+    
     event = create_event(session, title, start, end, owner_id, content,
-                         location=location, invitees=invited_emails,
-                         latitude=latitude, longitude=longitude,
-                         color=color,
-                         category_id=category_id,
-                         availability=availability)
+                        location=location,
+                        latitude=latitude,
+                        longitude=longitude,
+                        vc_link=vc_link,
+                        color=color, invitees=invited_emails,
+                        category_id=category_id,
+                        availability=availability)
+
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -97,15 +96,14 @@ async def create_new_event(request: Request, session=Depends(get_db)):
 
 @router.get("/{event_id}")
 async def eventview(request: Request, event_id: int,
-                    db: Session = Depends(get_db)):
-    event = by_id(db, event_id)
-    start_format = '%A, %d/%m/%Y %H:%M'
-    end_format = ('%H:%M' if event.start.date() == event.end.date()
-                  else start_format)
+                    db: Session = Depends(get_db)) -> Response:
+    event, comments, end_format = get_event_data(db, event_id)
     messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request, "event": event,
-                                       "start_format": start_format,
+                                      {"request": request,
+                                       "event": event,
+                                       "comments": comments,
+                                       "start_format": START_FORMAT,
                                        "end_format": end_format,
                                        "messages": messages})
 
@@ -140,7 +138,8 @@ def by_id(db: Session, event_id: int) -> Event:
     return event
 
 
-def is_end_date_before_start_date(start_date: dt, end_date: dt) -> bool:
+def is_end_date_before_start_date(start_date: datetime,
+                                  end_date: datetime) -> bool:
     """Check if the start date is earlier than the end date"""
     return start_date > end_date
 
@@ -176,7 +175,7 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
 
 def get_event_with_editable_fields_only(event: Dict[str, Any]
                                         ) -> Dict[str, Any]:
-    """Remove all keys that are not allowed to  """
+    """Remove all keys that are not allowed to update"""
 
     edit_event = {i: event[i] for i in UPDATE_EVENTS_FIELDS if i in event}
     # Convert `availability` value into boolean.
@@ -209,17 +208,9 @@ def update_event(event_id: int, event: Dict, db: Session
     check_change_dates_allowed(old_event, event_to_update)
     if not event_to_update:
         return None
-    update_location_coordinates(event_to_update)
     event_updated = _update_event(db, event_id, event_to_update)
     # TODO: Send emails to recipients.
     return event_updated
-
-
-async def update_location_coordinates(event_to_update: Dict):
-    location = await get_location_coordinates(event_to_update.get('location'))
-    if location is not None:
-        for i, field in enumerate(location._fields):
-            event_to_update[field] = location[i]
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
@@ -227,6 +218,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  location: Optional[str] = None,
                  latitude: Optional[str] = None,
                  longitude: Optional[str] = None,
+                 vc_link: str = None,
                  color: Optional[str] = None,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
@@ -246,6 +238,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         location=location,
         latitude=latitude,
         longitude=longitude,
+        vc_link=vc_link,
         color=color,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
@@ -265,6 +258,13 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
     temp = events.copy()
     return sorted(temp, key=attrgetter('start'))
+
+
+def get_attendees_email(session: Session, event: Event):
+    return (
+        session.query(User.email).join(UserEvent)
+        .filter(UserEvent.events == event).all()
+    )
 
 
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
@@ -295,12 +295,13 @@ def _delete_event(db: Session, event: Event):
 
 
 @router.delete("/{event_id}")
-def delete_event(event_id: int, db: Session = Depends(get_db)):
+def delete_event(event_id: int,
+                 db: Session = Depends(get_db)) -> Response:
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
     _delete_event(db, event)
-    if participants and event.start > dt.now():
+    if participants and event.start > datetime.now():
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
@@ -308,7 +309,7 @@ def delete_event(event_id: int, db: Session = Depends(get_db)):
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: dt, end_time: dt) -> bool:
+def is_date_before(start_time: datetime, end_time: datetime) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
@@ -335,3 +336,75 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+@router.post("/{event_id}")
+async def add_comment(request: Request, event_id: int,
+                      session: Session = Depends(get_db)) -> Response:
+    """Creates a comment instance in the DB. Redirects back to the event's
+    comments tab upon creation."""
+    form = await request.form()
+    data = {
+        'user_id': get_current_user(session).id,
+        'event_id': event_id,
+        'content': form['comment'],
+        'time': datetime.now(),
+    }
+    create_model(session, Comment, **data)
+    path = router.url_path_for('view_comments', event_id=event_id)
+    return RedirectResponse(path, status_code=status.HTTP_303_SEE_OTHER)
+
+
+def get_event_data(db: Session, event_id: int) -> EVENT_DATA:
+    """Retrieves all data necessary to display the event with the given id.
+
+    Args:
+        db (Session): DB session.
+        event_id (int): ID of Event to fetch data for.
+
+    Returns:
+        tuple(Event, list(dict(str: str)), str):
+            Tuple consisting of:
+                Event instance,
+                list of dictionaries with info for all comments in the event.
+                time format for the event's end time.
+
+    Raises:
+        None
+    """
+    event = by_id(db, event_id)
+    comments = json.loads(cmt.display_comments(db, event))
+    end_format = ('%H:%M' if event.start.date() == event.end.date()
+                  else START_FORMAT)
+    return event, comments, end_format
+
+
+@router.get("/{event_id}/comments")
+async def view_comments(request: Request, event_id: int,
+                        db: Session = Depends(get_db)) -> Response:
+    """Renders event comment tab view.
+    This essentially the same as `eventedit`, only with comments tab auto
+    showed."""
+    event, comments, end_format = get_event_data(db, event_id)
+    return templates.TemplateResponse("event/eventview.html",
+                                      {"request": request,
+                                       "event": event,
+                                       "comments": comments,
+                                       'comment': True,
+                                       "start_format": START_FORMAT,
+                                       "end_format": end_format})
+
+
+@router.post("/comments/delete")
+async def delete_comment(request: Request,
+                         db: Session = Depends(get_db)) -> Response:
+    """Deletes a comment instance from the db.
+
+    Redirects back to the event's comments tab upon deletion.
+    """
+    form = await request.form()
+    comment_id = form['comment_id']
+    event_id = form['event_id']
+    cmt.delete_comment(db, comment_id)
+    path = router.url_path_for('view_comments', event_id=event_id)
+    return RedirectResponse(path, status_code=303)
