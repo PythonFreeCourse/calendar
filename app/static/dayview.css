@@ -6,7 +6,7 @@
 }
 
 #toptab {
-    background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 .schedule {
@@ -55,7 +55,8 @@
 }
 
 .event {
-    font-size: 1rem;
+    font-size: 1.2rem;
+    padding: 0;
     z-index: 50;
     text-align: center;
 }
@@ -71,21 +72,20 @@
 }
 
 .total-time {
-    font-size: 0.4rem;
-    line-height: 1rem;
+    font-size: 0.8rem;
 }
 
 .title_size_small {
-    font-size: 0.6em;
+    font-size: 0.8em;
 }
 
 .title_size_Xsmall {
-    font-size: 0.4em;
+  font-size: 0.4em;
 }
 
 .title_size_tiny {
-    font-size: 0.1em;
-    line-height: 4em;
+    font-size: 0.2em;
+    line-height: 1em;
 }
 
 .actiongrid {
@@ -96,7 +96,7 @@
 }
 
 .action-icon {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .action-container {
@@ -105,6 +105,10 @@
 
 .event:hover .action-container .action-icon {
     visibility: visible;
+}
+
+.week-view-title {
+    font-size: 2em;
 }
 
 .zodiac-sign {
