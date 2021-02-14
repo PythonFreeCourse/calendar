@@ -1,29 +1,11 @@
 import json
 from collections import namedtuple
 from datetime import datetime
-from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
-from app.database.models import (Event, SharedList, SharedListItem, User,
-                                 UserEvent)
-from app.dependencies import get_db, logger, templates
-from app.internal.emotion import get_emotion
-from app.internal.event import (get_invited_emails, get_messages,
-                                get_uninvited_regular_emails,
-                                raise_if_zoom_link_invalid)
-from app.internal.utils import create_model
-from app.routers.user import create_user
-from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
-from starlette import status
-from starlette.datastructures import ImmutableMultiDict
-from starlette.responses import RedirectResponse
-
-TIME_FORMAT = '%Y-%m-%d %H:%M'
-from app.database.models import Comment, Event, User, UserEvent
+from app.database.models import (Comment, Event, SharedList, SharedListItem,
+                                 User, UserEvent)
 from app.dependencies import get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
@@ -31,6 +13,12 @@ from app.internal.event import (get_invited_emails, get_messages,
                                 get_uninvited_regular_emails,
                                 raise_if_zoom_link_invalid)
 from app.internal.utils import create_model, get_current_user
+from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from starlette import status
+from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse, Response
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
@@ -86,7 +74,7 @@ async def create_new_event(request: Request,
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
                                                       title, invited_emails)
     shared_list = extract_shared_list_from_data(data, session)
-    
+
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
@@ -399,6 +387,8 @@ def _create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]],
     except (AssertionError, AttributeError, TypeError, KeyError) as e:
         logger.exception(e)
         return None
+
+
 @router.post("/{event_id}")
 async def add_comment(request: Request, event_id: int,
                       session: Session = Depends(get_db)) -> Response:
