@@ -1,4 +1,3 @@
-<script src="{{ url_for('static', path='/voice.js') }}"></script>
 <div class="form_row">
 <input id="say" type="text" name="title" placeholder="Event Title" required>
 <input type="button" id="speak" name="speak" value="Speak it!">
@@ -52,7 +51,7 @@
 </div>
 <div class="form_row">
    <div class="form_row_start">
-	  <label for="color">Color:</label>
+      <label for="color">Color:</label>
       <select id="color" name="color">
          <option value="red">Red</option>
          <option value="green">Green</option>
@@ -60,15 +59,16 @@
       </select>
    </div>
    <div class="form_row_end">
-	  <label for="availability">Availability:</label>
+      <label for="availability">Availability:</label>
       <select id="availability" name="availability">
          <option value="free">Free</option>
          <option value="busy" selected>Busy</option>
       </select>
-	  <label for="privacy">Privacy:</label>
+      <label for="privacy">Privacy:</label>
       <select id="privacy" name="privacy">
          <option value="private">Private</option>
          <option value="public" selected>Public</option>
       </select>
    </div>
 </div>
+
