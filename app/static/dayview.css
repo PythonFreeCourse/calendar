@@ -107,14 +107,3 @@ html {
   border-radius: 50px;
   box-shadow: 1px 1px 2px #999;
 }
-
-@font-face{
-    font-family: "Secular one";
-    src: url("fonts/SecularOne-Regular.ttf") format("truetype");
-}
-
-.international-days {
-    color: #9999ff;
-    font-family: "Secular one";
-    font-size: 1.5em;
-}
