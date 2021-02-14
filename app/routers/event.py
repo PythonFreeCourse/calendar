@@ -82,10 +82,10 @@ async def create_new_event(request: Request,
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
-                              TIME_FORMAT)
+    start = dt.strptime(data['start_date'] + ' ' +
+                        data['start_time'], TIME_FORMAT)
     end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
-                            TIME_FORMAT)
+                      TIME_FORMAT)
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
     location_type = data['location_type']
