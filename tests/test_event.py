@@ -10,10 +10,7 @@ from app.database.models import Comment, Event
 from app.dependencies import get_db
 from app.internal.utils import delete_instance
 from app.main import app
-from app.routers.event import (_delete_event, _update_event, add_new_event,
-                               by_id, check_change_dates_allowed,
-                               delete_event, is_date_before, update_event,
-                               create_event)
+
 from app.routers import event as evt
 
 
@@ -114,7 +111,6 @@ def test_eventview_with_id(event_test_client, session, event):
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"View Event" in response.content
-    
 
 
 def test_create_event_with_default_availability(client, user, session):
@@ -373,6 +369,7 @@ def test_successful_deletion(event_test_client, session, event):
     with pytest.raises(HTTPException):
         assert "Event ID does not exist. ID: 1" in evt.by_id(
             db=session, event_id=1).content
+
 
 def test_changeowner(client, event_test_client, user, session, event):
     """
