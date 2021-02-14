@@ -15,6 +15,7 @@ from app.dependencies import get_db, logger, templates
 from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
+
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
@@ -240,6 +241,13 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
     temp = events.copy()
     return sorted(temp, key=attrgetter('start'))
+
+
+def get_attendees_email(session: Session, event: Event):
+    return (
+        session.query(User.email).join(UserEvent)
+        .filter(UserEvent.events == event).all()
+    )
 
 
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
