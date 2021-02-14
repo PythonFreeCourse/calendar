@@ -36,7 +36,7 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, four_o_four, friendview, invitation, profile, search,
+    email, event, export, four_o_four, friendview, invitation, profile, search,
     weekview, telegram, whatsapp,
 )
 
