@@ -300,7 +300,7 @@ def _is_event_dates_valid(start: str, end: str) -> bool:
 
     is_date_in_range = (_is_date_in_range(start_date)
                         and _is_date_in_range(end_date))
-    is_end_after_start = _is_start_day_before_end_date(start_date, end_date)
+    is_end_after_start = _is_start_date_before_end_date(start_date, end_date)
     is_duration_valid = _is_event_duration_valid(start_date, end_date)
     return is_date_in_range and is_end_after_start and is_duration_valid
 
@@ -371,7 +371,7 @@ def _is_date_in_range(
     return current_year - year_range < date.year < current_year + year_range
 
 
-def _is_start_day_before_end_date(start: datetime, end: datetime) -> bool:
+def _is_start_date_before_end_date(start: datetime, end: datetime) -> bool:
     """Whether the start date is before the end date.
 
     Args:

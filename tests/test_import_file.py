@@ -74,6 +74,12 @@ START_DAY_END_DAY_TESTS = [
     (datetime(1991, 12, 1, 11), datetime(1991, 12, 1, 10), False),
 ]
 
+VALID_DATES_TESTS = [
+    ("02-26-2022", "02-27-2022", True),
+    ("02-27-2022", "02-26-2022", False),
+    ("not a date", "02-28-2022", False),
+]
+
 FILE_EXTENSION_TESTS = [
     (FILE_TXT_BELOW_1MB, None, True),
     (FILE_CSV_BELOW_1MB, None, True),
@@ -208,7 +214,12 @@ def test_convert_string_to_date(date, expected):
 
 @pytest.mark.parametrize("start, end, expected", START_DAY_END_DAY_TESTS)
 def test_is_start_day_before_end_date(start, end, expected):
-    assert import_file._is_start_day_before_end_date(start, end) == expected
+    assert import_file._is_start_date_before_end_date(start, end) == expected
+
+
+@pytest.mark.parametrize("start, end, is_valid", VALID_DATES_TESTS)
+def test_is_event_dates_valid(start, end, is_valid):
+    assert import_file._is_event_dates_valid(start, end) == is_valid
 
 
 @pytest.mark.parametrize("test_file, extension, expected",
