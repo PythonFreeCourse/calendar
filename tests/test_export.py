@@ -1,12 +1,98 @@
+from datetime import timedelta
+
 from icalendar import vCalAddress
 
 from app.config import ICAL_VERSION, PRODUCT_ID
-from app.routers.export import (
-    create_ical_calendar, create_ical_event, event_to_ical
+from app.internal.agenda_events import filter_dates
+from app.internal.export import (
+    create_ical_calendar, create_ical_event,
+    event_to_ical
 )
+from app.routers.user import get_all_user_events
 
 
 class TestExport:
+
+    def test_export(self, client, sender, today_event):
+        resp = client.get('/export?start_date=&end_date=')
+        assert isinstance(resp.content, bytes)
+        assert resp.ok
+
+    def test_get_events_no_time_frame(
+            self, today_event,
+            next_month_event,
+            sender, session
+    ):
+        start = None
+        end = None
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert set(evens) == {today_event, next_month_event}
+
+    def test_get_events_end_time_frame_success(
+            self, today_event,
+            sender, session
+    ):
+        start = None
+        end = today_event.end.date()
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert list(evens) == [today_event]
+
+    def test_get_events_end_time_frame_failure(
+            self, today_event,
+            next_month_event,
+            sender, session
+    ):
+        start = None
+        end = today_event.start.date() - timedelta(days=1)
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert list(evens) == []
+
+    def test_get_events_start_time_frame_success(
+            self, today_event,
+            next_month_event,
+            sender, session
+    ):
+        start = next_month_event.start.date()
+        end = None
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert list(evens) == [next_month_event]
+
+    def test_get_events_start_time_frame_failure(
+            self, today_event,
+            next_month_event,
+            sender, session
+    ):
+        start = next_month_event.start.date() + timedelta(days=1)
+        end = None
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert list(evens) == []
+
+    def test_get_events_start_and_end_time_frame_success(
+            self, today_event,
+            next_month_event,
+            sender, session
+    ):
+        start = today_event.start.date()
+        end = next_month_event.start.date()
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert set(evens) == {today_event, next_month_event}
+
+    def test_get_events_start_and_end_time_frame_failure(
+            self, today_event,
+            next_month_event,
+            sender, session
+    ):
+        start = today_event.start.date() + timedelta(days=1)
+        end = next_month_event.start.date() - timedelta(days=1)
+        events = get_all_user_events(session, sender.id)
+        evens = filter_dates(events, start, end)
+        assert list(evens) == []
 
     def test_create_ical_calendar(self):
         cal = create_ical_calendar()

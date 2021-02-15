@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h3>Login</h3>
+        {% if message %}
+            <div class="alert" style="color: red;">{{ message }}</div>
+        {% endif %}
+        <form method="post">
+            <div class="row">
+                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-auto">
+                    <input type="text" class="form-control" name="username" id="username" autofocus><br>
+                </div>
+            </div>
+            <div class="row">
+                <label for="password" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-auto">
+                    <input type="text" class="form-control" name="password" id="username"><br>
+                </div>
+            </div>
+            <input type="submit" class="btn-sm btn btn-outline-primary" value="Log In">
+        </form>
+    </div>
+{% endblock %}
+                    
