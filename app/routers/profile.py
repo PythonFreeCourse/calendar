@@ -138,7 +138,7 @@ async def update_telegram_id(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
-@router.post("/update_calendar_privacy")
+@router.post("/privacy")
 async def update_calendar_privacy(
         request: Request,
         session=Depends(get_db)
