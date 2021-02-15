@@ -51,11 +51,11 @@ class DivAttributes:
 
 class CurrentTimeAttributes(DivAttributes):
     def __init__(self, date: datetime) -> None:
-        current_datetime = datetime.now()
+        current = datetime.now()
         self.dayview_date = date.date()
         self.is_viewed = self._date_is_today()
-        self.grid_position = self._get_position(current_datetime) - 1
-        self.sub_grid_position = self._minutes_position(current_datetime.minute)
+        self.grid_position = self._get_position(current) - 1
+        self.sub_grid_position = self._minutes_position(current.minute)
         self.sub_grid_position = self.sub_grid_position['min_deviation']
 
     def _date_is_today(self) -> bool:
@@ -63,7 +63,7 @@ class CurrentTimeAttributes(DivAttributes):
         if today == self.dayview_date:
             return True
         return False
-  
+
 
 class EventsAttributes(DivAttributes):
     def __init__(self, event: Event,

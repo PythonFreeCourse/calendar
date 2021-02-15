@@ -44,7 +44,8 @@ async def get_day_events_and_attributes(
     events_and_attrs = get_events_and_attributes(
             day=day, session=session, user_id=user.id)
     current_time_and_attrs = CurrentTimeAttributes(date=day)
-    return DayEventsAndAttrs(day, template, events_and_attrs, current_time_and_attrs)
+    return DayEventsAndAttrs(day, template, events_and_attrs,
+                             current_time_and_attrs)
 
 
 @router.get('/week/{firstday}')
