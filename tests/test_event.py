@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
+import json
+import pytest
 
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
-import pytest
 from sqlalchemy.orm.session import Session
 from starlette import status
 
@@ -94,6 +95,14 @@ CONVERT_TIME_FORM_DATA = {
     'start_time' : '14:00',
     'end_date' : '2021-02-02',
     'end_time' : '15:00'
+
+CORRECT_ADD_EVENT_DATA = {
+    "title": "test",
+    "start": "2021-02-13T09:03:49.560Z",
+    "end": "2021-02-13T09:03:49.560Z",
+    "content": "test",
+    "owner_id": 0,
+    "location": "test"
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -105,6 +114,17 @@ INVALID_FIELD_UPDATE = [
     {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
     {"start": datetime(2030, 2, 2)}, {"end": datetime(1990, 1, 1)},
 ]
+
+
+def test_get_events(event_test_client, session, event):
+    response = event_test_client.get("/event/")
+    assert response.ok
+
+
+def test_create_event_api(event_test_client, session, event):
+    response = event_test_client.post("/event/",
+                                      data=json.dumps(CORRECT_ADD_EVENT_DATA))
+    assert response.ok
 
 
 def test_eventedit(event_test_client):
