@@ -95,6 +95,7 @@ CONVERT_TIME_FORM_DATA = {
     'start_time': '14:00',
     'end_date': '2021-02-02',
     'end_time': '15:00'
+}
 
 CORRECT_ADD_EVENT_DATA = {
     "title": "test",
