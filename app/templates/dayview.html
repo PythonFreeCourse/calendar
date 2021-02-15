@@ -50,11 +50,11 @@
                 {% endfor %}
             </div>
             <div class="actiongrid">
-                
+
                 {% for event, attr in events %}
                     <div class="d-flex flex-row justify-content-around align-items-end action-continer" style="grid-row: {{attr.grid_position}};">
-                        <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
-                        <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}" width="15em" height="15em"></a>
+                        <a href="/event/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
+                        <a href="/event/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}" width="15em" height="15em"></a>
                     </div>
                 {% endfor %}
             </div>

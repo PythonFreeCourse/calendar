@@ -24,12 +24,13 @@ class DivAttributes:
     FIRST_GRID_BAR = 1
     LAST_GRID_BAR = 101
     DEFAULT_COLOR = 'grey'
-    DEFAULT_FORMAT = "%H:%M"
-    MULTIDAY_FORMAT = "%d/%m %H:%M"
+    DEFAULT_FORMAT = '%H:%M'
+    MULTIDAY_FORMAT = '%d/%m %H:%M'
     CLASS_SIZES = ('title_size_tiny', 'title_size_Xsmall', 'title_size_small')
     LENGTH_SIZE_STEP = (30, 45, 90)
 
-    def __init__(self, event: Event,
+    def __init__(self,
+                 event: Event,
                  day: Union[bool, datetime] = False) -> None:
         self.start_time = event.start
         self.end_time = event.end
@@ -105,15 +106,15 @@ class DivAttributes:
 
 
 def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
-    return (
-        (event.start >= day and event.start < day_end) or
-        (event.end >= day and event.end < day_end) or
-        (event.start < day_end < event.end)
-        )
+    return ((event.start >= day and event.start < day_end)
+            or (event.end >= day and event.end < day_end)
+            or (event.start < day_end < event.end))
 
 
 def get_events_and_attributes(
-    day: datetime, session, user_id: int,
+    day: datetime,
+    session,
+    user_id: int,
 ) -> Tuple[Event, DivAttributes]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
@@ -124,24 +125,31 @@ def get_events_and_attributes(
 
 @router.get('/day/{date}')
 async def dayview(
-          request: Request, date: str, session=Depends(get_db), view='day',
-      ):
+        request: Request,
+        date: str,
+        session=Depends(get_db),
+        view='day',
+):
     # TODO: add a login session
     user = session.query(User).filter_by(username='test_username').first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:
-        raise HTTPException(status_code=404, detail=f"{err}")
+        raise HTTPException(status_code=404, detail=f'{err}')
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
-    events_n_attrs = get_events_and_attributes(
-        day=day, session=session, user_id=user.id,
-    )
-    month = day.strftime("%B").upper()
-    return templates.TemplateResponse("dayview.html", {
-        "request": request,
-        "events": events_n_attrs,
-        "month": month,
-        "day": day.day,
-        "zodiac": zodiac_obj,
-        "view": view
-    })
+    events_n_attrs = list(
+        get_events_and_attributes(
+            day=day,
+            session=session,
+            user_id=user.id,
+        ))
+    month = day.strftime('%B').upper()
+    return templates.TemplateResponse(
+        'dayview.html', {
+            'request': request,
+            'events': events_n_attrs,
+            'month': month,
+            'day': day.day,
+            'zodiac': zodiac_obj,
+            'view': view
+        })
