@@ -105,7 +105,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
     for user_quote in user_quotes:
         if user_quote.id == quote.id:
             quote.is_favorite = True
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "quote": quote,
     })
