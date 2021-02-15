@@ -1,0 +1,22 @@
+<form action="{{ url_for('add_comment', event_id=event.id )}}" method="POST" class="card">
+    <textarea class="card-body" name="comment" placeholder="Write your comment here..." required></textarea>
+    <button class="btn btn-danger text-center">Post Comment</button>
+</form>
+
+{% for comment in comments %}
+    <div class="card my-3">
+        <div class="card-header">
+            <img class="float-start card-img-top profile-image rounded-circle mx-auto d-block" src="{{ url_for('media', path=comment['avatar']) }}" alt="Profile image" width="100">
+            <form class="float-end" method="post" action="{{ url_for('delete_comment') }}">
+                <input type="number" name="event_id" value="{{ event.id }}" hidden>
+                <input type="number" name="comment_id" value="{{ comment.id }}" hidden>
+                <button class="btn btn-danger text-center">X</button>
+            </form>
+            <p class="mt-4"><strong> {{ comment['username'] }} </strong></p>
+            <p>{{ comment['time'] }}</p>
+        </div>
+        <div class="card-body">
+            {{ comment['content'] }}
+        </div>
+    </div>
+{% endfor %}
