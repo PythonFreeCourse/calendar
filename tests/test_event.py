@@ -155,7 +155,7 @@ def test_eventview_with_id(event_test_client, session, event):
     assert response.ok
     assert b"View Event" in response.content
     for event_detail in event_details:
-        assert str(event_detail).encode('utf-8') in response.content, \
+        assert str(event_detail).encode('utf-8') in response.content,
             f'{event_detail} not in view event page'
 
 

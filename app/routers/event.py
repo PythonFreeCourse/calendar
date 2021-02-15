@@ -95,7 +95,7 @@ async def choose_country(request: Request,
 
 @router.post("/edit/view_countries", include_in_schema=False)
 async def check_country_time(request: Request,
-                         session=Depends(get_db)) -> Response:
+                             session=Depends(get_db)) -> Response:
     """
     Displays datalist of all countries name from "Country" table.
     By clicking "Check time" the converted meeting time is displayed.
