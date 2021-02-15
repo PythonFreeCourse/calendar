@@ -48,6 +48,10 @@ class TestUtils:
         utils.get_current_user(session)
         assert session.query(User).filter_by(id=1).first()
 
+    def test_get_user(self, user: User, session: Session) -> None:
+        assert utils.get_user(session, user.id) == user
+        assert utils.get_user(session, 2) is None
+
     @pytest.mark.parametrize('string, formatted_time', TIMES)
     def test_get_time_from_string(self, string: str,
                                   formatted_time: time) -> None:

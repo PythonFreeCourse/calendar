@@ -28,7 +28,7 @@ def create_model(session: Session, model_class: Base,
 
 
 def delete_instance(session: Session, instance: Base) -> None:
-    """Deletes an instant from the db."""
+    """Deletes an instance from the db."""
     session.delete(instance)
     session.commit()
 
@@ -43,6 +43,22 @@ def get_current_user(session: Session) -> User:
         user = session.query(User).first()
 
     return user
+
+
+def get_user(session: Session, user_id: int) -> Optional[User]:
+    """Returns User instance for `user_id` if exists, None otherwise.
+
+    Args:
+        session (Session): DB session.
+        user_id (int): ID of user to return.
+
+    Returns:
+        (User | None): User instance for `user_id` if exists, None otherwise.
+
+    Raises:
+        None
+    """
+    return session.query(User).filter_by(id=user_id).first()
 
 
 def get_time_from_string(string: str) -> Optional[Union[date, time]]:
