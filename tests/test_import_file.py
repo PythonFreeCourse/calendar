@@ -244,8 +244,8 @@ def test_get_data_from_ics_file(test_file, expected):
     assert import_file._get_data_from_ics_file(test_file) == expected
 
 
-@pytest.mark.parametrize("start, end, max_duration, expected",
-                         EVENT_DURATION_TESTS)
+@pytest.mark.parametrize(
+    "start, end, max_duration, expected", EVENT_DURATION_TESTS)
 def test_is_event_valid_duration(start, end, max_duration, expected):
     if max_duration is None:
         assert import_file._is_event_duration_valid(start, end) == expected

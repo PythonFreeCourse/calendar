@@ -6,8 +6,9 @@ from sqlalchemy.orm.session import Session
 from app.database.models import Event
 
 
-def get_results_by_keywords(session: Session, keywords: str, owner_id: int
-                            ) -> List[Event]:
+def get_results_by_keywords(
+        session: Session, keywords: str, owner_id: int
+) -> List[Event]:
     """Returns a list of Events matching the search query.
 
      The results are limited to Events owned by the current user.

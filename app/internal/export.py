@@ -31,8 +31,9 @@ def get_icalendar(event: Event, emails: List[str]) -> bytes:
     return icalendar.to_ical()
 
 
-def get_icalendar_with_multiple_events(session: Session, events: List[Event]
-                                       ) -> bytes:
+def get_icalendar_with_multiple_events(
+        session: Session, events: List[Event]
+) -> bytes:
     """Returns an iCalendar event in bytes.
 
     Builds an iCalendar event with information from the Event object.

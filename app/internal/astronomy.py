@@ -11,8 +11,9 @@ ASTRONOMY_URL = "https://api.weatherapi.com/v1/astronomy.json"
 NO_API_RESPONSE = _("No response from server.")
 
 
-async def get_astronomical_data(date: datetime, location: str
-                                ) -> Dict[str, Any]:
+async def get_astronomical_data(
+        date: datetime, location: str
+) -> Dict[str, Any]:
     """Returns astronomical data (sun and moon) for date and location.
 
     Args:
@@ -35,8 +36,9 @@ async def get_astronomical_data(date: datetime, location: str
 
 
 @functools.lru_cache(maxsize=128)
-async def _get_astronomical_data_from_api(date: str, location: str
-                                          ) -> Dict[str, Any]:
+async def _get_astronomical_data_from_api(
+        date: str, location: str
+) -> Dict[str, Any]:
     """Returns astronomical_data from a Weather API call.
 
     Args:

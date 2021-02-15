@@ -12,13 +12,14 @@ from app.routers.share import accept
 router = APIRouter(
     prefix="/invitations",
     tags=["invitation"],
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
 )
 
 
 @router.get("/")
-def view_invitations(request: Request, db: Session = Depends(get_db)
-                     ) -> Response:
+def view_invitations(
+        request: Request, db: Session = Depends(get_db)
+) -> Response:
     """Returns the Invitations page route.
 
     Args:
@@ -40,8 +41,9 @@ def view_invitations(request: Request, db: Session = Depends(get_db)
 
 
 @router.post("/")
-async def accept_invitations(request: Request, db: Session = Depends(get_db)
-                             ) -> RedirectResponse:
+async def accept_invitations(
+        request: Request, db: Session = Depends(get_db)
+) -> RedirectResponse:
     """Creates a new connection between the User and the Event in the database.
 
     See Also:

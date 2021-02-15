@@ -9,8 +9,9 @@ from app.internal.utils import create_model, delete_instance
 
 
 @pytest.fixture
-def invitation(event: Event, user: User, session: Session
-               ) -> Generator[Invitation, None, None]:
+def invitation(
+        event: Event, user: User, session: Session
+) -> Generator[Invitation, None, None]:
     """Returns an Invitation object after being created in the database.
     Args:
         event: An Event instance.

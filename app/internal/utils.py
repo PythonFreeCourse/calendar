@@ -16,8 +16,11 @@ def save(session: Session, instance: Base) -> bool:
     return False
 
 
-def create_model(session: Session, model_class: Base,
-                 **kwargs: Any) -> Base:
+def create_model(
+        session: Session,
+        model_class: Base,
+        **kwargs: Any
+) -> Base:
     """Creates and saves a db model."""
 
     instance = model_class(**kwargs)

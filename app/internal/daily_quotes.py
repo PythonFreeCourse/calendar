@@ -25,8 +25,9 @@ def get_quote(data: Dict[str, Optional[str]]) -> Quote:
     )
 
 
-def get_quote_of_day(session: Session, requested_date: date = date.today()
-                     ) -> Optional[Quote]:
+def get_quote_of_day(
+        session: Session, requested_date: date = date.today()
+) -> Optional[Quote]:
     """Returns the Quote object for the specific day.
 
     The quote is randomly selected from a set of quotes matching the given day.

@@ -31,8 +31,11 @@ def search(request: Request, db: Session = Depends(get_db)) -> Response:
 
 
 @router.post("/search")
-async def show_results(request: Request, keywords: str = Form(None),
-                       db: Session = Depends(get_db)) -> Response:
+async def show_results(
+        request: Request,
+        keywords: str = Form(None),
+        db: Session = Depends(get_db),
+) -> Response:
     """Returns the Search page route.
 
     Args:

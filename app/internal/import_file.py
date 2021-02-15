@@ -58,7 +58,7 @@ def import_events(path: str, user_id: int, session: Session) -> bool:
         session: The database connection.
 
     Returns:
-        True if successfully saved, other returns False.
+        True if successfully saved, otherwise returns False.
 
     """
     if _is_file_valid_to_import(path):
@@ -402,8 +402,9 @@ def _is_start_day_before_end_date(start: datetime, end: datetime) -> bool:
     return start <= end
 
 
-def _is_event_duration_valid(start: datetime, end: datetime,
-                             max_days: int = EVENT_DURATION_LIMIT) -> bool:
+def _is_event_duration_valid(
+        start: datetime, end: datetime, max_days: int = EVENT_DURATION_LIMIT
+) -> bool:
     """Whether an event duration is valid.
 
     Args:

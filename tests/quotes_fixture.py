@@ -5,8 +5,9 @@ from app.database.models import Quote
 from app.internal.utils import create_model, delete_instance
 
 
-def add_quote(session: Session, id_quote: int, text: str, author: str
-              ) -> Quote:
+def add_quote(
+        session: Session, id_quote: int, text: str, author: str
+) -> Quote:
     quote = create_model(
         session,
         Quote,

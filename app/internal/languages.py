@@ -69,8 +69,9 @@ def _get_language_directory() -> str:
     return language_dir
 
 
-def _get_supported_languages(language_dir: str = _get_language_directory()
-                             ) -> Iterator[str]:
+def _get_supported_languages(
+        language_dir: str = _get_language_directory()
+) -> Iterator[str]:
     """Returns a generator of supported translation languages codes.
 
     Args:
