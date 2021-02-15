@@ -1,6 +1,6 @@
 function setToggle(
     elementClass, targetElement, classToAdd,
-    index, elementsToLoad,
+    index, elementsToLoad
 ) {
     const allElements = document.getElementsByClassName(elementClass);
     const target = document.getElementById(targetElement);
@@ -29,12 +29,13 @@ document.addEventListener(
     }
 )
 
-function loadWeekAfter(baseUrl, day, index, daysToLoad) {
+function loadWeekAfter(day, index, daysToLoad) {
     if (day.dataset.last === "false") {
         return false;
     }
     day.dataset.last = false;
-    let path = new URL('/calendar/month/add/' + day.id, baseUrl);
+
+    let path = new URL('/calendar/month/add/' + day.id, 'http://127.0.0.1:8000/');
     params = { days: daysToLoad };
     Object.keys(params).forEach(key => path.searchParams.append(key, params[key]))
 
@@ -46,8 +47,8 @@ function loadWeekAfter(baseUrl, day, index, daysToLoad) {
     });
 }
 
-function loadWeekBefore(baseUrl, day, daysToLoad) {
-    let path = new URL('/calendar/month/add/' + day, baseUrl);
+function loadWeekBefore(day, daysToLoad) {
+    let path = new URL('/calendar/month/add/' + day, 'http://127.0.0.1:8000/');
     params = { days: daysToLoad };
     Object.keys(params).forEach(key => path.searchParams.append(key, params[key]))
 
@@ -61,14 +62,13 @@ function loadWeekBefore(baseUrl, day, daysToLoad) {
 
 function callLoadWeek(daysToLoad = 42, end = true) {
     let day = null;
-    const baseUrl = window.location.origin;
     const allDays = document.getElementsByClassName('day');
     if (end) {
         day = allDays[allDays.length - 1];
-        loadWeekAfter(baseUrl, day, allDays.length, daysToLoad);
+        loadWeekAfter(day, allDays.length, daysToLoad);
     } else {
         day = dateToId(getDateInNDays(allDays[0].id, daysToLoad * -1))
-        loadWeekBefore(baseUrl, day, daysToLoad);
+        loadWeekBefore(day, daysToLoad);
     }
     setTimeout(setMonthNav, 200);
 }
