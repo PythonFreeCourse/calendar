@@ -145,10 +145,15 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-
-.vscode
-pyvenv.cfg
+# mac env
 bin
+
+# register stuff
+run.txt
+
+# VScode
+.vscode
+app/.vscode/
 
 app/routers/stam
 
