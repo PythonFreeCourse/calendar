@@ -11,7 +11,7 @@ body {
     font-family: "Assistant", "Ariel", sans-serif;
     text-transform: uppercase;
     font-size: 6em;
-    letter-spacing: 0.1em;
+    letter-spacing: 4px;
     overflow: hidden;
     background: linear-gradient(90deg, #000, #fff, #000);
     background-repeat: no-repeat;
