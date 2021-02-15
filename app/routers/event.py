@@ -393,3 +393,74 @@ async def delete_comment(request: Request,
     cmt.delete_comment(db, comment_id)
     path = router.url_path_for('view_comments', event_id=event_id)
     return RedirectResponse(path, status_code=303)
+
+
+# @app.get("/global_time")
+# async def time(
+#         request: Request):
+#     """
+#     Displays a globe icon.
+#     By Click the page transfers to "/global_time/choose".
+#     """
+#     return templates.TemplateResponse("event/partials/global_time.html", {
+#         "request": request
+#     })
+
+
+# @app.get("/global_time/choose")
+# async def time_choose(
+#         request: Request,
+#         session=Depends(get_db)):
+#     """
+#     Displays the list of all countries name from "Country" table.
+#     By Click on country name the page transfers to:
+#     "/global_time/{country_name}/{chosen_datetime}".
+#     *** Temporarily  returns a fictitious meeting datetime. ***
+#     """
+#     data = session.query(Country.name).all()
+#     temp_meeting_datetime = '2021-02-10 19:00:00'
+#     ip = request.client.host
+#     return templates.TemplateResponse("event/partials/global_time.html", {
+#         "request": request,
+#         "data": data,
+#         "date": temp_meeting_datetime,
+#         "ip": ip
+#     })
+
+
+# @app.get("/global_time/{country}/{datetime}/{ip}")
+# async def time_conv(
+#         ip,
+#         country,
+#         datetime: datetime,
+#         request: Request,
+#         session=Depends(get_db)):
+#     """
+#     Displays the chosen country name and the meeting time,
+#     converted to it's local time.
+#     If the Users IP is not recognized , displays error message
+#     """
+#     error_msg = """
+#     Your ip address is not associated with any geographical location.
+#     This function cannot operate.
+#     """
+#     match = geolite2.lookup(ip)
+#     if match is not None:
+#         ip_tmz = match.timezone
+#         trgt_tmz = session.query(Country.timezone).filter_by(name=country)
+#         trgt_tmz = trgt_tmz.first()
+#         trgt_tmz = trgt_tmz[0]
+#         meeting_time_with_utc = pytz.timezone(ip_tmz).localize(datetime)
+#         target_with_utc = pytz.timezone(trgt_tmz)
+#         target_time = meeting_time_with_utc.astimezone(target_with_utc)
+#         target_meeting_hour = target_time.strftime("%H:%M")
+#         return templates.TemplateResponse("event/partials/global_time.html", {
+#             "request": request,
+#             "time": target_meeting_hour,
+#             "country": country
+#         })
+#     else:
+#         return templates.TemplateResponse("event/partials/global_time.html", {
+#             "request": request,
+#             "msg": error_msg
+#         })
