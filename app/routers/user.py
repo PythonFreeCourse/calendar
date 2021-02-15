@@ -1,4 +1,4 @@
-from fastapi import APIRouter, FastAPI, Request
+from fastapi import APIRouter, Depends, FastAPI, Request
 from typing import List
 from pydantic import BaseModel, Field
 
@@ -7,16 +7,11 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 from app.database.models import Event, User, UserEvent
-<<<<<<< HEAD
 from app.internal.utils import save, get_current_user
 from app.internal.user.availability import (
     disable, enable)
 
-router = APIRouter()
 app = FastAPI()
-=======
-from app.internal.utils import save
-from fastapi import APIRouter, Depends
 
 router = APIRouter(
     prefix="/user",
@@ -47,7 +42,6 @@ async def get_user(id: int, session=Depends(get_db)):
 def manually_create_user(user: UserModel, session=Depends(get_db)):
     create_user(**user.dict(), session=session)
     return f'User {user.username} successfully created'
->>>>>>> 372421f295baf215e8bc23ad366c609556e8f1ac
 
 
 def create_user(username: str,
@@ -123,11 +117,28 @@ def enable_current_user(
 
 
 @router.post("/disable")
-def disable_current_user(
+def disable_logged_user(
         request: Request, session: Session) -> bool:
-    """function to disable the user.
+    """route that sends request to disable the user.
     after successful disable it will be directed to main page.
     if the disable fails user will stay at settings page
+    and an error will be shown."""
+    disable_successful = disable(session, get_current_user)
+    if disable_successful:
+        # disable succeeded- the user will be directed to homepage.
+        app.url_path_for("/")
+    else:
+        # if disable wasn't successful, user will stay in the
+        # settings page and an error message will show.
+        pass
+
+
+@router.post("/enable")
+def enable_logged_user(
+        request: Request, session: Session) -> bool:
+    """router that sends a request to enable the user.
+    if enable successful it will be directed to main page.
+    if it fails user will stay at settings page
     and an error will be shown."""
     disable_successful = disable(session, get_current_user)
     if disable_successful:
