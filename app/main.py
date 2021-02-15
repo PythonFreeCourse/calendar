@@ -42,7 +42,7 @@ json_data_loader.load_to_db(next(get_db()))
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    agenda, calendar, categories, celebrity, currency, credits, dayview,
+    agenda, calendar, categories, celebrity, credits, currency, dayview,
     email, event, export, four_o_four, invitation, login, logout, profile,
     register, search, telegram, user, weekview, whatsapp,
 )

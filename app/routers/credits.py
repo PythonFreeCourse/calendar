@@ -2,7 +2,6 @@ from fastapi import APIRouter, Request
 import json
 from typing import List
 
-
 from loguru import logger
 from starlette.templating import _TemplateResponse
 
@@ -11,7 +10,7 @@ from app.dependencies import templates
 router = APIRouter()
 
 
-def data_from_json() -> List:
+def credits_from_json() -> List:
     path = 'app/resources/credits.json'
     try:
         with open(path, 'r') as json_file:
@@ -25,7 +24,7 @@ def data_from_json() -> List:
 
 @router.get("/credits")
 def credits(request: Request) -> _TemplateResponse:
-    credit_list = data_from_json()
+    credit_list = credits_from_json()
     return templates.TemplateResponse("credits.html", {
         "request": request,
         "credit_list": credit_list
