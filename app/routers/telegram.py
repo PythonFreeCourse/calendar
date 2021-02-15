@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/", include_in_schema=False)
 async def bot_client(req: dict = Body(...), session=Depends(get_db)):
     chat = Chat(req)
 

@@ -12,6 +12,7 @@ router = APIRouter(
     prefix="/calendar/month",
     tags=["calendar"],
     responses={404: {"description": "Not found"}},
+    include_in_schema=False
 )
 
 ADD_DAYS_ON_SCROLL: int = 42
