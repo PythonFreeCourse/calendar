@@ -1,3 +1,11 @@
+:root {
+    --backgroundcol:#f7f7f7;
+    --textcolor:#222831;
+    --navcolor:rgba(0,0,0,.55);
+    --navhovercolor:rgba(0,0,0,.7);
+    --cardcolor:#fff;
+}
+
 .profile-image {
   width: 7em;
 }
@@ -88,7 +96,12 @@ p {
   margin: 0;
 }
 
+.card {
+  background-color: var(--cardcolor)
+}
+
 .card-body {
+  color: var(--textcolor);
   overflow: auto;
 }
 
@@ -99,4 +112,29 @@ p {
 
 .subtitle {
     font-size: 20px;
+}
+
+.relative.overflow-hidden {
+  background-color: var(--backgroundcol);
+  height: 100vh;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: var(--navcolor);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: var(--navhovercolor);
+}
+
+.main-text-color {
+    color: var(--textcolor);
+}
+
+.cal-img {
+    text-align: center;
+}
+
+#darkmode {
+    cursor: pointer;
 }

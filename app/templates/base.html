@@ -51,6 +51,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('search') }}">Search</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link">
+                                <ion-icon id="darkmode" name="moon-outline"></ion-icon>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -76,3 +81,4 @@
 </body>
 
 </html>
+<script src="{{ url_for('static', path='/js/darkmode.js') }}"></script>

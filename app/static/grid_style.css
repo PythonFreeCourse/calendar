@@ -1,3 +1,13 @@
+:root {
+    --backgroundcol:#f7f7f7;
+    --textcolor:#222831;
+    --start-of-month:#e9ecef;
+    --primary-variant:#FFDE4D;
+    --secondary:#EF5454;
+    --borders:#E7E7E7;
+    --borders-variant:#F7F7F7;
+}
+
 html {
   font-size: 62.5%; /*16px / 10px = 62.5% -> 1rem = 10px*/
 }
@@ -37,6 +47,7 @@ nav {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: var(--backgroundcol);
 }
 
 .user-features {
@@ -98,7 +109,7 @@ header {
   display: flex;
   grid-flow: row wrap;
   margin: 0 1rem 0 1rem;
-  background-color: #F7F7F7;
+  background-color: var(--backgroundcol);
 }
 
 header div {
@@ -138,7 +149,7 @@ main {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   margin: 1rem 1rem 0 1rem;
-  background-color: #F7F7F7;
+  background-color: var(--backgroundcol);
   align-self: stretch;
 }
 
@@ -336,9 +347,13 @@ main {
 }
 
 .background-lightgray {
-  background-color: #e9ecef;
+  background-color: var(--start-of-month);
 }
 
 .background-yellow {
   background-color: #FFDE4D;
+}
+
+#darkmode {
+    cursor: pointer;
 }
