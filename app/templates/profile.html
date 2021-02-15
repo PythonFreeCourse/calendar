@@ -229,7 +229,11 @@
                 <a class="text-decoration-none text-secondary" href="{{ url_for('import_holidays') }}">Add holidays to calendar</a>
               </li>
               <li class="list-group-item list-group-item-action no-border">
+              {% if google_error %}
+                <a class="text-decoration-none text-secondary" href="{{ url_for('google_sync') }}">Sync with Google - Not Avaliable</a>
+              {% else %}
                 <a class="text-decoration-none text-secondary" href="{{ url_for('google_sync') }}">Sync with Google</a>
+              {% endif %}
               </li>
             </ul>
           </div>

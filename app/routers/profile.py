@@ -9,7 +9,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app import config
 from app.database.models import User
-from app.dependencies import get_db, MEDIA_PATH, templates
+from app.dependencies import get_db, MEDIA_PATH, templates, GOOGLE_ERROR
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
@@ -58,6 +58,7 @@ async def profile(
         "user": user,
         "events": upcoming_events,
         "signs": signs,
+        'google_error': GOOGLE_ERROR,
         "on_this_day_data": on_this_day_data,
     })
 

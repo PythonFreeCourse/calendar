@@ -297,17 +297,6 @@ def test_get_credentials_from_consent_screen(mocker, session,
 
 
 @pytest.mark.usefixtures("session")
-def test_get_active_user(session):
-    create_user(session=session,
-                username='new_test_username',
-                password='new_test_password',
-                email='new_test.email@gmail.com',
-                language_id=1)
-
-    assert google_connect.get_active_user(session=session)
-
-
-@pytest.mark.usefixtures("session")
 def test_create_google_event(session):
     user = create_user(session=session,
                        username='new_test_username',

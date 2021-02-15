@@ -84,12 +84,6 @@ def push_credentials_to_db(credentials: Credentials, user: User,
     return credentials
 
 
-def get_active_user(session: SessionLocal = Depends(get_db)) -> User:
-    # TODO - get connected/current user
-    user = session.query(User).filter_by(id=1).first()
-    return user
-
-
 def is_client_secret_none() -> bool:
     return CLIENT_SECRET_FILE is None
 
@@ -123,31 +117,20 @@ def push_events_to_db(events: list, user: User,
 
     for event in events:
         # Running over the events that have come from the API
-        title = event['summary']  # The Google event title
+        title = event.get('summary')  # The Google event title
 
         # support for all day events
-        if 'dateTime' in event['start'].keys():
+        if 'dateTime' in event['start']:
             # This case handles part time events (not all day events)
             start = datetime.fromisoformat(event['start']['dateTime'])
             end = datetime.fromisoformat(event['end']['dateTime'])
         else:
             # This case handles all day events
-            # It takes the date string in this format yyyy-mm-dd
-            # - according to the documentation
-            # and then split it and passing it to datetime constructor.
-            start_in_str = event['start']['date'].split('-')
-            start = datetime(
-                year=int(start_in_str[0]),
-                month=int(start_in_str[1]),
-                day=int(start_in_str[2])
-            )
+            start_in_str = event['start']['date']
+            start = datetime.strptime(start_in_str, '%Y-%m-%d')
 
-            end_in_str = event['end']['date'].split('-')
-            end = datetime(
-                year=int(end_in_str[0]),
-                month=int(end_in_str[1]),
-                day=int(end_in_str[2])
-            )
+            end_in_str = event['end']['date']
+            end = datetime.strptime(end_in_str, '%Y-%m-%d')
 
         # if Google Event has a location attached
         location = event.get('location')
