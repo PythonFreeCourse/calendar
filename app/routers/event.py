@@ -110,10 +110,10 @@ async def check_country_time(request: Request,
     if match is not None:
         data = await request.form()
         country = data['countries']
-        start_time = datetime.strptime(
+        start_time = dt.strptime(
             data['start_date'] + ' ' + data['start_time'],
             TIME_FORMAT)
-        end_time = datetime.strptime(
+        end_time = dt.strptime(
             data['end_date'] + ' ' + data['end_time'],
             TIME_FORMAT)
         user_timezone = match.timezone
@@ -124,13 +124,15 @@ async def check_country_time(request: Request,
                                     country=country,
                                     session=session)
         return templates.TemplateResponse("event/eventedit.html",
-                                        {"request": request,
-                                         "chosen_country": country,
-                                         "chosen_country_meeting_time": meeting_time_for_invitee})
+                                         {"request": request,
+                                          "chosen_country": country,
+                                          "chosen_country_meeting_time": (
+                                              meeting_time_for_invitee
+                                              )})
     else:
         return templates.TemplateResponse("event/eventedit.html",
-                                        {"request": request,
-                                         "msg": ERROR_MSG})
+                                         {"request": request,
+                                          "msg": ERROR_MSG})
 
 
 @router.post("/edit", include_in_schema=False)

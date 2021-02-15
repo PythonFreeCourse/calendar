@@ -26,7 +26,7 @@ CORRECT_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'True',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com',
+    'invited': 'a@a.com,b@b.com'
 }
 
 WRONG_EVENT_FORM_DATA = {
