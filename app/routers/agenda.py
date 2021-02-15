@@ -27,7 +27,7 @@ def calc_dates_range_for_agenda(
     return start, end
 
 
-@router.get("/agenda")
+@router.get("/agenda", include_in_schema=False)
 def agenda(
         request: Request,
         db: Session = Depends(get_db),

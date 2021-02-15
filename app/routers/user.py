@@ -1,16 +1,53 @@
 from fastapi import APIRouter, FastAPI, Request
 from typing import List
+from pydantic import BaseModel, Field
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.dependencies import get_db
 from app.database.models import Event, User, UserEvent
+<<<<<<< HEAD
 from app.internal.utils import save, get_current_user
 from app.internal.user.availability import (
     disable, enable)
 
 router = APIRouter()
 app = FastAPI()
+=======
+from app.internal.utils import save
+from fastapi import APIRouter, Depends
+
+router = APIRouter(
+    prefix="/user",
+    tags=["user"],
+    responses={404: {"description": "Not found"}},
+)
+
+
+class UserModel(BaseModel):
+    username: str
+    password: str
+    email: str = Field(regex='^\\S+@\\S+\\.\\S+$')
+    language: str
+    language_id: int
+
+
+@router.get("/list")
+async def get_all_users(session=Depends(get_db)):
+    return session.query(User).all()
+
+
+@router.get("/")
+async def get_user(id: int, session=Depends(get_db)):
+    return session.query(User).filter_by(id=id).first()
+
+
+@router.post("/")
+def manually_create_user(user: UserModel, session=Depends(get_db)):
+    create_user(**user.dict(), session=session)
+    return f'User {user.username} successfully created'
+>>>>>>> 372421f295baf215e8bc23ad366c609556e8f1ac
 
 
 def create_user(username: str,
