@@ -97,7 +97,7 @@ for router in routers_to_include:
 @app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
-    quote = daily_quotes.get_quote(db)
+    quote = daily_quotes.get_quote_of_day(db)
     return templates.TemplateResponse("index.html", {
         "request": request,
         "quote": quote,
