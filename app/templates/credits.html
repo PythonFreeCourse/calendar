@@ -7,123 +7,17 @@
 
 {% block content %}
     <h1>Say hello to our developers:</h1>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Yam Mesicka.PNG') }}" alt="Yam Mesicka">
-        <div class="credit-name">Yam Mesicka</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/mesicka/">LinkedIn</a>
+    {% for credit in credit_list %}
+        <div class="gallery">
+            <img src="/static/credits_pictures/{{credit.picture}}" alt="{{credit.name}}">
+            <div class="credit-name">{{credit.name}}</div>
+            <div class="credit-name">
+                {% if credit.linkedin  %}
+                    <a class="contact" href={{credit.linkedin}}>LinkedIn</a>
+                {% else %}
+                    <p>{{credit.mail}}</p>
+                {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Adva Alkalay.PNG') }}" alt="Adva Alkalay">
-        <div class="credit-name">Adva Alkalay</div>
-        <div class="credit-name">
-            <p>adva.alkalay@gmail.com</p>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Aviad Amar.PNG') }}" alt="Aviad Amar">
-        <div class="credit-name">Aviad Amar</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/aviad-amar-368405aa ">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Elior Digmi.PNG') }}" alt="Elior Digmi">
-        <div class="credit-name">Elior Digmi</div>
-        <div class="credit-name">
-            <p>Eliory09@gmail.com</p>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Adi Faibish.PNG') }}" alt="Adi Faibish">
-        <div class="credit-name">Adi Faibish</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/adi-faibish-3a9664144/">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Yaakov Fogel.PNG') }}" alt="Yaakov Fogel">
-        <div class="credit-name">Yaakov Fogel</div>
-        <div class="credit-name">
-            <p>kobyfogel@gmail.com</p>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Ori Hirshfeld.PNG') }}" alt="Ori Hirshfeld">
-        <div class="credit-name">Ori Hirshfeld</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/ori-hirshfeld-799748172/">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Hagai Kraus.PNG') }}" alt="Hagai Kraus">
-        <div class="credit-name">Hagai Kraus</div>
-        <div class="credit-name">
-            <a class="contact" href="https://github.com/krauson/">GitHub</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/profile.png') }}" alt="Eyal Merav">
-        <div class="credit-name">Eyal Merav</div>
-        <div class="credit-name">
-        </div>
-    </div>
-    <div class="gallery">
-            <img src="{{ url_for('static', path='credits_pictures/Idan Pelled.PNG') }}" alt="Idan Pelled">
-        <div class="credit-name">Idan Pelled</div>
-        <div class="credit-name">
-            <p>pelled.idan@gmail.com</p>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Nir Perelshtein.PNG') }}" alt="Nir Perelshtein">
-        <div class="credit-name">Nir Perelshtein</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/nir-perelshtein">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Nadav Pesach.PNG') }}" alt="Nadav Pesach">
-        <div class="credit-name">Nadav Pesach</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/nadav-pesach-b337a51b1">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Elor Shoshan.PNG') }}" alt="Elor Shoshan">
-        <div class="credit-name">Elor Shoshan</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/elor-shoshan-319192119/">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Anna Shtirberg.PNG') }}" alt="Anna Shtirberg">
-        <div class="credit-name">Anna Shtirberg</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/anna-shtirberg-586250206/ ">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Zohar Yamin.PNG') }}" alt="Zohar Yamin">
-        <div class="credit-name">Zohar Yamin</div>
-        <div class="credit-name">
-            <p>zohary89@gmail.com</p>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Odelia Yechiel.PNG') }}" alt="Odelia Yechiel">
-        <div class="credit-name">Odelia Yechiel</div>
-        <div class="credit-name">
-            <a class="contact" href="https://www.linkedin.com/in/odeliayec/">LinkedIn</a>
-        </div>
-    </div>
-    <div class="gallery">
-        <img src="{{ url_for('static', path='credits_pictures/Sagi Zaid Or.PNG') }}" alt="Sagi Zaid Or">
-        <div class="credit-name">Sagi Zaid Or</div>
-        <div class="credit-name">
-            <!-- <a class="contact" href="mailto:sagi@eretz.org.il">sagi@eretz.org.il</a> -->
-            <p>sagi@eretz.org.il</p>
-        </div>
-    </div>
+    {% endfor %}
 {% endblock %}

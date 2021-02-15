@@ -2,13 +2,18 @@
 
 # Our Authors
 
-Markup : * Yam Mesicka - Leader
+         * Yam Mesicka - Leader
          * Adva Alkalay - Developer
          * Aviad Amar - Developer
+         * Efrat Bar Yehuda - Developer
+         * Michael Ben David - Developer
+         * Tamar Berger - Developer
+         * Yuval Cagan - Developer
          * Elior Digmi - Developer
          * Adi Faibish - Developer
          * Yaakov Fogel - Developer
          * Ori Hirshfeld - Developer
+         * Hadas Kedar - Developer
          * Hagai Kraus - Developer
          * Eyal Merav - Developer
          * Idan Pelled - Developer
@@ -20,13 +25,11 @@ Markup : * Yam Mesicka - Leader
          * Odelia Yechiel - Developer
          * Sagi Zaid Or - Developer
          * Ap1234567 - Developer
-         * efratush - Developer
          * ellenc345 - Developer
          * Gonzom - Developer
          * ivarshav - Developer
          * Liad-n - Developer
          * leddest - Developer
-         * Michael-B-D - Developer
          * PureDreamer - Developer
          * ShiZinDle - Developer
          * YairEn - Developer
