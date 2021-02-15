@@ -9,7 +9,7 @@ from app.internal.utils import get_current_user
 router = APIRouter()
 
 
-@router.get("/search")
+@router.get("/search", include_in_schema=False)
 def search(request: Request, db: Session = Depends(get_db)) -> Response:
     """Returns the Search page route.
 
@@ -29,7 +29,7 @@ def search(request: Request, db: Session = Depends(get_db)) -> Response:
     })
 
 
-@router.post("/search")
+@router.post("/search", include_in_schema=False)
 async def show_results(
         request: Request,
         keywords: str = Form(None),

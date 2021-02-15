@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/", include_in_schema=False)
 def view_invitations(
         request: Request, db: Session = Depends(get_db)
 ) -> Response:
@@ -39,7 +39,7 @@ def view_invitations(
     })
 
 
-@router.post("/")
+@router.post("/", include_in_schema=False)
 async def accept_invitations(
         request: Request, db: Session = Depends(get_db)
 ) -> RedirectResponse:
@@ -65,7 +65,7 @@ async def accept_invitations(
     url = router.url_path_for("view_invitations")
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
-
+@router.get("/get_all_invitations")
 def get_all_invitations(db: Session, **param) -> List[Invitation]:
     """Returns all invitations filtered by the requested parameters.
 
@@ -84,6 +84,7 @@ def get_all_invitations(db: Session, **param) -> List[Invitation]:
         return invitations
 
 
+@router.post("/get_invitation_by_id")
 def get_invitation_by_id(
         invitation_id: int, db: Session
 ) -> Optional[Invitation]:
