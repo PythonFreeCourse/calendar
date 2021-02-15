@@ -6,7 +6,7 @@
     --borders-variant:#F7F7F7;
 }
 
-.day {
+.day-weekview {
     border-left: 1px solid var(--borders);
     width: 100%;
 }
@@ -38,4 +38,3 @@
     margin-left: -2;
     overflow: hidden;
 }
-
