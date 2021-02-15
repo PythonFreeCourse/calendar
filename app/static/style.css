@@ -97,6 +97,10 @@ p {
   background-color: whitesmoke;
 }
 
-.subtitle {
-    font-size: 20px;
+.input-upload-file {
+    margin-top: 15px
+}
+
+.upload-file {
+    margin: auto 10px auto 0px
 }

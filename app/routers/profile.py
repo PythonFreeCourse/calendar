@@ -164,8 +164,8 @@ def get_image_crop_area(width, height):
     return 0, delta, width, width + delta
 
 
-@router.post("/holidays/update_holidays")
-async def update_holidays(
+@router.post("/holidays/update")
+async def update(
         file: UploadFile = File(...), session=Depends(get_db)):
     icsfile = await file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
