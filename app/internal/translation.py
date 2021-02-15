@@ -24,7 +24,6 @@ def translate_text_for_user(text: str, session: Session, user_id: int) -> str:
 
     Returns:
         The translated text.
-
     """
     target_lang = _get_user_language(user_id, session)
     if not target_lang:
@@ -45,7 +44,6 @@ def translate_text(text: str,
 
     Returns:
         The translated text.
-
     """
     if not text.strip():
         return ""
@@ -78,7 +76,6 @@ def _get_user_language(user_id: int, session: Session) -> str:
     Raises:
         HTTPException: If no language or multiple languages were
             found for the user.
-
     """
     try:
         user = get_users(session, id=user_id)[0]
@@ -107,7 +104,6 @@ def _detect_text_language(text: str) -> str:
 
     Returns:
         The language code of the language the text is written in.
-
     """
     return str(TextBlob(text).detect_language())
 
@@ -120,7 +116,6 @@ def _get_language_code(language_name: str) -> str:
 
     Returns:
         The language code.
-
     """
     return languages.get(name=language_name.capitalize()).alpha2
 
@@ -134,7 +129,6 @@ def _get_language_by_id(language_id: int, session: Session) -> str:
 
     Returns:
         The language name.
-
     """
     try:
         language = session.query(Language.name).filter_by(id=language_id).one()

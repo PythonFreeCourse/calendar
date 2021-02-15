@@ -23,7 +23,6 @@ def get_icalendar(event: Event, emails: List[str]) -> bytes:
 
     Returns:
         An iCalendar that can be used as a string for a file.
-
     """
     icalendar = _create_icalendar()
     ievent = _get_icalendar_event(event, emails)
@@ -45,7 +44,6 @@ def get_icalendar_with_multiple_events(
 
     Returns:
         An iCalendar that can be used as a string for a file.
-
     """
     icalendar = _create_icalendar()
     for event in events:
@@ -78,7 +76,6 @@ def _get_icalendar_event(event: Event, emails: List[str]) -> IEvent:
 
     Returns:
         A iCalendar that can be used as a string for a file.
-
     """
     ievent = _create_icalendar_event(event)
     _add_attendees(ievent, emails)
@@ -93,7 +90,6 @@ def _create_icalendar_event(event: Event) -> IEvent:
 
     Returns:
         An iCalendar event.
-
     """
     data = [
         ('organizer', _get_v_cal_address(event.owner.email, organizer=True)),
@@ -125,7 +121,7 @@ def _get_v_cal_address(email: str, organizer: bool = False) -> vCalAddress:
         organizer: A flag whether or not the user is the event organizer.
 
     Returns:
-
+        A vCalAddress object.
     """
     attendee = vCalAddress(f'MAILTO:{email}')
     if organizer:
@@ -149,7 +145,6 @@ def _generate_id(event: Event) -> bytes:
 
     Returns:
         A unique encoded ID in bytes.
-
     """
     return (
             str(event.id)
@@ -165,7 +160,6 @@ def _add_attendees(ievent: IEvent, emails: List[str]):
     Args:
         ievent: The iCalendar event.
         emails: A list of attendees emails.
-
     """
     for email in emails:
         if verify_email_pattern(email):

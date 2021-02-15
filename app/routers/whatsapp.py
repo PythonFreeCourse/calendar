@@ -18,7 +18,6 @@ def make_link(phone_number: Optional[str], message: Optional[str]) -> str:
 
     Returns:
         A WhatsApp message URL.
-
     """
     api = 'https://api.whatsapp.com/send?'
     url_query = {'phone': phone_number, 'text': message}

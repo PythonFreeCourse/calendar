@@ -22,7 +22,6 @@ def get_results_by_keywords(
 
     Returns:
         A list of Events matching the search query.
-
     """
     keywords = _get_stripped_keywords(keywords)
 
@@ -44,7 +43,6 @@ def _get_stripped_keywords(keywords: str) -> str:
 
     Returns:
         A valid database search keywords string.
-
     """
     keywords = " ".join(keywords.split())
     keywords = keywords.replace(" ", ":* & ") + ":*"

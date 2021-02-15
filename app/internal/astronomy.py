@@ -29,7 +29,6 @@ async def get_astronomical_data(
             astronomy: A dictionary of relevant data, including:
                 sunrise, sunset, moonrise, moonset, moon_phase, and
                 moon_illumination.
-
     """
     formatted_date = date.strftime('%Y-%m-%d')
     return await _get_astronomical_data_from_api(formatted_date, location)
@@ -47,7 +46,6 @@ async def _get_astronomical_data_from_api(
 
     Returns:
         A dictionary with the results from the API call.
-
     """
     input_query_string = {
         'key': config.ASTRONOMY_API_KEY,

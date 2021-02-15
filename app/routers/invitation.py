@@ -28,7 +28,6 @@ def view_invitations(
 
     Returns:
         The Invitations HTML page.
-
     """
     return templates.TemplateResponse("invitations.html", {
         "request": request,
@@ -55,7 +54,6 @@ async def accept_invitations(
 
     Returns:
         An updated Invitations HTML page.
-
     """
     data = await request.form()
     invite_id = list(data.values())[0]
@@ -77,7 +75,6 @@ def get_all_invitations(db: Session, **param) -> List[Invitation]:
 
     Returns:
         A list of all invitations.
-
     """
     try:
         invitations = list(db.query(Invitation).filter_by(**param))
@@ -87,8 +84,9 @@ def get_all_invitations(db: Session, **param) -> List[Invitation]:
         return invitations
 
 
-def get_invitation_by_id(invitation_id: int, db: Session
-                         ) -> Optional[Invitation]:
+def get_invitation_by_id(
+        invitation_id: int, db: Session
+) -> Optional[Invitation]:
     """Returns a Invitation by an ID.
 
     Args:
@@ -97,7 +95,6 @@ def get_invitation_by_id(invitation_id: int, db: Session
 
     Returns:
         An Invitation object if found, otherwise returns None.
-
     """
     return (db.query(Invitation)
             .filter_by(id=invitation_id)

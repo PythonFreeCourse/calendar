@@ -16,7 +16,6 @@ def celebrity(request: Request) -> Response:
 
     Returns:
         The Celebrity HTML page.
-
     """
     today = get_today_month_and_day()
 

@@ -13,10 +13,12 @@ def invitation(
         event: Event, user: User, session: Session
 ) -> Generator[Invitation, None, None]:
     """Returns an Invitation object after being created in the database.
+
     Args:
         event: An Event instance.
         user: A user instance.
         session: A database connection.
+
     Returns:
         An Invitation object.
     """

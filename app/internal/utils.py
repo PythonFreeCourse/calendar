@@ -8,7 +8,6 @@ from app.database.models import Base, User
 def save(session: Session, instance: Base) -> bool:
     """Commits an instance to the db.
     source: app.database.models.Base"""
-
     if issubclass(instance.__class__, Base):
         session.add(instance)
         session.commit()
@@ -22,7 +21,6 @@ def create_model(
         **kwargs: Any
 ) -> Base:
     """Creates and saves a db model."""
-
     instance = model_class(**kwargs)
     save(session, instance)
     return instance
@@ -55,9 +53,6 @@ def get_user(session: Session, user_id: int) -> Optional[User]:
 
     Returns:
         (User | None): User instance for `user_id` if exists, None otherwise.
-
-    Raises:
-        None
     """
     return session.query(User).filter_by(id=user_id).first()
 
@@ -70,7 +65,6 @@ def get_placeholder_user() -> User:
 
     Returns:
         A User object.
-
     """
     return User(
         username='new_user',

@@ -28,7 +28,6 @@ def set_ui_language(language: str = None) -> None:
 
     .. _Language Code Identifier (LCID) Reference:
         https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c # noqa: E501
-
     """
 
     # TODO: Connect when user registration is completed.
@@ -80,7 +79,6 @@ def _get_supported_languages(
 
     Returns:
         A generator expression of the supported translation languages codes.
-
     """
 
     paths = [Path(f.path) for f in os.scandir(language_dir) if f.is_dir()]

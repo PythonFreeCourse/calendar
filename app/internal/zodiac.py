@@ -15,7 +15,6 @@ def get_zodiac(data: Dict[str, Union[str, int]]) -> Zodiac:
 
     Returns:
         A new Zodiac object.
-
     """
     return Zodiac(
         name=data['name'],
@@ -35,7 +34,6 @@ def get_zodiac_of_day(session: Session, date: datetime) -> Zodiac:
 
     Returns:
         A Zodiac object.
-
     """
     first_month_of_sign_filter = and_(
         Zodiac.start_month == date.month,
@@ -64,7 +62,6 @@ def get_zodiac_of_month(session: Session, date: datetime) -> Zodiac:
 
     Returns:
         A Zodiac object.
-
     """
     zodiac = (session
               .query(Zodiac)

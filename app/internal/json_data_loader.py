@@ -20,7 +20,6 @@ def load_to_database(session: Session) -> None:
 
     Args:
         session: The database connection.
-
     """
     _insert_into_database(
         session,
@@ -53,7 +52,6 @@ def _insert_into_database(
 
     Returns:
         True if the save was successful, otherwise returns False.
-
     """
     if not _is_table_empty(session, table):
         return False
@@ -90,7 +88,6 @@ def _get_data_from_json(path: str) -> List[Dict[str, Any]]:
 
     Returns:
         A list of dictionary objects.
-
     """
     try:
         with open(path, 'r') as json_file:

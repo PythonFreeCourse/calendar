@@ -17,7 +17,6 @@ def get_quote(data: Dict[str, Optional[str]]) -> Quote:
 
     Returns:
         A new Quote object.
-
     """
     return Quote(
         text=data['text'],
@@ -38,7 +37,6 @@ def get_quote_of_day(
 
     Returns:
         A Quote object.
-
     """
     day_number = requested_date.timetuple().tm_yday
     quote = (session.query(Quote)

@@ -19,7 +19,6 @@ def search(request: Request, db: Session = Depends(get_db)) -> Response:
 
     Returns:
         The Search HTML page.
-
     """
     # TODO: connect to current user
     user = get_current_user(db)
@@ -45,7 +44,6 @@ async def show_results(
 
     Returns:
         The Search HTML page.
-
     """
     # TODO: connect to current user
     user = get_current_user(db)

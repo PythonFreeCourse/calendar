@@ -32,7 +32,7 @@ def export(
         db: Optional; The database connection.
 
     Returns:
-
+        # TODO add description
     """
     # TODO: connect to real user
     user = get_current_user(db)
