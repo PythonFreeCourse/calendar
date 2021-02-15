@@ -32,6 +32,7 @@ class User(Base):
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     privacy = Column(String, default="Private", nullable=False)
+    is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
 
     owned_events = relationship(
@@ -43,9 +44,16 @@ class User(Base):
     salary_settings = relationship(
         "SalarySettings", cascade="all, delete", back_populates="user",
     )
+    comments = relationship("Comment", back_populates="user")
 
     def __repr__(self):
         return f'<User {self.id}>'
+
+    @staticmethod
+    async def get_by_username(db: Session, username: str) -> User:
+        """query database for a user by unique username"""
+        return db.query(User).filter(
+            User.username == username).first()
 
 
 class Event(Base):
@@ -57,6 +65,7 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    vc_link = Column(String)
     color = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
     invitees = Column(String)
@@ -69,6 +78,7 @@ class Event(Base):
     participants = relationship(
         "UserEvent", cascade="all, delete", back_populates="events",
     )
+    comments = relationship("Comment", back_populates="event")
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -266,6 +276,22 @@ class Quote(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+
+
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    content = Column(String, nullable=False)
+    time = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="comments")
+    event = relationship("Event", back_populates="comments")
+
+    def __repr__(self):
+        return f'<Comment {self.id}>'
 
 
 class Zodiac(Base):
