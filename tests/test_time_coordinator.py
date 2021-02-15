@@ -1,15 +1,10 @@
 from datetime import datetime
 
-from fastapi.testclient import TestClient
-import pytest
-from sqlalchemy.orm.session import Session
-from starlette import status
-
-from app.database.models import Country
-from app.dependencies import get_db
-from app.main import app
 from app.resources.countries import countries
-from app.internal.event import add_countries_to_db, get_all_countries_names, get_meeting_local_duration
+from app.internal.event import (
+    add_countries_to_db, get_all_countries_names,
+    get_meeting_local_duration
+)
 
 
 def test_get_all_countries_names(session):
@@ -27,5 +22,7 @@ def test_time_convertion(session):
     country_to_convert_to = "France, Paris"
     start = datetime(year=2021, month=2, day=2, hour=14, minute=0)
     end = datetime(year=2021, month=2, day=2, hour=15, minute=0)
-    converted = get_meeting_local_duration(start, end, timezone, country_to_convert_to, session)
+    converted = get_meeting_local_duration(
+        start, end, timezone, country_to_convert_to, session
+    )
     assert converted == '13:00 - 14:00'

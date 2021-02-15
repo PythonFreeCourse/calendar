@@ -14,8 +14,8 @@ from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
-    raise_if_zoom_link_invalid, get_meeting_local_duration, get_all_countries_names
-
+    raise_if_zoom_link_invalid, get_meeting_local_duration,
+    get_all_countries_names
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
@@ -74,16 +74,20 @@ async def check_country_time(request: Request,
     If the user's ip is not recognized, an error message will appear.
     ** temporarily using a random israeli ip address instead **
     """
-    ip = request.client.host
+    # TODO: define ip as request.client.host
+    # ip = request.client.host
     random_israeli_ip_for_now = '82.166.236.10'
-    match = geolite2.lookup(random_israeli_ip_for_now)
+    ip = random_israeli_ip_for_now
+    match = geolite2.lookup(ip)
     if match is not None:
         data = await request.form()
         country = data['countries']
-        start_time = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
-                              TIME_FORMAT)
-        end_time = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
-                            TIME_FORMAT)
+        start_time = datetime.strptime(
+            data['start_date'] + ' ' + data['start_time'],
+            TIME_FORMAT)
+        end_time = datetime.strptime(
+            data['end_date'] + ' ' + data['end_time'],
+            TIME_FORMAT)
         user_timezone = match.timezone
         meeting_time_for_invitee = get_meeting_local_duration(
                                     start_time=start_time,
@@ -92,13 +96,13 @@ async def check_country_time(request: Request,
                                     country=country,
                                     session=session)
         return templates.TemplateResponse("event/eventedit.html",
-                                      {"request": request,
-                                       "chosen_country": country,
-                                       "chosen_country_meeting_time": meeting_time_for_invitee})
+                                        {"request": request,
+                                         "chosen_country": country,
+                                         "chosen_country_meeting_time": meeting_time_for_invitee})
     else:
         return templates.TemplateResponse("event/eventedit.html",
-                                            {"request": request,
-                                             "msg": ERROR_MSG})
+                                        {"request": request,
+                                         "msg": ERROR_MSG})
 
 
 @router.post("/edit")

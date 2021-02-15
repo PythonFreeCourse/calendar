@@ -6,8 +6,8 @@ from typing import List, Set
 
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
-from sqlalchemy.dialects import postgresql
-from sqlalchemy.dialects.postgresql import insert
+# from sqlalchemy.dialects import postgresql
+# from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
@@ -92,6 +92,7 @@ def get_messages(session: Session,
                         f'Want to create another one {weeks_diff} after too?')
     return messages
 
+
 def add_countries_to_db(session: Session) -> None:
     """
     Adding all new countries to the "Country" table in the database.
@@ -117,9 +118,13 @@ def add_countries_to_db(session: Session) -> None:
             if not existing:
                 new_country = Country(name=name, timezone=str(capital))
                 session.add(new_country)
-            # insert_country = insert(Country).values(name=name, timezone=str(capital))
-            # insert_country_with_condition = insert_country.on_conflict_do_nothing(index_elements=['name'])
-            # session.execute(insert_country_with_condition)
+            # insert_country = insert(Country).values(
+            # name=name, timezone=str(capital)
+            # )
+            # insert_country = insert_country.on_conflict_do_nothing(
+            # index_elements=['name']
+            # )
+            # session.execute(insert_country)
     session.commit()
     session.close()
 
@@ -151,14 +156,18 @@ def get_meeting_local_duration(start_time: datetime,
     """
     Returns the total duration of the converted meeting time.
     """
-    meeting_start_time = find_local_time_by_country(user_timezone=user_timezone,
-                                                    country=country,
-                                                    meeting_time=start_time,
-                                                    session=session)
-    meeting_end_time = find_local_time_by_country(user_timezone=user_timezone,
-                                                    country=country,
-                                                    meeting_time=end_time,
-                                                    session=session)
+    meeting_start_time = find_local_time_by_country(
+        user_timezone=user_timezone,
+        country=country,
+        meeting_time=start_time,
+        session=session
+        )
+    meeting_end_time = find_local_time_by_country(
+        user_timezone=user_timezone,
+        country=country,
+        meeting_time=end_time,
+        session=session
+        )
     total_time = meeting_start_time + ' - ' + meeting_end_time
     return total_time
 
@@ -171,4 +180,3 @@ def get_all_countries_names(session: Session) -> List:
     add_countries_to_db(session=session)
     countries_names = session.query(Country.name).all()
     return countries_names
-
