@@ -40,8 +40,8 @@
                             <a class="nav-link" href="{{ url_for('login') }}">Sign In</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="{{ url_for('logout') }}">{{ gettext("Sign Out") }}</a>
-                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">{{ gettext("Sign Out") }}</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
                         </li>
@@ -52,10 +52,13 @@
                             <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('read_all_notes') }}">Notes</a>
+                            <a class="nav-link" href="{{ url_for('search') }}">Search</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('search') }}">Search</a>
+                            <a class="nav-link" href="{{ url_for('about') }}">{{ gettext("About Us") }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('read_all_notes') }}">Notes</a>
                         </li>
                     </ul>
                 </div>
