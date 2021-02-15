@@ -1,4 +1,8 @@
 from fastapi import Depends, FastAPI, Request, status
+from fastapi.openapi.docs import (
+    get_swagger_ui_html,
+    get_swagger_ui_oauth2_redirect_html,
+)
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
@@ -8,16 +12,8 @@ from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
-from app.utils.extending_openapi import custom_openapi
 from app.routers.salary import routes as salary
-from fastapi import Depends, FastAPI, Request
-from fastapi.openapi.docs import (
-    get_swagger_ui_html,
-    get_swagger_ui_oauth2_redirect_html,
-)
-from fastapi.staticfiles import StaticFiles
-from starlette.status import HTTP_401_UNAUTHORIZED
-from sqlalchemy.orm import Session
+from app.utils.extending_openapi import custom_openapi
 
 
 def create_tables(engine, psql_environment):

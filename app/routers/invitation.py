@@ -65,6 +65,7 @@ async def accept_invitations(
     url = router.url_path_for("view_invitations")
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
+
 @router.get("/get_all_invitations")
 def get_all_invitations(db: Session, **param) -> List[Invitation]:
     """Returns all invitations filtered by the requested parameters.
