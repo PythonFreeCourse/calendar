@@ -2,26 +2,6 @@ from datetime import datetime
 from pydantic import BaseModel, validator, EmailStr, EmailError
 from typing import Optional, Union
 
-
-class NoteSchema(BaseModel):
-    title: str
-    description: Optional[str] = None
-    timestamp: Optional[datetime]
-
-    class Config:
-        orm_mode = True
-        schema_extra = {
-            'example': {
-                'title': 'Foo',
-                'description': 'Bar',
-            }
-        }
-
-
-class NoteDB(NoteSchema):
-    id: int
-
-
 EMPTY_FIELD_STRING = 'field is required'
 MIN_FIELD_LENGTH = 3
 MAX_FIELD_LENGTH = 20
@@ -106,3 +86,22 @@ class User(UserBase):
     """
     id: int
     is_active: bool
+
+
+class NoteSchema(BaseModel):
+    title: str
+    description: Optional[str] = None
+    timestamp: Optional[datetime]
+
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            'example': {
+                'title': 'Foo',
+                'description': 'Bar',
+            }
+        }
+
+
+class NoteDB(NoteSchema):
+    id: int
