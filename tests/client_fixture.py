@@ -80,6 +80,7 @@ def settings_test_client() -> Iterator[TestClient]:
     yield from create_test_client(profile.get_db)
 
 
+@pytest.fixture(scope="session")
 def security_test_client():
     yield from create_test_client(event.get_db)
 

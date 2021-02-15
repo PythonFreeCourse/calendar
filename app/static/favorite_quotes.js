@@ -1,3 +1,4 @@
+// Adding event listeners
 let hearts = Array.from(document.getElementsByClassName("heart"));
 hearts.forEach((heart) => {
   if (heart) {
@@ -5,6 +6,15 @@ hearts.forEach((heart) => {
   }
 });
 
+/**
+ * @summary This function is a handler for the event of heart-click.
+ * Whenever a user clicks on a heart icon, in case of empty heart:
+ * saves quote in favorites, as well as changing
+ * the heart icon from empty to full.
+ * In case of full heart:
+ * Removes it and switch back to empty heart icon.
+ * Uses the save_or_remove_quote function to handle db operations.
+ */
 function on_heart_click() {
   const quote = this.parentNode.previousElementSibling.innerHTML.replaceAll(
     '"',
@@ -24,6 +34,9 @@ function on_heart_click() {
   }
 }
 
+/**
+ * @summary Saves or removes a quote from favorites.
+ */
 function save_or_remove_quote(user_id, quote, author, to_save) {
   let xhr = new XMLHttpRequest();
   xhr.open("post", "/");
