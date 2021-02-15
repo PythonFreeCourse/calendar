@@ -42,11 +42,11 @@ load_hebrew_view.load_hebrew_view_if_table_empty(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
-from app.routers import (
+from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, export, four_o_four, hebrew_date, invitation,
     login, logout, profile, register, search, telegram, user,
-    weekview, whatsapp
+    weekview, whatsapp,
 )
 
 json_data_loader.load_to_db(next(get_db()))
