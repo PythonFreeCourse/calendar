@@ -5,7 +5,6 @@
   <title>Edit Event</title>
   <link href="{{ url_for('static', path='event/eventedit.css') }}" rel="stylesheet">
 </head>
-<script src="{{ url_for('static', path='/voice.js') }}"></script>
 <body>
 <form name="eventeditform" method="POST">
   <!-- Temporary nav layout based on bootstrap -->
@@ -37,5 +36,6 @@
     <input type="submit" value="Submit">
   </div>
 </form>
+<script src="{{ url_for('static', path='/voice.js') }}"></script>
 </body>
 </html>
