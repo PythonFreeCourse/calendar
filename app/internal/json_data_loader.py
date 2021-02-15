@@ -33,7 +33,7 @@ def load_to_database(session: Session) -> None:
         session,
         'app/resources/quotes.json',
         Quote,
-        daily_quotes.create_quote_object,
+        daily_quotes.get_quote,
     )
 
 
