@@ -1,17 +1,8 @@
-body {
-    margin: 0;
-    padding: 0;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #F7F7F7;
-}
-
 .moving-words {
-    font-family: "Assistant", "Ariel", sans-serif;
+    margin-top: 4rem;
     text-transform: uppercase;
-    font-size: 6em;
-    letter-spacing: 0.1em;
+    font-size: 6rem;
+    letter-spacing: 0.1rem;
     overflow: hidden;
     background: linear-gradient(90deg, #000, #fff, #000);
     background-repeat: no-repeat;
@@ -41,16 +32,12 @@ body {
     width: 100%;
 }
 
-.abouttext {
-    font-size: 1.2em;
+.seprator {
+    margin-top: 8rem;
+    margin-bottom: 8rem;
+}
+
+.about-text {
+    font-size: 1.2rem;
     text-align: justify;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-.course {
-    width: 50%;
 }
