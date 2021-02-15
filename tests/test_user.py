@@ -4,8 +4,7 @@ import pytest
 from app.routers.user import (
     create_user, does_user_exist, get_users
 )
-from app.internal.user.disable import disable_user
-from app.internal.user.enable import enable_user
+from app.internal.user.availability import disable, enable
 from app.internal.utils import save
 from app.database.models import UserEvent, Event
 from app.routers.event import create_event
@@ -96,7 +95,7 @@ def user3(session, event1):
 
 def test_disabling_no_event_user(session, user1):
     # users without any future event can disable themselves
-    disable_user(session, user1.id)
+    disable(session, user1.id)
     assert user1.disabled
     future_events = list(session.query(Event.id).join(UserEvent)
                          .filter(
@@ -104,7 +103,7 @@ def test_disabling_no_event_user(session, user1):
                              Event.start > datetime.now()
                              ))
     assert not future_events
-    enable_user(session, user1.id)
+    enable(session, user1.id)
     assert not user1.disabled
     # making sure that after disabling the user he can be easily enabled.
 
@@ -112,7 +111,7 @@ def test_disabling_no_event_user(session, user1):
 def test_disabling_user_participating_event(session, user3):
     """making sure only users who only participate in events
     can disable and enable themselves."""
-    disable_user(session, user3.id)
+    disable(session, user3.id)
     assert user3.disabled
     future_events = list(session.query(Event.id).join(UserEvent)
                          .filter(
@@ -120,13 +119,13 @@ def test_disabling_user_participating_event(session, user3):
                              Event.start > datetime.now()
                              ))
     assert len(future_events) == 0
-    enable_user(session, user3.id)
+    enable(session, user3.id)
     assert not user3.disabled
 
 
 def test_disabling_event_owning_user(session, user2):
     # making sure user owning events can't disable itself
-    disable_user(session, user2.id)
+    disable(session, user2.id)
     assert not user2.disabled
 
 

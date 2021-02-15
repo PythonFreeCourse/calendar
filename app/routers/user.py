@@ -1,9 +1,16 @@
+from fastapi import APIRouter, FastAPI, Request
 from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+
 from app.database.models import Event, User, UserEvent
-from app.internal.utils import save
+from app.internal.utils import save, get_current_user
+from app.internal.user.availability import (
+    disable, enable)
+
+router = APIRouter()
+app = FastAPI()
 
 
 def create_user(username: str,
@@ -24,7 +31,7 @@ def create_user(username: str,
 
 
 def get_users(session: Session, **param):
-    # Returns all users filtered by param.
+    """Returns all users filtered by param."""
 
     try:
         users = list(session.query(User).filter_by(**param))
@@ -58,3 +65,38 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
         session.query(Event).join(UserEvent)
         .filter(UserEvent.user_id == user_id).all()
     )
+
+
+@router.post("/enable")
+def enable_current_user(
+        request: Request, session: Session) -> bool:
+    """function to enable the user.
+    after successful enable it will be directed to main page.
+    if the disable fails user will stay at settings page
+    and an error will be shown."""
+    disable_successful = enable(session, get_current_user)
+    if disable_successful:
+        # disable succeeded- the user will be directed to homepage.
+        app.url_path_for("/")
+
+    else:
+        # if disable wasn't successful, user will stay in the
+        # settings page and an error message will show.
+        pass
+
+
+@router.post("/disable")
+def disable_current_user(
+        request: Request, session: Session) -> bool:
+    """function to disable the user.
+    after successful disable it will be directed to main page.
+    if the disable fails user will stay at settings page
+    and an error will be shown."""
+    disable_successful = disable(session, get_current_user)
+    if disable_successful:
+        # disable succeeded- the user will be directed to homepage.
+        app.url_path_for("/")
+    else:
+        # if disable wasn't successful, user will stay in the
+        # settings page and an error message will show.
+        pass

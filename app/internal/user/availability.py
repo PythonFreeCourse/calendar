@@ -6,7 +6,7 @@ from app.database.models import Event, User
 # from app.internal.utils import get_current_user
 
 
-def disable_user(session: Session, user_id: int) -> bool:
+def disable(session: Session, user_id: int) -> bool:
     """this functions changes user status to disabled.
     returns:
     True if function worked properly
@@ -27,5 +27,17 @@ def disable_user(session: Session, user_id: int) -> bool:
     user_disabled.disabled = True
     user_disabled.disabled = True
     session.merge(user_disabled)
+    session.commit()
+    return True
+
+
+def enable(session: Session, user_id: int) -> bool:
+    """this functions enables user- doesn't return anything.
+    currently it doesn't uses get_current_user since logger is not
+    merged yet, Ill add it when its impossible to mock a logged user."""
+    # if get_current_user(session) != user_id:
+    #    return False
+    user_enabled = session.query(User).get(user_id)
+    user_enabled.disabled = False
     session.commit()
     return True
