@@ -123,7 +123,9 @@ venv.bak/
 .vscode/
 Scripts/*
 pyvenv.cfg
+.history
 calender-venv/
+
 
 # Spyder project settings
 .spyderproject
@@ -143,9 +145,14 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
+# register stuff
+run.txt
 # VScode
 .vscode/
 app/.vscode/
+
+app/routers/stam
 
 # PyCharm
 .idea

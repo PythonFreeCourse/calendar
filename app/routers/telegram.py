@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Body, Depends
 
-from app.database.database import get_db
 from app.database.models import User
+from app.dependencies import get_db
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.models import Chat
-
 
 router = APIRouter(
     prefix="/telegram",
@@ -13,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/", include_in_schema=False)
 async def bot_client(req: dict = Body(...), session=Depends(get_db)):
     chat = Chat(req)
 

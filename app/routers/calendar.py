@@ -1,15 +1,17 @@
 from http import HTTPStatus
 
-from app.dependencies import templates
-from app.routers import calendar_grid as cg
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from starlette.responses import Response
+
+from app.dependencies import templates
+from app.routers import calendar_grid as cg
 
 router = APIRouter(
     prefix="/calendar/month",
     tags=["calendar"],
     responses={404: {"description": "Not found"}},
+    include_in_schema=False
 )
 
 ADD_DAYS_ON_SCROLL: int = 42

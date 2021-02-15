@@ -1,8 +1,8 @@
 import logging
 
-import pytest
 from _pytest.logging import caplog as _caplog  # noqa: F401
 from loguru import logger
+import pytest
 
 from app import config
 from app.internal.logger_customizer import LoggerCustomizer
