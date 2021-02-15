@@ -13,6 +13,7 @@ router = APIRouter(
     prefix="/calendar/month",
     tags=["calendar"],
     responses={404: {"description": "Not found"}},
+    include_in_schema=False
 )
 
 
