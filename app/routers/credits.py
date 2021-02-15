@@ -11,14 +11,14 @@ from app.dependencies import templates
 router = APIRouter()
 
 
-def data_from_json():
+def data_from_json() -> List:
     path = 'app/resources/credits.json'
     try:
         with open(path, 'r') as json_file:
             json_list = json.load(json_file)
     except (IOError, ValueError):
         logger.exception(
-            f"An error occurred during reading of json file")
+            "An error occurred during reading of json file")
         return []
     return json_list
 
