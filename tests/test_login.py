@@ -83,7 +83,6 @@ def test_is_manager_in_dependency_with_logged_in_manager(
     session.commit()
     security_test_client.post('/login', data=LOGIN_DATA)
     res = security_test_client.get('/manager')
-    print(res.content)
     assert res.json() == {"manager": True}
 
 

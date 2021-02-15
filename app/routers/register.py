@@ -31,7 +31,7 @@ async def create_user(
         'full_name': user.full_name,
         'email': user.email,
         'password': hashed_password,
-        'description': user.description,
+        'description': user.description
     }
     db_user = models.User(**user_details)
     db.add(db_user)
