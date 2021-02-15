@@ -26,9 +26,9 @@
 
     <div class="category_filter">
       <label for="category" class="sr-only">Filter events by category</label>
-      <input type="text" id="category" name="category"
-             class="form-control-sm" placeholder="category ID"
-             value="{{ category }}" onfocus="this.value=''" required>
+      <input type="text" id="category" name="category" class="form-control-sm"
+             placeholder="category ID" value="{{ category }}"
+             onfocus="this.value=''" required>
       <button class="btn btn-outline-info btn-sm" onclick='filterByCategory({{ events | tojson | safe }})'>
         Filter by Categories
       </button>
