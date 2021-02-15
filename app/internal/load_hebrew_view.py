@@ -60,6 +60,7 @@ def load_hebrew_view_if_table_empty(session: Session) -> None:
 
 
 def get_hebrew_dates(db_session: Session) -> HebrewView:
-    """This function return a list of the hebrew dates of the current year object"""
+    """This function return a list of hebrew dates
+     of the current year object"""
     print(db_session.query(HebrewView))
     return print(db_session.query(HebrewView))
