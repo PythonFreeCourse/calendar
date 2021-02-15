@@ -50,5 +50,15 @@ cp app/config.py.example app/config.py
 # Rendering JWT_KEY:
 python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
 
+### Running tox
+```shell
+# Standard tests: 'coverage' and 'flake8'
+tox
+# Only flake8 tests
+tox -e flake8
+# Coverage with html reports
+tox -e rep
+```
+
 ## Contributing
 View [contributing guidelines](https://github.com/PythonFreeCourse/calendar/blob/master/CONTRIBUTING.md).
