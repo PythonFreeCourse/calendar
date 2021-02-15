@@ -146,6 +146,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+
+# register stuff
+run.txt
 # VScode
 .vscode/
 app/.vscode/
