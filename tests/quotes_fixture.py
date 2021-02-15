@@ -6,7 +6,8 @@ from app.internal.utils import create_model, delete_instance
 
 
 def add_quote(
-        session: Session, id_quote: int, text: str, author: str, is_favorite: bool) -> Quote:
+        session: Session, id_quote: int, text: str,
+        author: str, is_favorite: bool) -> Quote:
     quote = create_model(
         session, Quote,
         id=id_quote,

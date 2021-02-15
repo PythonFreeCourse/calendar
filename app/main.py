@@ -5,7 +5,6 @@ from app.internal import daily_quotes, json_data_loader
 
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
-from app.utils.extending_openapi import custom_openapi
 from app.routers.salary import routes as salary
 from fastapi import Depends, FastAPI, Form, Request
 from fastapi.openapi.docs import (

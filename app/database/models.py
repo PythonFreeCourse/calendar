@@ -10,7 +10,6 @@ from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy.orm import relationship, Session
-from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
