@@ -120,3 +120,29 @@ def test_corrupted_token(session, security_test_client):
     security_test_client.post(f'{url}', data=LOGIN_DATA)
     res = security_test_client.get('/protected')
     assert b'Your token is incorrect' in res.content
+
+
+def test_current_user_dependency_ok(session, security_test_client):
+    security_test_client.post('/register', data=REGISTER_DETAIL)
+    res = security_test_client.post('/login', data=LOGIN_DATA)
+    res = security_test_client.get('/current_user')
+    assert res.json() == {"user": 'correct_user'}
+
+
+def test_current_user_dependency_not_logged_in(
+        session, security_test_client):
+    security_test_client.get('/logout')
+    res = security_test_client.get('/current_user')
+    assert b'Please log in' in res.content
+
+
+def test_current_user_dependency_wrong_details(
+        session, security_test_client):
+    security_test_client.get('/logout')
+    security_test_client.post('/register', data=REGISTER_DETAIL)
+    user = LoginUser(**WRONG_LOGIN_DATA)
+    incorrect_token = create_jwt_token(user)
+    url = f"/login?existing_jwt={incorrect_token}"
+    security_test_client.post(f'{url}', data=LOGIN_DATA)
+    res = security_test_client.get('/current_user')
+    assert b'Your token is incorrect' in res.content
