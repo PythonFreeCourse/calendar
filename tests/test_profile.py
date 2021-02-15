@@ -137,7 +137,7 @@ def test_update_calendar_privacy(profile_test_client):
 
     # Post new data
     profile = profile_test_client.post(
-        '/profile/update_calendar_privacy', data=new_privacy)
+        '/profile/privacy', data=new_privacy)
     assert profile.status_code == status.HTTP_302_FOUND
 
     # Get updated data
