@@ -1,9 +1,11 @@
+from app.config import PICTURE_EXTENSION
 from datetime import datetime as dt
+import io
 from operator import attrgetter
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+from PIL import Image
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-# File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, File, Request
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -11,7 +13,7 @@ from starlette import status
 from starlette.responses import RedirectResponse
 
 from app.database.models import Event, User, UserEvent
-from app.dependencies import get_db, logger, templates
+from app.dependencies import get_db, logger, MEDIA_PATH, templates
 from app.internal.event import (
     get_invited_emails,
     get_messages,
@@ -23,6 +25,7 @@ from app.internal.utils import create_model
 from app.routers.user import create_user
 
 TIME_FORMAT = '%Y-%m-%d %H:%M'
+HEIGHT = 200
 
 UPDATE_EVENTS_FIELDS = {
     'title': str,
@@ -50,7 +53,9 @@ async def eventedit(request: Request):
 
 
 @router.post('/edit')
-async def create_new_event(request: Request, session=Depends(get_db)):
+async def create_new_event(request: Request,
+                           event_img: bytes = File(None),
+                           session=Depends(get_db)):
     data = await request.form()
     title = data['title']
     content = data['description']
@@ -77,22 +82,57 @@ async def create_new_event(request: Request, session=Depends(get_db)):
     if is_zoom:
         raise_if_zoom_link_invalid(location)
 
-    event = create_event(session,
-                         title,
-                         start,
-                         end,
-                         owner_id,
-                         content,
-                         location,
-                         invitees=invited_emails,
-                         category_id=category_id,
-                         availability=availability)
+    event = create_event(
+        session,
+        title,
+        start,
+        end,
+        owner_id,
+        content,
+        location,
+        invitees=invited_emails,
+        category_id=category_id,
+        availability=availability,
+    )
+    if event_img:
+        image = process_image(event_img, event.id)
+        event.image = image
+        session.commit()
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
         router.url_path_for('eventview', event_id=event.id) +
         f'messages={"---".join(messages)}',
         status_code=status.HTTP_302_FOUND)
+
+
+def process_image(img: bytes, event_id: int, img_height: int = HEIGHT):
+    """Resized and saves picture according to required height,
+    and keeps aspect ratio"""
+    image = Image.open(io.BytesIO(img))
+    width, height = image.size
+    height_to_req_height = img_height / float(height)
+    new_width = int(float(width) * float(height_to_req_height))
+    resized = image.resize((new_width, img_height), Image.ANTIALIAS)
+    file_name = f'{event_id}{PICTURE_EXTENSION}'
+    resized.save(f'{MEDIA_PATH}/{file_name}')
+    return file_name
+
+
+def crop_to_ratio(width: int, height: int, req_width: int,
+                  req_height: int) -> Tuple[int]:
+    """Get crop values according to current size and
+    required aspect, if necessary"""
+    ratio = width / height
+    req_aspect = req_width / req_height
+    if ratio > req_aspect:
+        new_width = int(height * req_aspect)
+        offset = (width - new_width) // 2
+        return (offset, 0, width - offset, height)
+    else:
+        new_height = int(width / req_aspect)
+        offset = (height - new_height) // 2
+        return (0, offset, width, height - offset)
 
 
 @router.get('/{event_id}')
@@ -211,38 +251,36 @@ def update_event(event_id: int, event: Dict, db: Session) -> Optional[Event]:
     return event_updated
 
 
-def create_event(
-    db: Session,
-    title: str,
-    start,
-    end,
-    owner_id: int,
-    content: Optional[str] = None,
-    location: Optional[str] = None,
-    color: Optional[str] = None,
-    invitees: List[str] = None,
-    category_id: Optional[int] = None,
-    availability: bool = True,
-):
+def create_event(db: Session,
+                 title: str,
+                 start,
+                 end,
+                 owner_id: int,
+                 content: Optional[str] = None,
+                 location: Optional[str] = None,
+                 color: Optional[str] = None,
+                 invitees: List[str] = None,
+                 category_id: Optional[int] = None,
+                 availability: bool = True,
+                 image: Optional[str] = None):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
 
-    event = create_model(
-        db,
-        Event,
-        title=title,
-        start=start,
-        end=end,
-        content=content,
-        owner_id=owner_id,
-        location=location,
-        color=color,
-        emotion=get_emotion(title, content),
-        invitees=invitees_concatenated,
-        category_id=category_id,
-        availability=availability,
-    )
+    event = create_model(db,
+                         Event,
+                         title=title,
+                         start=start,
+                         end=end,
+                         content=content,
+                         owner_id=owner_id,
+                         location=location,
+                         color=color,
+                         emotion=get_emotion(title, content),
+                         invitees=invitees_concatenated,
+                         category_id=category_id,
+                         availability=availability,
+                         image=image)
     create_model(
         db,
         UserEvent,
