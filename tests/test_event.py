@@ -13,6 +13,7 @@ from app.database.models import Comment, Event
 from app.dependencies import get_db
 from app.internal.utils import delete_instance
 from app.main import app
+
 from app.routers import event as evt
 
 CORRECT_EVENT_FORM_DATA = {
@@ -142,16 +143,9 @@ def test_eventedit(event_test_client):
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
-    event_details = [
-        event.title, event.content, event.location, event.vc_link, event.start,
-        event.end, event.color, event.category_id
-    ]
-    response = event_test_client.get(f'/event/{event_id}')
+    response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
-    assert b'View Event' in response.content
-    for event_detail in event_details:
-        assert str(event_detail).encode('utf-8') in response.content, \
-            f'{event_detail} not in view event page'
+    assert b"View Event" in response.content
 
 
 def test_create_event_with_default_availability(client, user, session):
@@ -354,9 +348,11 @@ def test_update_db_close(event):
         'title': 'Problem connecting to db in func update_event',
     }
     with pytest.raises(HTTPException):
-        assert (evt.update_event(
-            event_id=event.id, event=data,
-            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            evt.update_event(event_id=event.id, event=data,
+                             db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_update_event_does_not_exist(event, session):
@@ -374,9 +370,13 @@ def test_db_close_update(session, event):
         'title': 'Problem connecting to db in func _update_event',
     }
     with pytest.raises(HTTPException):
-        assert (evt._update_event(
-            event_id=event.id, event_to_update=data,
-            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            evt._update_event(
+                event_id=event.id,
+                event_to_update=data,
+                db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_repr(event):
@@ -386,14 +386,18 @@ def test_repr(event):
 def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
         response = evt.delete_event(event_id=1, db=None)
-        assert (response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            response.status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
-        assert (evt._delete_event(
-            event=event,
-            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            evt._delete_event(event=event, db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_successful_deletion(event_test_client, session, event):
@@ -402,6 +406,33 @@ def test_successful_deletion(event_test_client, session, event):
     with pytest.raises(HTTPException):
         assert 'Event ID does not exist. ID: 1' in evt.by_id(
             db=session, event_id=1).content
+
+
+def test_change_owner(client, event_test_client, user, session, event):
+    """
+    Test change owner of an event
+    """
+    event_id = event.id
+    event_details = [event.title, event.content, event.location, event.start,
+                     event.end, event.color, event.category_id]
+    response = event_test_client.post(f"/event/{event_id}/owner",
+                                      data=None)
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response.ok
+    assert b"View Event" not in response.content
+    for event_detail in event_details:
+        assert str(event_detail).encode('utf-8') not in response.content, \
+            f'{event_detail} not in view event page'
+    data = {'username': "worng_username"}
+    response = event_test_client.post(f"/event/{event_id}/owner",
+                                      data=data)
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert b'Username does not exist.' in response.content
+    data = {'username': user.username}
+    response = event_test_client.post(f"/event/{event_id}/owner",
+                                      data=data)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
 
 
 def test_deleting_an_event_does_not_exist(event_test_client, event):
@@ -491,10 +522,11 @@ class TestApp:
         'title': 'Test Title',
         'location': 'Fake City',
         'vc_link': 'https://us02web.zoom.us/j/875384596',
-        'start': date_test_data[0],
-        'end': date_test_data[1],
-        'content': 'Any Words',
-        'owner_id': 123
+        "start": date_test_data[0],
+        "end": date_test_data[1],
+        "content": "Any Words",
+        "owner_id": 123,
+        'invitees': 'user1, user2'
     }
 
     @staticmethod
