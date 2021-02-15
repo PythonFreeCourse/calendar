@@ -1,44 +1,31 @@
+from datetime import datetime
+
 from fastapi.testclient import TestClient
+import pytest
+from sqlalchemy.orm.session import Session
+from starlette import status
 
-from app.main import app, add_countries_to_db
-
-
-client = TestClient(app)
-
-
-def test_global_time_feature_opening():
-    response = client.get("/global_time")
-    assert response.status_code == 200
-    assert b"Icons" in response.content
+from app.database.models import Country
+from app.dependencies import get_db
+from app.main import app
+from app.resources.countries import countries
+from app.internal.event import add_countries_to_db, get_all_countries_names, get_meeting_local_duration
 
 
-def test_global_time_choose_country(session):
-    response = client.get("/global_time/choose")
-    assert response.status_code == 200
+def test_get_all_countries_names(session):
+    countries_num = 0
+    for country in countries:
+        for timezone in country['timezones']:
+            countries_num += 1
+    function_result = len(get_all_countries_names(session))
+    assert countries_num == function_result
 
 
-def test_global_time_chosen_country_and_time_fails_without_ip(session):
-    add_countries_to_db()
-    country = 'Israel, Jerusalem'
-    datetime = '2021-02-10 19:00:00'
-    response = client.get(f"/global_time/{country}/{datetime}")
-    assert response.status_code == 404
-
-
-def test_global_time_chosen_country_and_time_with_valid_ip(session):
-    add_countries_to_db()
-    country = 'Israel, Jerusalem'
-    datetime = '2021-02-10 19:00:00'
-    valid_ip = '85.250.214.253'
-    response = client.get(f"/global_time/{country}/{datetime}/{valid_ip}")
-    assert response.status_code == 200
-
-
-def test_global_time_chosen_country_and_time_with_invalid_ip(session):
-    add_countries_to_db()
-    country = 'Israel, Jerusalem'
-    datetime = '2021-02-10 19:00:00'
-    invalid_ip = '127.0.0.1'
-    response = client.get(f"/global_time/{country}/{datetime}/{invalid_ip}")
-    assert response.status_code == 200
-    assert b"not associated" in response.content
+def test_time_convertion(session):
+    add_countries_to_db(session)
+    timezone = 'Asia/Jerusalem'
+    country_to_convert_to = "France, Paris"
+    start = datetime(year=2021, month=2, day=2, hour=14, minute=0)
+    end = datetime(year=2021, month=2, day=2, hour=15, minute=0)
+    converted = get_meeting_local_duration(start, end, timezone, country_to_convert_to, session)
+    assert converted == '13:00 - 14:00'

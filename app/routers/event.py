@@ -1,5 +1,4 @@
 from datetime import datetime
-import functools
 import json
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
@@ -13,24 +12,21 @@ from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse, Response
 
-from app.database.models import Comment, Country, Event, User, UserEvent
+from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, SessionLocal, templates
 from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
-    raise_if_zoom_link_invalid,
+    raise_if_zoom_link_invalid, get_meeting_local_duration, get_all_countries_names
 
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.utils import create_model, get_current_user
-from app.resources.countries import countries
 from geoip import geolite2
-import pytz
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
 START_FORMAT = '%A, %d/%m/%Y %H:%M'
-HOUR_MINUTE_FORMAT = '%H:%M'
 UPDATE_EVENTS_FIELDS = {
     'title': str,
     'start': datetime,
@@ -51,87 +47,6 @@ router = APIRouter(
     tags=["event"],
     responses={404: {"description": "Not found"}},
 )
-
-def add_countries_to_db(session: Session) -> None:
-    """
-    Adding all new countries to the "Country" table in the database.
-    Information is based on the "countries" list.
-    (The list is located in app/resources/countries.py)
-    Names are described either as:
-    "Country Name, City Name" or
-    "Country Name" solely.
-    Timezones are described as "Continent/ City Name"
-    for example:
-        name: Israel, Jerusalem
-        timezone: Asia/Jerusalem
-    """
-    session = SessionLocal()
-    for country in countries:
-        partial_name = country['name']
-        for capital in country['timezones']:
-            capital_name = capital.split('/')[-1]
-            if partial_name != capital_name:
-                name = partial_name + ', ' + capital_name
-            else:
-                name = capital_name
-            existing = session.query(Country).filter_by(name=name).first()
-            if not existing:
-                new_country = Country(name=name, timezone=str(capital))
-                session.add(new_country)
-            # insert_country = insert(Country).values(name=name, timezone=str(capital))
-            # insert_country_with_condition = insert_country.on_conflict_do_nothing(index_elements=['name'])
-            # session.execute(insert_country_with_condition)
-    session.commit()
-    session.close()
-
-
-def find_local_time_by_country(user_timezone: str, country: str,
-                               meeting_time: datetime,
-                               session: Session) -> str:
-    """
-    Converts the local meeting time to the chosen country meeting time.
-    """
-    country_timezone = session.query(
-                                Country.timezone).filter_by(
-                                name=country).first()[0]
-    users_meeting_time_with_utc = pytz.timezone(
-                                    user_timezone).localize(
-                                    meeting_time)
-    country_utc = pytz.timezone(country_timezone)
-    meeting_time_for_country = users_meeting_time_with_utc.astimezone(
-                            country_utc).strftime(
-                                        HOUR_MINUTE_FORMAT)
-    return meeting_time_for_country
-
-
-def get_meeting_local_duration(start_time: datetime,
-                               end_time: datetime,
-                               user_timezone: str,
-                               country: str,
-                               session: Session) -> str:
-    """
-    Returns the total duration of the converted meeting time.
-    """
-    meeting_start_time = find_local_time_by_country(user_timezone=user_timezone,
-                                                    country=country,
-                                                    meeting_time=start_time,
-                                                    session=session)
-    meeting_end_time = find_local_time_by_country(user_timezone=user_timezone,
-                                                    country=country,
-                                                    meeting_time=end_time,
-                                                    session=session)
-    total_time = meeting_start_time + ' - ' + meeting_end_time
-    return total_time
-
-
-@functools.lru_cache
-def get_all_countries_names(session: Session) -> List:
-    """
-    Returns a cached list of the countries names.
-    """
-    add_countries_to_db(session=session)
-    countries_names = session.query(Country.name).all()
-    return countries_names
 
 
 @router.get("/edit")

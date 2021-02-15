@@ -88,6 +88,14 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'invited': 'a@a.com,b@b.com'
 }
 
+CONVERT_TIME_FORM_DATA = {
+    'countries' : "France, Paris",
+    'start_date' : '2021-02-02',
+    'start_time' : '14:00',
+    'end_date' : '2021-02-02',
+    'end_time' : '15:00'
+}
+
 NONE_UPDATE_OPTIONS = [
     {}, {"test": "test"},
 ]
@@ -103,6 +111,19 @@ def test_eventedit(event_test_client):
     response = event_test_client.get("/event/edit")
     assert response.ok
     assert b"Edit Event" in response.content
+
+
+def test_eventedit_with_countries_list(event_test_client):
+    response = event_test_client.get("event/edit/view_countries")
+    assert response.ok
+    assert b"Choose country" in response.content
+
+
+def test_eventedit_with_time_convertion(client):
+    response = client.post(client.app.url_path_for('check_country_time'),
+                           data=CONVERT_TIME_FORM_DATA)
+    assert response.ok
+    assert response.status_code == 200
 
 
 def test_eventview_with_id(event_test_client, session, event):
