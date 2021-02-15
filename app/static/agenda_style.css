@@ -6,6 +6,23 @@
   text-align: center;
 }
 
+.agenda_filter_grid {
+  grid-area: header;
+}
+
+.agenda_grid {
+   display: grid;
+   grid-template-areas:
+      "header filter"
+      "sidebar sidebar";
+   grid-template-columns: 5fr 2fr;
+   grid-gap: 0 20px;
+}
+
+.category_filter {
+  grid-area: filter;
+}
+
 .event_line {
   width: 80%;
   margin-left: 2em;
