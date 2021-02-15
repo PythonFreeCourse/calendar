@@ -103,7 +103,20 @@ p {
     padding-left: 12.5rem;
 }
 
-
 .subtitle {
     font-size: 20px;
+}
+
+.error-message {
+    line-height: 0;
+    color: red;
+    padding-left: 12.5rem;
+}
+
+.input-upload-file {
+    margin-top: 1em;
+}
+
+.upload-file {
+    margin: auto 1em auto 0em;
 }
