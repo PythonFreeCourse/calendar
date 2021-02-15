@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from PIL import Image
+import os
 
 import pytest
 from fastapi import HTTPException
@@ -389,18 +389,24 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_event_with_image(client, session):
-    img = Image.open(r'app\media\example.png')
-    data = {**CORRECT_EVENT_FORM_DATA, **{'event_img': img}}
-
-    response = client.post(client.app.url_path_for('create_new_event'),
-                           data=data)
-    event_created = session.query(Event).filter_by(id=1).first()
-    is_event_image = '1.png' == event_created.image
+def test_event_with_image(event_test_client, client, session):
+    with open(r'app\media\example.png', 'rb') as img:
+        imgstr = img.read()
+    files = {'event_img': imgstr}
+    data = {**CORRECT_EVENT_FORM_DATA}
+    response = event_test_client.post(
+        client.app.url_path_for('create_new_event'), data=data, files=files)
+    event_created = session.query(Event).order_by(Event.id.desc()).first()
+    event_id = event_created.id
+    is_event_image = f'{event_id}.png' == event_created.image
     assert response.ok
-    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+    assert (client.app.url_path_for('eventview',
+                                    event_id=event_id).strip(f'{event_id}')
             in response.headers['location'])
     assert is_event_image is True
+    os.remove(fr'app\media\{event_id}.png')
+    session.delete(event_created)
+    session.commit()
 
 
 class TestApp:

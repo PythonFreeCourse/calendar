@@ -2,7 +2,7 @@ from app.config import PICTURE_EXTENSION
 from datetime import datetime as dt
 import io
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 from PIL import Image
 
 from fastapi import APIRouter, Depends, HTTPException, File, Request
@@ -102,11 +102,11 @@ async def create_new_event(request: Request,
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
         router.url_path_for('eventview', event_id=event.id) +
-        f'messages={"---".join(messages)}',
+        f'?messages={"---".join(messages)}',
         status_code=status.HTTP_302_FOUND)
 
 
-def process_image(img: bytes, event_id: int, img_height: int = HEIGHT):
+def process_image(img: bytes, event_id: int, img_height: int = HEIGHT) -> str:
     """Resized and saves picture according to required height,
     and keeps aspect ratio"""
     image = Image.open(io.BytesIO(img))
@@ -117,22 +117,6 @@ def process_image(img: bytes, event_id: int, img_height: int = HEIGHT):
     file_name = f'{event_id}{PICTURE_EXTENSION}'
     resized.save(f'{MEDIA_PATH}/{file_name}')
     return file_name
-
-
-def crop_to_ratio(width: int, height: int, req_width: int,
-                  req_height: int) -> Tuple[int]:
-    """Get crop values according to current size and
-    required aspect, if necessary"""
-    ratio = width / height
-    req_aspect = req_width / req_height
-    if ratio > req_aspect:
-        new_width = int(height * req_aspect)
-        offset = (width - new_width) // 2
-        return (offset, 0, width - offset, height)
-    else:
-        new_height = int(width / req_aspect)
-        offset = (height - new_height) // 2
-        return (0, offset, width, height - offset)
 
 
 @router.get('/{event_id}')

@@ -8,7 +8,7 @@
   </div>
 </div>
 <div class="event-image-container">
-  <img class="event-image" src="{{ url_for('media', path=event.image) }}">
+  <img class="event-image" src="{{ '' if not event.image else url_for('media', path=event.image) }}">
 </div>
 <div class="event_info_row">
     <span class="icon">ICON</span>
