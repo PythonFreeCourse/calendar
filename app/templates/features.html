@@ -3,7 +3,13 @@
 <header>
     <div>
         <div class="title">FEATURES PANEL</div>
-        <div class="s-title">some secondary text</div>
+        <p class="s-paragraph">This panel allows you to view optional addons. <br>
+            Add, remove or customize features to your liking by clicking on the features icon in the navigation bar.
+        </p>
+        <div class="search-box">
+            <ion-icon name="search" alt="Search icon"></ion-icon>
+            <input class="search-input" type="text" placeholder="Search Feature" autofocus="true" maxlength="80">
+        </div>
     </div>
     <div id="logo-div">
         <a href="/calendar/month">
@@ -14,33 +20,49 @@
 
 <main>
     <div id="features">
-        <div>
-            <div class="try m-title underline-yellow"> Available Features </div>
-            {% for i in range(30) %}
-            <div class="feature-row">
-                <div>icon</div>
-                <div>name</div>
-                <div>creator</div>
+        <div id="available-features">
+            <div class="m-title underline-yellow"> Available Features </div>
+            {% for i in range(5) %}
+            <div class="feature-row" data-state="available">
                 <div>
-                    <ion-icon name="star"></ion-icon>
-                    <span>followers</span>
+                    <ion-icon class="feature-icon" name="airplane"></ion-icon>
                 </div>
-                <div>add</div>
+                <div>
+                    <span class="row-feature-name">NAME</span>
+                    <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
+                </div>
+                <div><b>Creator:</b> Aviad2020</div>
+                <div>
+                    <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
+                    <span><b>Followers:</b> 100K</span>
+                </div>
+                <div class="button feature-button background-green text-lightgray">
+                    ADD
+                </div>
             </div>
             {% endfor %}
         </div>
         <div>
-            <div class="try m-title underline-yellow"> Your Freatures </div>
+            <div class="try m-title underline-yellow"> Your Features </div>
+            {% for i in range(5) %}
             <div class="feature-row">
-                <div>icon</div>
-                <div>name</div>
-                <div>creator</div>
                 <div>
-                    <ion-icon name="star"></ion-icon>
-                    <span>followers</span>
+                    <ion-icon class="feature-icon" name="airplane"></ion-icon>
                 </div>
-                <div>remove</div>
+                <div>
+                    <b>NAME</b>
+                    <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
+                </div>
+                <div><b>Creator:</b> Aviad2020</div>
+                <div>
+                    <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
+                    <span><b>Followers:</b> 100K</span>
+                </div>
+                <div class="button feature-button background-red text-lightgray">
+                    REMOVE
+                </div>
             </div>
+            {% endfor %}
         </div>
     </div>
 </main>

@@ -333,8 +333,18 @@ main {
   font-size: var(--text_s);
 }
 
+/* Paragraph */
+
+.s-paragraph {
+  font-size: var(--text_s);
+  line-height: 1.25rem;
+  margin: var(--space_s) 0;
+}
+
 /* Text Colors */
 .text-yellow {color: var(--bold_primary);}
+
+.text-red {color: var(--bold_secondary);}
 
 .text-gray {color: var(--up_surface);}
 
@@ -364,11 +374,17 @@ main {
 
 .button {
   border-radius: 0.15rem;
+  font-weight: 500;
   font-size: var(--text_s);
-  font-weight: 800;
   padding: 0.15rem 0.25rem;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .button:hover {
-  font-weight: 700;
+  font-weight: 800;
+}
+
+@media {
+
 }
