@@ -46,7 +46,7 @@ from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency,
     dayview, email, event, export, four_o_four,
     invitation, login, logout, parasha, profile,
-    register, search, telegram  , user, weekview, whatsapp,
+    register, search, telegram, user, weekview, whatsapp
 )
 
 
