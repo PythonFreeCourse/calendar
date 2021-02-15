@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, FastAPI, Request
+from fastapi import APIRouter, Depends, Request
 from typing import List
+from starlette.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+
+from starlette.status import HTTP_202_ACCEPTED
 
 from app.dependencies import get_db
 from app.database.models import Event, User, UserEvent
@@ -11,7 +14,6 @@ from app.internal.utils import save, get_current_user
 from app.internal.user.availability import (
     disable, enable)
 
-app = FastAPI()
 
 router = APIRouter(
     prefix="/user",
@@ -100,7 +102,7 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
 
 @router.post("/disable")
 def disable_logged_user(
-        request: Request, session: Session) -> bool:
+        request: Request, session: Session = Depends(get_db)):
     """route that sends request to disable the user.
     after successful disable it will be directed to main page.
     if the disable fails user will stay at settings page
@@ -108,17 +110,19 @@ def disable_logged_user(
     disable_successful = disable(session, get_current_user)
     if disable_successful:
         # disable succeeded- the user will be directed to homepage.
-        app.url_path_for("/")
+        url = router.url_path_for("home")
+        return RedirectResponse(url=url, status_code=HTTP_202_ACCEPTED)
 
 
 @router.post("/enable")
 def enable_logged_user(
-        request: Request, session: Session) -> bool:
+        request: Request, session: Session = Depends(get_db)):
     """router that sends a request to enable the user.
     if enable successful it will be directed to main page.
     if it fails user will stay at settings page
     and an error will be shown."""
     enable_successful = enable(session, get_current_user)
     if enable_successful:
-        # disable succeeded- the user will be directed to homepage.
-        app.url_path_for("/")
+        # enable succeeded- the user will be directed to homepage.
+        url = router.url_path_for("home")
+        return RedirectResponse(url=url, status_code=HTTP_202_ACCEPTED)
