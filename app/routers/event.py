@@ -124,15 +124,15 @@ async def check_country_time(request: Request,
                                     country=country,
                                     session=session)
         return templates.TemplateResponse("event/eventedit.html",
-                                         {"request": request,
-                                          "chosen_country": country,
-                                          "chosen_country_meeting_time": (
-                                              meeting_time_for_invitee
-                                              )})
+                                          {"request": request,
+                                           "chosen_country": country,
+                                           "chosen_country_meeting_time": (
+                                               meeting_time_for_invitee
+                                               )})
     else:
         return templates.TemplateResponse("event/eventedit.html",
-                                         {"request": request,
-                                          "msg": ERROR_MSG})
+                                          {"request": request,
+                                           "msg": ERROR_MSG})
 
 
 @router.post("/edit", include_in_schema=False)
