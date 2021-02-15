@@ -9,8 +9,10 @@ from starlette import status
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
+from app.internal.event import add_countries_to_db
 from app.internal.utils import delete_instance
 from app.main import app
+
 
 from app.routers import event as evt
 
@@ -135,13 +137,15 @@ def test_eventedit(event_test_client):
     assert b"Edit Event" in response.content
 
 
-def test_eventedit_with_countries_list(event_test_client):
+def test_eventedit_with_countries_list(event_test_client, session):
+    add_countries_to_db(session)
     response = event_test_client.get("event/edit/view_countries")
     assert response.ok
     assert b"Choose country" in response.content
 
 
-def test_eventedit_with_time_convertion(client):
+def test_eventedit_with_time_convertion(client, session):
+    add_countries_to_db(session)
     response = client.post(client.app.url_path_for('check_country_time'),
                            data=CONVERT_TIME_FORM_DATA)
     assert response.ok
