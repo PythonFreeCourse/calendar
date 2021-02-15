@@ -33,6 +33,11 @@ p {
   justify-content: space-around;
 }
 
+p#p_quote {
+  align-items: center;
+  justify-content: center;
+}
+
 #inner:hover {
   cursor: pointer;
   padding: 50px;
