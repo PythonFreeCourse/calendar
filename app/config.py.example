@@ -52,6 +52,11 @@ email_conf = ConnectionConfig(
     USE_CREDENTIALS=True,
 )
 
+
+# security
+JWT_KEY = "JWT_KEY_PLACEHOLDER"
+JWT_ALGORITHM = "HS256"
+JWT_MIN_EXP = 60 * 24 * 7
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
 # application name
