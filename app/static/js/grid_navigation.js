@@ -36,7 +36,7 @@ function displayMonthYear(id) {
 }
 
 function setMonthNav() {
-    const allFirst = document.querySelectorAll('*[id^="01"]');
+    const allFirst = document.querySelectorAll('[id^="01"]');
     const currentMonth = OnlyOnScreen(allFirst);
     for (let i = -2; i < 3; ++i) {
         const date = getDateInNMonths(currentMonth.id, i);
