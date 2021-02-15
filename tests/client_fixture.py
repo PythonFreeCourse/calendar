@@ -5,7 +5,7 @@ import pytest
 
 from app import main
 from app.database.models import Base, User
-from app.routers import agenda, event, invitation, profile
+from app.routers import agenda, event, invitation, profile, global_variable
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 
@@ -35,6 +35,11 @@ def create_test_client(get_db_function) -> Iterator[TestClient]:
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def global_var_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(global_variable.get_db)
 
 
 @pytest.fixture(scope="session")

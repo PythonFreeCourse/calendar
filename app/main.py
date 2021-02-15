@@ -36,8 +36,8 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, four_o_four, invitation, profile, search,
-    weekview, telegram, whatsapp,
+    email, event, four_o_four, global_variable, invitation, profile,
+    search, weekview, telegram, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -53,6 +53,7 @@ routers_to_include = [
     email.router,
     event.router,
     four_o_four.router,
+    global_variable.router,
     invitation.router,
     profile.router,
     salary.router,
@@ -60,6 +61,12 @@ routers_to_include = [
     telegram.router,
     whatsapp.router,
 ]
+
+user_id = 1
+db_gen = get_db()
+session = next(db_gen)
+user = session.query(models.User).filter_by(id=user_id).first()
+templates.env.globals['user'] = user
 
 for router in routers_to_include:
     app.include_router(router)
