@@ -139,7 +139,7 @@ async def dayview(
     )
     shopping_products = session.query(ShoppingProduct).filter(ShoppingProduct.owner_id == user.id) \
         .filter(ShoppingProduct.date == day.date())
-    shopping_lists = sort_by_date(list(shopping_products))
+    shopping_products = sort_by_date(list(shopping_products))
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,

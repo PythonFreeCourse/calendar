@@ -1,90 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ url_for('static', path='/dayview.css') }}">
-        <link href="https://fonts.googleapis.com/css2?family=Assistant&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
-        <title>dayview</title>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script type="text/javascript">
-            function openEditModal(shoppingListId, shoppingListTime, shoppingListName, shoppingListAmount{
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', path='/dayview.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap"
+          rel="stylesheet">
+    <title>dayview</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+            function openEditModal(shoppingProudctId, shoppingProudctName, shoppingProudctAmount){
                 $('#Modal').modal("toggle");
-                $('#editShoppingListId').val(shoppingListId);
-                $('#customerTime2').val(shoppingListTime);
-                $('#customerName2').val(shoppingListName);
-                $('#customerAmount2').val(shoppingListAmount);
+                $('#editShoppingProudctId').val(shoppingProudctId);
+                $('#customerName2').val(shoppingProudctName);
+                $('#customerAmount2').val(shoppingProudctAmount);
                 $('#editModal').modal("toggle");
             }
 
             function deleteModal() {
-                var shoppingListId = $('#editShoppingListId').val();
-                $('#deleteShoppingListId').val(shoppingListId);
-                $('#deleteshoppingListForm').submit();
+                var shoppingProudctId = $('#editShoppingProudctId').val();
+                $('#deleteShoppingProudctId').val(editShoppingProudctId);
+                $('#deleteShoppingProudctForm').submit();
             }
-        </script>
-    </head>
-    <body>
-    <div id="toptab" class="d-flex justify-content-around sticky-top">
-        {% if view == 'day' %}
-        <a href="/closethedayview" title="close day view"><img class="pb-1"
-                                                               src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
-                                                               width="15em"
-                                                               height="15em"></a>
-        <span id="month-num" class="month-num fw-bold text-white">{{month}}</span>
-        <span id="day-num" class="day-num fw-bold text-white">{{day}}</span>
-        {% if zodiac %}
-        <div class="zodiac-sign">
-            <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}"
-               title="Zodiac-sign: {{zodiac.name}}" target="_blank"><img
-                    src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
-                    alt="zodiac sign" width="14em" height="13em"></a>
-        </div>
-        {% endif %}
-        {% else %}
-        <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
-        {% endif %}
+
+    </script>
+</head>
+<body>
+<div id="toptab" class="d-flex justify-content-around sticky-top">
+    {% if view == 'day' %}
+    <a href="/closethedayview" title="close day view"><img class="pb-1"
+                                                           src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
+                                                           width="15em"
+                                                           height="15em"></a>
+    <span id="month-num" class="month-num fw-bold text-white">{{month}}</span>
+    <span id="day-num" class="day-num fw-bold text-white">{{day}}</span>
+    {% if zodiac %}
+    <div class="zodiac-sign">
+        <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}"
+           title="Zodiac-sign: {{zodiac.name}}" target="_blank"><img
+                src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
+                alt="zodiac sign" width="14em" height="13em"></a>
+    </div>
+    {% endif %}
+    {% else %}
+    <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
+    {% endif %}
 </div>
 <button type="button" class="open-button" data-bs-toggle="modal"
         data-bs-target="#exampleModal">
-    Create Shopping list
+    Create Shopping Proudct
 </button>
 <button type="button" class="open-button" data-bs-toggle="modal"
         data-bs-target="#Modal">
-    Shopping-List
+    Shopping List
 </button>
 <!-- Modal -->
-<div class="todo-style">
+<div class="shopping-style">
     <div class="modal fade" id="exampleModal" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="background: #30465D">
                     <h1 class="day fw-bold text-white" id="exampleModalLabel">
-                        Add product</h1>
+                        Add Shopping Proudct</h1>
                     <button type="button" class="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
-                <form action="/task/add" method="post">
+                <form action="/shopping_proudct/add" method="post">
                     <div class="modal-body">
                         <input type="hidden" value="{{datestr}}"
                                name="datestr">
-                        <label for="customerTime">Select
-                            Hour:<em>&#x2a;</em></label>
-                        <input id="customerTime" name="timestr" required=""
-                               type="time">
-                        <label for="customerTitle">Title:<em>&#x2a;</em></label>
-                        <input id="customerTitle" name="title" required=""
+                        <label for="customerName">Name:<em>&#x2a;</em></label>
+                        <input id="customerName" name="name" required=""
                                type="text" maxlength="10">
-                        <textarea placeholder="Description:"
-                                  id="customerDescrip" name="description"
+                        <textarea placeholder="Amount:"
+                                  id="customerAmount" name="amount"
                                   required="" type="text"></textarea>
-                        <label>Is important?</label>
-                        <input id="isImportant" name="is_important"
-                               type="checkbox">
                     </div>
                     <div class="modal-footer">
                         <button class="sub-button" type="submit" value="Submit"
@@ -93,15 +89,15 @@
                     </div>
                 </form>
             </div>
-            </div>
+             </div>
     </div>
     <div class="modal fade" id="Modal" tabindex="-1"
          aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="background: #30465D">
-                    <h1 class="day fw-bold text-white" id="ModalLabel">Todo
-                        List</h1>
+                    <h1 class="day fw-bold text-white" id="ModalLabel">
+                        Shopping List</h1>
                     <button type="button" class="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"></button>
@@ -109,44 +105,28 @@
                 <div class="modal-body" id="table">
                     <table id="customerDone">
                         <thead>
-                        <th>Time</th>
-                        <th>Task</th>
-                        <th>Description</th>
-                        <th>Is Done?</th>
+                        <th>Product</th>
+                        <th>amount</th>
+                        <th>Is Bought?</th>
                         </thead>
                         <tbody>
-                        {% for task in tasks %}
-                        {% if task.is_important %}
-                        <tr style="border-bottom: 5px solid blue">
-                            {% else %}
-                        <tr>
-                            {% endif %}
-                            <td>{{task.time}}</td>
-                            <td>{{task.title}}</td>
-                            <td>{{task.description}}</td>
-                            {% if task.is_done %}
+                        {% for product in shopping_products %}
+                            <td>{{product.name}}</td>
+                            <td>{{product.amount}}</td>
+                            {% if product.is_bought %}
                             <td>
-                                <form action="/task/setUndone/{{task.id}}"
+                                <form action="/shopping_product/setUnBought/{product.id}"
                                       method="post">
-                                    <button type="submit">Undone</button>
+                                    <button type="submit">UnBought</button>
                                 </form>
                             </td>
                             {% else %}
                             <td>
-                                <form action="/task/setDone/{{task.id}}"
+                                <form action="/shopping_product/setBought/{{shopping_product.id}}"
                                       method="post">
-                                    <button type="submit">Done</button>
+                                    <button type="submit">Bought</button>
                                 </form>
                             </td>
-                            {% endif %}
-                            {% if task.is_important %}
-                            <td><a href="#"
-                                   onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', true)"
-                                   class="edit">Edit</a></td>
-                            {% else %}
-                            <td><a href="#"
-                                   onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', false)"
-                                   class="edit">Edit</a></td>
                             {% endif %}
                         </tr>
                         {% endfor %}
@@ -159,33 +139,29 @@
             </div>
     </div>
 </div>
-<div class="todo-style">
+<div class="shopping-style">
     <div class="modal fade" id="editModal" tabindex="-1"
          aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="background: #30465D">
                     <h1 class="day fw-bold text-white" id="editModalLabel">
-                        Edit Task</h1>
+                        Edit Product</h1>
                     <button type="button" class="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
-                <form action="/task/edit" method="post">
+                <form action="/shopping_product/edit" method="post">
                     <div class="modal-body">
                         <input type="hidden" value="{{datestr}}"
                                name="datestr">
-                        <input type="hidden" value="" name="task_id"
-                               id="editTaskId">
-                        <label for="customerTime2">Select
-                            Hour:<em>&#x2a;</em></label>
-                        <input id="customerTime2" name="timestr" required=""
-                               type="time">
-                        <label for="customerTitle2">Title:<em>&#x2a;</em></label>
-                        <input id="customerTitle2" name="title" required=""
+                        <input type="hidden" value="" name="shopping_product_id"
+                               id="editShoppingProductId">
+                        <label for="customerName2">Name:<em>&#x2a;</em></label>
+                        <input id="customerName2" name="title" required=""
                                type="text" maxlength="10">
-                        <textarea placeholder="Description:"
-                                  id="customerDescrip2" name="description"
+                        <textarea placeholder="Amount"
+                                  id="customerAmount2" name="amount"
                                   required="" type="text"></textarea>
                         <label>Is important?</label>
                         <input id="isImportant2" name="is_important"
@@ -201,8 +177,8 @@
                         </button>
                     </div>
                 </form>
-                <form action="/task/delete" method="post" id="deleteTaskForm">
-                    <input type="hidden" id="deleteTaskId" name="taskId">
+                <form action="/shopping_product/delete" method="post" id="deleteShoppingProductForm">
+                    <input type="hidden" id="deleteShoppingProductId" name="shopping_product_id">
                 </form>
             </div>
         </div>
