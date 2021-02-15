@@ -1,70 +1,78 @@
-import datetime
+from datetime import datetime
 import functools
-from typing import Dict
+from typing import Any, Dict
 
 import httpx
 
 from app import config
 
 # This feature requires an API KEY - get yours free @ www.weatherapi.com
+ASTRONOMY_URL = "https://api.weatherapi.com/v1/astronomy.json"
+NO_API_RESPONSE = _("No response from server.")
 
-ASTRONOMY_URL = "http://api.weatherapi.com/v1/astronomy.json"
-NO_API_RESPONSE = "No response from server"
 
+async def get_astronomical_data(date: datetime, location: str
+                                ) -> Dict[str, Any]:
+    """Returns astronomical data (sun and moon) for date and location.
 
-@functools.lru_cache(maxsize=128, typed=False)
-async def get_data_from_api(formatted_date: str, location: str) \
-        -> Dict[str, int]:
-    """ get the relevant astronomical data by calling the "weather api" API.
     Args:
-        formatted_date (date) - relevant date.
-        location (str) - location name.
+        date: The requested date for astronomical data.
+        location: The location name.
+
     Returns:
-        response_json (json dict) including:
-        relevant part (data / error) of the JSON returned by the API.
-        Success (bool)
-        ErrorDescription (str) - error message.
+        A dictionary with the following entries:
+            success: True or False.
+            error: The error description.
+            location: A dictionary of relevant data, including:
+                name, region, country, lat, lon etc.
+            astronomy: A dictionary of relevant data, including:
+                sunrise, sunset, moonrise, moonset, moon_phase, and
+                moon_illumination.
+
     """
-    input_query_string = {'key': config.ASTRONOMY_API_KEY, 'q': location,
-                          'dt': formatted_date}
-    output = {}
+    formatted_date = date.strftime('%Y-%m-%d')
+    return await _get_astronomical_data_from_api(formatted_date, location)
+
+
+@functools.lru_cache(maxsize=128)
+async def _get_astronomical_data_from_api(date: str, location: str
+                                          ) -> Dict[str, Any]:
+    """Returns astronomical_data from a Weather API call.
+
+    Args:
+        date: The requested date for astronomical data.
+        location: The location name.
+
+    Returns:
+        A dictionary with the results from the API call.
+
+    """
+    input_query_string = {
+        'key': config.ASTRONOMY_API_KEY,
+        'q': location,
+        'dt': date,
+    }
+
+    output: Dict[str, Any] = {}
     try:
         async with httpx.AsyncClient() as client:
-            response = await client.get(ASTRONOMY_URL,
-                                        params=input_query_string)
+            response = await client.get(
+                ASTRONOMY_URL, params=input_query_string)
     except httpx.HTTPError:
-        output["Success"] = False
-        output["ErrorDescription"] = NO_API_RESPONSE
+        output["success"] = False
+        output["error"] = NO_API_RESPONSE
         return output
+
     if response.status_code != httpx.codes.OK:
-        output["Success"] = False
-        output["ErrorDescription"] = NO_API_RESPONSE
+        output["success"] = False
+        output["error"] = NO_API_RESPONSE
         return output
-    output["Success"] = True
+
+    output["success"] = True
     try:
         output.update(response.json()['location'])
         return output
     except KeyError:
-        output["Success"] = False
-        output["ErrorDescription"] = response.json()['error']['message']
+        output["success"] = False
+        output["error"] = response.json()['error']['message']
         return output
-
-
-async def get_astronomical_data(requested_date: datetime.datetime,
-                                location: str) -> Dict[str, int]:
-    """ get astronomical data (Sun & Moon) for date & location -
-        main function.
-    Args:
-        requested_date (date) - date requested for astronomical data.
-        location (str) - location name.
-    Returns: dictionary with the following entries:
-        Status - success / failure.
-        ErrorDescription - error description (relevant only in case of error).
-        location - relevant location values(relevant only in case of success).
-            name, region, country, lat, lon etc.
-        astronomy - relevant astronomy values, all time in local time -
-            (relevant only in case of success):
-            sunrise, sunset, moonrise, moonset, moon_phase, moon_illumination.
-    """
-    formatted_date = requested_date.strftime('%Y-%m-%d')
-    return await get_data_from_api(formatted_date, location)
