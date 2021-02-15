@@ -127,10 +127,6 @@ def disable_logged_user(
     if disable_successful:
         # disable succeeded- the user will be directed to homepage.
         app.url_path_for("/")
-    else:
-        # if disable wasn't successful, user will stay in the
-        # settings page and an error message will show.
-        pass
 
 
 @router.post("/enable")
@@ -140,11 +136,7 @@ def enable_logged_user(
     if enable successful it will be directed to main page.
     if it fails user will stay at settings page
     and an error will be shown."""
-    disable_successful = disable(session, get_current_user)
-    if disable_successful:
+    enable_successful = enable(session, get_current_user)
+    if enable_successful:
         # disable succeeded- the user will be directed to homepage.
         app.url_path_for("/")
-    else:
-        # if disable wasn't successful, user will stay in the
-        # settings page and an error message will show.
-        pass
