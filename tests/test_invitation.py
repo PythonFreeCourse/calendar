@@ -1,4 +1,4 @@
-from starlette.status import HTTP_302_FOUND
+from fastapi import status
 
 from app.routers.invitation import get_all_invitations, get_invitation_by_id
 
@@ -18,7 +18,7 @@ class TestInvitations:
         invitation = {"invite_id ": invitation.id}
         resp = invitation_test_client.post(
             TestInvitations.URL, data=invitation)
-        assert resp.status_code == HTTP_302_FOUND
+        assert resp.status_code == status.HTTP_302_FOUND
 
     @staticmethod
     def test_get_all_invitations_success(invitation, event, user, session):

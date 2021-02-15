@@ -11,7 +11,7 @@ def test_whatsapp_send():
     phone_number = "972536106106"
     message = 'Hello hello'
     expected = ("https://api.whatsapp.com/send?phone=972536106106&text="
-                f"Hello+hello")
+                "Hello+hello")
     assert whatsapp.make_link(phone_number, message) == expected
 
 
