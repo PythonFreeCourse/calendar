@@ -97,6 +97,12 @@ p {
   background-color: whitesmoke;
 }
 
+.error-message {
+    line-height: 0;
+    color: red;
+    padding-left: 12.5rem;
+}
+
 .input-upload-file {
     margin-top: 15px
 }
