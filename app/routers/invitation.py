@@ -68,7 +68,7 @@ async def accept_invitations(
 
 @router.get("/get_all_invitations")
 def get_all_invitations(
-        db: Session = Depends(get_db), **param: Any
+        db=Depends(get_db), **param: Any
 ) -> List[Invitation]:
     """Returns all invitations filtered by the requested parameters.
 
@@ -89,13 +89,13 @@ def get_all_invitations(
 
 @router.post("/get_invitation_by_id")
 def get_invitation_by_id(
-        invitation_id: int, db: Session
+        invitation_id: int, db=Depends(get_db)
 ) -> Optional[Invitation]:
     """Returns a Invitation by an ID.
 
     Args:
         invitation_id: The Invitation ID.
-        db: The database connection.
+        db: Optional; The database connection.
 
     Returns:
         An Invitation object if found, otherwise returns None.
