@@ -30,6 +30,7 @@ UPDATE_EVENTS_FIELDS = {
     'start': datetime,
     'end': datetime,
     'availability': bool,
+    'all_day': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
     'vc_link': (str, type(None)),
@@ -62,9 +63,6 @@ async def create_new_event(request: Request,
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
-    # if data['event_type']:
-    #     all_day = data['event_type']
-    #     all_day = all_day == "on"
     all_day = data['event_type'] and data['event_type'] == 'on'
 
     vc_link = data['vc_link']
@@ -94,7 +92,7 @@ async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)) -> Response:
     event, comments, end_format = get_event_data(db, event_id)
     start_format = START_FORMAT
-    if event.all_day is True:
+    if event.all_day:
         start_format = '%A, %d/%m/%Y'
         end_format = ""
     messages = request.query_params.get('messages', '').split("---")
@@ -105,18 +103,6 @@ async def eventview(request: Request, event_id: int,
                                        "start_format": start_format,
                                        "end_format": end_format,
                                        "messages": messages})
-
-
-UPDATE_EVENTS_FIELDS = {
-    'title': str,
-    'start': datetime,
-    'end': datetime,
-    'availability': bool,
-    'all_day': bool,
-    'content': (str, type(None)),
-    'location': (str, type(None)),
-    'category_id': (int, type(None))
-}
 
 
 def by_id(db: Session, event_id: int) -> Event:
