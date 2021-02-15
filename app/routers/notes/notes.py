@@ -4,7 +4,7 @@ from app.dependencies import get_db, templates
 from app.internal.notes import notes
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
-from fastapi.param_functions import Depends, Form
+from fastapi.param_functions import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
