@@ -37,7 +37,7 @@
 
       <div class="input-group mb-2">
         <label class="font-weight-bold input-group-text" for="amount">Daily Amount:</label>
-        <input class="form-control" type="number" name="amount" id="amount" value="{{ data['amount'] }}" min="1" required>
+        <input class="form-control" type="number" name="amount" id="amount" value="{{ data['amount'] }}" min="1" max="{{ quantity }}" required>
       </div>
 
       <div class="input-group mb-2">
@@ -52,7 +52,7 @@
 
       <div class="input-group mb-2">
         <label class="font-weight-bold input-group-text" for="min">Minimal Interval:</label>
-        <input class="form-control" type="time" name="min" id="min" value="{{ data['min'] }}">
+        <input class="form-control" type="time" name="min" id="min" min="00:01" value="{{ data['min'] }}">
       </div>
 
       <div class="input-group mb-2">

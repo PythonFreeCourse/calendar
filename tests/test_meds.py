@@ -58,30 +58,38 @@ AMOUNTS = [
     (3, time(8), time(10), time(20), False),
 ]
 
+EVENTS = [
+    (FORM, True),
+    (create_test_form(amount='60'), False),
+    (create_test_form(end='2015-11-22'), False),
+]
 
 FORM_VALIDATE = [
-    (FORM, [False, False, False]),
+    (FORM, [False, False, False, False]),
     (create_test_form(
         end=FORM['start'], max=FORM['min'], amount='1', late='10:00'
-    ), [False, False, False]),
-    (create_test_form(end='1985-10-26'), [True, False, False]),
-    (create_test_form(max='03:00'), [False, True, False]),
-    (create_test_form(late='10:00'), [False, False, True]),
-    (create_test_form(amount='60'), [False, False, True]),
-    (create_test_form(end='1985-10-26', max='03:00', late='10:00'),
-     [True, True, True])
+    ), [False, False, False, False]),
+    (create_test_form(end='1985-10-26'), [True, False, False, False]),
+    (create_test_form(max='03:00'), [False, True, False, False]),
+    (create_test_form(late='10:00'), [False, False, True, False]),
+    (create_test_form(min='00:01', amount='60'), [False, False, False, True]),
+    (create_test_form(
+        end='1985-10-26', max='03:00', late='10:00', amount="60"
+    ), [True, True, True, False]),
+    (create_test_form(max='03:00', late='10:00', amount="60"),
+     [False, True, True, True]),
 ]
 
 CALC_INTERVAL = [
     (create_test_form(amount='1'), 0),
-    (FORM, 300),
-    (create_test_form(min='00:00', max='23:59'), 420),
+    (FORM, 18000),
+    (create_test_form(min='00:01', max='23:59'), 25200),
 ]
 
 REMINDER_TIMES = [
     (FORM, [time(10), time(15), time(20)]),
     (create_test_form(amount='1'), [time(15)]),
-    (create_test_form(min='00:00', max='23:59'),
+    (create_test_form(min='00:01', max='23:59'),
      [time(8), time(15), time(22)]),
     (create_test_form(early='13:00', late='02:00'),
      [time(14, 30), time(19, 30), time(0, 30)]),
@@ -120,7 +128,12 @@ DATETIMES = [
 
 CREATE = [
     (create_test_form(name=None), False),
-    (FORM, True)
+    (FORM, True),
+]
+
+PYLENDAR = [
+    (FORM, True),
+    (create_test_form(end='1985-10-26'), False),
 ]
 
 
@@ -146,17 +159,25 @@ def test_validate_amount(amount: int, minimum: time, early: time, late: time,
     assert meds.validate_amount(amount, minimum, early, late) == boolean
 
 
+@pytest.mark.parametrize('form, boolean', EVENTS)
+def test_validate_events(form: Dict[str, str], boolean: bool) -> None:
+    datetimes = meds.get_reminder_datetimes(form)
+    assert meds.validate_events(datetimes) is boolean
+
+
 @pytest.mark.parametrize('form, booleans', FORM_VALIDATE)
 def test_validate_form(form: Dict[str, str], booleans: List[bool]) -> None:
     errors = meds.validate_form(form)
     for i, error in enumerate(meds.ERRORS.values()):
         message = error in errors
+        print(i, error, message)
         assert message is booleans[i]
 
 
 @pytest.mark.parametrize('form, interval', CALC_INTERVAL)
-def test_calc_reminder_interval(form: Dict[str, str], interval: int) -> None:
-    assert meds.calc_reminder_interval(form) == interval
+def test_calc_reminder_interval_in_seconds(form: Dict[str, str],
+                                           interval: int) -> None:
+    assert meds.calc_reminder_interval_in_seconds(form) == interval
 
 
 @pytest.mark.parametrize('form, times', REMINDER_TIMES)
@@ -199,11 +220,19 @@ def test_meds_page_returns_ok(meds_test_client: TestClient) -> None:
     assert response.ok
 
 
-def test_meds_send_form(meds_test_client: TestClient,
-                        session: Session) -> None:
+@pytest.mark.parametrize('form, pylendar', PYLENDAR)
+def test_meds_send_form_success(meds_test_client: TestClient, session: Session,
+                                form: Dict[str, str], pylendar: bool) -> None:
     assert session.query(Event).first() is None
     path = meds.router.url_path_for('meds')
-    response = meds_test_client.post(path, data=FORM, allow_redirects=True)
+    response = meds_test_client.post(path, data=form, allow_redirects=True)
     assert response.ok
-    assert 'PyLendar' in response.text
-    assert session.query(Event).first()
+    message = 'PyLendar' in response.text
+    assert message is pylendar
+    message = 'alert' in response.text
+    assert message is not pylendar
+    event = session.query(Event).first()
+    if pylendar:
+        assert event
+    else:
+        assert event is None
