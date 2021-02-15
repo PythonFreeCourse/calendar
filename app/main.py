@@ -89,8 +89,6 @@ routers_to_include = [
     telegram.router,
     user.router,
     whatsapp.router,
-
-
 ]
 
 for router in routers_to_include:
