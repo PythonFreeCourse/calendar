@@ -1,17 +1,20 @@
 from datetime import datetime
+import functools
 import json
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse, Response
 
-from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import get_db, logger, templates
+from app.database.models import Comment, Country, Event, User, UserEvent
+from app.dependencies import get_db, logger, SessionLocal, templates
 from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
@@ -20,11 +23,14 @@ from app.internal.event import (
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.utils import create_model, get_current_user
-
+from app.resources.countries import countries
+from geoip import geolite2
+import pytz
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
 START_FORMAT = '%A, %d/%m/%Y %H:%M'
+HOUR_MINUTE_FORMAT = '%H:%M'
 UPDATE_EVENTS_FIELDS = {
     'title': str,
     'start': datetime,
@@ -35,6 +41,10 @@ UPDATE_EVENTS_FIELDS = {
     'vc_link': (str, type(None)),
     'category_id': (int, type(None)),
 }
+ERROR_MSG = """
+    Your ip address is not associated with any geographical location.
+    This function cannot operate.
+    """
 
 router = APIRouter(
     prefix="/event",
@@ -42,11 +52,140 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
+def add_countries_to_db(session: Session) -> None:
+    """
+    Adding all new countries to the "Country" table in the database.
+    Information is based on the "countries" list.
+    (The list is located in app/resources/countries.py)
+    Names are described either as:
+    "Country Name, City Name" or
+    "Country Name" solely.
+    Timezones are described as "Continent/ City Name"
+    for example:
+        name: Israel, Jerusalem
+        timezone: Asia/Jerusalem
+    """
+    session = SessionLocal()
+    for country in countries:
+        partial_name = country['name']
+        for capital in country['timezones']:
+            capital_name = capital.split('/')[-1]
+            if partial_name != capital_name:
+                name = partial_name + ', ' + capital_name
+            else:
+                name = capital_name
+            existing = session.query(Country).filter_by(name=name).first()
+            if not existing:
+                new_country = Country(name=name, timezone=str(capital))
+                session.add(new_country)
+            # insert_country = insert(Country).values(name=name, timezone=str(capital))
+            # insert_country_with_condition = insert_country.on_conflict_do_nothing(index_elements=['name'])
+            # session.execute(insert_country_with_condition)
+    session.commit()
+    session.close()
+
+
+def find_local_time_by_country(user_timezone: str, country: str,
+                               meeting_time: datetime,
+                               session: Session) -> str:
+    """
+    Converts the local meeting time to the chosen country meeting time.
+    """
+    country_timezone = session.query(
+                                Country.timezone).filter_by(
+                                name=country).first()[0]
+    users_meeting_time_with_utc = pytz.timezone(
+                                    user_timezone).localize(
+                                    meeting_time)
+    country_utc = pytz.timezone(country_timezone)
+    meeting_time_for_country = users_meeting_time_with_utc.astimezone(
+                            country_utc).strftime(
+                                        HOUR_MINUTE_FORMAT)
+    return meeting_time_for_country
+
+
+def get_meeting_local_duration(start_time: datetime,
+                               end_time: datetime,
+                               user_timezone: str,
+                               country: str,
+                               session: Session) -> str:
+    """
+    Returns the total duration of the converted meeting time.
+    """
+    meeting_start_time = find_local_time_by_country(user_timezone=user_timezone,
+                                                    country=country,
+                                                    meeting_time=start_time,
+                                                    session=session)
+    meeting_end_time = find_local_time_by_country(user_timezone=user_timezone,
+                                                    country=country,
+                                                    meeting_time=end_time,
+                                                    session=session)
+    total_time = meeting_start_time + ' - ' + meeting_end_time
+    return total_time
+
+
+@functools.lru_cache
+def get_all_countries_names(session: Session) -> List:
+    """
+    Returns a cached list of the countries names.
+    """
+    add_countries_to_db(session=session)
+    countries_names = session.query(Country.name).all()
+    return countries_names
+
 
 @router.get("/edit")
 async def eventedit(request: Request) -> Response:
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request})
+
+
+@router.get("/edit/view_countries")
+async def choose_country(request: Request,
+                         session=Depends(get_db)) -> Response:
+    """
+    Displays the list of all countries name from "Country" table.
+    """
+    countries_names = get_all_countries_names(session=session)
+    return templates.TemplateResponse("event/eventedit.html",
+                                      {"request": request,
+                                       "countries_names": countries_names})
+
+
+@router.post("/edit/view_countries")
+async def check_country_time(request: Request,
+                         session=Depends(get_db)) -> Response:
+    """
+    Displays datalist of all countries name from "Country" table.
+    By clicking "Check time" the converted meeting time is displayed.
+    If the user's ip is not recognized, an error message will appear.
+    ** temporarily using a random israeli ip address instead **
+    """
+    ip = request.client.host
+    random_israeli_ip_for_now = '82.166.236.10'
+    match = geolite2.lookup(random_israeli_ip_for_now)
+    if match is not None:
+        data = await request.form()
+        country = data['countries']
+        start_time = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
+                              TIME_FORMAT)
+        end_time = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
+                            TIME_FORMAT)
+        user_timezone = match.timezone
+        meeting_time_for_invitee = get_meeting_local_duration(
+                                    start_time=start_time,
+                                    end_time=end_time,
+                                    user_timezone=user_timezone,
+                                    country=country,
+                                    session=session)
+        return templates.TemplateResponse("event/eventedit.html",
+                                      {"request": request,
+                                       "chosen_country": country,
+                                       "chosen_country_meeting_time": meeting_time_for_invitee})
+    else:
+        return templates.TemplateResponse("event/eventedit.html",
+                                            {"request": request,
+                                             "msg": ERROR_MSG})
 
 
 @router.post("/edit")
@@ -393,74 +532,3 @@ async def delete_comment(request: Request,
     cmt.delete_comment(db, comment_id)
     path = router.url_path_for('view_comments', event_id=event_id)
     return RedirectResponse(path, status_code=303)
-
-
-# @app.get("/global_time")
-# async def time(
-#         request: Request):
-#     """
-#     Displays a globe icon.
-#     By Click the page transfers to "/global_time/choose".
-#     """
-#     return templates.TemplateResponse("event/partials/global_time.html", {
-#         "request": request
-#     })
-
-
-# @app.get("/global_time/choose")
-# async def time_choose(
-#         request: Request,
-#         session=Depends(get_db)):
-#     """
-#     Displays the list of all countries name from "Country" table.
-#     By Click on country name the page transfers to:
-#     "/global_time/{country_name}/{chosen_datetime}".
-#     *** Temporarily  returns a fictitious meeting datetime. ***
-#     """
-#     data = session.query(Country.name).all()
-#     temp_meeting_datetime = '2021-02-10 19:00:00'
-#     ip = request.client.host
-#     return templates.TemplateResponse("event/partials/global_time.html", {
-#         "request": request,
-#         "data": data,
-#         "date": temp_meeting_datetime,
-#         "ip": ip
-#     })
-
-
-# @app.get("/global_time/{country}/{datetime}/{ip}")
-# async def time_conv(
-#         ip,
-#         country,
-#         datetime: datetime,
-#         request: Request,
-#         session=Depends(get_db)):
-#     """
-#     Displays the chosen country name and the meeting time,
-#     converted to it's local time.
-#     If the Users IP is not recognized , displays error message
-#     """
-#     error_msg = """
-#     Your ip address is not associated with any geographical location.
-#     This function cannot operate.
-#     """
-#     match = geolite2.lookup(ip)
-#     if match is not None:
-#         ip_tmz = match.timezone
-#         trgt_tmz = session.query(Country.timezone).filter_by(name=country)
-#         trgt_tmz = trgt_tmz.first()
-#         trgt_tmz = trgt_tmz[0]
-#         meeting_time_with_utc = pytz.timezone(ip_tmz).localize(datetime)
-#         target_with_utc = pytz.timezone(trgt_tmz)
-#         target_time = meeting_time_with_utc.astimezone(target_with_utc)
-#         target_meeting_hour = target_time.strftime("%H:%M")
-#         return templates.TemplateResponse("event/partials/global_time.html", {
-#             "request": request,
-#             "time": target_meeting_hour,
-#             "country": country
-#         })
-#     else:
-#         return templates.TemplateResponse("event/partials/global_time.html", {
-#             "request": request,
-#             "msg": error_msg
-#         })

@@ -277,6 +277,14 @@ class Quote(Base):
     author = Column(String)
 
 
+class Country(Base):
+    __tablename__ = "countries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+    timezone = Column(String, nullable=False)
+
+
 class Comment(Base):
     __tablename__ = "comments"
 

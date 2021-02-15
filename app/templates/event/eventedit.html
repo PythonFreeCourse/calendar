@@ -22,9 +22,12 @@
                 </a>
             </li> -->
         </ul>
-
         <div class="tab-content" id="event_edit_tabs">
             <div class="tab-pane fade show active" id="eventdetails" role="tabpanel" aria-labelledby="eventdetails-tab">
+                {% set names = countries_names %}
+                {% set country = chosen_country %}
+                {% set time = chosen_country_meeting_time %}
+                {% set msg = msg %}
                 {% include "event/partials/edit_event_details_tab.html" %}
             </div>
             <!-- Copy commented section to add another tab-->
