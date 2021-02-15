@@ -6,6 +6,8 @@ from typing import List, Set
 
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 

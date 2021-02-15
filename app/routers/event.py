@@ -4,8 +4,6 @@ from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from sqlalchemy.dialects import postgresql
-from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -13,7 +11,7 @@ from starlette import status
 from starlette.responses import RedirectResponse, Response
 
 from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import get_db, logger, SessionLocal, templates
+from app.dependencies import get_db, logger, templates
 from app.internal.event import (
     get_invited_emails, get_messages, get_uninvited_regular_emails,
     raise_if_zoom_link_invalid, get_meeting_local_duration, get_all_countries_names
