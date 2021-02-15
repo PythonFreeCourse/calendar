@@ -451,5 +451,5 @@ def test_all_international_days_per_day(session, all_international_days):
     count = 0
     for day in all_international_days:
         assert day.day, day.month == ALL_DATES[count]
-        assert day.international_day == ALL_DAYS[count]
+        assert day.international_day in ALL_DAYS[count]
         count += 1
