@@ -10,6 +10,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app import config
 from app.database.models import User
 from app.dependencies import get_db, MEDIA_PATH, templates
+from app.internal.showevent import get_upcoming_events
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
@@ -40,14 +41,12 @@ async def profile(
         request: Request,
         session=Depends(get_db),
         new_user=Depends(get_placeholder_user)):
-    # Get relevant data from database
-    upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
     if not user:
         session.add(new_user)
         session.commit()
         user = session.query(User).filter_by(id=1).first()
-
+    upcoming_events = get_upcoming_events(session, user.id)[:5]
     signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
              'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
              'Capricorn', 'Aquarius', 'Pisces']
