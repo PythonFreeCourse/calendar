@@ -97,9 +97,11 @@ def get_events_count_stats(
     """
     meetings_for_user = db.query(Event.id).join(
         UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(text(event_start_end_filter())).count()
+        UserEvent.user_id == userid).filter(
+        text(event_start_end_filter())).count()
     created_by_user = db.query(Event.id).filter(
-        Event.owner_id == userid).filter(text(event_start_end_filter())).count()
+        Event.owner_id == userid).filter(
+        text(event_start_end_filter())).count()
     return {"events_count_stats": {"meetings_for_user": meetings_for_user,
                                    "created_by_user": created_by_user}}
 
@@ -121,7 +123,8 @@ def get_events_by_date(
     events_by_date = db.query(
         func.date(Event.start), func.count(func.date(Event.start))).join(
         UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(text(event_start_end_filter())).all()
+        UserEvent.user_id == userid).filter(
+        text(event_start_end_filter())).all()
     return events_by_date
 
 
@@ -212,7 +215,8 @@ def get_events_duration_statistics_from_db(
         (func.avg(func.julianday(Event.end) - func.julianday(Event.start))
          * NIN_IN_DAY)
     ).join(UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(text(event_start_end_filter())).all()
+        UserEvent.user_id == userid).filter(
+        text(event_start_end_filter())).all()
     if events_duration_statistics[0][0]:
         return EventsDurationStatistics(
             shortest_event=round(events_duration_statistics[0][0]),
@@ -271,7 +275,8 @@ def get_participants_statistics(
     """
     subquery = db.query(
         Event.id).join(UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(text(event_start_end_filter())).subquery()
+        UserEvent.user_id == userid).filter(
+        text(event_start_end_filter())).subquery()
     event_participants = db.query(
         UserEvent.user_id, func.count(UserEvent.user_id)).filter(
         UserEvent.user_id != userid).filter(
