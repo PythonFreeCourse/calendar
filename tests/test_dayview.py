@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import pytest
 
 from app.database.models import Event
-from app.routers.dayview import CurrentTimeAttributes, DivAttributes, EventsAttributes
+from app.routers.dayview import CurrentTimeAttributes, EventsAttributes
 from app.routers.event import create_event
 
 
@@ -47,6 +47,7 @@ def test_current_time_gets_not_today_attributes(not_today):
     current_attr = CurrentTimeAttributes(not_today)
     assert str(current_attr.dayview_date) == '2012-12-12'
     assert current_attr.is_viewed is False
+
 
 @pytest.mark.parametrize(
     "minutes,css_class,visiblity", [

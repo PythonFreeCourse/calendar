@@ -14,6 +14,7 @@ templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
 router = APIRouter()
 
+
 class DivAttributes:
     GRID_BAR_QUARTER = 1
     FULL_GRID_BAR = 4
@@ -28,14 +29,13 @@ class DivAttributes:
     CLASS_SIZES = ('title_size_tiny', 'title_size_Xsmall', 'title_size_small')
     LENGTH_SIZE_STEP = (30, 45, 90)
 
-
     def _minutes_position(self, minutes: int) -> Union[int, None]:
         min_minutes = self.MIN_MINUTES
         max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
             if min_minutes < minutes <= max_minutes:
                 minute_deviation = minutes - (i - 1) * self.MAX_MINUTES
-                return {'min_position':i, 'min_deviation': minute_deviation}
+                return {'min_position': i, 'min_deviation': minute_deviation}
             min_minutes = max_minutes
             max_minutes += 15
 
@@ -55,14 +55,15 @@ class CurrentTimeAttributes(DivAttributes):
         self.dayview_date = date.date()
         self.is_viewed = self._date_is_today()
         self.grid_position = self._get_position(current_datetime) - 1
-        self.sub_grid_position = self._minutes_position(current_datetime.minute)['min_deviation']
+        self.sub_grid_position = self._minutes_position(current_datetime.minute)
+        self.sub_grid_position = self.sub_grid_position['min_deviation']
 
     def _date_is_today(self) -> bool:
         today = datetime.now().date()
         if today == self.dayview_date:
             return True
         return False
-        
+  
 
 class EventsAttributes(DivAttributes):
     def __init__(self, event: Event,
