@@ -30,8 +30,7 @@ async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
             "day": day,
             "week_days": cg.Week.DAYS_OF_THE_WEEK,
             "weeks_block": cg.get_month_block(day),
-            "hebrewView": hebrew_obj
-
+            "hebrewView": hebrew_obj,
         }
     )
 

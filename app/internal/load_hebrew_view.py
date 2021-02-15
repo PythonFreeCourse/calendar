@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 
 
 def get_hebrew_view_from_json() -> List[Dict[str, Optional[str]]]:
-    """Reading all parashot from the a JSON file that have been copied from:
+    """Reading all hebrew dates from the a JSON file that have been copied from:
     'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&
     nx=on&year=now&month=x&ss=on&mf=on&c=on&
     geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on'
@@ -30,7 +30,6 @@ def get_hebrew_view_from_json() -> List[Dict[str, Optional[str]]]:
     lambda i: 'hebdate' in i['category'], items))
     return [relevent_details(p) for p in all_hebrew_dates]
     """
-
     try:
         with open('app/resources/hebrew_view.json', encoding='utf-8-sig') as f:
             hebrew_dates_list = json.load(f)
@@ -40,7 +39,7 @@ def get_hebrew_view_from_json() -> List[Dict[str, Optional[str]]]:
 
 
 def add_hebrew_dates_to_db(session: Session) -> None:
-    """This function reads the parashot and inserts them into the db"""
+    """This function reads the dates and inserts them into the db"""
     hebrew_dates = get_hebrew_view_from_json()
     hebrew_dates_objects = [
         HebrewView(
@@ -55,11 +54,12 @@ def add_hebrew_dates_to_db(session: Session) -> None:
 
 
 def load_hebrew_view_if_table_empty(session: Session) -> None:
-    """loading parashot from file to db """
+    """loading hebrew dates from file to db """
     if session.query(HebrewView).count() == 0:
         add_hebrew_dates_to_db(session)
 
 
 def get_hebrew_dates(db_session: Session) -> HebrewView:
-    """This function return a parashot object"""
-    return db_session.query(HebrewView)
+    """This function return a list of the hebrew dates of the current year object"""
+    print(db_session.query(HebrewView))
+    return print(db_session.query(HebrewView))

@@ -42,8 +42,7 @@ load_hebrew_view.load_hebrew_view_if_table_empty(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
-from app.routers import (  # noqa: E402
-
+from app.routers import (
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, export, four_o_four, hebrew_date, invitation,
     login, logout, profile, register, search, telegram, user,
@@ -76,12 +75,11 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
-    hebrew_date.router,
-    weekview.router,
     email.router,
     event.router,
     export.router,
     four_o_four.router,
+    hebrew_date.router,
     invitation.router,
     login.router,
     logout.router,
@@ -91,6 +89,7 @@ routers_to_include = [
     search.router,
     telegram.router,
     user.router,
+    weekview.router,
     whatsapp.router,
 ]
 
