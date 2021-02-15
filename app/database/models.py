@@ -27,7 +27,6 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     full_name = Column(String)
-    language = Column(String)
     description = Column(String, default="Happy new user!")
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
@@ -44,6 +43,7 @@ class User(Base):
     salary_settings = relationship(
         "SalarySettings", cascade="all, delete", back_populates="user",
     )
+    comments = relationship("Comment", back_populates="user")
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -64,16 +64,20 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    vc_link = Column(String)
+    color = Column(String, nullable=True)
+    availability = Column(Boolean, default=True, nullable=False)
     invitees = Column(String)
+    emotion = Column(String, nullable=True)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
-    color = Column(String, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"))
 
     owner = relationship("User", back_populates="owned_events")
     participants = relationship(
         "UserEvent", cascade="all, delete", back_populates="events",
     )
+    comments = relationship("Comment", back_populates="event")
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -273,6 +277,22 @@ class Quote(Base):
     author = Column(String)
 
 
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
+    content = Column(String, nullable=False)
+    time = Column(DateTime, nullable=False)
+
+    user = relationship("User", back_populates="comments")
+    event = relationship("Event", back_populates="comments")
+
+    def __repr__(self):
+        return f'<Comment {self.id}>'
+
+
 class Zodiac(Base):
     __tablename__ = "zodiac-signs"
 
@@ -290,3 +310,16 @@ class Zodiac(Base):
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
         )
+
+
+# insert language data
+
+# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+# https://stackoverflow.com/questions/17461251
+def insert_data(target, session: Session, **kw):
+    session.execute(
+        target.insert(),
+        {'id': 1, 'name': 'English'}, {'id': 2, 'name': 'עברית'})
+
+
+event.listen(Language.__table__, 'after_create', insert_data)

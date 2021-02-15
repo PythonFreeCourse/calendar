@@ -2,6 +2,7 @@ from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
+
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
@@ -35,10 +36,12 @@ json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
+
 from app.routers import (  # noqa: E402
+
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, invitation, login, logout, profile, register,
-    reset_password, search, telegram, whatsapp
+    email, event, export, four_o_four, invitation, login, logout,
+    profile, register, reset_password, search, telegram, weekview, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -50,8 +53,11 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    weekview.router,
     email.router,
     event.router,
+    export.router,
+    four_o_four.router,
     invitation.router,
     login.router,
     logout.router,
@@ -74,7 +80,7 @@ for router in routers_to_include:
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "quote": quote,
     })
