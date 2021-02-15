@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import RedirectResponse, Response
@@ -67,11 +67,13 @@ async def accept_invitations(
 
 
 @router.get("/get_all_invitations")
-def get_all_invitations(db: Session, **param) -> List[Invitation]:
+def get_all_invitations(
+        db: Session = Depends(get_db), **param: Any
+) -> List[Invitation]:
     """Returns all invitations filtered by the requested parameters.
 
     Args:
-        db: The database connection.
+        db: Optional; The database connection.
         **param: A list of parameters to filter by.
 
     Returns:
