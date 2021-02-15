@@ -10,23 +10,22 @@ from icalendar import cal, Calendar
 from loguru import logger
 from sqlalchemy.orm.session import Session
 
+from app.config import (
+    EVENT_CONTENT_LIMIT,
+    EVENT_DURATION_LIMIT,
+    EVENT_HEADER_LIMIT,
+    EVENT_HEADER_NOT_EMPTY,
+    EVENT_VALID_YEARS,
+    LOCATION_LIMIT,
+    MAX_EVENTS_START_DATE,
+    MAX_FILE_SIZE_MB,
+    VALID_FILE_EXTENSION,
+)
 from app.routers.event import create_event
 
 DATE_FORMAT = "%m-%d-%Y"
 DATE_FORMAT2 = "%m-%d-%Y %H:%M"
 DESC_EVENT = "VEVENT"
-
-MAX_FILE_SIZE_MB = 5  # 5MB
-VALID_FILE_EXTENSION = (".txt", ".csv", ".ics")
-
-# Events must be within 20 years range from the current year.
-EVENT_VALID_YEARS = 20
-EVENT_HEADER_NOT_EMPTY = True
-EVENT_HEADER_LIMIT = 50  # Max characters for event header.
-EVENT_CONTENT_LIMIT = 500  # Max characters for event content.
-MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
-LOCATION_LIMIT = 50  # Max characters for location.
-EVENT_DURATION_LIMIT = 2  # Max duration in days for an event.
 
 EVENT_PATTERN = re.compile(r"^(\w{" + str(int(EVENT_HEADER_NOT_EMPTY)) + "," +
                            str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
@@ -294,28 +293,28 @@ def _is_event_dates_valid(start: str, end: str) -> bool:
     """
     start_date = _convert_string_to_date(start)
     end_date = _convert_string_to_date(end)
-    if not start_date and not end_date:
+    if start_date is None or end_date is None:
         return False
 
     assert start_date is not None and end_date is not None
-    if (not _is_date_in_range(start_date)
-            or not _is_date_in_range(end_date)
-            or not _is_start_day_before_end_date(start_date, end_date)
-            or not _is_event_duration_valid(start_date, end_date)):
-        return False
-    return True
+
+    is_date_in_range = (_is_date_in_range(start_date)
+                        and _is_date_in_range(end_date))
+    is_end_after_start = _is_start_day_before_end_date(start_date, end_date)
+    is_duration_valid = _is_event_duration_valid(start_date, end_date)
+    return is_date_in_range and is_end_after_start and is_duration_valid
 
 
 def _add_event_component_txt(
-        event: Dict[str, Any], calendar_content: List[Dict[str, Any]]) -> None:
+        event: Dict[str, Any], calendar_content: List[Dict[str, Any]]
+) -> None:
     """Appends event data from a txt file.
 
     Args:
         event: An event's data.
         calendar_content: A list of event data.
     """
-    if (re.search(r":", event["start_date"])
-            and re.search(r":", event["start_date"])):
+    if ":" in event["start_date"] and ":" in event["start_date"]:
         start_date = datetime.strptime(event["start_date"], DATE_FORMAT2)
         end_date = datetime.strptime(event["end_date"], DATE_FORMAT2)
     else:
@@ -350,8 +349,9 @@ def _convert_string_to_date(string_date: str) -> Optional[datetime]:
     return date
 
 
-def _is_date_in_range(date: datetime, year_range: int = EVENT_VALID_YEARS
-                      ) -> bool:
+def _is_date_in_range(
+        date: datetime, year_range: int = EVENT_VALID_YEARS
+) -> bool:
     """Whether the date is in range.
 
     The range should be between the current year - the EVENT_VALID_YEARS
