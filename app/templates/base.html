@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  {% block head %}
+    {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -37,10 +37,13 @@
                             <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('not_implemented') }}">Sign In</a>
+                            <a class="nav-link" href="{{ url_for('login') }}">Sign In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('not_implemented') }}">Sign Up</a>
+                          <a class="nav-link" href="{{ url_for('logout') }}">{{ gettext("Sign Out") }}</a>
+                        <li class="nav-item">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
@@ -77,7 +80,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js"
         integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD"
         crossorigin="anonymous"></script>
-
+    <script src="{{ url_for('static', path='/horoscope.js') }}"></script>
 </body>
 
 </html>

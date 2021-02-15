@@ -31,6 +31,8 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
+    privacy = Column(String, default="Private", nullable=False)
+    is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
 
     owned_events = relationship(
@@ -46,6 +48,12 @@ class User(Base):
 
     def __repr__(self):
         return f'<User {self.id}>'
+
+    @staticmethod
+    async def get_by_username(db: Session, username: str) -> User:
+        """query database for a user by unique username"""
+        return db.query(User).filter(
+            User.username == username).first()
 
 
 class Event(Base):
