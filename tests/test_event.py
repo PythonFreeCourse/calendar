@@ -426,7 +426,11 @@ def test_event_with_image(event_test_client, client, session):
                                     event_id=event_id).strip(f'{event_id}')
             in response.headers['location'])
     assert is_event_image is True
-    os.remove(fr'app\media\{event_id}.png')
+    rel_path = f'app\media\{event_id}.png'
+    fileDir = os.path.dirname(os.path.realpath('__file__'))
+    filename = os.path.join(fileDir, rel_path)
+    filename = os.path.abspath(os.path.realpath(filename))
+    os.remove(filename)
     os.remove('pil_red.png')
     session.delete(event_created)
     session.commit()
