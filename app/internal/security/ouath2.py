@@ -69,9 +69,7 @@ async def check_jwt_token(
     try:
         jwt_payload = jwt.decode(
             token, JWT_KEY, algorithms=JWT_ALGORITHM)
-        if not manager:
-            return jwt_payload.get("sub"), jwt_payload.get("user_id")
-        if jwt_payload.get("is_manager"):
+        if not manager or jwt_payload.get("is_manager"):
             return jwt_payload.get("sub"), jwt_payload.get("user_id")
         raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,

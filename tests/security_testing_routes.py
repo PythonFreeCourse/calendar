@@ -1,6 +1,8 @@
-from app.internal.security.dependancies import (
-    current_user, is_manager, is_logged_in, User)
 from fastapi import APIRouter, Depends, Request
+
+from app.internal.security.dependancies import (
+    current_user, is_logged_in, is_manager, User
+)
 
 
 """
@@ -18,26 +20,29 @@ router = APIRouter(
 @router.get('/protected')
 async def protected_route(
         request: Request, user: bool = Depends(is_logged_in)):
-    # This is how to protect route for logged in user only.
-    # Dependency will return True.
-    # if user not looged-in, will be redirected to login route.
+    """This is how to protect route for logged in user only.
+    Dependency will return True.
+    if user not looged-in, will be redirected to login route.
+    """
     return {"user": user}
 
 
 @router.get('/manager')
 async def manager_route(
         request: Request, user: bool = Depends(is_manager)):
-    # This is how to protect route for logged in manager only.
-    # Dependency will return True.
-    # if user not looged-in, or have no manager permission,
-    # will be redirected to login route.
+    """This is how to protect route for logged in manager only.
+    Dependency will return True.
+    if user not looged-in, or have no manager permission,
+    will be redirected to login route.
+    """
     return {"manager": user}
 
 
 @router.get('/current_user')
 async def logged_in_user(
         request: Request, user: User = Depends(current_user)):
-    # This is how to protect route for logged in user only.
-    # Dependency will return User object.
-    # if user not looged-in, will be redirected to login route.
+    """This is how to protect route for logged in user only.
+    Dependency will return User object.
+    if user not looged-in, will be redirected to login route.
+    """
     return {"user": user.username}
