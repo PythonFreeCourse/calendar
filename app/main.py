@@ -1,13 +1,14 @@
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-
+import uvicorn
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 
 from app.internal.languages import set_ui_language
+from app.internal.restore_events import delete_events_after_optionals_num_days
 from app.routers.salary import routes as salary
 
 
@@ -29,17 +30,19 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
-
 json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
+# delete permanently events after 30 days
+DAYS = 30
+delete_events_after_optionals_num_days(DAYS, next(get_db()))
 
 from app.routers import (  # noqa: E402
 
     agenda, calendar, categories, celebrity, currency, dayview,
     email, event, export, four_o_four, invitation, profile, search,
-    weekview, telegram, whatsapp,
+    weekview, telegram, whatsapp
 )
 
 json_data_loader.load_to_db(next(get_db()))
@@ -61,7 +64,8 @@ routers_to_include = [
     salary.router,
     search.router,
     telegram.router,
-    whatsapp.router,
+    whatsapp.router
+
 ]
 
 for router in routers_to_include:
@@ -78,3 +82,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
         "request": request,
         "quote": quote,
     })
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)

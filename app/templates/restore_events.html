@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+    <h4>Restore deleted events</h4>
+    <form action="restore_events" method="post">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Event ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Start Event</th>
+                <th scope="col">End Event</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for del_event in deleted_events %}
+                <tr>
+                    <td><input type="checkbox"
+                               id=""
+                               name="check"></td>
+                    <td>
+                        <input type="text" readonly
+                               class="form-control-plaintext"
+                               id="id"
+                               name="id"
+                               value="{{ del_event.id }}">
+                    </td>
+                    <td><input type="text" readonly
+                               class="form-control-plaintext"
+                               id="title"
+                               name="title"
+                               value="{{ del_event.title }}">
+                    </td>
+                    <td><input type="text" readonly
+                               class="form-control-plaintext"
+                               id="start"
+                               name="start"
+                               value="{{ del_event.start }}">
+                    </td>
+                    <td><input type="text" readonly
+                               class="form-control-plaintext"
+                               id="end"
+                               name="end"
+                               value="{{ del_event.end }}">
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <input type="submit" class="btn btn-light" value="Restore">
+    </form>
+{% endblock %}

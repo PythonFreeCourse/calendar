@@ -71,6 +71,7 @@ class Event(Base):
         "UserEvent", cascade="all, delete", back_populates="events",
     )
     comments = relationship("Comment", back_populates="event")
+    deleted_date = Column(DateTime)
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:

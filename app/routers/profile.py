@@ -8,11 +8,12 @@ from starlette.status import HTTP_302_FOUND
 from sqlalchemy.exc import SQLAlchemyError
 
 from app import config
-from app.database.models import User
+from app.database.models import User, Event
 from app.dependencies import get_db, MEDIA_PATH, templates
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
+from app.internal.restore_events import get_events_ids_to_restored
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -176,3 +177,36 @@ async def update_holidays(
     finally:
         url = router.url_path_for("profile")
         return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.get("/restore_events")
+async def restore_events(request: Request,
+                         session=Depends(get_db)):
+    # TODO: Add user.id instead 1
+    deleted_events = session.query(Event.id,
+                                   Event.title,
+                                   Event.start,
+                                   Event.end).filter(Event.owner_id == 1,
+                                                     Event.deleted_date != None).all()
+
+    return templates.TemplateResponse("restore_events.html", {
+        "request": request,
+        "deleted_events": deleted_events
+    })
+
+
+@router.post("/restore_events")
+async def restore_events(request: Request,
+                         session=Depends(get_db)):
+    data = await request.form()
+    events_ids_to_restored = get_events_ids_to_restored(data._list)
+
+    # TODO: Add user.id instead 1
+    restore_del_events = session.query(Event).filter(Event.owner_id == 1, Event.deleted_date != None).filter(
+        Event.id.in_(events_ids_to_restored)).all()
+
+    for del_event in restore_del_events:
+        del_event.deleted_date = None
+
+    session.commit()
+    return RedirectResponse(url='restore_events', status_code=HTTP_302_FOUND)

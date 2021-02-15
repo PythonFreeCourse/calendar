@@ -21,7 +21,6 @@ from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.utils import create_model, get_current_user
 
-
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
 START_FORMAT = '%A, %d/%m/%Y %H:%M'
@@ -248,7 +247,7 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 def get_attendees_email(session: Session, event: Event):
     return (
         session.query(User.email).join(UserEvent)
-        .filter(UserEvent.events == event).all()
+            .filter(UserEvent.events == event).all()
     )
 
 
@@ -264,11 +263,14 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
 
 def _delete_event(db: Session, event: Event):
     try:
+        # TODO: Check if user activate the restore deleted events feature
+
         # Delete event
-        db.delete(event)
+        # db.delete(event)
+        event.deleted_date = datetime.now()
 
         # Delete user_event
-        db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
+        # db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
 
         db.commit()
 
