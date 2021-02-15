@@ -1,9 +1,3 @@
-body {
-  background: #a1ffce;
-  background: -webkit-linear-gradient(to right, #faffd1, #a1ffce);
-  background: linear-gradient(to right, #faffd1, #a1ffce);
-}
-
 .profile-image {
   width: 7em;
 }
@@ -18,6 +12,44 @@ body {
 
 .card-event:hover {
   transform: scale(1.02);
+}
+
+.top-line {
+  height: 0.25rem;
+}
+
+.bg-gradient2 {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 97, 215, 1) 0%,
+    rgba(0, 200, 255, 1) 100%
+  );
+}
+
+h2,
+p {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#inner:hover {
+  cursor: pointer;
+  padding: 50px;
+  background-color: linear-gradient(
+    135deg,
+    rgba(0, 97, 215, 1) 0%,
+    rgba(0, 200, 255, 1) 100%
+  );
+}
+
+#inner {
+  transition: background 0.2s ease, padding 0.8s linear;
+}
+
+.landing-page-button {
+  border-radius: 9999px;
+  justify-content: center;
 }
 
 .event-posted-time {
@@ -72,4 +104,17 @@ body {
 .heart {
   width: 1.5em;
   height: 1.5em;
+}
+.error-message {
+    line-height: 0;
+    color: red;
+    padding-left: 12.5rem;
+}
+
+.input-upload-file {
+    margin-top: 1em;
+}
+
+.upload-file {
+    margin: auto 1em auto 0em;
 }

@@ -10,10 +10,11 @@
       {% else %}
       <p><i id="quote">"{{ quote.text }}"</i> <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
         {% if quote.is_favorite %} 
-          <img src="../media/full_heart.png" class="heart"></span>
+          <img src="../media/full_heart.png" class="heart">
         {% else %}
-          <img src="../media/empty_heart.png" class="heart"></span>
+          <img src="../media/empty_heart.png" class="heart">
         {% endif %}
+        </span>
       </p>
       {% endif %}
     {% endif %}
