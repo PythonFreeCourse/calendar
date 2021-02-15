@@ -21,10 +21,13 @@
                         <h1 class="font font-bold py-3">Manage Notes</h1>
                     </div>
                     <div class="col-sm-6">
-                        <button type="button" class="btn btn-success"><i class="meterial-icons">&#xE147;</i>Add New
-                            Note</button>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#dddModal"><i class="meterial-icons">&#xE147;</i>Delete</button>
+                        <a class="btn btn-success" href="/notes/add" role="button">
+                            <ion-icon name="add-circle-outline"></ion-icon>Add New
+                            Note
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#dddModal">
+                            <ion-icon name="remove-circle-outline"></ion-icon>Delete
+                        </button>
                     </div>
                     <table class="table table-hover table-striped table-bordered">
                         <thead>
@@ -56,8 +59,12 @@
                                 <td>{{ row['description']}}</td>
                                 <td>{{ row['timestamp']}}</td>
                                 <td class="float-right">
-                                    <a href="/notes/{{ row['id'] }}" title="Edit" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
-                                    <button class="btn btn-primary">Delete</button>
+                                    <a href="/notes/edit/{{ row['id'] }}" title="Edit" class="action-icon">
+                                        <ion-icon name="pencil-outline"></ion-icon>
+                                    </a>
+                                    <a href="/notes/delete/{{ row['id'] }}" title="Delete" class="action-icon">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -83,15 +90,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Delete Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                Not implemented
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

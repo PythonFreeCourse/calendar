@@ -4,7 +4,7 @@ import json
 import pytest
 
 
-def test_create_note(notes_test_client: TestClient, monkeypatch):
+def _test_create_note(notes_test_client: TestClient, monkeypatch):
     test_request_payload = {
         "title": "something", "description": "something else"
     }
@@ -19,15 +19,15 @@ def test_create_note(notes_test_client: TestClient, monkeypatch):
     monkeypatch.setattr(notes, "post", mock_post)
 
     response = notes_test_client.post(
-        "/notes/", data=json.dumps(test_request_payload),)
+        "/notes/add/", data=json.dumps(test_request_payload))
 
     assert response.status_code == 201
     assert response.json() == test_response_payload
 
 
-def test_create_note_invalid_json(notes_test_client: TestClient):
+def _test_create_note_invalid_json(notes_test_client: TestClient):
     response = notes_test_client.post(
-        "/notes/", data=json.dumps({"titles": "something"}))
+        "/notes/add/", data=json.dumps({"titles": "something"}))
     assert response.status_code == 422
 
 
@@ -60,10 +60,14 @@ def test_read_note_incorrect_id(notes_test_client: TestClient, monkeypatch):
 
 def test_read_all_notes(notes_test_client: TestClient, monkeypatch):
     test_data = [
-        {"id": 1, "title": "something",
-            "description": "something else", "timestamp": None},
-        {"id": 2, "title": "someone",
-         "description": "someone else", "timestamp": None},
+        {"id": 1,
+         "title": "something",
+         "description": "something else",
+         "timestamp": "2021-02-15T07:13:55.837950"},
+        {"id": 2,
+         "title": "someone",
+         "description": "someone else",
+         "timestamp": "2021-02-15T07:13:55.837950"},
     ]
 
     async def mock_get_all(session):
@@ -73,7 +77,7 @@ def test_read_all_notes(notes_test_client: TestClient, monkeypatch):
 
     response = notes_test_client.get("/notes/")
     assert response.status_code == 200
-    assert response.json() == test_data
+    assert response.context['data'] == test_data
 
 
 def test_update_note(notes_test_client: TestClient, monkeypatch):

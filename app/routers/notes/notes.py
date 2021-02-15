@@ -3,7 +3,6 @@ from app.database.schemas import NoteDB, NoteSchema
 from app.dependencies import get_db, templates
 from app.internal.notes import notes
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.encoders import jsonable_encoder
 from fastapi.param_functions import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
@@ -27,12 +26,6 @@ async def create_new_note(request: Request,
     return RedirectResponse('/notes', status_code=HTTP_302_FOUND)
 
 
-@router.get("/add")
-async def create_note_form(request: Request):
-    return templates.TemplateResponse("notes/note.html",
-                                      {"request": request})
-
-
 async def create_note(note: NoteSchema, session: Session) -> models.Note:
     note_id = await notes.post(session, note)
     response_object = {
@@ -43,23 +36,24 @@ async def create_note(note: NoteSchema, session: Session) -> models.Note:
     }
     return response_object
 
-test_data = [
-    {"id": 1, "title": "something",
-     "description": "something else", "timestamp": None},
-    {"id": 2, "title": "someone",
-     "description": "someone else", "timestamp": None},
-]
+
+@router.get("/add")
+async def create_note_form(request: Request) -> templates:
+    return templates.TemplateResponse("notes/note.html",
+                                      {"request": request})
 
 
 @router.get("/", response_model=List[NoteDB])
-async def read_all_notes(request: Request,
-                         session: Session = Depends(get_db)):
-    db_notes_data = await notes.get_all(session)
-    data = jsonable_encoder(db_notes_data)
+async def get_all_notes(request: Request,
+                        session: Session = Depends(get_db)) -> templates:
+    data = await read_all_notes(session)
     return templates.TemplateResponse(
         "notes/notes.html",
         {'request': request, 'data': data})
-    # return db_notes_data
+
+
+async def read_all_notes(session: Session) -> List[NoteDB]:
+    return await notes.get_all(session)
 
 
 @router.get("/{id}/", response_model=NoteSchema)
@@ -71,7 +65,9 @@ async def read_note(id: int, session: Session = Depends(get_db)):
 
 
 @router.put("/{id}/", response_model=NoteDB)
-async def update_note(request: Request, id: int, payload: NoteSchema,
+async def update_note(request: Request,
+                      id: int,
+                      payload: NoteSchema,
                       session: Session = Depends(get_db)):
     note = await notes.get(session, id)
     if not note:
@@ -95,3 +91,4 @@ async def delete_note(id: int, session: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Note not found")
     await notes.delete(session, id)
     return note
+    # return RedirectResponse('/notes', status_code=HTTP_302_FOUND)
