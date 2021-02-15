@@ -97,8 +97,8 @@ async def eventview(request: Request, event_id: int,
                                        "messages": messages})
 
 
-@router.post("/{event_id}/owner_changed")
-async def changeowner(request: Request, event_id: int,
+@router.post("/{event_id}/owner")
+async def change_owner(request: Request, event_id: int,
                       db: Session = Depends(get_db)):
     form = await request.form()
     if 'username' not in form:

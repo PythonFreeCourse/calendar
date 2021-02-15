@@ -371,14 +371,14 @@ def test_successful_deletion(event_test_client, session, event):
             db=session, event_id=1).content
 
 
-def test_changeowner(client, event_test_client, user, session, event):
+def test_change_owner(client, event_test_client, user, session, event):
     """
     Test change owner of an event
     """
     event_id = event.id
     event_details = [event.title, event.content, event.location, event.start,
                      event.end, event.color, event.category_id]
-    response = event_test_client.post(f"/event/{event_id}/owner_changed",
+    response = event_test_client.post(f"/event/{event_id}/owner",
                                       data=None)
     assert response.status_code == status.HTTP_302_FOUND
     assert response.ok
@@ -387,12 +387,12 @@ def test_changeowner(client, event_test_client, user, session, event):
         assert str(event_detail).encode('utf-8') not in response.content, \
             f'{event_detail} not in view event page'
     data = {'username': "worng_username"}
-    response = event_test_client.post(f"/event/{event_id}/owner_changed",
+    response = event_test_client.post(f"/event/{event_id}/owner",
                                       data=data)
     assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
     assert b'Username does not exist.' in response.content
     data = {'username': user.username}
-    response = event_test_client.post(f"/event/{event_id}/owner_changed",
+    response = event_test_client.post(f"/event/{event_id}/owner",
                                       data=data)
     assert response.ok
     assert response.status_code == status.HTTP_302_FOUND
