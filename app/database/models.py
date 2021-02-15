@@ -8,7 +8,7 @@ from sqlalchemy import (
     JSON, String, Time, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.ext.declarative.api import declarative_base
+from sqlalchemy.ext.declarative.api import declarative_base, DeclarativeMeta
 from sqlalchemy.orm import relationship, Session
 from sqlalchemy.sql.schema import CheckConstraint
 
@@ -16,7 +16,7 @@ from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
 import app.routers.salary.config as SalaryConfig
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 
 
 class User(Base):
