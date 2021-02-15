@@ -1,0 +1,21 @@
+{% extends "partials/index/index_base.html" %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h1>Favorite Quotes</h1>
+    <br>
+    {% for quote in quotes %}
+      {% if not quote.author %}
+        <p><i>"{{ quote.text }}"</i></p>
+      {% else %}
+        <p><i id="quote">"{{ quote.text }}"</i> <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
+        {% if quote.is_favorite %} 
+            <img src="../media/full_heart.png" class="heart favorites"></span>
+        {% else %}
+            <img src="../media/empty_heart.png" class="heart favorites"></span>
+        {% endif %}
+        </p>
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endblock %}

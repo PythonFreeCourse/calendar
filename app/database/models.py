@@ -10,6 +10,7 @@ from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base
 from sqlalchemy.orm import relationship, Session
+from sqlalchemy.sql.expression import null
 from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
@@ -265,6 +266,7 @@ class Quote(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+    is_favorite = Column(Boolean)
 
 
 class Zodiac(Base):
@@ -297,3 +299,11 @@ def insert_data(target, session: Session, **kw):
 
 
 event.listen(Language.__table__, 'after_create', insert_data)
+
+
+class UserQuotes(Base):
+    __tablename__ = "user_quotes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    quote_id = Column(Integer, ForeignKey("quotes.id"), nullable=False)

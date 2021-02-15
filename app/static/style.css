@@ -68,3 +68,8 @@ body {
 .subtitle {
     font-size: 20px;
 }
+
+.heart {
+  width: 1.5em;
+  height: 1.5em;
+}

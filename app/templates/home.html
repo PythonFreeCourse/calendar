@@ -2,18 +2,19 @@
 
 {% block content %}
 
-
-  <div class="container mt-4">
-  </div>
-
-
   <!-- I chose to add the quote day to the home page until the relavent calendar view will be developed.  -->
-  <div>
+  <div class="container mt-4">
     {% if quote %}
       {% if not quote.author %}
         <p><i>"{{ quote.text }}"</i></p>
       {% else %}
-        <p><i>"{{ quote.text }}"</i> <span style="font-size: small;">&nbsp; \ {{ quote.author }}</span></p>
+      <p><i id="quote">"{{ quote.text }}"</i> <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
+        {% if quote.is_favorite %} 
+          <img src="../media/full_heart.png" class="heart"></span>
+        {% else %}
+          <img src="../media/empty_heart.png" class="heart"></span>
+        {% endif %}
+      </p>
       {% endif %}
     {% endif %}
   </div>
