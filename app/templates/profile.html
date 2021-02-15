@@ -50,6 +50,13 @@
                                         Register telegram Id
                                     </button>
                                 </li>
+                                <li class="list-group-item no-border">
+                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#calendarPrivacyModal">
+                                        Update calendar privacy
+                                    </button>
+                                </li>
                             </ul>
                         </div>
 
@@ -59,7 +66,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ gettext("Update name") }}</h5>
+                                        <h2 class="modal-title">{{ gettext("Update name") }}</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -84,7 +91,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ gettext("Update email") }}</h5>
+                                        <h2 class="modal-title">{{ gettext("Update email") }}</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -110,7 +117,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ gettext("Update description") }}</h5>
+                                        <h2 class="modal-title">{{ gettext("Update description") }}</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -137,7 +144,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">{{ gettext("Update photo") }}</h5>
+                                        <h2 class="modal-title">{{ gettext("Update photo") }}</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -163,7 +170,7 @@
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h5 class="modal-title">My Telegram Id</h5>
+                                        <h2 class="modal-title">My Telegram Id</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
@@ -171,12 +178,37 @@
                                         <form action="update_telegram_id" method="post">
                                             <input type="text"
                                                    class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                   name="telegram_id" placeholder="Telegram id"
-                                                    {% if user.telegram_id %}
+                                                   name="telegram_id" placeholder="Telegram id"{% if user.telegram_id %}
                                                    value="{{ user.telegram_id }}" {% endif %}>
                                             <div class="d-flex flex-row-reverse mt-4">
                                                 <button type="submit"
                                                         class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calendar Privacy -->
+                        <div class="modal modal-sm" id="calendarPrivacyModal" tabindex="-1" data-bs-backdrop="static"
+                             aria-labelledby="updateCalendarPrivacyModalLabel" aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h2 class="modal-title">Set your calendar privacy</h2>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="update_calendar_privacy" method="post">
+                                            <select class="form-control-sm" name="privacy">
+                                                <option value="private">Private</option>
+                                                <option value="public">Public</option>
+                                            </select>
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit" class="btn btn-sm btn-success">Save changes
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -219,51 +251,48 @@
                             </div>
                         </div>
 
-                        </p>
+                        <!-- Features card -->
+                        <div class="card card-profile">
+                            <div class="card-body">
+                                <p class="card-title">
+                                    Explore more features
+                                </p>
+                                <li class="list-group">
+                                    {% if not user.telegram_id %}
+                                        <li class="list-group-item list-group-item-action no-border">
+                                            <a class="text-decoration-none text-success"
+                                               href="https://t.me/pylander_bot" target="_blank">
+                                                <strong>Try PyLander bot</strong>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                <li class="list-group-item list-group-item-action no-border">
+                                    <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
+                                </li>
+                                <li class="list-group-item list-group-item-action no-border">
+                                    <a class="text-decoration-none text-secondary"
+                                       href="{{ url_for('import_holidays') }}">Add holidays to calendar</a>
+                                </li>
+                                <li class="list-group-item list-group-item-action no-border">
+                                    <a class="text-decoration-none text-secondary"
+                                       href="{{ url_for('restore_events') }}">Restore events</a>
+                                </li>
+                                <li class="list-group-item list-group-item-action no-border">
+                                    <a class="text-decoration-none text-secondary" href="#">Your feature</a>
+                                </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- End Features card -->
+
+                    </div>
+
+                    <!-- Center -->
+                    <div class="col-5">
                         <div class="container" id="daily_horoscope">
                         </div>
                     </div>
                 </div>
-
-                <!-- Features card -->
-                <div class="card card-profile">
-                    <div class="card-body">
-                        <p class="card-title">
-                            Explore more features
-                        </p>
-                        <ul class="list-group">
-                            {% if not user.telegram_id %}
-                                <li class="list-group-item list-group-item-action no-border">
-                                    <a class="text-decoration-none text-success" href="https://t.me/pylander_bot"
-                                       target="_blank">
-                                        <strong>Try PyLander bot</strong>
-                                    </a>
-                                </li>
-                            {% endif %}
-                            <li class="list-group-item list-group-item-action no-border">
-                                <form method="GET" action="{{ url_for('export') }}">
-                                    <label for="start_date">{{ gettext("From") }}</label><br>
-                                    <input class="filter" type="date" id="start_date" name="start_date"><br>
-                                    <label for="end_date">{{ gettext("To") }}</label><br>
-                                    <input class="filter" type="date" id="end_date" name="end_date"><br>
-                                    <input class="filter" type="submit" value="{{ gettext('Export') }}">
-                                </form>
-                            </li>
-                            <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="{{ url_for('import_holidays') }}">Add
-                                    holidays to calendar</a>
-                            </li>
-                            <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary"
-                                   href="{{ url_for('restore_events') }}">Restore events</a>
-                            </li>
-                            <li class="list-group-item list-group-item-action no-border">
-                                <a class="text-decoration-none text-secondary" href="#">Your feature</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- End Features card -->
             </div>
 
             <!-- Center -->
@@ -311,7 +340,7 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title">Update Event</h5>
+                                        <h2 class="modal-title">Update Event</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
