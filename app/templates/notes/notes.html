@@ -1,0 +1,99 @@
+{% extends "partials/calendar/calendar_base.html" %}
+{% block head %}
+{{ super() }}
+
+<!-- CSS -->
+<link href="{{ url_for('static', path='/notes.css') }}" rel="stylesheet" type="text/css">
+
+<!-- Scripts -->
+<!-- <script src="{{ url_for('static', path='/js/notes.js') }}"></script> -->
+{% endblock head %}
+
+{% block page_name %}Notes{% endblock page_name %}
+{% block content %}
+
+<section>
+    <div class="container">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h1 class="font font-bold py-3">Manage Notes</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-success"><i class="meterial-icons">&#xE147;</i>Add New
+                            Note</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#dddModal"><i class="meterial-icons">&#xE147;</i>Delete</button>
+                    </div>
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <span>
+                                        <input type="checkbox" id="selectAll">
+                                        <label for="selectAll"></label>
+                                    </span>
+                                </th>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Updated on</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in data %}
+                            <tr>
+                                <td>
+                                    <span class="custom-checkbox">
+                                        <input type="checkbox" id="checkbox1" name="option[]" value="1">
+                                        <label for="checkbox1"></label>
+                                    </span>
+                                </td>
+                                <td>{{ row['id']}}</td>
+                                <td>{{ row['title']}}</td>
+                                <td>{{ row['description']}}</td>
+                                <td>{{ row['timestamp']}}</td>
+                                <td class="float-right">
+                                    <a href="/notes/{{ row['id'] }}" title="Edit" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
+                                    <button class="btn btn-primary">Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="dddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
