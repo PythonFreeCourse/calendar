@@ -104,9 +104,9 @@ p {
 }
 
 .input-upload-file {
-    margin-top: 15px
+    margin-top: 1em;
 }
 
 .upload-file {
-    margin: auto 10px auto 0px
+    margin: auto 1em auto 0em
 }
