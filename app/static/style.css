@@ -101,6 +101,13 @@ p {
     font-family: 'Assistant', sans-serif;
     text-align: center;
 }
+  
+.error-message {
+    line-height: 0;
+    color: red;
+    padding-left: 12.5rem;
+}
+
 
 .subtitle {
     font-size: 20px;

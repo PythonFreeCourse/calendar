@@ -37,10 +37,13 @@
                             <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('not_implemented') }}">Sign In</a>
+                            <a class="nav-link" href="{{ url_for('login') }}">Sign In</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('not_implemented') }}">Sign Up</a>
+                          <a class="nav-link" href="{{ url_for('logout') }}">{{ gettext("Sign Out") }}</a>
+                        <li class="nav-item">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
