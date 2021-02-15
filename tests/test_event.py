@@ -14,7 +14,6 @@ from app.internal.utils import delete_instance
 from app.main import app
 from app.routers import event as evt
 
-
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
@@ -91,12 +90,12 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
 }
 
 CORRECT_ADD_EVENT_DATA = {
-    "title": "test",
-    "start": "2021-02-13T09:03:49.560Z",
-    "end": "2021-02-13T09:03:49.560Z",
-    "content": "test",
-    "owner_id": 0,
-    "location": "test"
+    'title': 'test',
+    'start': '2021-02-13T09:03:49.560Z',
+    'end': '2021-02-13T09:03:49.560Z',
+    'content': 'test',
+    'owner_id': 0,
+    'location': 'test'
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -124,12 +123,12 @@ INVALID_FIELD_UPDATE = [
 
 
 def test_get_events(event_test_client, session, event):
-    response = event_test_client.get("/event/")
+    response = event_test_client.get('/event/')
     assert response.ok
 
 
 def test_create_event_api(event_test_client, session, event):
-    response = event_test_client.post("/event/",
+    response = event_test_client.post('/event/',
                                       data=json.dumps(CORRECT_ADD_EVENT_DATA))
     assert response.ok
 
@@ -142,10 +141,11 @@ def test_eventedit(event_test_client):
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
-    event_details = [event.title, event.content, event.location,
-                     event.vc_link, event.start,
-                     event.end, event.color, event.category_id]
-    response = event_test_client.get(f"/event/{event_id}")
+    event_details = [
+        event.title, event.content, event.location, event.vc_link, event.start,
+        event.end, event.color, event.category_id
+    ]
+    response = event_test_client.get(f'/event/{event_id}')
     assert response.ok
     assert b'View Event' in response.content
     for event_detail in event_details:
@@ -303,8 +303,8 @@ def test_invalid_fields(event, data, session):
 def test_not_check_change_dates_allowed(event):
     data = {'start': '20.01.2020'}
     with pytest.raises(HTTPException):
-        assert (evt.check_change_dates_allowed(event, data).status_code ==
-                status.HTTP_400_BAD_REQUEST)
+        assert (evt.check_change_dates_allowed(
+            event, data).status_code == status.HTTP_400_BAD_REQUEST)
 
 
 def test_update_event_availability(event, session):
@@ -312,9 +312,7 @@ def test_update_event_availability(event, session):
     Test update event's availability.
     """
     original_availability = event.availability
-    data = {
-        "availability": not original_availability
-    }
+    data = {'availability': not original_availability}
     assert original_availability is not evt.update_event(
         event_id=event.id, event=data, db=session).availability
 
@@ -331,7 +329,7 @@ def test_successful_update(event, session):
     }
     assert isinstance(evt.update_event(1, data, session), Event)
     updated_event = evt.update_event(event_id=event.id, event=data, db=session)
-    assert "successful" in updated_event.title
+    assert 'successful' in updated_event.title
     assert updated_event.availability is False
 
 
@@ -343,9 +341,10 @@ def test_update_event_with_category(today_event, category, session):
         'title': 'successful',
         'category_id': category.id,
     }
-    updated_event = evt.update_event(event_id=today_event.id, event=data,
+    updated_event = evt.update_event(event_id=today_event.id,
+                                     event=data,
                                      db=session)
-    assert "successful" in updated_event.title
+    assert 'successful' in updated_event.title
     assert updated_event.category_id == category.id
 
 
@@ -354,11 +353,9 @@ def test_update_db_close(event):
         'title': 'Problem connecting to db in func update_event',
     }
     with pytest.raises(HTTPException):
-        assert (
-                evt.update_event(event_id=event.id, event=data,
-                                 db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        assert (evt.update_event(
+            event_id=event.id, event=data,
+            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def test_update_event_does_not_exist(event, session):
@@ -366,7 +363,8 @@ def test_update_event_does_not_exist(event, session):
     with pytest.raises(HTTPException):
         response = evt.update_event(
             event_id=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            event=data, db=session)
+            event=data,
+            db=session)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
@@ -375,13 +373,9 @@ def test_db_close_update(session, event):
         'title': 'Problem connecting to db in func _update_event',
     }
     with pytest.raises(HTTPException):
-        assert (
-                evt._update_event(
-                    event_id=event.id,
-                    event_to_update=data,
-                    db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        assert (evt._update_event(
+            event_id=event.id, event_to_update=data,
+            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def test_repr(event):
@@ -391,25 +385,21 @@ def test_repr(event):
 def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
         response = evt.delete_event(event_id=1, db=None)
-        assert (
-                response.status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        assert (response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
-        assert (
-                evt._delete_event(event=event, db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        assert (evt._delete_event(
+            event=event,
+            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def test_successful_deletion(event_test_client, session, event):
     response = event_test_client.delete('/event/1')
     assert response.ok
     with pytest.raises(HTTPException):
-        assert "Event ID does not exist. ID: 1" in evt.by_id(
+        assert 'Event ID does not exist. ID: 1' in evt.by_id(
             db=session, event_id=1).content
 
 
@@ -437,7 +427,7 @@ def test_event_with_image(event_test_client, client, session):
     session.delete(event_created)
     session.commit()
 
- 
+
 def test_add_comment(event_test_client: TestClient, session: Session,
                      event: Event) -> None:
     assert session.query(Comment).first() is None
@@ -454,17 +444,13 @@ def test_add_comment(event_test_client: TestClient, session: Session,
 
 def test_get_event_data(session: Session, event: Event,
                         comment: Comment) -> None:
-    data = (
-        event,
-        [{
-            'id': 1,
-            'avatar': 'profile.png',
-            'username': 'test_username',
-            'time': '01/01/2021 00:01',
-            'content': 'test comment',
-        }],
-        '%H:%M'
-    )
+    data = (event, [{
+        'id': 1,
+        'avatar': 'profile.png',
+        'username': 'test_username',
+        'time': '01/01/2021 00:01',
+        'content': 'test comment',
+    }], '%H:%M')
     assert evt.get_event_data(session, event.id) == data
 
 
@@ -494,13 +480,14 @@ class TestApp:
     client = TestClient(app)
     date_test_data = [datetime.today() - timedelta(1), datetime.today()]
     event_test_data = {
-        'title': "Test Title",
-        "location": "Fake City",
+        'title': 'Test Title',
+        'location': 'Fake City',
         'vc_link': 'https://us02web.zoom.us/j/875384596',
-        "start": date_test_data[0],
-        "end": date_test_data[1],
-        "content": "Any Words",
-        "owner_id": 123}
+        'start': date_test_data[0],
+        'end': date_test_data[1],
+        'content': 'Any Words',
+        'owner_id': 123
+    }
 
     @staticmethod
     def test_get_db():
@@ -518,10 +505,7 @@ class TestApp:
 
     @staticmethod
     def test_bad_check_validation():
-        assert not evt.is_date_before(
-            TestApp.date_test_data[0],
-            'bad value'
-        )
+        assert not evt.is_date_before(TestApp.date_test_data[0], 'bad value')
 
     @staticmethod
     def test_add_event(session: Session):

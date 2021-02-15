@@ -21,12 +21,10 @@ from app.internal.event import (
     get_messages,
     get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
-
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.utils import create_model, get_current_user
-
 
 HEIGHT = 200
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
@@ -61,12 +59,12 @@ class EventModel(BaseModel):
     location: str
 
 
-@router.get("/")
+@router.get('/')
 async def get_events(session=Depends(get_db)):
     return session.query(Event).all()
 
 
-@router.post("/")
+@router.post('/')
 async def create_event_api(event: EventModel, session=Depends(get_db)):
     create_event(db=session,
                  title=event.title,
@@ -78,23 +76,23 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
     return {'success': True}
 
 
-@router.get("/edit", include_in_schema=False)
-@router.get("/edit")
+@router.get('/edit', include_in_schema=False)
+@router.get('/edit')
 async def eventedit(request: Request) -> Response:
-    return templates.TemplateResponse("event/eventedit.html",
-                                      {"request": request})
+    return templates.TemplateResponse('event/eventedit.html',
+                                      {'request': request})
 
-@router.post("/edit", include_in_schema=False)
-async def create_new_event(request: Request,
-                           event_img: bytes = File(None),
-                           session=Depends(get_db)) -> Response:
+
+@router.post('/edit', include_in_schema=False)
+async def create_new_event(
+    request: Request, event_img: bytes = File(None), session=Depends(get_db)
+) -> Response:
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = dt.strptime(data['start_date'] + ' ' +
-                        data['start_time'], TIME_FORMAT)
-    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
-                      TIME_FORMAT)
+    start = dt.strptime(data['start_date'] + ' ' + data['start_time'],
+                        TIME_FORMAT)
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'], TIME_FORMAT)
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
@@ -108,20 +106,28 @@ async def create_new_event(request: Request,
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(session, title, start, end, owner_id, content,
-                         location, vc_link, invitees=invited_emails,
+    event = create_event(session,
+                         title,
+                         start,
+                         end,
+                         owner_id,
+                         content,
+                         location,
+                         vc_link,
+                         invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
-    
+
     if event_img:
         image = process_image(event_img, event.id)
         event.image = image
         session.commit()
 
     messages = get_messages(session, event, uninvited_contacts)
-    return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            + f'?messages={"---".join(messages)}',
-                            status_code=status.HTTP_302_FOUND)
+    return RedirectResponse(
+        router.url_path_for('eventview', event_id=event.id) +
+        f'?messages={"---".join(messages)}',
+        status_code=status.HTTP_302_FOUND)
 
 
 def process_image(img: bytes, event_id: int, img_height: int = HEIGHT) -> str:
@@ -137,18 +143,21 @@ def process_image(img: bytes, event_id: int, img_height: int = HEIGHT) -> str:
     return file_name
 
 
-@router.get("/{event_id}", include_in_schema=False)
-async def eventview(request: Request, event_id: int,
+@router.get('/{event_id}', include_in_schema=False)
+async def eventview(request: Request,
+                    event_id: int,
                     db: Session = Depends(get_db)) -> Response:
     event, comments, end_format = get_event_data(db, event_id)
-    messages = request.query_params.get('messages', '').split("---")
-    return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request,
-                                       "event": event,
-                                       "comments": comments,
-                                       "start_format": START_FORMAT,
-                                       "end_format": end_format,
-                                       "messages": messages})
+    messages = request.query_params.get('messages', '').split('---')
+    return templates.TemplateResponse(
+        'event/eventview.html', {
+            'request': request,
+            'event': event,
+            'comments': comments,
+            'start_format': START_FORMAT,
+            'end_format': end_format,
+            'messages': messages
+        })
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -177,8 +186,7 @@ def by_id(db: Session, event_id: int) -> Event:
     return event
 
 
-def is_end_date_before_start_date(start_date: dt,
-                                  end_date: dt) -> bool:
+def is_end_date_before_start_date(start_date: dt, end_date: dt) -> bool:
     """Check if the start date is earlier than the end date"""
     return start_date > end_date
 
@@ -299,10 +307,8 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
 
 def get_attendees_email(session: Session, event: Event):
-    return (
-        session.query(User.email).join(UserEvent)
-        .filter(UserEvent.events == event).all()
-    )
+    return (session.query(
+        User.email).join(UserEvent).filter(UserEvent.events == event).all())
 
 
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
@@ -332,9 +338,8 @@ def _delete_event(db: Session, event: Event):
                             detail='Deletion failed')
 
 
-@router.delete("/{event_id}")
-def delete_event(event_id: int,
-                 db: Session = Depends(get_db)) -> Response:
+@router.delete('/{event_id}')
+def delete_event(event_id: int, db: Session = Depends(get_db)) -> Response:
     # TODO: Check if the user is the owner of the event.
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
@@ -374,9 +379,11 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-@router.post("/{event_id}")
-async def add_comment(request: Request, event_id: int,
-                      session: Session = Depends(get_db)) -> Response:
+@router.post('/{event_id}')
+async def add_comment(
+    request: Request, event_id: int,
+    session: Session = Depends(get_db)
+) -> Response:
     """Creates a comment instance in the DB. Redirects back to the event's
     comments tab upon creation."""
     form = await request.form()
@@ -410,30 +417,35 @@ def get_event_data(db: Session, event_id: int) -> EVENT_DATA:
     """
     event = by_id(db, event_id)
     comments = json.loads(cmt.display_comments(db, event))
-    end_format = ('%H:%M' if event.start.date() == event.end.date()
-                  else START_FORMAT)
+    end_format = ('%H:%M'
+                  if event.start.date() == event.end.date() else START_FORMAT)
     return event, comments, end_format
 
 
-@router.get("/{event_id}/comments")
-async def view_comments(request: Request, event_id: int,
-                        db: Session = Depends(get_db)) -> Response:
+@router.get('/{event_id}/comments')
+async def view_comments(
+    request: Request, event_id: int,
+    db: Session = Depends(get_db)
+) -> Response:
     """Renders event comment tab view.
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
-    return templates.TemplateResponse("event/eventview.html",
-                                      {"request": request,
-                                       "event": event,
-                                       "comments": comments,
-                                       'comment': True,
-                                       "start_format": START_FORMAT,
-                                       "end_format": end_format})
+    return templates.TemplateResponse(
+        'event/eventview.html', {
+            'request': request,
+            'event': event,
+            'comments': comments,
+            'comment': True,
+            'start_format': START_FORMAT,
+            'end_format': end_format
+        })
 
 
-@router.post("/comments/delete")
-async def delete_comment(request: Request,
-                         db: Session = Depends(get_db)) -> Response:
+@router.post('/comments/delete')
+async def delete_comment(
+    request: Request, db: Session = Depends(get_db)
+) -> Response:
     """Deletes a comment instance from the db.
 
     Redirects back to the event's comments tab upon deletion.
