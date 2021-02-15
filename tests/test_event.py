@@ -3,6 +3,7 @@ import os
 import json
 import pytest
 
+from PIL import Image
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
@@ -409,7 +410,9 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 
 
 def test_event_with_image(event_test_client, client, session):
-    with open(r'app\media\example.png', 'rb') as img:
+    img = Image.new('RGB', (60, 30), color = 'red')
+    img.save('pil_red.png')
+    with open('pil_red.png', 'rb') as img:
         imgstr = img.read()
     files = {'event_img': imgstr}
     data = {**CORRECT_EVENT_FORM_DATA}
@@ -424,6 +427,7 @@ def test_event_with_image(event_test_client, client, session):
             in response.headers['location'])
     assert is_event_image is True
     os.remove(fr'app\media\{event_id}.png')
+    os.remove('pil_red.png')
     session.delete(event_created)
     session.commit()
 
