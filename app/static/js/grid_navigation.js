@@ -65,7 +65,7 @@ function calcDaysToLoad(number, weekDays = 7, monthBlock = 6) {
 }
 
 function loadDaysIfNeeded(dateId, link) {
-    const allFirst = Array.from(document.querySelectorAll('*[id^="01"]'));
+    const allFirst = Array.from(document.querySelectorAll('[id^="01"]'));
     const allId = allFirst.map(x => x.id);
     if (allId.includes(dateId)) {
         return false;
