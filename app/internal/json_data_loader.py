@@ -26,7 +26,7 @@ def load_to_database(session: Session) -> None:
         session,
         'app/resources/zodiac.json',
         Zodiac,
-        zodiac.create_zodiac_object,
+        zodiac.get_zodiac,
     )
 
     _insert_into_database(
