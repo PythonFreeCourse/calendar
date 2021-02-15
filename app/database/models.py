@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 from sqlalchemy import (
     Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
-    JSON, String, Time, UniqueConstraint)
+    JSON, String, Time, Date, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base
@@ -44,6 +44,9 @@ class User(Base):
         "SalarySettings", cascade="all, delete", back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
+
+    shoppingProducts = relationship(
+        "ShoppingProduct", cascade="all, delete", back_populates="owner")
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -322,6 +325,17 @@ class Parasha(Base):
     date = Column(DateTime, nullable=False)
 
 
+class ShoppingProduct(Base):
+    __tablename__ = "shoppingProducts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    amount = Column(Integer)
+    is_bought = Column(Boolean, nullable=False)
+    date = Column(Date, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="shoppingProducts")
 # insert language data
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
 # https://stackoverflow.com/questions/17461251

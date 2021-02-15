@@ -5,10 +5,11 @@ from typing import Tuple, Union, Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
-from app.database.models import Event, User
+from app.database.models import Event, User, ShoppingProduct
 from app.dependencies import get_db, TEMPLATES_PATH
 from app.routers.user import get_all_user_events
 from app.internal import zodiac
+from app.internal.create_shopping_list import sort_by_date
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
@@ -136,6 +137,9 @@ async def dayview(
     events_n_attrs = get_events_and_attributes(
         day=day, session=session, user_id=user.id,
     )
+    shopping_products = session.query(ShoppingProduct).filter(ShoppingProduct.owner_id == user.id) \
+        .filter(ShoppingProduct.date == day.date())
+    shopping_lists = sort_by_date(list(shopping_products))
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,
@@ -143,5 +147,7 @@ async def dayview(
         "month": month,
         "day": day.day,
         "zodiac": zodiac_obj,
-        "view": view
+        "view": view,
+        "datestr": date,
+        "shoppingProducts": shopping_products,
     })

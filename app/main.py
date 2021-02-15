@@ -42,7 +42,7 @@ from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency,
     dayview, email, event, export, four_o_four,
     invitation, login, logout, parasha, profile,
-    register, search, telegram, weekview, whatsapp
+    register, search, telegram, weekview, whatsapp, using_shopping_list
 )
 
 
@@ -68,6 +68,7 @@ routers_to_include = [
     search.router,
     telegram.router,
     whatsapp.router,
+    using_shopping_list.router
 ]
 
 for router in routers_to_include:
