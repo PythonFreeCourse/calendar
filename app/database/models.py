@@ -32,6 +32,7 @@ class User(Base):
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     is_active_exercise = Column(Boolean, default=False)
+    privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
 
