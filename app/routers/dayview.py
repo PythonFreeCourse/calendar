@@ -123,7 +123,7 @@ def get_events_and_attributes(
             yield (event, DivAttributes(event, day))
 
 
-@router.get('/day/{date}')
+@router.get('/day/{date}', include_in_schema=False)
 async def dayview(
           request: Request, date: str, session=Depends(get_db), view='day',
       ):
