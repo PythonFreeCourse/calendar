@@ -9,18 +9,18 @@ from app.database.models import Quote
 TOTAL_DAYS = 366
 
 
-def get_quote(data: Dict[str, Optional[str]]) -> Quote:
+def get_quote(quote_: Dict[str, Optional[str]]) -> Quote:
     """Returns a Quote object from the dictionary data.
 
     Args:
-        data: A dictionary quote related information.
+        quote_: A dictionary quote related information.
 
     Returns:
         A new Quote object.
     """
     return Quote(
-        text=data['text'],
-        author=data['author'],
+        text=quote_['text'],
+        author=quote_['author'],
     )
 
 
