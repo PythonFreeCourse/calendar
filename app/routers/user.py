@@ -98,24 +98,6 @@ def get_all_user_events(session: Session, user_id: int) -> List[Event]:
     )
 
 
-@router.post("/enable")
-def enable_current_user(
-        request: Request, session: Session) -> bool:
-    """function to enable the user.
-    after successful enable it will be directed to main page.
-    if the disable fails user will stay at settings page
-    and an error will be shown."""
-    disable_successful = enable(session, get_current_user)
-    if disable_successful:
-        # disable succeeded- the user will be directed to homepage.
-        app.url_path_for("/")
-
-    else:
-        # if disable wasn't successful, user will stay in the
-        # settings page and an error message will show.
-        pass
-
-
 @router.post("/disable")
 def disable_logged_user(
         request: Request, session: Session) -> bool:
