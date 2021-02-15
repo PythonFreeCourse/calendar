@@ -127,7 +127,7 @@ async def eventview(request: Request, event_id: int,
 
 @router.post("/{event_id}/owner")
 async def change_owner(request: Request, event_id: int,
-                      db: Session = Depends(get_db)):
+                       db: Session = Depends(get_db)):
     form = await request.form()
     if 'username' not in form:
         return RedirectResponse(router.url_path_for('eventview',
