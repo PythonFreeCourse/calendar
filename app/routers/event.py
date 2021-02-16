@@ -415,7 +415,8 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 @router.post('/{event_id}')
 async def add_comment(
     request: Request, event_id: int,
-    session: Session = Depends(get_db)) -> Response:
+    session: Session = Depends(get_db)
+) -> Response:
     """Creates a comment instance in the DB. Redirects back to the event's
     comments tab upon creation."""
     form = await request.form()
@@ -457,7 +458,8 @@ def get_event_data(db: Session, event_id: int) -> EVENT_DATA:
 @router.get('/{event_id}/comments')
 async def view_comments(
     request: Request, event_id: int,
-    db: Session = Depends(get_db)) -> Response:
+    db: Session = Depends(get_db)
+) -> Response:
     """Renders event comment tab view.
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
@@ -475,7 +477,8 @@ async def view_comments(
 
 @router.post('/comments/delete')
 async def delete_comment(
-    request: Request, db: Session = Depends(get_db)) -> Response:
+    request: Request, db: Session = Depends(get_db)
+) -> Response:
     """Deletes a comment instance from the db.
 
     Redirects back to the event's comments tab upon deletion.
