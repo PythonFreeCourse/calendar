@@ -24,20 +24,21 @@ def get_who_is_out_of_office(session: Session,
     return out_of_office_users
 
 
-def insert_new_out_of_office(out_of_office_data_from_req,
+def insert_new_out_of_office(out_of_office_data,
                              user,
                              session):
     out = get_out_of_office_template(1,
                                      user_id=user.id,
-                                     start_date=datetime.strptime(
-                                         out_of_office_data_from_req['start_date']
+                                     start_date=datetime.
+                                     strptime(
+                                         out_of_office_data['start_date']
                                          + ' ' +
-                                         out_of_office_data_from_req['start_time'],
+                                         out_of_office_data['start_time'],
                                          '%Y-%m-%d %H:%M'),
                                      end_date=datetime.strptime(
-                                         out_of_office_data_from_req['end_date']
+                                         out_of_office_data['end_date']
                                          + ' ' +
-                                         out_of_office_data_from_req['end_time'],
+                                         out_of_office_data['end_time'],
                                          '%Y-%m-%d %H:%M'),
                                      status='On')
     session.add(out)
