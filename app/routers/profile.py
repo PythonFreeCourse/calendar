@@ -137,6 +137,23 @@ async def update_telegram_id(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
+@router.post("/privacy")
+async def update_calendar_privacy(
+        request: Request,
+        session=Depends(get_db)
+):
+    user = session.query(User).filter_by(id=1).first()
+    data = await request.form()
+    new_privacy = data['privacy']
+
+    # Update database
+    user.privacy = new_privacy
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
 @router.get("/holidays/import")
 def import_holidays(request: Request):
     return templates.TemplateResponse("import_holidays.html", {
@@ -164,7 +181,7 @@ def get_image_crop_area(width, height):
 
 
 @router.post("/holidays/update")
-async def update_holidays(
+async def update(
         file: UploadFile = File(...), session=Depends(get_db)):
     icsfile = await file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
