@@ -1,7 +1,8 @@
 {% extends "partials/calendar/calendar_base.html" %}
 {% block head %}
 {{ super() }}
-
+<link rel="icon" href="{{ url_for('static', path='/images/icons/calendar-outline.svg') }}" />
+    
 <!-- CSS -->
 <link href="{{ url_for('static', path='/notes.css') }}" rel="stylesheet" type="text/css">
 
@@ -9,7 +10,7 @@
 <!-- <script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script> -->
 {% endblock head %}
 
-{% block page_name %}Note Details{% endblock page_name %}
+{% block page_name %}Add Note{% endblock page_name %}
 {% block content %}
 
 <section class="Form my-4 mx-5">

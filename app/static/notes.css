@@ -20,18 +20,53 @@ img {
 }
 
 .btn1 {
-    border: none;
-    outline: none;
-    height: 50px;
-    width: 100%;
-    background-color: black;
-    color: white;
-    border-radius: 4px;
-    font-weight: bold;
+  border: none;
+  outline: none;
+  height: 50px;
+  width: 100%;
+  background-color: black;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
 .btn1:hover {
-    background-color: white;
-    color: black;
-    border: 1px solid;
+  background-color: white;
+  color: black;
+  border: 1px solid;
+}
+
+.table-wrapper {
+  padding: 20px 25px;
+  margin: 30px 0;
+}
+
+.table-title {
+  color: #fff;
+  padding-bottom: 15px;
+  background: linear-gradient(
+    45deg,
+    rgba(0, 97, 215, 1) 0%,
+    rgba(0, 200, 255, 1) 100%
+  );
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 16px 30px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.247);
+}
+
+.table-title .btn-group {
+  float: right;
+}
+
+.table-title .btn {
+  color: #fff;
+  float: right;
+  min-width: 50px;
+  margin-left: 10px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.247);
+}
+
+table.table tr th:last-child {
+  width: 60px;
 }
