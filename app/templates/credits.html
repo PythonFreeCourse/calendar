@@ -10,8 +10,8 @@
     {% for credit in credit_list %}
         <div class="gallery">
             <img src="{{ url_for('static', path='/credits_pictures/' + credit.picture + '.PNG') }}" alt="{{credit.name}}">
-            <div class="credit-name">{{credit.name}}</div>
-            <div class="credit-name">
+            <div class="credit-details">{{credit.name}}</div>
+            <div class="credit-details">
                 {% if credit.linkedin  %}
                     <a class="contact" href={{credit.linkedin}}>LinkedIn</a>
                 {% else %}

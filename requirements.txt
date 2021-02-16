@@ -83,7 +83,6 @@ nodeenv==1.5.0
 outcome==1.1.0
 packaging==20.8
 passlib==1.7.4
-pathlib==1.0.1
 Pillow==8.1.0
 pluggy==0.13.1
 pre-commit==2.10.0
