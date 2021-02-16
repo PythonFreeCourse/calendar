@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 from sqlalchemy.orm import Session
 
-from app.database.models import Event, User, Category
+from app.database.models import Category, Event, User
 from app.routers.event import create_event
 
 today_date = datetime.today().replace(hour=0, minute=0, second=0)
@@ -89,7 +89,7 @@ def old_event(sender: User, session: Session) -> Event:
         db=session,
         title='event 6',
         start=today_date - timedelta(days=5),
-        end=today_date,
+        end=today_date - timedelta(days=1),
         content='test event',
         owner_id=sender.id,
     )

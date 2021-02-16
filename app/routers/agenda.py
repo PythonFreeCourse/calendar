@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from starlette.templating import _TemplateResponse
 
-from app.database.database import get_db
-from app.dependencies import templates
+from app.dependencies import get_db, templates
 from app.internal import agenda_events
 
 router = APIRouter()
@@ -28,7 +27,7 @@ def calc_dates_range_for_agenda(
     return start, end
 
 
-@router.get("/agenda")
+@router.get("/agenda", include_in_schema=False)
 def agenda(
         request: Request,
         db: Session = Depends(get_db),
@@ -50,7 +49,7 @@ def agenda(
     for event_obj in events_objects:
         event_duration = agenda_events.get_time_delta_string(
             event_obj.start, event_obj.end
-            )
+        )
         events[event_obj.start.date()].append((event_obj, event_duration))
 
     return templates.TemplateResponse("agenda.html", {

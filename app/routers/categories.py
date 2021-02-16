@@ -1,4 +1,5 @@
-from typing import List
+import re
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from pydantic import BaseModel
@@ -9,11 +10,12 @@ from starlette.datastructures import ImmutableMultiDict
 from starlette.templating import _TemplateResponse
 
 
-from app.database.database import get_db
-from tests.conftest import get_test_db
 from app.database.models import Category
+from app.dependencies import get_db
 from app.dependencies import templates
+from tests.conftest import get_test_db
 
+HEX_COLOR_FORMAT = r"^(?:[0-9a-fA-F]{3}){1,2}$"
 
 router = APIRouter()
 
@@ -27,14 +29,14 @@ class CategoryModel(BaseModel):
         schema_extra = {
             "example": {
                 "name": "Guitar lessons",
-                "color": "#aabbcc",
+                "color": "aabbcc",
                 "user_id": 1,
             }
         }
 
 
 # TODO(issue#29): get current user_id from session
-@router.get("/categories/by_parameters")
+@router.get("/categories/by_parameters", include_in_schema=False)
 def get_categories(request: Request,
                    db_session: Session = Depends(get_db)) -> List[Category]:
     if validate_request_params(request.query_params):
@@ -106,11 +108,24 @@ def validate_request_params(query_params: ImmutableMultiDict) -> bool:
     Intersection must contain at least user_id.
     Union must not contain fields other than user_id, name, color.
     """
+    is_valid_color = True
     all_fields = set(CategoryModel.schema()["required"])
     request_params = set(query_params)
     union_set = request_params.union(all_fields)
     intersection_set = request_params.intersection(all_fields)
-    return union_set == all_fields and "user_id" in intersection_set
+    if "color" in intersection_set:
+        is_valid_color = validate_color_format(query_params["color"])
+    return union_set == all_fields and "user_id" in intersection_set and (
+        is_valid_color)
+
+
+def validate_color_format(color: str) -> bool:
+    """
+    Validate color is from hex format (without `#`).
+    """
+    if color:
+        return re.fullmatch(HEX_COLOR_FORMAT, color) is not None
+    return False
 
 
 def get_user_categories(db_session: Session,
