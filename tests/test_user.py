@@ -100,8 +100,9 @@ def test_disabling_no_event_user(session, user1):
     future_events = list(session.query(Event.id)
                          .join(UserEvent)
                          .filter(
-                            UserEvent.user_id == user1.id,
-                            Event.start > datetime.now()))
+                         UserEvent.user_id == user1.id,
+                         Event.start > datetime
+                         .now()))
     assert not future_events
     # making sure that after disabling the user he can be easily enabled.
     enable(session, user1.id)
@@ -116,8 +117,9 @@ def test_disabling_user_participating_event(session, user3):
     future_events = list(session.query(Event.id)
                          .join(UserEvent)
                          .filter(
-                            UserEvent.user_id == user3.id,
-                            Event.start > datetime.now()))
+                         UserEvent.user_id == user3.id,
+                         Event.start > datetime
+                         .now()))
     assert not future_events
     enable(session, user3.id)
     assert not user3.disabled
