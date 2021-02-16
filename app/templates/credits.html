@@ -9,7 +9,7 @@
     <h1>Say hello to our developers:</h1>
     {% for credit in credit_list %}
         <div class="gallery">
-            <img src="/static/credits_pictures/{{credit.picture}}" alt="{{credit.name}}">
+            <img src="{{ url_for('static', path='/credits_pictures/' + credit.picture + '.PNG') }}" alt="{{credit.name}}">
             <div class="credit-name">{{credit.name}}</div>
             <div class="credit-name">
                 {% if credit.linkedin  %}

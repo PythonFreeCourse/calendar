@@ -5,13 +5,14 @@ from typing import List
 from loguru import logger
 from starlette.templating import _TemplateResponse
 
+from app.config import RESOURCES_DIR
 from app.dependencies import templates
 
 router = APIRouter()
 
 
 def credits_from_json() -> List:
-    path = 'app/resources/credits.json'
+    path = RESOURCES_DIR / "credits.json"
     try:
         with open(path, 'r') as json_file:
             json_list = json.load(json_file)
