@@ -1,11 +1,11 @@
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
 from starlette.status import HTTP_401_UNAUTHORIZED
 from starlette.requests import Request
 
 from app.database.models import User
 from app.dependencies import get_db
 from app.internal.security.ouath2 import (
-    Depends, Session, get_jwt_token, get_authorization_cookie
+    Session, get_jwt_token, get_authorization_cookie
 )
 
 
