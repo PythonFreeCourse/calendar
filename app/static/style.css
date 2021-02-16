@@ -107,9 +107,14 @@ p#p_quote {
 }
 
 .heart {
-  width: 1.5em;
-  height: 1.5em;
+  width: 1.5rem;
+  height: 1.5rem;
 }
+
+#favorite-quotes {
+  margin-bottom: 2rem;
+}
+
 .error-message {
     line-height: 0;
     color: red;

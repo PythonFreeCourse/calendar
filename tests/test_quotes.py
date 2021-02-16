@@ -32,7 +32,6 @@ def test_quote_per_day_get_second_quote(session, quote1, quote2):
         session, DATE2).text == quote2.text
 
 
-# Tests for saving, removing and displaying favorite quotes
 def test_save_quote(session, settings_test_client, quote1):
     data = {
         "user_id": 1,

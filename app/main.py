@@ -93,9 +93,6 @@ for router in routers_to_include:
     app.include_router(router)
 
 
-@app.get("/")
-# TODO: I add the quote day to the home page
-# until the relevant calendar view will be developed.
 @app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):

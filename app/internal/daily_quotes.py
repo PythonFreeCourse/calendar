@@ -35,8 +35,7 @@ def get_quotes(session, user_id):
     quotes = []
     user_quotes = session.query(UserQuotes).filter_by(user_id=user_id).all()
     for user_quote in user_quotes:
-        quote_id = user_quote.quote_id
-        quote = session.query(Quote).filter_by(id=quote_id).first()
+        quote = session.query(Quote).filter_by(id=user_quote.quote_id).first()
         quote.is_favorite = True
         quotes.append(quote)
     return quotes
