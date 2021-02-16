@@ -351,10 +351,10 @@ class ShoppingProduct(Base):
     __tablename__ = "shoppingProducts"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    amount = Column(Integer)
+    name = Column(String, nullable=False)
+    amount = Column(Integer, nullable=False)
     is_bought = Column(Boolean, nullable=False)
-    date = Column(Date, nullable=False)
+    date = Column(Date)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="shoppingProducts")
