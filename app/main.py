@@ -42,7 +42,7 @@ json_data_loader.load_to_db(next(get_db()))
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    agenda, calendar, categories, celebrity, currency, dayview,
+    about_us, agenda, calendar, categories, celebrity, currency, dayview,
     email, event, export, four_o_four, google_connect,
     invitation, login, logout, profile,
     register, search, telegram, user, weekview, whatsapp,
@@ -68,6 +68,7 @@ async def swagger_ui_redirect():
 
 
 routers_to_include = [
+    about_us.router,
     agenda.router,
     calendar.router,
     categories.router,
