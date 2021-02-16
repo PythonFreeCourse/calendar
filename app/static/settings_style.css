@@ -101,56 +101,55 @@
 }
 
 /* For Mobile */
-/* 540px */
-@media screen and (max-width: 700px) { 
-    .settings {
-        display: flex;
-        flex-direction: column;
-        font-size: 3vw;
-    }
+@media screen and (max-width: 540px) { 
+  .settings {
+    display: flex;
+    flex-direction: column;
+    font-size: 3vw;
+  }
+  
+  #settings-left {
+    padding: 3rem 0em 0em 4rem;
+  }
+  
+  .settings-headline {
+    padding-bottom: 20px;
+  }
+
+  .settings-headline img {
+    display: none;
+  } 
+
+  .settings-headline h1 {
+    margin-left: 0;
+  }
+  
+  .settings-options {
+    margin-bottom: 30px;
+  }
+
+  .settings-options ul {
+    padding-left: 0;
+  }
+
+  .settings-options ul li {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .settings-main {
+    padding: 4rem 4rem
+  }
+  .settings-main .form-select {
+    width: 250px;
+  }
+
+  .settings-main h2 {
+    margin-bottom: 1rem;
+  }
     
-    #settings-left {
-        padding: 3rem 0em 0em 4rem;
-    }
+  .settings-main p {
+    margin: 1rem 0px;
+  }
     
-    .settings-headline {
-        padding-bottom: 20px;
-    }
-
-    .settings-headline img {
-        display: none;
-    } 
-
-    .settings-headline h1 {
-        margin-left: 0;
-    }
-    
-    .settings-options {
-        margin-bottom: 30px;
-    }
-
-    .settings-options ul {
-        padding-left: 0;
-    }
-
-    .settings-options ul li {
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    .settings-main {
-        padding: 4rem 4rem
-    }
-    .settings-main .form-select {
-        width: 250px;
-    }
-
-    .settings-main h2 {
-        margin-bottom: 1rem;
-    }
-      
-    .settings-main p {
-        margin: 1rem 0px;
-    }
-      
 }
