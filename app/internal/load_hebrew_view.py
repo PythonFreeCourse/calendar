@@ -43,8 +43,8 @@ def add_hebrew_dates_to_db(session: Session) -> None:
     hebrew_dates = get_hebrew_view_from_json()
     hebrew_dates_objects = [
         HebrewView(
-            date=datetime.strptime(hebrew_date['date_gregorian'],
-                                   '%Y-%m-%d').date(),
+            date=datetime.strptime(
+                hebrew_date['date_gregorian'],'%Y-%m-%d').date(),
             hebrew_date=hebrew_date['date_hebrew']
         )
         for hebrew_date in hebrew_dates
@@ -62,5 +62,4 @@ def load_hebrew_view_if_table_empty(session: Session) -> None:
 def get_hebrew_dates(db_session: Session) -> HebrewView:
     """This function return a list of hebrew dates
      of the current year object"""
-    print(db_session.query(HebrewView))
-    return print(db_session.query(HebrewView))
+    return db_session.query(HebrewView).all()
