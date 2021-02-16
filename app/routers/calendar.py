@@ -11,9 +11,8 @@ router = APIRouter(
     prefix="/calendar/month",
     tags=["calendar"],
     responses={404: {"description": "Not found"}},
+    include_in_schema=False
 )
-
-ADD_DAYS_ON_SCROLL: int = 42
 
 
 @router.get("/")
@@ -31,10 +30,12 @@ async def calendar(request: Request) -> Response:
     )
 
 
-@router.get("/{date}")
-async def update_calendar(request: Request, date: str) -> HTMLResponse:
+@router.get("/add/{date}")
+async def update_calendar(
+    request: Request, date: str, days: int
+) -> HTMLResponse:
     last_day = cg.Day.convert_str_to_date(date)
-    next_weeks = cg.create_weeks(cg.get_n_days(last_day, ADD_DAYS_ON_SCROLL))
+    next_weeks = cg.create_weeks(cg.get_n_days(last_day, days))
     template = templates.get_template(
         'partials/calendar/monthly_view/add_week.html')
     content = template.render(weeks_block=next_weeks)
