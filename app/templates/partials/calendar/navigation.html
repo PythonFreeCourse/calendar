@@ -2,7 +2,7 @@
     <div class="menu">
         <div class="fixed-features">
             <div>
-                <a href="/profile">
+                <a href="{{ url_for('profile') }}">
                     <ion-icon name="person-circle-outline"></ion-icon>
                 </a>
             </div>
@@ -13,10 +13,22 @@
                 <ion-icon name="settings-outline"></ion-icon>
             </div>
             <div>
-                <ion-icon name="calendar-outline"></ion-icon>
+                <a href="{{ url_for('calendar') }}">
+                    <ion-icon name="calendar-outline"></ion-icon>
+                </a>
             </div>
             <div>
                 <ion-icon name="cube-outline"></ion-icon>
+            </div>
+            <div>
+                <a href="{{ url_for('get_all_notes') }}">
+                    <ion-icon name="pencil-outline"></ion-icon>
+                </a>
+            </div>
+            <div>
+                <a href="{{ url_for('about') }}">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+                </a>
             </div>
         </div>
         <div class="user-features">
@@ -26,11 +38,6 @@
         </div>
         <div id="open-features">
             <ion-icon name="ellipsis-vertical"></ion-icon>
-        </div>
-        <div>
-            <a title="About Us" href="{{ url_for('about') }}">
-                <ion-icon name="information-circle-outline"></ion-icon>
-            </a>
         </div>
     </div>
 </nav>
