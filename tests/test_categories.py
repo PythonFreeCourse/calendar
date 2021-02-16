@@ -26,7 +26,7 @@ class TestCategories:
         response = client.post("/for_categories_test",
                                data={"user_id": user.id,
                                      "category": "Foo",
-                                     "color": "eecc11",})
+                                     "color": "eecc11"})
         assert response.ok
         assert TestCategories.CREATE_CATEGORY in response.content
 

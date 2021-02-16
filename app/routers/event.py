@@ -1,8 +1,18 @@
-from datetime import datetime as dt
 import json
+from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 
+from app.database.models import Comment, Event, User, UserEvent
+from app.dependencies import get_db, logger, templates
+from app.internal import comment as cmt
+from app.internal.emotion import get_emotion
+from app.internal.event import (get_invited_emails, get_messages,
+                                get_uninvited_regular_emails,
+                                raise_if_zoom_link_invalid)
+
+from app.internal.utils import create_model, get_current_user
+from app.routers.categories import get_user_categories
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,19 +20,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse, Response
-
-from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import get_db, logger, templates
-from app.internal.event import (
-    get_invited_emails, get_messages, get_uninvited_regular_emails,
-    raise_if_zoom_link_invalid,
-
-)
-from app.internal import comment as cmt
-from app.internal.emotion import get_emotion
-from app.internal.utils import create_model, get_current_user
-from app.routers.categories import get_user_categories
-
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
@@ -75,12 +72,13 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
 
 @router.get("/edit", include_in_schema=False)
 @router.get("/edit")
-async def eventedit(request: Request, db_session: Session = Depends(get_db)) -> Response:
+async def eventedit(request: Request,
+                    db_session: Session = Depends(get_db)) -> Response:
     user_id = 1    # until issue#29 will get current user_id from session
     categories_list = get_user_categories(db_session, user_id)
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request,
-                                        "categories_list": categories_list})
+                                       "categories_list": categories_list})
 
 
 @router.post("/edit", include_in_schema=False)
