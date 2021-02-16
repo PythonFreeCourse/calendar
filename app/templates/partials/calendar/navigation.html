@@ -20,20 +20,20 @@
             <div>
                 <ion-icon name="cube-outline"></ion-icon>
             </div>
-            <div>
-                <a href="{{ url_for('get_all_notes') }}">
-                    <ion-icon name="pencil-outline"></ion-icon>
-                </a>
-            </div>
-            <div>
-                <a href="{{ url_for('about') }}">
-                    <ion-icon name="information-circle-outline"></ion-icon>
-                </a>
-            </div>
         </div>
         <div class="user-features">
             <div class="feature" name="feather01">
                 <ion-icon name="chatbox"></ion-icon>
+            </div>
+            <div class="feature" name="Notes">
+                <a href="{{ url_for('get_all_notes') }}">
+                    <ion-icon name="pencil-outline"></ion-icon>
+                </a>
+            </div>
+            <div class="feature" name="About Us">
+                <a href="{{ url_for('about') }}">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+                </a>
             </div>
         </div>
         <div id="open-features">
