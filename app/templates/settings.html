@@ -60,9 +60,10 @@
                   </ul>
                 </div>
               </div>
-            </div>
+            </section>
+          </div>
           
-          <div class="settings-main">
+          <div id="settings-main" class="settings-main">
             <!-- Language and region -->
             <article id="settings_content" class="tabShow">
               <h2>Language and region</h2>
@@ -132,7 +133,15 @@
           const tab =
           document.querySelectorAll(".tabShow");
           
-      
+          function clearMenu(options) {
+            for (var i=0, l=options.length; i<l; i++) {
+                  cat = document.getElementById("options").children[i].children[0]
+                  if (!(cat.classList.contains("active"))) {
+                      options[i].style.display = "none";
+                  }
+              }
+          }
+          clearMenu(document.getElementById("settings-main").children)
           function tabClick(tab_id) {
               tab.forEach(function(node) {
                   node.style.display = "none";
@@ -149,6 +158,7 @@
                 }
               }
             }
+
       </script>
     </div>
   </div>
