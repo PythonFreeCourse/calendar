@@ -5,8 +5,8 @@ from typing import Callable, Dict, List, Union
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, Quote, Zodiac
-from app.internal import daily_quotes, zodiac
+from app.database.models import Base, Quote, Zodiac, Parasha
+from app.internal import daily_quotes, zodiac, weekly_parasha
 
 
 def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
@@ -54,3 +54,25 @@ def load_to_db(session) -> None:
     """The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'. I saved the content so the API won't be
     called every time the app is initialized."""
+    load_data(
+        session, 'app/resources/parashot.json',
+        Parasha, weekly_parasha.create_parasha_object)
+    """The quotes JSON file content is copied from the free API:
+    'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
+    mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
+    &geonameid=293397&m=50&s=on&d=on&D=on'.
+    Each year the Json file will need to be re-updated
+    according to this API in this way:
+
+    def relevent_details(p):
+    parashot_dict = {'name': p['title'], 'hebrew': p['hebrew'],
+     'link': p['link'], 'date': p['date']}
+    return parashot_dict
+
+
+    def get_all_parashot(API):
+    r = requests.get(API)
+    items = r.json()['items']
+    all_para = list(filter(lambda i: 'Parashat' in i['title'], items))
+    return [relevent_details(p) for p in all_para]
+    """

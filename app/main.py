@@ -1,7 +1,7 @@
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
-from app.internal import daily_quotes, json_data_loader, load_parasha
+from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.utils.extending_openapi import custom_openapi
@@ -37,7 +37,6 @@ app.logger = logger
 app.add_exception_handler(HTTP_401_UNAUTHORIZED, auth_exception_handler)
 
 json_data_loader.load_to_db(next(get_db()))
-load_parasha.load_parashot_if_table_empty(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
@@ -45,7 +44,7 @@ from app.routers import (  # noqa: E402
 
     about_us, agenda, calendar, categories, celebrity,
     currency, dayview, email, event, export, four_o_four,
-    google_connect, invitation, login, logout, parasha,
+    google_connect, invitation, login, logout,
     profile, register, search, telegram, user, weekview,
     whatsapp,
 )
@@ -84,7 +83,6 @@ routers_to_include = [
     invitation.router,
     login.router,
     logout.router,
-    parasha.router,
     profile.router,
     register.router,
     salary.router,
