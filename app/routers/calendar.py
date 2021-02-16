@@ -40,7 +40,8 @@ async def update_calendar(
     request: Request, date: str, days: int
 ) -> HTMLResponse:
     last_day = calendar_grid.Day.convert_str_to_date(date)
-    next_weeks = calendar_grid.create_weeks(calendar_grid.get_n_days(last_day, days))
+    next_weeks = calendar_grid.create_weeks(
+        calendar_grid.get_n_days(last_day, days))
     template = templates.get_template(
         'partials/calendar/monthly_view/add_week.html')
     content = template.render(weeks_block=next_weeks)
