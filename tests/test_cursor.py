@@ -6,24 +6,24 @@ LOAD_CURSOR_URL = router.url_path_for("load_cursor")
 OK = 200
 
 
-def test_get_cursor_settings(settings_test_client):
-    response = settings_test_client.get(
+def test_get_cursor_settings(cursor_test_client):
+    response = cursor_test_client.get(
         url=CURSOR_SETTINGS_URL)
     assert response.ok
     assert b"Cursor Settings" in response.content
 
 
-def test_cursor_choices(session, settings_test_client):
+def test_cursor_choices(session, cursor_test_client):
     data = {
         "primary_cursor": "arrow",
         "secondary_cursor": "p1",
     }
-    first_response = settings_test_client.post(
+    first_response = cursor_test_client.post(
         url=GET_CHOICES_URL, data=data)
     primary1, secondary1 = get_cursor_settings(session, user_id=1)
 
     data["secondary_cursor"] = "default"
-    second_response = settings_test_client.post(
+    second_response = cursor_test_client.post(
         url=GET_CHOICES_URL, data=data)
     primary2, secondary2 = get_cursor_settings(session, user_id=1)
 
@@ -32,14 +32,14 @@ def test_cursor_choices(session, settings_test_client):
     assert primary2 == "arrow" and secondary2 == "default"
 
 
-def test_load_cursor(session, settings_test_client):
+def test_load_cursor(session, cursor_test_client):
     data = {
         "primary_cursor": "cloud",
         "secondary_cursor": "ice",
     }
-    response = settings_test_client.post(
+    response = cursor_test_client.post(
         url=GET_CHOICES_URL, data=data)
-    response = settings_test_client.get(
+    response = cursor_test_client.get(
         url=LOAD_CURSOR_URL)
 
     primary_cursor, secondary_cursor = get_cursor_settings(session, user_id=1)

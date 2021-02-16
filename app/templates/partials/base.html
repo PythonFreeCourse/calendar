@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% block head %}
+  {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -32,6 +32,10 @@
     {% endblock head %}
     {% block title %}<title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>{%
     endblock %}
+  {% endblock head %}
+  {% block title %}
+    <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
+  {% endblock %}
 </head>
 <body>
 {% block body %}

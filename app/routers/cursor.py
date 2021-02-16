@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from app.database.database import get_db
+from app.dependencies import get_db
 from app.database.models import CursorSettings, User
 from app.dependencies import CURSORS_PATH, templates
 from fastapi import APIRouter, Depends, Form, Request
@@ -28,9 +28,6 @@ def get_placeholder_user():
         email='cursor@cursor',
         password='cursor123',
         full_name='cursaouer',
-        language_id=1,
-        telegram_id='',
-        language='english',
     )
 
 
