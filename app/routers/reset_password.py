@@ -55,7 +55,7 @@ async def forgot_password(
         user = await authenticate_user(db, user, email=True)
         if user:
             user.token = create_jwt_token(user, jwt_min_exp=15)
-            await send_reset_password_mail(db, user, background_tasks)
+            await send_reset_password_mail(user, background_tasks)
             return templates.TemplateResponse("forgot_password.html", {
                 "request": request,
                 "message": "Email for reseting password was sent"})

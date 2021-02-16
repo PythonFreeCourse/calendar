@@ -185,8 +185,16 @@ def verify_email_pattern(email: str) -> bool:
 
 
 async def send_reset_password_mail(
-        session: Session, user: ForgotPassword,
+        user: ForgotPassword,
         background_tasks: BackgroundTasks) -> bool:
+    """
+    This function sends a reset password email to user.
+    :param user: ForgotPassword schema.
+        Contains user's email address, jwt verifying token.
+    :param background_tasks: (BackgroundTasks): Function from fastapi that lets
+            you apply tasks in the background.
+    returns True
+    """
     template = templates.get_template("reset_password_mail.html")
     html = template.render(
          recipient=user.username,
