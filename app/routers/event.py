@@ -106,14 +106,9 @@ async def create_new_event(
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(session,
-                         title,
-                         start,
-                         end,
-                         owner_id,
-                         content,
-                         location,
-                         vc_link,
+    event = create_event(db=session, title=title, start=start, end=end,
+                         owner_id=owner_id, content=content,
+                         location=location, vc_link=vc_link,
                          invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
@@ -300,26 +295,29 @@ def create_event(db: Session,
                  category_id: Optional[int] = None,
                  availability: bool = True,
                  image: Optional[str] = None):
+                 is_google_event: bool = False,
+                 ):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
 
-    event = create_model(db,
-                         Event,
-                         title=title,
-                         start=start,
-                         end=end,
-                         content=content,
-                         owner_id=owner_id,
-                         location=location,
-                         vc_link=vc_link,
-                         color=color,
-                         emotion=get_emotion(title, content),
-                         invitees=invitees_concatenated,
-                         category_id=category_id,
-                         availability=availability,
-                         image=image)
-
+    event = create_model(
+        db, Event,
+        title=title,
+        start=start,
+        end=end,
+        content=content,
+        owner_id=owner_id,
+        location=location,
+        vc_link=vc_link,
+        color=color,
+        emotion=get_emotion(title, content),
+        invitees=invitees_concatenated,
+        category_id=category_id,
+        availability=availability,
+        is_google_event=is_google_event
+        image=image
+    )
     create_model(
         db,
         UserEvent,
