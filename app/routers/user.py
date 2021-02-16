@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
-from starlette.responses import HTTP_200_OK, RedirectResponse
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_200_OK
 from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
