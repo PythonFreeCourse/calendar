@@ -36,6 +36,7 @@ def test_successful_undeleted_events(event_test_client, session, event):
     days = 20
     delete_events_after_optionals_num_days(days, session)
     event = session.query(Event.id).filter(Event.id == 1).all()
-    user_event = session.query(UserEvent.id).filter(UserEvent.event_id == 1).all()
+    user_event = (session.query(UserEvent.id).
+                  filter(UserEvent.event_id == 1).all())
     assert event != []
     assert user_event != []
