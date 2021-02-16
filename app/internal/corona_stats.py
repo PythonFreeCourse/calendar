@@ -89,12 +89,16 @@ def get_vacinated_data() -> JSON:
     return json.loads(res.text)[-1]
 
 
-def get_corona_stats(db: Session = Depends(get_db)) -> Dict[str, Any]:
-    try:
-        db_data = (db.query(CoronaStats).
-                   filter(
+def get_vacinated_data_from_db(db: Session = Depends(get_db)) -> CoronaStats:
+    return (db.query(CoronaStats).
+            filter(
             func.date(CoronaStats.date_) == date.today()).
             one())
+
+
+def get_corona_stats(db: Session = Depends(get_db)) -> Dict[str, Any]:
+    try:
+        db_data = get_vacinated_data_from_db(db)
         data = serialize_stats(db_data)
 
     except NoResultFound:
