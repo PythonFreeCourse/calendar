@@ -21,7 +21,7 @@
   --primary-variant: #041E51;
   --secondary: #fbc44a;
   --secondary-variant: #ffa201;
-  --background: #F7F7F7; 
+  --background: #F7F7F7;
   --surface: #e6e6e6; /* borders */
   --surface-variant: #d2d1d1; /*up_surface, borders-variant*/
   --negative: #f24726;
@@ -38,24 +38,25 @@
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+    height: 100%;
 }
 
 body {
-  background-color: #F7F7F7;
-  color: #222831;
-  font-family: "Assistant", "Ariel", sans-serif;
-  font-weight: 400;
-  line-height: 1.7;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
-  width: 100%;
+    background-color: #F7F7F7;
+    color: #222831;
+    font-family: "Assistant", "Ariel", sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    width: 100%;
 }
 
 a {
