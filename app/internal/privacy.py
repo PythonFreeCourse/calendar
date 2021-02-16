@@ -23,7 +23,3 @@ class PrivateEvent:
         self.invitees = PrivacyKinds.Private.name
         self.category_id = Null
         self.emotion = Null
-
-privacy_kinds = [kind.name for kind in PrivacyKinds]
-print(privacy_kinds)
-print(type(privacy_kinds[0]))
