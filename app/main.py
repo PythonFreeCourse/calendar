@@ -43,9 +43,10 @@ load_hebrew_view.load_hebrew_view_if_table_empty(next(get_db()))
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, export, four_o_four, hebrew_date, invitation,
-    login, logout, profile, register, search, telegram, user,
+    about_us, agenda, calendar, categories, celebrity,
+    currency, dayview, email, event, export, four_o_four,
+    google_connect, hebrew_date, invitation, login,
+    logout, profile, register, search, telegram, user,
     weekview, whatsapp,
 )
 
@@ -69,6 +70,7 @@ async def swagger_ui_redirect():
 
 
 routers_to_include = [
+    about_us.router,
     agenda.router,
     calendar.router,
     categories.router,
@@ -80,6 +82,7 @@ routers_to_include = [
     export.router,
     four_o_four.router,
     hebrew_date.router,
+    google_connect.router,
     invitation.router,
     login.router,
     logout.router,
