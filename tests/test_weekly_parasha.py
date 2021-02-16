@@ -1,6 +1,3 @@
-from datetime import datetime
-
-
 from app.internal import weekly_parasha
 
 
