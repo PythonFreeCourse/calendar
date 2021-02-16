@@ -205,16 +205,14 @@ def test_create_feature(session):
     assert feat.name == 'test'
 
 
-@pytest.mark.asyncio
-async def test_index(features_test_client):
+def test_index(features_test_client):
     url = route.router.url_path_for('index')
 
-    resp = await features_test_client.get(url)
+    resp = features_test_client.get(url)
     assert resp.ok
 
 
-@pytest.mark.asyncio
-async def test_add_feature_to_user(features_test_client, session):
+def test_add_feature_to_user(features_test_client, session):
     test = Feature(
         name='test',
         route='/route',
@@ -227,15 +225,14 @@ async def test_add_feature_to_user(features_test_client, session):
 
     url = route.router.url_path_for('add_feature_to_user')
 
-    resp = await features_test_client.post(url, form={
+    resp = features_test_client.post(url, data={
         'feature_id': 1,
         'user_id': 1
     })
     assert resp.ok
 
 
-@pytest.mark.asyncio
-async def test_delete_user_feature_association(features_test_client, session):
+def test_delete_user_feature_association(features_test_client, session):
     test = Feature(
         name='test',
         route='/route',
@@ -253,7 +250,7 @@ async def test_delete_user_feature_association(features_test_client, session):
 
     url = route.router.url_path_for('delete_user_feature_association')
 
-    resp = await features_test_client.post(url, form={
+    resp = features_test_client.post(url, data={
         'feature_id': 1,
         'user_id': 1
     })
@@ -261,8 +258,7 @@ async def test_delete_user_feature_association(features_test_client, session):
     assert resp.content == b'true'
 
 
-@pytest.mark.asyncio
-async def test_enable_feature(features_test_client, session):
+def test_enable_feature(features_test_client, session):
     test = Feature(
         name='test',
         route='/route',
@@ -280,7 +276,7 @@ async def test_enable_feature(features_test_client, session):
 
     url = route.router.url_path_for('enable_feature')
 
-    resp = await features_test_client.post(url, form={
+    resp = features_test_client.post(url, data={
         'feature_id': 1,
         'user_id': 1
     })
@@ -288,8 +284,7 @@ async def test_enable_feature(features_test_client, session):
     assert resp.content == b'true'
 
 
-@pytest.mark.asyncio
-async def test_disable_feature(features_test_client, session):
+def test_disable_feature(features_test_client, session):
     test = Feature(
         name='test',
         route='/route',
@@ -307,7 +302,7 @@ async def test_disable_feature(features_test_client, session):
 
     url = route.router.url_path_for('disable_feature')
 
-    resp = await features_test_client.post(url, form={
+    resp = features_test_client.post(url, data={
         'feature_id': 1,
         'user_id': 1
     })
@@ -315,8 +310,7 @@ async def test_disable_feature(features_test_client, session):
     assert resp.content == b'true'
 
 
-@pytest.mark.asyncio
-async def test_show_user_enabled_features(mocker, features_test_client):
+def test_show_user_enabled_features(mocker, features_test_client):
 
     mocker.patch(
         'app.routers.features.get_user_enabled_features',
@@ -325,13 +319,12 @@ async def test_show_user_enabled_features(mocker, features_test_client):
 
     url = route.router.url_path_for('show_user_enabled_features')
 
-    resp = await features_test_client.get(url)
+    resp = features_test_client.get(url)
     assert resp.ok
     assert resp.content == b'true'
 
 
-@pytest.mark.asyncio
-async def test_show_user_disabled_features(mocker, features_test_client):
+def test_show_user_disabled_features(mocker, features_test_client):
 
     mocker.patch(
         'app.routers.features.get_user_disabled_features',
@@ -340,13 +333,12 @@ async def test_show_user_disabled_features(mocker, features_test_client):
 
     url = route.router.url_path_for('show_user_disabled_features')
 
-    resp = await features_test_client.get(url)
+    resp = features_test_client.get(url)
     assert resp.ok
     assert resp.content == b'true'
 
 
-@pytest.mark.asyncio
-async def test_get_user_unlinked_features(
+def test_get_user_unlinked_features(
         mocker, features_test_client, session):
 
     test = Feature(
@@ -366,7 +358,7 @@ async def test_get_user_unlinked_features(
 
     url = route.router.url_path_for('get_user_unlinked_features')
 
-    resp = await features_test_client.get(url)
+    resp = features_test_client.get(url)
     assert resp.ok
-    json_resp = resp.json()[0]
-    assert json_resp['id'] == 1
+    json_resp = resp.json()
+    assert type(json_resp) is list

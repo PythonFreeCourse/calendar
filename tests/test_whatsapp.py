@@ -1,5 +1,4 @@
 from app.routers import whatsapp
-import pytest
 
 
 def test_whatsapp_send():
@@ -38,9 +37,8 @@ def test_no_number():
                 "number%3F"}
 
 
-@pytest.mark.asyncio
-async def test_end_to_end_testing(client):
-    resp = await client.get(
+def test_end_to_end_testing(client):
+    resp = client.get(
         '/whatsapp?phone_number=972536106106&message=testing')
     assert resp.ok
     assert resp.json
