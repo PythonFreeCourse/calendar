@@ -1,4 +1,4 @@
-:root {
+:root[color-mode="regular"] {
     --backgroundcol:#f7f7f7;
     --textcolor:#222831;
     --start-of-month:#e9ecef;
@@ -6,6 +6,12 @@
     --secondary:#EF5454;
     --borders:#E7E7E7;
     --borders-variant:#F7F7F7;
+}
+
+:root[color-mode="dark"] {
+    --backgroundcol:#000000;
+    --textcolor:#EEEEEE;
+    --start-of-month:#8c28bf;
 }
 
 html {

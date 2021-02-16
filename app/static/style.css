@@ -1,9 +1,17 @@
-:root {
-    --backgroundcol:#f7f7f7;
-    --textcolor:#222831;
-    --navcolor:rgba(0,0,0,.55);
-    --navhovercolor:rgba(0,0,0,.7);
-    --cardcolor:#fff;
+:root[color-mode="regular"] {
+    --backgroundcol: #f7f7f7;
+    --textcolor: #222831;
+    --navcolor: rgba(0,0,0,.55);
+    --navhovercolor: rgba(0,0,0,.7);
+    --cardcolor: #fff;
+}
+
+:root[color-mode="dark"] {
+    --backgroundcol: #000000;
+    --textcolor: #EEEEEE;
+    --navcolor: #e9ecef;
+    --navhovercolor: rgb(255 255 255);
+    --cardcolor: #230a88;
 }
 
 .profile-image {
