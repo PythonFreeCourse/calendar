@@ -21,16 +21,6 @@ class TestCategories:
     def test_get_categories_logic_succeeded(session, user, category):
         assert get_user_categories(session, category.user_id) == [category]
 
-    # @staticmethod
-    # def test_mocking_constant_a(user, mocker, category, client):
-    #     mocker.patch(Category.create, return_value=Category(name='Foo', color='eecc11', user_id=category.user_id))
-    #     response = client.post("/categories",
-    #                             data={"user_id": user.id,
-    #                                     "category": "Foo",
-    #                                     "color": "eecc11",})
-    #     assert response.ok
-    #     assert TestCategories.CREATE_CATEGORY in response.content
-    
     @staticmethod
     def test_creating_new_category(session, client, user):
         response = client.post("/for_categories_test",
@@ -51,8 +41,8 @@ class TestCategories:
 
     @staticmethod
     def test_creating_new_category_bad_color_format(client, user):
-        response = client.post("/categories/",
-                               json={"user_id": user.id, "name": "Foo",
+        response = client.post("/categories",
+                               data={"user_id": user.id, "category": "Foo",
                                      "color": "bad format"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert TestCategories.BAD_COLOR_FORMAT in response.json()["detail"]
@@ -153,8 +143,3 @@ class TestCategories:
 
         session.query = mock.Mock(side_effect=raise_error)
         assert get_user_categories(session, 1) == []
-
-    # @staticmethod
-    # def test_event_status_ok(client):
-    #     response = client.get("/event/edit")
-    #     assert response.ok

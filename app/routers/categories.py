@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, List
+from typing import List
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from pydantic import BaseModel
@@ -47,21 +47,6 @@ def get_categories(request: Request,
                                    f"unallowed params.")
 
 
-# @router.get("/event/edit")
-# def your_categories(request: Request,
-#                     db_session: Session = Depends(get_db)) -> List[Category]:
-#     """
-#     Return all categories created by user.
-#     user categories will be shown in dropdown list
-#     """
-#     user_id = 1
-#     categories_list = get_user_categories(db_session, user_id)
-#     return templates.TemplateResponse("event/eventedit.html", {
-#         "request": request,
-#         "categories_list": categories_list,
-#     })
-
-
 @router.get("/categories")
 def category_color_insert(request: Request) -> _TemplateResponse:
     return templates.TemplateResponse("categories.html", {
@@ -78,6 +63,11 @@ async def set_category(request: Request,
 
     message = ""
     user_id = 1    # until issue#29 will get current user_id from session
+    color = color.replace('#', '')
+    if not validate_color_format(color):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Color {color} if not from "
+                                   f"expected format.")
     try:
         Category.create(db_sess,
                         name=category,
@@ -154,6 +144,11 @@ async def for_category_test(request: Request,
 
     message = ""
     user_id = 1
+    color = color.replace('#', '')
+    if not validate_color_format(color):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Color {color} if not from "
+                                   f"expected format.")
     try:
         Category.create(db_sess,
                         name=category,
