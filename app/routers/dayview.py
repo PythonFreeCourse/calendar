@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from app.database.models import Event, User
 from app.dependencies import get_db, TEMPLATES_PATH
 from app.routers.user import get_all_user_events
-from app.internal import zodiac, international_days
+from app.internal import international_days, zodiac
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 

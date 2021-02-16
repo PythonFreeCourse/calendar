@@ -15,8 +15,9 @@ def create_international_day_object(
     )
 
 
-def get_international_day_per_day(session: Session, date) -> \
-        Optional[InternationalDays]:
+def get_international_day_per_day(session: Session, date) -> Optional[
+    InternationalDays
+]:
     day_num = date.day
     month = date.month
     international_day = session.query(InternationalDays).filter(
