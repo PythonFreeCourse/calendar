@@ -137,7 +137,8 @@ async def dayview(
     events_n_attrs = get_events_and_attributes(
         day=day, session=session, user_id=user.id,
     )
-    shopping_products = session.query(ShoppingProduct).filter(ShoppingProduct.owner_id == user.id) \
+    shopping_products = session.query(ShoppingProduct).\
+        filter(ShoppingProduct.owner_id == user.id) \
         .filter(ShoppingProduct.date == day.date())
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {

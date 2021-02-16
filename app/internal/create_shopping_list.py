@@ -1,11 +1,9 @@
-from operator import attrgetter
-from typing import List
-
 from app.database.models import ShoppingProduct
 from app.internal.utils import create_model
 
 
-def create_shopping_product(db, name, amount, datestr, owner_id) -> ShoppingProduct:
+def create_shopping_product(db, name, amount, datestr, owner_id) \
+        -> ShoppingProduct:
     """Creates and saves a new shopping product."""
 
     shopping_product = create_model(

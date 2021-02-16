@@ -20,7 +20,10 @@ router = APIRouter(
 
 
 @router.post("/delete")
-def delete_shopping_product(shopping_product_id: int = Form(...), db: Session = Depends(get_db)):
+def delete_shopping_product(
+        shopping_product_id: int = Form(...),
+        db: Session = Depends(get_db)
+):
     # TODO: Check if the user is the owner of the shopping product.
     shopping_product = by_id(db, shopping_product_id)
     datestr = shopping_product.date.strftime('%Y-%m-%d')
@@ -41,12 +44,16 @@ def delete_shopping_product(shopping_product_id: int = Form(...), db: Session = 
 
 
 @router.post("/add")
-async def add_shopping_product(name: str = Form(...), amount: int = Form(...),
-                   datestr: str = Form(...), session=Depends(get_db)):
+async def add_shopping_product(name: str = Form(...),
+                               amount: int = Form(...),
+                               datestr: str = Form(...),
+                               session=Depends(get_db)):
     # TODO: add a login session
     user = session.query(User).filter_by(username='test_username').first()
-    create_shopping_product(session, name, amount,
-                datetime.strptime(datestr, '%Y-%m-%d').date(), user.id)
+    create_shopping_product(
+        session, name, amount,
+        datetime.strptime(datestr, '%Y-%m-%d').date(), user.id
+    )
     return RedirectResponse(f"/day/{datestr}", status_code=303)
 
 
@@ -65,12 +72,17 @@ async def edit_shopping_product(shopping_product_id: int = Form(...),
 
 
 @router.post("/setBought/{shopping_product_id}")
-async def set_shopping_product_has_bought(shopping_product_id: int, session=Depends(get_db)):
+async def set_shopping_product_has_bought(
+        shopping_product_id: int,
+        session=Depends(get_db)
+):
     shopping_product = by_id(session, shopping_product_id)
     shopping_product.is_bought = True
     session.commit()
-    return RedirectResponse(f"/day/{shopping_product.date.strftime('%Y-%m-%d')}",
-                            status_code=303)
+    return RedirectResponse(
+        f"/day/{shopping_product.date.strftime('%Y-%m-%d')}",
+        status_code=303
+    )
 
 
 @router.post("/setUnBought/{shopping_product_id}")
