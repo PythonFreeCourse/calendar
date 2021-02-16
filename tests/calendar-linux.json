@@ -1,0 +1,78 @@
+{
+  "kind": "calendar#events",
+  "etag": "etag",
+  "summary": "string",
+  "description": "string",
+  "updated": "2021-01-13T09:10:02.000Z",
+  "timeZone": "string",
+  "accessRole": "string",
+  "defaultReminders": [
+    {
+      "method": "string",
+      "minutes": 5
+    }
+  ],
+  "nextPageToken": "string",
+  "nextSyncToken": "string",
+  "items": [
+        {
+            "kind": "calendar#event",
+            "etag": "somecode",
+            "id": "somecode",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=somecode",
+            "created": "2021-01-13T09:10:02.000Z",
+            "updated": "2021-01-13T09:10:02.388Z",
+            "summary": "some title",
+            "creator": {
+                "email": "someemail",
+                "self": true
+            },
+            "organizer": {
+                "email": "someemail",
+                "self": true
+            },
+            "start": {
+                "dateTime": "2021-02-25T13:00:00+02:00"
+            },
+            "end": {
+                "dateTime": "2021-02-25T14:00:00+02:00"
+            },
+            "iCalUID": "somecode",
+            "sequence": 0,
+            "reminders": {
+                "useDefault": true
+            }
+        },
+        {
+            "kind": "calendar#event",
+            "etag": "somecode",
+            "id": "somecode",
+            "status": "confirmed",
+            "htmlLink": "https://www.google.com/calendar/event?eid=somecode",
+            "created": "2021-01-13T09:10:02.000Z",
+            "updated": "2021-01-13T09:10:02.388Z",
+            "summary": "some title to all day event",
+            "creator": {
+                "email": "someemail",
+                "self": true
+            },
+            "organizer": {
+                "email": "someemail",
+                "self": true
+            },
+            "start": {
+                "date": "2021-02-25"
+            },
+            "end": {
+                "date": "2021-02-25"
+            },
+            "iCalUID": "somecode",
+            "sequence": 0,
+            "location": "somelocation",
+            "reminders": {
+                "useDefault": true
+            }
+        }
+  ]
+}
