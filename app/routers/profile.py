@@ -1,6 +1,5 @@
 import io
 
-from datetime import datetime
 from loguru import logger
 from fastapi import APIRouter, Depends, File, Request, UploadFile
 from PIL import Image
@@ -16,8 +15,7 @@ from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.out_of_office import (insert_new_out_of_office, update_out_of_office,
-                                        update_out_of_office_status_to_off_if_the_time_is_pass,
-                                        get_out_of_office_template)
+                                        update_out_of_office_status_to_off_if_time_pass)
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -55,10 +53,8 @@ async def profile(
 
     out_of_office_data = session.query(OutOfOffice).filter_by(id=1).first()
     out_of_office_updated_data = (
-        update_out_of_office_status_to_off_if_the_time_is_pass
+        update_out_of_office_status_to_off_if_time_pass
         (out_of_office_data, session))
-    if out_of_office_data is None:
-        out_of_office_updated_data = get_out_of_office_template()
 
     signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
              'Virgo', 'Libra', 'Scorpio', 'Sagittarius',

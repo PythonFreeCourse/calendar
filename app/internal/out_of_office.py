@@ -48,7 +48,7 @@ def get_out_of_office_template(out_of_office_id, user_id, start_date=None, end_d
 
 
 def update_out_of_office(out_of_office_data_from_req, out_of_office_data_from_db):
-    activate_out_of_office = 1
+    activate_out_of_office = '1'
     if out_of_office_data_from_req['outOfOffice'] == activate_out_of_office:
         out_of_office_data_from_db.start_date = datetime.strptime(
             out_of_office_data_from_req['start_date'] + ' ' + out_of_office_data_from_req['start_time'],
@@ -61,7 +61,7 @@ def update_out_of_office(out_of_office_data_from_req, out_of_office_data_from_db
         out_of_office_data_from_db.status = 'Off'
 
 
-def update_out_of_office_status_to_off_if_the_time_is_pass(out_of_office_data, session):
+def update_out_of_office_status_to_off_if_time_pass(out_of_office_data, session):
     """
     This func check if out of office date passed and changed the status to off
     :param out_of_office_data: Out of office data from db
