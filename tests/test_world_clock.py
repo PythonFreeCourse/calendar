@@ -1,17 +1,19 @@
-from app.routers.world_clock import (generate_possible_timezone_path,
-    generate_possible_timezone_path_by_country,
-    get_all_possible_timezone_paths_for_given_place,
-    get_api_data, get_continent, get_country,
-    get_arbitrary_timezone_of_country,
-    get_current_time_in_place, get_part_of_day_and_feedback,
-    get_subcountry, get_timezone_from_subcountry,
-    get_timezone_path_for_given_place, get_timezones_parts,
-    load_city_country_data_set, load_country_continent_data_set,
-    load_country_subcountry_data_set,
-    meeting_possibility_feedback,
-    normalize_continent_name,
-    parse_timezones_list, search_timezone_by_just_place, standardize_continent,
-    standardize_country_or_place, TIMEZONES_BASE_URL)
+from app.routers.world_clock import \
+    (generate_possible_timezone_path,
+     generate_possible_timezone_path_by_country,
+     get_all_possible_timezone_paths_for_given_place,
+     get_api_data, get_continent, get_country,
+     get_arbitrary_timezone_of_country,
+     get_current_time_in_place, get_part_of_day_and_feedback,
+     get_subcountry, get_timezone_from_subcountry,
+     get_timezone_path_for_given_place, get_timezones_parts,
+     load_city_country_data_set, load_country_continent_data_set,
+     load_country_subcountry_data_set,
+     meeting_possibility_feedback,
+     normalize_continent_name,
+     parse_timezones_list, search_timezone_by_just_place,
+     standardize_continent,
+     standardize_country_or_place, TIMEZONES_BASE_URL)
 
 import pytest
 import requests
@@ -245,13 +247,14 @@ def test_get_current_time_in_place():
 
 
 def test_get_part_of_day_and_feedback():
-    assert get_part_of_day_and_feedback(datetime.strptime('02:42:45', '%H:%M:%S'))\
-           == ('Late night', 'Not possible')
+    assert (get_part_of_day_and_feedback(
+            datetime.strptime('02:42:45', '%H:%M:%S'))
+            == ('Late night', 'Not possible'))
 
 
 items_details = [
-    ('22:22:12', 'Haifa', ('22:22:12', 'Night', 'Better not')),
-    ('22:22:12','Australia', ('12:22:12', 'Early afternoon', 'OK')),
+    ('22:22:12', 'Haifa', ('20:22:12', 'Night', 'Better not')),
+    ('22:22:12', 'Australia', ('10:22:12', 'Early afternoon', 'OK')),
 ]
 
 

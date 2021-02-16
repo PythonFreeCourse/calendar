@@ -16,9 +16,11 @@ BLANK = ' '
 UNDERSCORE = '_'
 UNPACK_ELEMENT = 0
 TIMEZONES_BASE_URL = 'http://worldtimeapi.org/api/timezone'
-COUNTRY_TO_CONTINENT_DATA_SET_PATH = f'{config.RESOURCES_PATH}\\country-continent.json'
+COUNTRY_TO_CONTINENT_DATA_SET_PATH = (f'{config.RESOURCES_PATH}\\'
+                                      f'country-continent.json')
 CITY_TO_COUNTRY_DATA_SET_PATH = f'{config.RESOURCES_PATH}\\world-cities.json'
-TIMEZONES_COUNTRY_SUBCOUNTRY_PATH = f'{config.RESOURCES_PATH}\\country-subcountry.json'
+TIMEZONES_COUNTRY_SUBCOUNTRY_PATH = (f'{config.RESOURCES_PATH}\\'
+                                     f'country-subcountry.json')
 
 CONTINENTS = {'Africa', 'America', 'Antarctica', 'Asia',
               'Australia', 'Europe', 'Indian', 'Pacific'}
@@ -38,7 +40,7 @@ ARB_COUNTRY_TIMEZONE = -1
 PATH_SEPARETOR = '/'
 
 MeetingTime = namedtuple('MeetingTime',
-                         ['time','start','end', 'desirability'])
+                         ['time', 'start', 'end', 'desirability'])
 PARTS_OF_THE_DAY_FEEDBACK = [
     MeetingTime(time='Early Morning', start='05:00:00', end='07:59:59',
                 desirability='Better not'),
@@ -94,7 +96,7 @@ def get_continent(country_name: str) -> Optional[str]:
     Returns:
         str: The suitable continent name.
     """
-    details = load_country_continent_data_set() #requests.get(COUNTRY_TO_CONTINENT_DATA_SET).json()
+    details = load_country_continent_data_set()
     for country_element in details:
         if (country_name.title() in
                 country_element[COUNTRY_NAME_KEY_IN_CONTITNENTS]):
@@ -335,7 +337,7 @@ def get_timezone_from_subcountry(place_name: str) -> str:
     if subcountry:
         for timezone, details in load_country_subcountry_data_set().items():
             if (details[SUBCOUNTRY_NAME_KEY_IN_CITIES] ==
-                subcountry) or (details[COUNTRY] == country):
+                    subcountry) or (details[COUNTRY] == country):
                 return f'{TIMEZONES_BASE_URL}/{timezone}'
 
 
@@ -388,7 +390,9 @@ def get_part_of_day_and_feedback(time: datetime) -> Tuple[str, str]:
             return part.time, part.desirability
 
 
-def get_equivalent_time_in_place(time_in_place: str, time_part: datetime, wanted_time: datetime) -> datetime:
+def get_equivalent_time_in_place(time_in_place: str,
+                                 time_part: datetime,
+                                 wanted_time: datetime) -> datetime:
     """Get the equivalent time in place.
     Args:
         time_in_place (str): The time in place.
@@ -429,5 +433,5 @@ def meeting_possibility_feedback(wanted_time_here: str, place_name: str) \
         part_of_day, feedback = (
             get_part_of_day_and_feedback(wanted_time_there))
         return (f"{wanted_time_there.strftime('%H')}:"
-               f"{datetime.strftime(wanted_time_here, '%M:%S')}",
-               part_of_day, feedback)
+                f"{datetime.strftime(wanted_time_here, '%M:%S')}",
+                part_of_day, feedback)
