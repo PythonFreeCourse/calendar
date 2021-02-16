@@ -1,74 +1,178 @@
 {% extends "base.html" %} {% include "event/partials/text_editor_partial_head.html" %} {% block content %}
 
     <div class="container mt-4">
-        <div class="row">
-            <!-- Left side -->
-            <div class="col-3">
-                <!-- Profile card -->
-                <div class="card card-profile mb-3">
+    <div class="row">
+    <!-- Left side -->
+    <div class="col-3">
+        <!-- Profile card -->
+        <div class="card card-profile mb-3">
 
-                    <!-- Profile update menu -->
-                    <div class="d-flex flex-row-reverse">
-                        <div class="dropdown">
+            <!-- Profile update menu -->
+            <div class="d-flex flex-row-reverse">
+                <div class="dropdown">
                         <span class="text-secondary p-1 mx-2" type="button" id="dropdownMenuButton"
                               data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa fa-edit"></i>
                             </span>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li class="list-group-item no-border">
-                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#updateNameModal">
-                                        Update full name
-                                    </button>
-                                </li>
-                                <li class="list-group-item no-border">
-                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#updateEmailModal">
-                                        Update email adress
-                                    </button>
-                                </li>
-                                <li class="list-group-item no-border">
-                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#updatePhotoModal">
-                                        Update profile photo
-                                    </button>
-                                </li>
-                                <li class="list-group-item no-border">
-                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#updateDescriptionModal">
-                                        Update profile status
-                                    </button>
-                                </li>
-                                <li class="list-group-item no-border">
-                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#telegramModal">
-                                        Register telegram Id
-                                    </button>
-                                </li>
-                                <li class="list-group-item no-border">
-                                    <button type="button" class="btn text-secondary p-1 dropdown-item"
-                                            data-bs-toggle="modal" data-bs-target="#calendarPrivacyModal">
-                                        Update calendar privacy
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li class="list-group-item no-border">
+                            <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                    data-bs-toggle="modal" data-bs-target="#updateNameModal">
+                                Update full name
+                            </button>
+                        </li>
+                        <li class="list-group-item no-border">
+                            <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                    data-bs-toggle="modal" data-bs-target="#updateEmailModal">
+                                Update email adress
+                            </button>
+                        </li>
+                        <li class="list-group-item no-border">
+                            <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                    data-bs-toggle="modal" data-bs-target="#updatePhotoModal">
+                                Update profile photo
+                            </button>
+                        </li>
+                        <li class="list-group-item no-border">
+                            <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                    data-bs-toggle="modal" data-bs-target="#updateDescriptionModal">
+                                Update profile status
+                            </button>
+                        </li>
+                        <li class="list-group-item no-border">
+                            <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                    data-bs-toggle="modal" data-bs-target="#telegramModal">
+                                Register telegram Id
+                            </button>
+                        </li>
+                        <li class="list-group-item no-border">
+                            <button type="button" class="btn text-secondary p-1 dropdown-item"
+                                    data-bs-toggle="modal" data-bs-target="#calendarPrivacyModal">
+                                Update calendar privacy
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-                        <!-- Name Modal -->
-                        <div class="modal modal-sm" id="updateNameModal" tabindex="-1" data-bs-backdrop="static"
-                             aria-labelledby="updateNameModalLabel" aria-hidden="true">
+                <!-- Name Modal -->
+                <div class="modal modal-sm" id="updateNameModal" tabindex="-1" data-bs-backdrop="static"
+                     aria-labelledby="updateNameModalLabel" aria-hidden="true">
+                    <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                        <div class="modal-content">
+                            <div class="modal-header profile-modal-header">
+                                <h2 class="modal-title">{{ gettext("Update name") }}</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="update_user_fullname" method="post">
+                                    <input type="text"
+                                           class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+                                           name="fullname" placeholder="Full Name" value="{{ user.full_name }}">
+                                    <div class="d-flex flex-row-reverse mt-4">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email modal -->
+                <div class="modal modal-sm" id="updateEmailModal" tabindex="-1" data-bs-backdrop="static"
+                     aria-labelledby="updateEmailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                        <div class="modal-content">
+                            <div class="modal-header profile-modal-header">
+                                <h2 class="modal-title">{{ gettext("Update email") }}</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="update_user_email" method="post">
+                                    <input type="email"
+                                           class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+                                           name="email" placeholder="E-mail" value="{{ user.email }}">
+                                    <div class="d-flex flex-row-reverse mt-4">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description modal -->
+                <div class="modal" id="updateDescriptionModal" tabindex="-1" data-bs-backdrop="static"
+                     aria-labelledby="updateDescriptionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                        <div class="modal-content">
+                            <div class="modal-header profile-modal-header">
+                                <h2 class="modal-title">{{ gettext("Update description") }}</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="update_user_description" method="post">
+                                    <input type="text"
+                                           class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+                                           name="description" placeholder="About me"
+                                           value="{{ user.description }}">
+                                    <div class="d-flex flex-row-reverse mt-4">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload photo -->
+                <div class="modal modal-sm" id="updatePhotoModal" tabindex="-1" data-bs-backdrop="static"
+                     aria-labelledby="updatePhotoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                        <div class="modal-content">
+                            <div class="modal-header profile-modal-header">
+                                <h2 class="modal-title">{{ gettext("Update photo") }}</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="upload_user_photo" method="post" enctype="multipart/form-data">
+                                    <div class="input-group">
+                                        <input type="file" class="form-control-sm"
+                                               accept="image/png, image/jpeg" name="file">
+                                    </div>
+                                    <div class="d-flex flex-row-reverse mt-4">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- End profile update menu -->
+
+                        <!-- Telegram modal -->
+                        <div class="modal modal-sm" id="telegramModal" tabindex="-1" data-bs-backdrop="static"
+                             aria-labelledby="telegramModalLabel" aria-hidden="true">
                             <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
                                 <div class="modal-content">
                                     <div class="modal-header profile-modal-header">
-                                        <h2 class="modal-title">{{ gettext("Update name") }}</h2>
+                                        <h2 class="modal-title">My Telegram Id</h2>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                 aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="update_user_fullname" method="post">
+                                        <form action="update_telegram_id" method="post">
                                             <input type="text"
                                                    class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                   name="fullname" placeholder="Full Name" value="{{ user.full_name }}">
+                                                   name="telegram_id" placeholder="Telegram id"
+                                                    {% if user.telegram_id %}
+                                                   value="{{ user.telegram_id }}" {% endif %}>
                                             <div class="d-flex flex-row-reverse mt-4">
                                                 <button type="submit"
                                                         class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
@@ -77,299 +181,195 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Email modal -->
-                        <div class="modal modal-sm" id="updateEmailModal" tabindex="-1" data-bs-backdrop="static"
-                             aria-labelledby="updateEmailModalLabel" aria-hidden="true">
-                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
-                                <div class="modal-content">
-                                    <div class="modal-header profile-modal-header">
-                                        <h2 class="modal-title">{{ gettext("Update email") }}</h2>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="update_user_email" method="post">
-                                            <input type="email"
-                                                   class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                   name="email" placeholder="E-mail" value="{{ user.email }}">
-                                            <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Description modal -->
-                        <div class="modal" id="updateDescriptionModal" tabindex="-1" data-bs-backdrop="static"
-                             aria-labelledby="updateDescriptionModalLabel" aria-hidden="true">
-                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
-                                <div class="modal-content">
-                                    <div class="modal-header profile-modal-header">
-                                        <h2 class="modal-title">{{ gettext("Update description") }}</h2>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="update_user_description" method="post">
-                                            <input type="text"
-                                                   class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                   name="description" placeholder="About me"
-                                                   value="{{ user.description }}">
-                                            <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
-                                            </div>
-                                        </form>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Upload photo -->
-                        <div class="modal modal-sm" id="updatePhotoModal" tabindex="-1" data-bs-backdrop="static"
-                             aria-labelledby="updatePhotoModalLabel" aria-hidden="true">
-                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
-                                <div class="modal-content">
-                                    <div class="modal-header profile-modal-header">
-                                        <h2 class="modal-title">{{ gettext("Update photo") }}</h2>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form action="upload_user_photo" method="post" enctype="multipart/form-data">
-                                            <div class="input-group">
-                                                <input type="file" class="form-control-sm"
-                                                       accept="image/png, image/jpeg" name="file">
-                                            </div>
-                                            <div class="d-flex flex-row-reverse mt-4">
-                                                <button type="submit"
-                                                        class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <!-- End profile update menu -->
-
-                                <!-- Telegram modal -->
-                                <div class="modal modal-sm" id="telegramModal" tabindex="-1" data-bs-backdrop="static"
-                                     aria-labelledby="telegramModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
-                                        <div class="modal-content">
-                                            <div class="modal-header profile-modal-header">
-                                                <h2 class="modal-title">My Telegram Id</h2>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="update_telegram_id" method="post">
-                                                    <input type="text"
-                                                           class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-                                                           name="telegram_id" placeholder="Telegram id"
-                                                            {% if user.telegram_id %}
-                                                           value="{{ user.telegram_id }}" {% endif %}>
-                                                    <div class="d-flex flex-row-reverse mt-4">
-                                                        <button type="submit"
-                                                                class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
-                                                    </div>
-                                                </form>
-                                            </div>
+                            <!-- Calendar Privacy -->
+                            <div class="modal modal-sm" id="calendarPrivacyModal" tabindex="-1"
+                                 data-bs-backdrop="static" aria-labelledby="updateCalendarPrivacyModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                    <div class="modal-content">
+                                        <div class="modal-header profile-modal-header">
+                                            <h2 class="modal-title">Set your calendar privacy</h2>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
                                         </div>
-                                    </div>
-
-                                    <!-- Calendar Privacy -->
-                                    <div class="modal modal-sm" id="calendarPrivacyModal" tabindex="-1"
-                                         data-bs-backdrop="static" aria-labelledby="updateCalendarPrivacyModalLabel"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
-                                            <div class="modal-content">
-                                                <div class="modal-header profile-modal-header">
-                                                    <h2 class="modal-title">Set your calendar privacy</h2>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
+                                        <div class="modal-body">
+                                            <form action="update_calendar_privacy" method="post">
+                                                <select class="form-control-sm" name="privacy">
+                                                    <option value="private">Private</option>
+                                                    <option value="public">Public</option>
+                                                </select>
+                                                <div class="d-flex flex-row-reverse mt-4">
+                                                    <button type="submit" class="btn btn-sm btn-success">Save
+                                                        changes
+                                                    </button>
                                                 </div>
-                                                <div class="modal-body">
-                                                    <form action="update_calendar_privacy" method="post">
-                                                        <select class="form-control-sm" name="privacy">
-                                                            <option value="private">Private</option>
-                                                            <option value="public">Public</option>
-                                                        </select>
-                                                        <div class="d-flex flex-row-reverse mt-4">
-                                                            <button type="submit" class="btn btn-sm btn-success">Save
-                                                                changes
-                                                            </button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- End profile update menu -->
+                            </div>
+                        </div>
+                        <!-- End profile update menu -->
 
-                                <img class="card-img-top profile-image rounded-circle mx-auto d-block"
-                                     src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
-                                <div class="card-body">
-                                    <h6 class="card-title text-center mb-1">{{ user.full_name }}</h6>
-                                    <p class="card-text text-center mt-0">
-                                        <a class="nav-link text-secondary" href="#">
-                                            <i class="fa fa-spin fa-cog" aria-hidden="true"></i> Settings
-                                        </a>
-                                    </p>
-                                    <hr>
-                                    <p class="card-text text-center">
-                                        <small>{{ user.description }}</small>
-                                    </p>
+                        <img class="card-img-top profile-image rounded-circle mx-auto d-block"
+                             src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
+                        <div class="card-body">
+                            <h6 class="card-title text-center mb-1">{{ user.full_name }}</h6>
+                            <p class="card-text text-center mt-0">
+                                <a class="nav-link text-secondary" href="#">
+                                    <i class="fa fa-spin fa-cog" aria-hidden="true"></i> Settings
+                                </a>
+                            </p>
+                            <hr>
+                            <p class="card-text text-center">
+                                <small>{{ user.description }}</small>
+                            </p>
+                        </div>
+                    </div>
+                    <!-- End Profile card -->
+
+                    <div class="card card-profile">
+                        <div class="card-body">
+                            <p class="card-title">
+                            <div class="btn-group">
+                                <button class="btn btn-secondary dropdown-toggle" type="button"
+                                        id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                    daily horoscope
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" id='signs'>
+                                    {% for sign in signs %}
+                                        <button class="dropdown-item sign" type="button" id="sign"
+                                                name="{{ sign }}">{{ sign }}</button> {% endfor %}
                                 </div>
                             </div>
-                            <!-- End Profile card -->
 
+                            <!-- Features card -->
                             <div class="card card-profile">
                                 <div class="card-body">
                                     <p class="card-title">
-                                    <div class="btn-group">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                            daily horoscope
-                                        </button>
-                                        <div class="dropdown-menu dropdown-menu-right" id='signs'>
-                                            {% for sign in signs %}
-                                                <button class="dropdown-item sign" type="button" id="sign"
-                                                        name="{{ sign }}">{{ sign }}</button> {% endfor %}
-                                        </div>
-                                    </div>
-
-                                    <!-- Features card -->
-                                    <div class="card card-profile">
-                                        <div class="card-body">
-                                            <p class="card-title">
-                                                Explore more features
-                                            </p>
-                                            <ul class="list-group">
-                                                {% if not user.telegram_id %}
-                                                    <li class="list-group-item list-group-item-action no-border">
-                                                        <a class="text-decoration-none text-success"
-                                                           href="https://t.me/pylander_bot" target="_blank">
-                                                            <strong>Try PyLander bot</strong>
-                                                        </a>
-                                                    </li>
-                                                {% endif %}
-                                                <li class="list-group-item list-group-item-action no-border">
-                                                    <a class="text-decoration-none text-secondary" href="#">Export my
-                                                        calendar</a>
-                                                </li>
-                                                <li class="list-group-item list-group-item-action no-border">
-                                                    <a class="text-decoration-none text-secondary"
-                                                       href="{{ url_for('import_holidays') }}">Add holidays to
-                                                        calendar</a>
-                                                </li>
-                                                <li class="list-group-item list-group-item-action no-border">
-                                                    {% if google_error %}
-                                                        <a class="text-decoration-none text-secondary"
-                                                           href="{{ url_for('google_sync') }}">Sync with Google - Not
-                                                            Avaliable</a> {% else %}
-                                                        <a class="text-decoration-none text-secondary"
-                                                           href="{{ url_for('google_sync') }}">Sync with
-                                                            Google</a> {% endif %}
-                                                </li>
-                                                <li class="list-group-item list-group-item-action no-border">
-                                                    <a data-bs-toggle="modal"
-                                                       class="text-decoration-none text-secondary"
-                                                       href="#outOfOfficeModal">Out of office</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <!-- End Features card -->
-
+                                        Explore more features
+                                    </p>
+                                    <ul class="list-group">
+                                        {% if not user.telegram_id %}
+                                            <li class="list-group-item list-group-item-action no-border">
+                                                <a class="text-decoration-none text-success"
+                                                   href="https://t.me/pylander_bot" target="_blank">
+                                                    <strong>Try PyLander bot</strong>
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                        <li class="list-group-item list-group-item-action no-border">
+                                            <a class="text-decoration-none text-secondary" href="#">Export my
+                                                calendar</a>
+                                        </li>
+                                        <li class="list-group-item list-group-item-action no-border">
+                                            <a class="text-decoration-none text-secondary"
+                                               href="{{ url_for('import_holidays') }}">Add holidays to
+                                                calendar</a>
+                                        </li>
+                                        <li class="list-group-item list-group-item-action no-border">
+                                            {% if google_error %}
+                                                <a class="text-decoration-none text-secondary"
+                                                   href="{{ url_for('google_sync') }}">Sync with Google - Not
+                                                    Avaliable</a> {% else %}
+                                                <a class="text-decoration-none text-secondary"
+                                                   href="{{ url_for('google_sync') }}">Sync with
+                                                    Google</a> {% endif %}
+                                        </li>
+                                        <li class="list-group-item list-group-item-action no-border">
+                                            <a data-bs-toggle="modal"
+                                               class="text-decoration-none text-secondary"
+                                               href="#outOfOfficeModal">Out of office</a>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <!-- Out of office Modal -->
-                                <div class="modal modal-sm" id="outOfOfficeModal" tabindex="-1"
-                                     data-bs-backdrop="static"
-                                     aria-labelledby="outOfOfficeModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
-                                        <div class="modal-content">
-                                            <div class="modal-header profile-modal-header">
-                                                <h5 class="modal-title">Out of office</h5>
-                                                <button type="button" class="btn-close"
-                                                        data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="out_of_office" method="post">
-                                                    <label>Out of office
-                                                        status: {{ out_of_office_data.status }}</label>
-                                                    <br>
-                                                    <input type="radio"
-                                                           id="deactivate"
-                                                           name="outOfOffice"
-                                                           value="0"
-                                                           onChange="findselected()">
-                                                    <label for="deactivate">Deactivate out of office</label>
-                                                    <br>
-                                                    <input type="radio"
-                                                           id="activate"
-                                                           name="outOfOffice"
-                                                           value="1"
-                                                           checked
-                                                           onChange="findselected()">
-                                                    <label for="activate">Activate out of office</label>
-                                                    <div class="mb-3 agenda_filters">
-                                                        <label for="start_date">From</label><br>
-                                                        <input class="filter" type="date" required id="start_date"
-                                                               name="start_date"
-                                                               value={{ out_of_office_data.start_date }}>
-                                                        <input type="time" name="start_time" placeholder="Start Time"
-                                                               value={{ out_of_office_data.start_date }}
-                                                                       required><br>
-                                                        <label for="end_date">To</label><br>
-                                                        <input class="filter" type="date" required id="end_date"
-                                                               name="end_date"
-                                                               value={{ out_of_office_data.end_date }}>
-                                                        <input type="time" name="end_time" placeholder="End Time"
-                                                               value={{ out_of_office_data.end_date }}
-                                                                       required>
-                                                    </div>
-                                                    <div class="d-flex flex-row-reverse mt-4">
-                                                        <button type="submit"
-                                                                class="btn btn-sm btn-success">Save changes
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
+                            </div>
+                            <!-- End Features card -->
 
-                                        </div>
+                        </div>
+                        <!-- Out of office Modal -->
+                        <div class="modal modal-sm" id="outOfOfficeModal" tabindex="-1"
+                             data-bs-backdrop="static"
+                             aria-labelledby="outOfOfficeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+                                <div class="modal-content">
+                                    <div class="modal-header profile-modal-header">
+                                        <h5 class="modal-title">Out of office</h5>
+                                        <button type="button" class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
-                                </div>
-
-
-                                <!-- Center -->
-                                <div class="col-5">
-                                    <div class="container" id="daily_horoscope">
+                                    <div class="modal-body">
+                                        <form action="out_of_office" method="post">
+                                            <label>Out of office
+                                                status: {{ out_of_office_data.status }}</label>
+                                            <br>
+                                            <input type="radio"
+                                                   id="deactivate"
+                                                   name="outOfOffice"
+                                                   value="0"
+                                                   onChange="findselected()">
+                                            <label for="deactivate">Deactivate out of office</label>
+                                            <br>
+                                            <input type="radio"
+                                                   id="activate"
+                                                   name="outOfOffice"
+                                                   value="1"
+                                                   checked
+                                                   onChange="findselected()">
+                                            <label for="activate">Activate out of office</label>
+                                            <div class="mb-3 agenda_filters">
+                                                <label for="start_date">From</label><br>
+                                                <input class="filter" type="date" required id="start_date"
+                                                       name="start_date"
+                                                       value={{ out_of_office_data.start_date }}>
+                                                <input type="time" name="start_time" placeholder="Start Time"
+                                                       value={{ out_of_office_data.start_date }}
+                                                               required><br>
+                                                <label for="end_date">To</label><br>
+                                                <input class="filter" type="date" required id="end_date"
+                                                       name="end_date"
+                                                       value={{ out_of_office_data.end_date }}>
+                                                <input type="time" name="end_time" placeholder="End Time"
+                                                       value={{ out_of_office_data.end_date }}
+                                                               required>
+                                            </div>
+                                            <div class="d-flex flex-row-reverse mt-4">
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-success">Save changes
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
 
+
                         <!-- Center -->
                         <div class="col-5">
+                            <div class="container" id="daily_horoscope">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                            <!-- Upcoming events -->
-                            <div class="mb-3">
-                                {% for event in events %}
-                                    <!-- Events card -->
-                                    <div class="card card-event mb-2 pb-0">
-                                        <div class="card-header d-flex justify-content-between">
-                                            <small><i>{{ gettext("Upcoming event on (date)", date=event.start) }}</i>
-                                            </small>
-                                            <!-- Event settings -->
-                                            <a class="text-dark" href="#">
-                                                <div class="d-flex flex-row-reverse">
+                <!-- Center -->
+                <div class="col-5">
+
+                    <!-- Upcoming events -->
+                    <div class="mb-3">
+                        {% for event in events %}
+                            <!-- Events card -->
+                            <div class="card card-event mb-2 pb-0">
+                                <div class="card-header d-flex justify-content-between">
+                                    <small><i>{{ gettext("Upcoming event on (date)", date=event.start) }}</i>
+                                    </small>
+                                    <!-- Event settings -->
+                                    <a class="text-dark" href="#">
+                                        <div class="d-flex flex-row-reverse">
 
                                             <span class="text-secondary p-1 mx-2" type="button">
                                     <button type="button" class="btn text-secondary p-1 dropdown-item"
@@ -377,91 +377,92 @@
                                         <i class="fas fa-ellipsis-h"></i>
                                     </button>
                                 </span>
-                                                </div>
-                                            </a>
-
-
                                         </div>
-                                        <div class="card-body pb-1">
-                                            <p class="card-text">
-                                                The Event {{ event }} - description ...
-                                            </p>
-                                            <hr class="mb-0">
-                                            <small class="event-posted-time text-muted">Last updated 3 mins ago</small>
-                                        </div>
-                                    </div>
-                                    <div class="card-body pb-1">
-                                        <p class="card-text">
-                                            {{ gettext("The Event (event)", event=event.title) }}
-                                        </p>
-                                        <hr class="mb-0">
-                                        <small class="event-posted-time text-muted">{{ gettext("Last updated (time) ago") }}</small>
-                                    </div>
-                                    <div class="modal modal-bg" id="updateeventcontent" tabindex="-1"
-                                         data-bs-backdrop="static" aria-labelledby="updateeventcontentlabel"
-                                         aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h2 class="modal-title">Update Event</h2>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div id="editorSection">{{ event.content }}</div>
-                                                    <button class="btn btn-sm btn-success" id="but">Save Changes
-                                                    </button>
-                                                    <!--  TODO usage of update event, WAITING FOR FUNCTION -->
+                                    </a>
 
-                                                </div>
 
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                {% endfor %}
+                                </div>
+                                <div class="card-body pb-1">
+                                    <p class="card-text">
+                                        The Event {{ event }} - description ...
+                                    </p>
+                                    <hr class="mb-0">
+                                    <small class="event-posted-time text-muted">Last updated 3 mins ago</small>
+                                </div>
                             </div>
+                            <div class="card-body pb-1">
+                                <p class="card-text">
+                                    {{ gettext("The Event (event)", event=event.title) }}
+                                </p>
+                                <hr class="mb-0">
+                                <small class="event-posted-time text-muted">{{ gettext("Last updated (time) ago") }}</small>
+                            </div>
+                            <div class="modal modal-bg" id="updateeventcontent" tabindex="-1"
+                                 data-bs-backdrop="static" aria-labelledby="updateeventcontentlabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2 class="modal-title">Update Event</h2>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div id="editorSection">{{ event.content }}</div>
+                                            <button class="btn btn-sm btn-success" id="but">Save Changes
+                                            </button>
+                                            <!--  TODO usage of update event, WAITING FOR FUNCTION -->
 
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right side -->
+
+    <div class="col-4">
+
+    <!-- Meetups -->
+    <div class="card card-profile mb-3" style="height: 18em;">
+        <div class="card-body">
+            <p class="card-title">
+                {{ gettext("Explore MeetUps near you") }}
+            </p>
+        </div>
+
+        <!-- Card -->
+        <div class="card card-profile mb-3" style="height: 18em;">
+            <div class="card-body">
+                <p class="card-title">
+                    {{ gettext("Your Card") }}
+                </p>
+            </div>
+
+
+            <!-- Card -->
+            <div class="card card-profile mb-3" style="height: 18em;">
+                <div class="card-body">
+                    <p class="card-title">
+                        Your Card
+                    </p>
+                    <!-- Card -->
+                    <div class="card card-profile mb-3" style="height: 18em;">
+                        <div class="card-body">
+                            {% include "on_this_day.html" %}
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Right side -->
-
-            <div class="col-4">
-
-                <!-- Meetups -->
-                <div class="card card-profile mb-3" style="height: 18em;">
-                    <div class="card-body">
-                        <p class="card-title">
-                            {{ gettext("Explore MeetUps near you") }}
-                        </p>
-                    </div>
-
-                    <!-- Card -->
-                    <div class="card card-profile mb-3" style="height: 18em;">
-                        <div class="card-body">
-                            <p class="card-title">
-                                {{ gettext("Your Card") }}
-                            </p>
-                        </div>
-
-
-                        <!-- Card -->
-                        <div class="card card-profile mb-3" style="height: 18em;">
-                            <div class="card-body">
-                                <p class="card-title">
-                                    Your Card
-                                </p>
-                                <!-- Card -->
-                                <div class="card card-profile mb-3" style="height: 18em;">
-                                    <div class="card-body">
-                                        {% include "on_this_day.html" %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% include "event/partials/text_editor_partial_body.html" %} {% endblock %}
+        </div>
+    </div>
+    {% include "event/partials/text_editor_partial_body.html" %} {% endblock %}
+<script src="{{ url_for('static', path='/out_of_office/out_of_office.js') }}"></script>
