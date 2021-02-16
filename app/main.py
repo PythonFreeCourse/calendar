@@ -53,6 +53,7 @@ routers_to_include = [
     weekview.router,
     email.router,
     event.router,
+    export.router,
     four_o_four.router,
     invitation.router,
     profile.router,
