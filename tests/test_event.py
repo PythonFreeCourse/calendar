@@ -124,14 +124,14 @@ def test_create_event_api(event_test_client, session, event):
 def test_eventedit(event_test_client):
     response = event_test_client.get("/event/edit")
     assert response.ok
-    assert b"Edit Event" in response.content
+    assert b"Event Details" in response.content
 
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
-    assert b"View Event" in response.content
+    assert b"Event Details" in response.content
 
 
 def test_create_event_with_default_availability(client, user, session):
