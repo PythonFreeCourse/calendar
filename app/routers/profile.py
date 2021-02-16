@@ -10,10 +10,14 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app import config
 from app.database.models import User, OutOfOffice
-from app.dependencies import get_db, MEDIA_PATH, templates
-from app.internal.on_this_day_events import get_on_this_day_events
+
+from app.dependencies import get_db, MEDIA_PATH, templates, GOOGLE_ERROR
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
+from app.internal.on_this_day_events import get_on_this_day_events
+from app.internal.out_of_office import (insert_new_out_of_office, update_out_of_office,
+                                        update_out_of_office_status_to_off_if_the_time_is_pass,
+                                        get_out_of_office_template)
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -23,32 +27,6 @@ router = APIRouter(
     tags=["profile"],
     responses={404: {"description": "Not found"}},
 )
-
-
-def update_out_of_office_status_to_off_if_the_time_is_pass(out_of_office_data, session):
-    """
-    This func check if out of office date passed and changed the status to off
-    :param out_of_office_data: Out of office data from db
-    :param session:
-    :return: out_of_office_data object
-    """
-    if out_of_office_data:
-        if out_of_office_data.status == 'On':
-            if out_of_office_data.end_date < datetime.now():
-                # update status to off
-                out_of_office_data.status = 'Off'
-                session.commit()
-    return out_of_office_data
-
-
-def get_out_of_office_template(out_of_office_id, user_id, start_date=None, end_date=None, status='Off'):
-    return OutOfOffice(
-        id=out_of_office_id,
-        user_id=user_id,
-        start_date=start_date,
-        end_date=end_date,
-        status=status
-    )
 
 
 def get_placeholder_user():
@@ -76,7 +54,11 @@ async def profile(
         user = session.query(User).filter_by(id=1).first()
 
     out_of_office_data = session.query(OutOfOffice).filter_by(id=1).first()
-    out_of_office_updated_data = update_out_of_office_status_to_off_if_the_time_is_pass(out_of_office_data, session)
+    out_of_office_updated_data = (
+        update_out_of_office_status_to_off_if_the_time_is_pass
+        (out_of_office_data, session))
+    if out_of_office_data is None:
+        out_of_office_updated_data = get_out_of_office_template()
 
     signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
              'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
@@ -87,9 +69,11 @@ async def profile(
         "request": request,
         "user": user,
         "events": upcoming_events,
-        "out_of_office_data": out_of_office_updated_data,
         "signs": signs,
-        "on_this_day_data": on_this_day_data})
+        'google_error': GOOGLE_ERROR,
+        "on_this_day_data": on_this_day_data,
+        "out_of_office_data": out_of_office_updated_data,
+    })
 
 
 @router.post("/update_user_fullname")
@@ -168,6 +152,23 @@ async def update_telegram_id(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
+@router.post("/privacy")
+async def update_calendar_privacy(
+        request: Request,
+        session=Depends(get_db)
+):
+    user = session.query(User).filter_by(id=1).first()
+    data = await request.form()
+    new_privacy = data['privacy']
+
+    # Update database
+    user.privacy = new_privacy
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
 @router.get("/holidays/import")
 def import_holidays(request: Request):
     return templates.TemplateResponse("import_holidays.html", {
@@ -199,34 +200,26 @@ async def out_of_office(
         request: Request, session=Depends(get_db)):
     activate_out_of_office = '1'
     user = session.query(User).filter_by(id=1).first()
+
     # TODO: Check if the user exist
 
-    data = await request.form()
+    out_of_office_data_from_req = await request.form()
 
-    out_of_office_data = session.query(OutOfOffice).filter_by(id=1).first()
+    out_of_office_data_from_db = (session.query(OutOfOffice).
+                                  filter_by(id=1).first())
 
     # insert new out of office
-    if not out_of_office_data:
-        if data['outOfOffice'] == activate_out_of_office:
-            out = get_out_of_office_template(1,
-                                             user_id=user.id,
-                                             start_date=datetime.strptime(data['start_date'] + ' ' + data['start_time'],
-                                                                          '%Y-%m-%d %H:%M'),
-                                             end_date=datetime.strptime(data['end_date'] + ' ' + data['end_time'],
-                                                                        '%Y-%m-%d %H:%M'),
-                                             status='On')
-            session.add(out)
+    if not out_of_office_data_from_db:
+        if (out_of_office_data_from_req['outOfOffice']
+                == activate_out_of_office):
+            insert_new_out_of_office(out_of_office_data_from_req,
+                                     user,
+                                     session)
 
     # update out of office
     else:
-        if data['outOfOffice'] == activate_out_of_office:
-            out_of_office_data.start_date = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
-                                                              '%Y-%m-%d %H:%M')
-            out_of_office_data.end_date = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
-                                                            '%Y-%m-%d %H:%M')
-            out_of_office_data.status = 'On'
-        else:
-            out_of_office_data.status = 'Off'
+        update_out_of_office(out_of_office_data_from_req,
+                             out_of_office_data_from_db)
 
     session.commit()
 
@@ -235,7 +228,7 @@ async def out_of_office(
 
 
 @router.post("/holidays/update")
-async def update_holidays(
+async def update(
         file: UploadFile = File(...), session=Depends(get_db)):
     icsfile = await file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
