@@ -16,10 +16,10 @@ BLANK = ' '
 UNDERSCORE = '_'
 UNPACK_ELEMENT = 0
 TIMEZONES_BASE_URL = 'http://worldtimeapi.org/api/timezone'
-COUNTRY_TO_CONTINENT_DATA_SET_PATH = (f'{config.RESOURCES_PATH}\\'
+COUNTRY_TO_CONTINENT_DATA_SET_PATH = (f'{config.RESOURCES_PATH}/'
                                       f'country-continent.json')
-CITY_TO_COUNTRY_DATA_SET_PATH = f'{config.RESOURCES_PATH}\\world-cities.json'
-TIMEZONES_COUNTRY_SUBCOUNTRY_PATH = (f'{config.RESOURCES_PATH}\\'
+CITY_TO_COUNTRY_DATA_SET_PATH = f'{config.RESOURCES_PATH}/world-cities.json'
+TIMEZONES_COUNTRY_SUBCOUNTRY_PATH = (f'{config.RESOURCES_PATH}/'
                                      f'country-subcountry.json')
 
 CONTINENTS = {'Africa', 'America', 'Antarctica', 'Asia',
