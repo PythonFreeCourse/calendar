@@ -380,18 +380,24 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-def get_tamplate_to_share_event(event_id: int, user_name: str,
+def get_template_to_share_event(event_id: int, user_name: str,
                                 db: Session, request: Request) -> templates:
-    """Give yoe nice tamplate of the event that you can share.
-    Get event id and the user name that want to send the share message,
-    Also needed to give db session and request method (mostly 'get')
-    return TemplateResponse that incloud all the ditails on the event"""
+    """Gives shareable template of the event.
+
+Args:
+     event_id: Event to share
+     user_name: The user who shares the event
+     db: The database to get the event from
+     request: The request we got from the user using FastAPI.
+
+Returns:
+    Shareable HTML with data from the database about the event.
+"""
 
     event = by_id(db, event_id)
+    data = {"sender_name": user_name, "event": event}
     html_temp = templates.TemplateResponse("event/share_event.html",
-                                           {"request": request,
-                                            "sender_name": user_name,
-                                            "event": event})
+                                           {"request": request, "data": data})
     return html_temp
 
 
