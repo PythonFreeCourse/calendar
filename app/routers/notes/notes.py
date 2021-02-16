@@ -80,8 +80,6 @@ async def update_note(request: Request,
         "description": payload.description,
         "timestamp": payload.timestamp,
     }
-    print(response_object)
-    # return RedirectResponse("/notes", status_code=HTTP_302_FOUND)
     return templates.TemplateResponse(
         "notes/note.html", {"request": request, "data": response_object})
 
