@@ -1,5 +1,3 @@
-import uvicorn
-
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
@@ -43,10 +41,6 @@ app.add_exception_handler(HTTP_401_UNAUTHORIZED, auth_exception_handler)
 json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
-
-# delete permanently events after 30 days
-DAYS = 30
-delete_events_after_optionals_num_days(DAYS, next(get_db()))
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
@@ -108,6 +102,10 @@ for router in routers_to_include:
 @app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
+    # delete permanently events after 30 days
+    days = 30
+    delete_events_after_optionals_num_days(days, next(get_db()))
+
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("index.html", {
         "request": request,
@@ -116,6 +114,3 @@ async def home(request: Request, db: Session = Depends(get_db)):
 
 
 custom_openapi(app)
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)

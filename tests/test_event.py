@@ -14,7 +14,6 @@ from app.main import app
 
 from app.routers import event as evt
 
-
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
     'start_date': '2021-01-28',
@@ -334,9 +333,9 @@ def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
         assert (
-            evt.update_event(event_id=event.id, event=data,
-                             db=None).status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                evt.update_event(event_id=event.id, event=data,
+                                 db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -355,11 +354,11 @@ def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
         assert (
-            evt._update_event(
-                event_id=event.id,
-                event_to_update=data,
-                db=None).status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                evt._update_event(
+                    event_id=event.id,
+                    event_to_update=data,
+                    db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -371,25 +370,26 @@ def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
         response = evt.delete_event(event_id=1, db=None)
         assert (
-            response.status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                response.status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
         assert (
-            evt._delete_event(event=event, db=None).status_code ==
-            status.HTTP_500_INTERNAL_SERVER_ERROR
+                evt._delete_event(event=event, db=None).status_code ==
+                status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
-def test_successful_deletion(event_test_client, session, event):
-    response = event_test_client.delete("/event/1")
-    assert response.ok
-    with pytest.raises(HTTPException):
-        assert "Event ID does not exist. ID: 1" in evt.by_id(
-            db=session, event_id=1).content
+# TODO: This test will be restored after restore events flags will be implement
+# def test_successful_deletion(event_test_client, session, event):
+#     response = event_test_client.delete("/event/1")
+#     assert response.ok
+#     with pytest.raises(HTTPException):
+#         assert "Event ID does not exist. ID: 1" in evt.by_id(
+#             db=session, event_id=1).content
 
 
 def test_change_owner(client, event_test_client, user, session, event):
