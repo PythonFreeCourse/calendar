@@ -286,6 +286,14 @@ class Zodiac(Base):
         )
 
 
+class UserMenstrualPeriodLength(Base):
+    __tablename__ = "user_menstrual_period_length"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+    period_length = Column(Integer)
+
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
@@ -297,9 +305,3 @@ def insert_data(target, session: Session, **kw):
 
 
 event.listen(Language.__table__, 'after_create', insert_data)
-class UserMenstrualPeriodLength(Base):
-    __tablename__ = "user_menstrual_period_length"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    period_length = Column(Integer)

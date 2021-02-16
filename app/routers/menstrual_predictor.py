@@ -8,11 +8,12 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_302_FOUND
 from starlette.templating import Jinja2Templates
 
-from app.database.models import Event
+from app.database.models import Event, UserMenstrualPeriodLength
 from app.dependencies import get_db, templates
 from app.routers.share import accept
 from app.routers.event import create_event
 from app.routers.user import create_user
+from app.internal.utils import create_model, get_current_user
 
 from loguru import logger
 
@@ -47,19 +48,31 @@ async def submit_join_form(
     # db.add(event)
     # db.commit()
     data = await request.form()
-    # invite_id = list(data.values())[0]
-
-    # invitation = get_invitation_by_id(invite_id, session=db)
-    # accept(invitation, db)
-
     # url = router.url_path_for("view_invitations")
+    current_user = get_current_user(session=db)
+    
+    logger.error(f'current user, {current_user.id}')
+    logger.error(data['avg_period_length'])
+
+    user_menstrual_period_length = {
+        "user_id": current_user.id,
+        "period_length": data['avg_period_length'],
+    }
+    last_period_date = datetime.datetime.strptime(data['last_period_date'], '%Y-%m-%d')
+    try:
+        new_signed_up_to_period = create_model(session=db, model_class=UserMenstrualPeriodLength, **user_menstrual_period_length)
+    except SQLAlchemyError as err:
+        logger.warning('User already signed up to the service, hurray')
+        db.rollback()
     url = '/'
-    generate_predicted_period_dates(db, 5, datetime.datetime.now(), 1)
-    period_days = get_all_period_days(db, user_id=1)
+    # if not is_date_before_today(last_period_date):
+    #     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+    generate_predicted_period_dates(db, data['avg_period_length'], last_period_date, current_user.id)
+    period_days = get_all_period_days(db, user_id=current_user.id)
     logger.error(period_days)
-    logger.warning(data)
-    remove_existing_period_dates(db, user_id=1)
-    period_days = get_all_period_days(db, user_id=1)
+    # logger.warning(data)
+    # remove_existing_period_dates(db, user_id=current_user.id)
+    period_days = get_all_period_days(db, user_id=current_user.id)
     for day in period_days:
         logger.error(day.start)
 
@@ -70,30 +83,25 @@ def remove_existing_period_dates(db, user_id):
     period_days = (db.query(Event).
         filter(Event.owner_id == user_id).
         filter(Event.category_id == MENSTRUAL_PERIOD_CATEGORY_ID).
-        all())
-    db.delete(period_days)
+        filter(Event.start > datetime.datetime.now()).
+        delete())
+    # db.delete(period_days)
     db.commit()
 
 
 def generate_predicted_period_dates(db, period_length, last_period_time, user_id):
-    for i in range(period_length):
+    for i in range(int(period_length)):
         delta = datetime.timedelta(i + 1)
         period_date = last_period_time + delta
         event = create_event(db, 'period day', period_date, period_date, user_id, category_id=MENSTRUAL_PERIOD_CATEGORY_ID)
-        db.add(event)
-    db.commit()
+        # db.add(event)
+    # db.commit()
 
 
 def get_all_period_days(session: Session, user_id: int) -> List[Event]:
     """Returns all period days filter by user id."""
 
     try:
-        # return [email[0] for email in db.query(User.email).
-        #         select_from(Event).
-        #         join(UserEvent, UserEvent.event_id == Event.id).
-        #         join(User, User.id == UserEvent.user_id).
-        #         filter(Event.id == event_id).
-        #         all()]
         period_days = list(session.query(Event).
         filter(Event.owner_id == user_id).
         filter(Event.category_id == MENSTRUAL_PERIOD_CATEGORY_ID).
@@ -106,10 +114,5 @@ def get_all_period_days(session: Session, user_id: int) -> List[Event]:
         return period_days
 
 
-# def get_invitation_by_id(
-#         invitation_id: int, session: Session
-# ) -> Union[Invitation, None]:
-#     """Returns a invitation by an id.
-#     if id does not exist, returns None."""
-
-#     return session.query(Invitation).filter_by(id=invitation_id).first()
+def is_date_before_today(received_date: datetime):
+    return received_date < datetime.datetime.now()

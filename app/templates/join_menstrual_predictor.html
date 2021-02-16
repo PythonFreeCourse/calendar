@@ -12,12 +12,12 @@
                     {% if errors %}
                         <input type="number" class="form-control" name="avg_period_length" id="avg_period_length" value="{{ form_values['avg_period_length'] }}" autofocus><br>
                     {% else %}
-                        <input type="number" class="form-control" name="avg_period_length" id="avg_period_length"  placeholder="Required" autofocus><br>
+                        <input onktype="number" class="form-control" name="avg_period_length" id="avg_period_length" placeholder="Required" autofocus required><br>
                     {% endif %}
                 </div>
                 <div class="col-auto">
-                    <span id="UsernameHelpInline" class="form-text">
-                        Must be between 3 to 20 characters.
+                    <span id="PeriodLengthHelpInline" class="form-text">
+                        Must be above 1 day.
                     </span>
                 </div>
                 <!-- 
@@ -31,9 +31,9 @@
                 <label for="last_period_date" class="col-sm-2 col-form-label">Last period date</label>
                 <div class="col-auto">
                     {% if errors %}
-                        <input type="date" class="form-control" name="last_period_date" id="last_period_date" value="{{ form_values['last_period_date'] }}"><br>
+                        <input type="date" class="form-control" name="last_period_date" id="last_period_date" value="{{ form_values['last_period_date'] }}" required><br>
                     {% else %}
-                        <input type="date" class="form-control" name="last_period_date" id="last_period_date" placeholder="Required"><br>
+                        <input type="date" class="form-control" name="last_period_date" id="last_period_date" placeholder="Required" required><br>
                     {% endif %}
                 </div>
                 {% if errors and "full_name" in errors %}
@@ -44,4 +44,16 @@
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
         </form>
     </div>
+    <script>
+        function change_max_to_today_date(el){
+            today = new Date();
+            today_str = today.toISOString().substring(0,10);
+            el.max = today_str;
+        }
+        function validate_date_older_than_today(received_date){
+            return received_date < new Date();
+        }
+        let last_period_date_element = document.getElementById('last_period_date');
+        change_max_to_today_date(last_period_date_element);
+    </script>
 {% endblock %}
