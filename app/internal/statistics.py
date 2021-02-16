@@ -1,10 +1,9 @@
-from collections import namedtuple
 import datetime
 from typing import Dict, List, NamedTuple, Tuple, Union
 
-from sqlalchemy import func
+from sqlalchemy import and_, func, or_
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import text
+from sqlalchemy.util import symbol
 
 from app.database.models import Event, UserEvent
 from app.routers.user import does_user_exist, get_users
@@ -15,15 +14,15 @@ INVALID_DATE_RANGE = "End date must be later than start date"
 INVALID_USER = "Invalid user id"
 NIN_IN_DAY = 1440
 
-
-ValidateResult = namedtuple(
-    'ValidateResult', 'valid_input error_text start end')
-DailyEventsStatistics = namedtuple(
-    'DailyEventsStatistics',
-    'min_events_in_day max_events_in_day avg_events_per_day')
-EventsDurationStatistics = namedtuple(
-    'EventsDurationStatistics',
-    'shortest_event longest_event average_event')
+ValidateResult = NamedTuple('ValidateResult', [
+        ('valid_input', bool), ('error_text', str),
+        ('start', datetime.datetime), ('end', datetime.datetime)])
+DailyEventsStatistics = NamedTuple('DailyEventsStatistics', [
+        ('min_events_in_day', int), ('max_events_in_day', int),
+        ('avg_events_per_day', float)])
+EventsDurationStatistics = NamedTuple('EventsDurationStatistics', [
+        ('shortest_event', float), ('longest_event', float),
+        ('average_event', float)])
 
 
 def validate_input(
@@ -65,16 +64,20 @@ def validate_input(
         valid_input=True, error_text="", start=start, end=end)
 
 
-def event_start_end_filter():
+def get_date_filter_between_dates(
+        start: datetime.datetime, end: datetime.datetime) -> symbol:
     """
-    prepare generic part of SQL to be used in all queries
+    Prepare the filter by dates using declarative SQLAlchemy.
+
     Returns:
-        concatenated sql part for events date
+        concatenated sql part for events date as sqlalchemy.util.symbol
     """
-    return """(events.start >= start and events.start <= end)
-            or (events.end >= start and events.end <= end)
-            or (events.start <= start and events.end >= end)
-    """
+    event_start, event_end = func.date(Event.start), func.date(Event.end)
+    return (
+            or_(
+                and_(event_start >= start, event_start <= end),
+                and_(event_end >= start, event_end <= end),
+                and_(event_start <= start, event_end >= end)))
 
 
 def get_events_count_stats(
@@ -95,13 +98,14 @@ def get_events_count_stats(
             meetings_for_user: events that the user has.
             created_by_user: events that the user has created.
     """
+    user_to_event = (UserEvent, UserEvent.event_id == Event.id)
+    by_user_id = UserEvent.user_id == userid
+    by_owner_id = Event.owner_id == userid
     meetings_for_user = db.query(Event.id).join(
-        UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(
-        text(event_start_end_filter())).count()
+        user_to_event).filter(by_user_id).filter(
+        get_date_filter_between_dates(start, end)).count()
     created_by_user = db.query(Event.id).filter(
-        Event.owner_id == userid).filter(
-        text(event_start_end_filter())).count()
+        by_owner_id).filter(get_date_filter_between_dates(start, end)).count()
     return {"events_count_stats": {"meetings_for_user": meetings_for_user,
                                    "created_by_user": created_by_user}}
 
@@ -109,7 +113,7 @@ def get_events_count_stats(
 def get_events_by_date(
         db: Session, userid: int, start: datetime.datetime,
         end: datetime.datetime) -> List[Tuple[datetime.datetime, int]]:
-    """ get data of date + number of events on it from the db
+    """ get date + number of events on it
 
     Args:
         db: db session.
@@ -120,12 +124,16 @@ def get_events_by_date(
     Returns:
         data of date + number of events on it
     """
-    events_by_date = db.query(
-        func.date(Event.start), func.count(func.date(Event.start))).join(
-        UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(
-        text(event_start_end_filter())).all()
-    return events_by_date
+    start_date = func.date(Event.start)
+    events_count = func.count(start_date)
+    by_user_id = UserEvent.user_id == userid
+    user_to_event = (UserEvent, UserEvent.event_id == Event.id)
+    return (
+        db.query(start_date, events_count)
+        .join(user_to_event)
+        .filter(by_user_id)
+        .filter(get_date_filter_between_dates(start, end)).all()
+    )
 
 
 def calc_daily_events_statistics(
@@ -145,14 +153,9 @@ def calc_daily_events_statistics(
             min_events_in_day, max_events_in_day, avg_events_per_day
     """
     num_of_days_in_period = (end - start).days + 1
-    if len(events_by_date) > 0:
-        min_events_in_day = min(day[1] for day in events_by_date)
-        max_events_in_day = max(day[1] for day in events_by_date)
-        sum_events_per_period = sum(day[1] for day in events_by_date)
-    else:
-        min_events_in_day = 0
-        max_events_in_day = 0
-        sum_events_per_period = 0
+    min_events_in_day = min(day[1] for day in events_by_date)
+    max_events_in_day = max(day[1] for day in events_by_date)
+    sum_events_per_period = sum(day[1] for day in events_by_date)
     if num_of_days_in_period > len(events_by_date):
         min_events_in_day = 0
     avg_events_per_day = round(
@@ -207,16 +210,15 @@ def get_events_duration_statistics_from_db(
     Returns:
         NamedTuple of: shortest_event, longest_event, average_event
     """
+    event_duration = func.julianday(Event.end) - func.julianday(Event.start)
+    user_to_event = (UserEvent, UserEvent.event_id == Event.id)
+    by_user_id = UserEvent.user_id == userid
     events_duration_statistics = db.query(
-        (func.min(func.julianday(Event.end) - func.julianday(Event.start))
-         * NIN_IN_DAY),
-        (func.max(func.julianday(Event.end) - func.julianday(Event.start))
-         * NIN_IN_DAY),
-        (func.avg(func.julianday(Event.end) - func.julianday(Event.start))
-         * NIN_IN_DAY)
-    ).join(UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(
-        text(event_start_end_filter())).all()
+        (func.min(event_duration) * NIN_IN_DAY),
+        (func.max(event_duration) * NIN_IN_DAY),
+        (func.avg(event_duration) * NIN_IN_DAY)
+    ).join(user_to_event).filter(by_user_id).filter(
+        get_date_filter_between_dates(start, end)).all()
     if events_duration_statistics[0][0]:
         return EventsDurationStatistics(
             shortest_event=round(events_duration_statistics[0][0]),
@@ -273,16 +275,18 @@ def get_participants_statistics(
             with same participant.
         participant_name: relevant participant name.
     """
+    by_user_id = UserEvent.user_id == userid
+    by_not_user_id = UserEvent.user_id != userid
+    user_to_event = (UserEvent, UserEvent.event_id == Event.id)
+    participant_count = func.count(UserEvent.user_id)
     subquery = db.query(
-        Event.id).join(UserEvent, UserEvent.event_id == Event.id).filter(
-        UserEvent.user_id == userid).filter(
-        text(event_start_end_filter())).subquery()
+        Event.id).join(user_to_event).filter(by_user_id).filter(
+        get_date_filter_between_dates(start, end)).subquery()
     event_participants = db.query(
-        UserEvent.user_id, func.count(UserEvent.user_id)).filter(
-        UserEvent.user_id != userid).filter(
+        UserEvent.user_id, participant_count).filter(
+        by_not_user_id).filter(
         UserEvent.event_id.in_(subquery)).group_by(
-        UserEvent.user_id).order_by(
-        func.count(UserEvent.user_id).desc()).first()
+        UserEvent.user_id).order_by(participant_count.desc()).first()
     if event_participants:
         return {
             "participants_statistics": {
