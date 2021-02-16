@@ -23,7 +23,7 @@ class DivAttributes:
     DEFAULT_COLOR = 'grey'
     DEFAULT_FORMAT = "%H:%M"
     MULTIDAY_FORMAT = "%d/%m %H:%M"
-    CLASS_SIZES = ('title_size_tiny', 'title_size_Xsmall', 'title_size_small')
+    CLASS_SIZES = ('title-size-tiny', 'title-size-Xsmall', 'title-size-small')
     LENGTH_SIZE_STEP = (30, 45, 90)
 
     def __init__(self, event: Event,

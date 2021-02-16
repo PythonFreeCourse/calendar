@@ -12,8 +12,8 @@
   display: grid;
   grid-template-rows: 1;
   flex: 1;
-  margin-top: 0.65em;
-  margin-bottom: 0.65em;
+  margin-top: var(--space_xs);
+  margin-bottom: var(--space_xs);
   line-height: 1;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .event {
-  font-size: 1.2rem;
+  font-size: var(--text_m);
   padding: 0;
   z-index: 50;
   text-align: center;
@@ -72,20 +72,20 @@
 }
 
 .total-time {
-  font-size: 0.8rem;
+  font-size: var(--text_s);
 }
 
-.title_size_small {
-  font-size: 0.8em;
+.title-size-small {
+  font-size: var(--text_m);
 }
 
-.title_size_Xsmall {
-  font-size: 0.4em;
+.title-size-Xsmall {
+  font-size: var(--text_s);
 }
 
-.title_size_tiny {
-  font-size: 0.2em;
-  line-height: 1em;
+.title-size-tiny {
+  font-size: var(--text_xs);
+  line-height: 1;
 }
 
 .action-icon {
@@ -101,16 +101,16 @@
 }
 
 .week-view-title {
-  font-size: 2em;
+  font-size: var(--text_xxl);
 }
 
 .zodiac-sign {
   position: fixed;
-  right: 1.2em;
-  top: 1.6em;
-  padding-right: 0.4em;
-  padding-left: 0.4em;
-  padding-bottom: 0.2em;
+  right: 1.2rem;
+  top: 1.6rem;
+  padding-right: var(--space_xs);
+  padding-left: var(--space_xs);
+  padding-bottom: var(--space_xxs);
   border: solid 0.1px var(--primary);
   background-color: var(--surface-variant);
   border-radius: 50px;

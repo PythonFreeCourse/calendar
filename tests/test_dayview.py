@@ -38,9 +38,9 @@ def test_div_attributes(event1):
 
 @pytest.mark.parametrize(
     "minutes,css_class,visiblity", [
-        (90, 'title_size_small', True),
-        (45, 'title_size_Xsmall', False),
-        (30, 'title_size_tiny', False)
+        (90, 'title-size-small', True),
+        (45, 'title-size-Xsmall', False),
+        (30, 'title-size-tiny', False)
     ]
 )
 def test_font_size_attribute(minutes, css_class, visiblity):
