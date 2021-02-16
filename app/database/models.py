@@ -337,7 +337,8 @@ class UserMenstrualPeriodLength(Base):
     __tablename__ = "user_menstrual_period_length"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey("users.id"),
+                     nullable=False, unique=True)
     period_length = Column(Integer)
 
 

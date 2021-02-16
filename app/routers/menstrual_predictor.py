@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Union
+from typing import List
 
 from fastapi import APIRouter, Depends, Request, HTTPException
 from fastapi.responses import RedirectResponse
@@ -38,13 +38,15 @@ def join(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/add-period-start/{start_date}")
-def add_period_start(request: Request, start_date: str, db: Session = Depends(get_db)):
+def add_period_start(request: Request, start_date: str,
+                     db: Session = Depends(get_db)):
     try:
         period_start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
     except ValueError as err:
         logger.exception(err)
         raise HTTPException(
-            status_code=400, detail="The given date doesn't match a date format YYYY-MM-DD")
+            status_code=400,
+            detail="The given date doesn't match a date format YYYY-MM-DD")
     else:
         current_user_id = get_current_user(db).id
         user_period_length = is_user_signed_up_to_menstrual_predictor(
@@ -75,10 +77,13 @@ async def submit_join_form(
         data['last_period_date'], '%Y-%m-%d')
     try:
         new_signed_up_to_period = create_model(
-            session=db, model_class=UserMenstrualPeriodLength, **user_menstrual_period_length)
-    except SQLAlchemyError as err:
+            session=db,
+            model_class=UserMenstrualPeriodLength,
+            **user_menstrual_period_length)
+    except SQLAlchemyError:
         logger.info(
-            f'User {new_signed_up_to_period.user_id} already signed up to the service, hurray')
+            f'User {new_signed_up_to_period.user_id}'
+            'already signed up to the service, hurray')
         db.rollback()
     url = '/'
     generate_predicted_period_dates(
@@ -94,9 +99,6 @@ def get_period_days(request: Request, db: Session = Depends(get_db)):
     for i in range(len(period_days) - 1):
         gap = get_date_diff(period_days[i].start, period_days[i + 1].start)
         gaps_list.append(gap.days)
-        # logger.debug(period_days[i].start)
-        # logger.debug(period_days[i+1].start)
-        logger.debug(gaps_list)
     logger.critical(get_list_avg(gaps_list))
 
 
@@ -110,7 +112,7 @@ def get_avg_period_gap(db: Session, user_id):
     return get_list_avg(gaps_list)
 
 
-def get_date_diff(date_1, date_2):
+def get_date_diff(date_1: datetime, date_2: datetime):
     return date_2 - date_1
 
 
@@ -128,22 +130,16 @@ def remove_existing_period_dates(db: Session, user_id: int):
     logger.info('Removed all period predictions to create new ones')
 
 
-# def add_period_start_date(db: Session, user_id: int, received_date: datetime):
-#     generate_predicted_period_dates(
-#         db, data['avg_period_length'], last_period_date, current_user.id)
-
-
-def generate_predicted_period_dates(db, period_length, period_start_date, user_id):
+def generate_predicted_period_dates(
+        db: Session,
+        period_length: str,
+        period_start_date: datetime,
+        user_id: int):
     delta = datetime.timedelta(int(period_length))
     period_end_date = period_start_date + delta
-    event = create_event(db, 'period', period_start_date, period_end_date,
-                         user_id, category_id=MENSTRUAL_PERIOD_CATEGORY_ID)
-    period_days = get_all_period_days(db, user_id=user_id)
-    # remove_existing_period_dates(db, user_id=current_user.id)
-    # period_days = sorted(get_all_period_days(db, user_id=user_id), key=lambda d: d.start)
-    # logger.error(period_days)
-    # for day in period_days:
-    #     logger.error(day.start)
+    create_event(db, 'period', period_start_date, period_end_date,
+                 user_id, category_id=MENSTRUAL_PERIOD_CATEGORY_ID)
+    get_all_period_days(db, user_id=user_id)
 
 
 def add_3_month_predictions(db, period_length, period_start_date, user_id):
@@ -163,7 +159,8 @@ def get_all_period_days(session: Session, user_id: int) -> List[Event]:
     try:
         period_days = sorted((session.query(Event).
                               filter(Event.owner_id == user_id).
-                              filter(Event.category_id == MENSTRUAL_PERIOD_CATEGORY_ID).
+                              filter(Event.category_id
+                                     == MENSTRUAL_PERIOD_CATEGORY_ID).
                               all()), key=lambda d: d.start)
 
     except SQLAlchemyError as err:
