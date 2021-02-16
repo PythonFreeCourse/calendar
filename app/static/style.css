@@ -103,13 +103,15 @@ p {
     padding-left: 12.5rem;
 }
 
-.forgot-password{
+.forgot-password {
     line-height: 0;
     color: rgb(188, 7, 194);
     padding-left: 8rem;
 }
 
-
+.red-massage {
+  color: red;
+}
 .subtitle {
     font-size: 20px;
 }

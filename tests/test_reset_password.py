@@ -113,5 +113,4 @@ def test_reset_password_expired_token(session, security_test_client):
     token = create_jwt_token(user, jwt_min_exp=-1)
     link = f"/reset-password?token={token}"
     res = security_test_client.post(link, data=RESET_PASSWORD_DETAILS)
-    # assert b'Your token has expired' in res.content
     assert res.ok
