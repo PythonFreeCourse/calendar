@@ -1,6 +1,4 @@
 from typing import Generator, Iterator
-from app.routers import agenda, event, invitation, profile, google_connect
-from typing import Iterator
 
 from fastapi.testclient import TestClient
 import pytest
@@ -8,9 +6,10 @@ from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
+from app.routers import agenda, event, google_connect, invitation, profile
 from app.routers.salary import routes as salary
+from tests import security_testing_routes
 from tests.conftest import get_test_db, test_engine
-from . import security_testing_routes
 
 main.app.include_router(security_testing_routes.router)
 
