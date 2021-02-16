@@ -61,4 +61,4 @@ def load_parashot_if_table_empty(session: Session) -> None:
 
 def get_weekly_parasha(db_session: Session) -> Parasha:
     """This function return a parashot object"""
-    return db_session.query(Parasha)
+    return db_session.query(Parasha).all()

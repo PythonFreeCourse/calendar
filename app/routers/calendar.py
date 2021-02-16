@@ -22,7 +22,6 @@ async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
     user_local_time = calendar_grid.Day.get_user_local_time()
     day = calendar_grid.create_day(user_local_time)
     parasha_obj = load_parasha.get_weekly_parasha(db_session)
-
     return templates.TemplateResponse(
         "calendar_monthly_view.html",
         {
