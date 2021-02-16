@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h3>Please Register</h3>
+        <form method="post">
+            <div class="row">
+                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-auto">
+                    <!-- 
+                        if form re-renders after validation fails, displays user's last field input
+                     -->
+                    {% if errors %}
+                        <input type="text" class="form-control" name="username" id="username" value="{{ form_values['username'] }}" autofocus><br>
+                    {% else %}
+                        <input type="text" class="form-control" name="username" id="username"  placeholder="Required" autofocus><br>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <span id="UsernameHelpInline" class="form-text">
+                        Must be between 3 to 20 characters.
+                    </span>
+                </div>
+                <!-- 
+                    if field did not pass validation, prints validation errors for field
+                 -->
+                {% if errors and "username" in errors %}
+                    <small class="error-message">{{ errors['username'] }}</small><br>
+                {% endif %}
+            </div>
+            <div class="row">
+                <label for="full_name" class="col-sm-2 col-form-label">Full Name</label>
+                <div class="col-auto">
+                    {% if errors %}
+                        <input type="text" class="form-control" name="full_name" id="full_name" value="{{ form_values['full_name'] }}"><br>
+                    {% else %}
+                        <input type="text" class="form-control" name="full_name" id="full_name" placeholder="Required"><br>
+                    {% endif %}
+                </div>
+                {% if errors and "full_name" in errors %}
+                    <small class="error-message">{{ errors["full_name"] }}</small><br>
+                {% endif %}
+            </div>
+            <div class="row">
+                <label for="password" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-auto">
+                    {% if errors %}
+                        <input type="text" class="form-control" name="password" id="password" value="{{ form_values['password'] }}"><br>
+                    {% else %}
+                        <input type="text" class="form-control" name="password" id="password" placeholder="Required"><br>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <span id="PasswordHelpInline" class="form-text">
+                        Must be between 3 to 20 characters.
+                    </span>
+                </div>
+                {% if errors and "password" in errors %}
+                    <small class="error-message">{{ errors['password'] }}</small><br>
+                {% endif %}
+            </div>
+            <div class="row">
+                <label for="confirm_password" class="col-sm-2 col-form-label">Confirm Password</label>
+                <div class="col-auto">
+                    {% if errors %}
+                        <input type="text"class="form-control" name="confirm_password" id="confirm_password" value="{{ form_values['confirm_password'] }}"><br>
+                    {% else %}
+                        <input type="text" class="form-control" name="confirm_password" id="confirm_password" placeholder="Required"><br>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <span id="ConfirmPasswordHelpInline" class="form-text">
+                        Must be equal to password.
+                    </span>
+                </div>
+                {% if errors and "confirm_password" in errors %}
+                    <small class="error-message">{{ errors['confirm_password'] }}</small><br>
+                {% endif %}
+            </div>
+            <div class="row">
+                <label for="email" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-auto">
+                    {% if errors %}
+                        <input type="text" class="form-control" name="email" id="email" value="{{ form_values['email'] }}"><br>
+                    {% else %}
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Required"><br>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <span id="ConfirmPasswordHelpInline" class="form-text">
+                        Must be valid.
+                    </span>
+                </div>
+                {% if errors and "email" in errors %}
+                    <small class="error-message">{{ errors['email'] }}</small><br>
+                {% endif %}
+            </div>
+            <div class="row">
+                <label for="description" class="col-sm-2 col-form-label">Description</label>
+                <div class="col-auto">
+                    {% if errors %}
+                        <input type="text" class="form-control" name="description" id="description" value="{{ form_values['description'] }}"><br>
+                    {% else %}
+                        <input type="text" class="form-control" name="description" id="description"><br>
+                    {% endif %}
+                </div>
+                <div class="col-auto">
+                    <span id="ConfirmPasswordHelpInline" class="form-text">
+                        Must be valid.
+                    </span>
+                </div>
+            </div>
+            <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
+        </form>
+    </div>
+{% endblock %}
