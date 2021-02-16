@@ -76,24 +76,17 @@ a {
 
 /* Feature Panel */
 #features {
-  display: flex;
-  flex-flow: row wrap;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 3rem;
+  grid-column-gap: var(--space_l);
   margin: var(--space_s);
-}
-
-#features div {
-  flex: 1;
-}
-
-#features div:first-child {
-  width: 50%;
+  align-items: start;
+  width: 100%;
 }
 
 .feature-row {
-  width: 95%;
   display: grid;
-
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;

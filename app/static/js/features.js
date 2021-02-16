@@ -1,11 +1,27 @@
-function display(rows, target) {
-    return true;
+function appendElement(elements, targetID) {
+    const target = document.getElementById(targetID);
+    for (let i = 0; i < elements.length; ++i) {
+        target.append(elements[i]);
+    }
 }
 
-function searchFeature(event, rows) {
-    const searchValue = event.target.value;
+function deleteElements(targetID) {
+    const target = document.getElementById(targetID).children;
+    const length = target.length;
+    for (let i = 0; i < length; ++i) {
+        target[0].remove();
+    }
+}
+
+function display(elements, targetID) {
+    deleteElements(targetID);
+    appendElement(elements, targetID);
+}
+
+function searchFeature(event, rows, targetID) {
+    const searchValue = event.target.value.trim();
     if (!searchValue) {
-        return false;
+        appendElement(rows, targetID);
     } else {
         const result = rows.filter(
             row => { return row.getElementsByClassName("row-feature-name")[0].innerHTML.includes(searchValue) }
@@ -25,21 +41,26 @@ function getAvailable() {
     return allAva;
 }
 
-function setSearchBox() {
+function setSearchBox(targetID) {
     searchBox = document.getElementsByClassName("search-input");
     if (!searchBox) {
         return false;
     }
+    const rows = getAvailable();
     searchBox[0].addEventListener('input', function (evt) {
-        const rows = getAvailable();
-        const result = searchFeature(evt, rows);
-        display(result);
+        if (evt.which === null) {
+            appendElement(rows, targetID)
+        }
+        deleteElements(targetID);
+        const result = searchFeature(evt, rows, targetID);
+        display(result, targetID);
+
     });
 }
 
 document.addEventListener(
     'DOMContentLoaded', function () {
-        setSearchBox();
+        setSearchBox("available-features");
     }
 )
 
