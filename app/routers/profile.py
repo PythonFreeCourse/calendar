@@ -201,11 +201,12 @@ async def update(
 async def restore_events(request: Request,
                          session=Depends(get_db)):
     # TODO: Add user.id instead 1
-    deleted_events = session.query(Event.id,
-                                   Event.title,
-                                   Event.start,
-                                   Event.end).filter(Event.owner_id == 1,
-                                                     Event.deleted_date != None).all()
+    deleted_events = (session.query(Event.id,
+                                    Event.title,
+                                    Event.start,
+                                    Event.end).
+                      filter(Event.owner_id == 1,
+                             Event.deleted_date.isnot(None)).all())
 
     return templates.TemplateResponse("restore_events.html", {
         "request": request,
@@ -214,14 +215,16 @@ async def restore_events(request: Request,
 
 
 @router.post("/restore_events")
-async def restore_events(request: Request,
-                         session=Depends(get_db)):
+async def restore_events_post(request: Request,
+                              session=Depends(get_db)):
     data = await request.form()
     events_ids_to_restored = get_events_ids_to_restored(data._list)
 
     # TODO: Add user.id instead 1
-    restore_del_events = session.query(Event).filter(Event.owner_id == 1, Event.deleted_date != None).filter(
-        Event.id.in_(events_ids_to_restored)).all()
+    restore_del_events = (session.query(Event).
+                          filter(Event.owner_id == 1,
+                                 Event.deleted_date.isnot(None)).filter(
+        Event.id.in_(events_ids_to_restored)).all())
 
     for del_event in restore_del_events:
         del_event.deleted_date = None
