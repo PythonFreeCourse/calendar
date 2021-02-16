@@ -14,4 +14,3 @@ def test_create_parasha_object():
     }
     result = weekly_parasha.create_parasha_object(parashot_fields)
     assert result.name == 'Parashat Vayechi'
-    assert result.date == datetime.date(2021, 1, 2)
