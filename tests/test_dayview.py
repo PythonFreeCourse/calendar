@@ -79,7 +79,7 @@ def test_dayview_html(event1, event2, event3, session, user, client):
     create_dayview_event([event1, event2, event3], session=session, user=user)
     response = client.get("/day/2021-2-1")
     soup = BeautifulSoup(response.content, 'html.parser')
-    assert 'FEBRUARY' in str(soup.find("div", {"id": "toptab"}))
+    assert 'FEBRUARY' in str(soup.find("div", {"id": "top-tab"}))
     assert 'event1' in str(soup.find("div", {"id": "event1"}))
     assert 'event2' in str(soup.find("div", {"id": "event2"}))
     assert soup.find("div", {"id": "event3"}) is None

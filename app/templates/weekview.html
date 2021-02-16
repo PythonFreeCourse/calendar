@@ -24,7 +24,7 @@
             <div id="hoursgrid" class="container">
                 <div class="row hour-top sticky-top bg-white">T</div>
                 {% for hour in range(24)%}
-                <span class="row bg-transparent hourmark">
+                <span class="row bg-transparent hour-mark">
                     {% set hour = hour|string() %}
                     {{hour.zfill(2)}}:00
                 </span>

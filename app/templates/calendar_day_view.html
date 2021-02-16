@@ -2,7 +2,7 @@
 {% block body %}
 <div id="day-view">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/dayview.css') }}">
-    <div id="toptab" class="d-flex justify-content-around align-items-center sticky-top">
+    <div id="top-tab" class="d-flex justify-content-around align-items-center sticky-top">
         {% if view == 'day' %}
             <a href="/closethedayview" title="close day view"><img class="pb-1"
                                                                    src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
@@ -25,16 +25,16 @@
             {% if view == 'day'%}
                 {% for hour in range(25)%}
                 <div class='hour-block'>
-                    <div class="row bg-transparent hourmark">
+                    <div class="row bg-transparent hour-mark">
                         {% set hour = hour|string() %}
                         {{hour.zfill(2)}}:00
                     </div>
-                    <div class="hourbar {{i}} row text-white border-bottom"></div>
+                    <div class="hour-bar {{i}} row text-white border-bottom"></div>
                 </div>
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="eventgrid">
+        <div class="event-grid">
             {% for event, attr in events %}
                 <div id="event{{event.id}}" class="d-flex flex-column text-truncate px-2 event"
                      style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">

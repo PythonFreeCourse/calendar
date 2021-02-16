@@ -1,82 +1,82 @@
 #day-view {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-#toptab {
+#top-tab {
   background-color: var(--primary);
 }
 
 .schedule {
-    display: grid;
-    grid-template-rows: 1;
-    flex: 1;
-    margin-top: 0.65em;
-    margin-bottom: 0.65em;
-    line-height: 1;
+  display: grid;
+  grid-template-rows: 1;
+  flex: 1;
+  margin-top: 0.65em;
+  margin-bottom: 0.65em;
+  line-height: 1;
 }
 
 .times {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    display: grid;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  display: grid;
 }
 
 .baselines {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
 }
 
-.eventgrid {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-rows: repeat(100, 1fr);
+.event-grid {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-rows: repeat(100, 1fr);
 }
 
 .hour-block {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
-.hourmark {
-    z-index: 60;
-    line-height: 1;
+.hour-mark {
+  z-index: 60;
+  line-height: 1;
 }
 
-.hour-block:last-child .hourmark {
-    visibility: hidden;
+.hour-block:last-child .hour-mark {
+  visibility: hidden;
 }
 
-.hourbar {
-    flex: 1;
-    z-index: 40;
+.hour-bar {
+  flex: 1;
+  z-index: 40;
 }
 
 .event {
-    font-size: 1.2rem;
-    padding: 0;
-    z-index: 50;
-    text-align: center;
+  font-size: 1.2rem;
+  padding: 0;
+  z-index: 50;
+  text-align: center;
 }
 
 .event:hover {
-    border-top: 1px dashed var(--surface);
-    border-bottom: 1px dashed var(--surface);
-    transition: 0.3;
+  border-top: 1px dashed var(--surface);
+  border-bottom: 1px dashed var(--surface);
+  transition: 0.3;
 }
 
 .event-details {
-    flex: 1;
+  flex: 1;
 }
 
 .total-time {
-    font-size: 0.8rem;
+  font-size: 0.8rem;
 }
 
 .title_size_small {
-    font-size: 0.8em;
+  font-size: 0.8em;
 }
 
 .title_size_Xsmall {
@@ -84,15 +84,8 @@
 }
 
 .title_size_tiny {
-    font-size: 0.2em;
-    line-height: 1em;
-}
-
-.actiongrid {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-rows: repeat(100, 1fr);
+  font-size: 0.2em;
+  line-height: 1em;
 }
 
 .action-icon {
@@ -100,26 +93,26 @@
 }
 
 .action-container {
-    z-index: 70;
+  z-index: 70;
 }
 
 .event:hover .action-container .action-icon {
-    visibility: visible;
+  visibility: visible;
 }
 
 .week-view-title {
-    font-size: 2em;
+  font-size: 2em;
 }
 
 .zodiac-sign {
-    position: fixed;
-    right: 1.2em;
-    top: 1.6em;
-    padding-right: 0.4em;
-    padding-left: 0.4em;
-    padding-bottom: 0.2em;
-    border: solid 0.1px var(--primary);
-    background-color: var(--surface-variant);
-    border-radius: 50px;
-    box-shadow: 1px 1px 2px #999;
+  position: fixed;
+  right: 1.2em;
+  top: 1.6em;
+  padding-right: 0.4em;
+  padding-left: 0.4em;
+  padding-bottom: 0.2em;
+  border: solid 0.1px var(--primary);
+  background-color: var(--surface-variant);
+  border-radius: 50px;
+  box-shadow: 1px 1px 2px #999;
 }

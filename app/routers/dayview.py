@@ -2,17 +2,12 @@ from bisect import bisect_left
 from datetime import datetime, timedelta
 from typing import Optional, Tuple, Union
 
-from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.templating import Jinja2Templates
-from starlette import status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.database.models import Event, User
-from app.dependencies import get_db, TEMPLATES_PATH
+from app.dependencies import get_db, templates
 from app.internal import zodiac
 from app.routers.user import get_all_user_events
-
-templates = Jinja2Templates(directory=TEMPLATES_PATH)
-
 
 router = APIRouter()
 
@@ -95,7 +90,7 @@ class DivAttributes:
         if i < len(self.CLASS_SIZES):
             return self.CLASS_SIZES[i]
 
-    def _check_multiday_event(self) -> Tuple[bool]:
+    def _check_multiday_event(self) -> Tuple[bool, bool]:
         start_multiday, end_multiday = False, False
         if self.day:
             if self.start_time < self.day:
@@ -108,14 +103,14 @@ class DivAttributes:
 
 def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
     return (
-        (event.start >= day and event.start < day_end) or
-        (event.end >= day and event.end < day_end) or
-        (event.start < day_end < event.end)
-        )
+            (event.start >= day and event.start < day_end) or
+            (event.end >= day and event.end < day_end) or
+            (event.start < day_end < event.end)
+    )
 
 
 def get_events_and_attributes(
-    day: datetime, session, user_id: int,
+        day: datetime, session, user_id: int,
 ) -> Tuple[Event, DivAttributes]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
@@ -126,8 +121,8 @@ def get_events_and_attributes(
 
 @router.get('/day/{date}', include_in_schema=False)
 async def dayview(
-          request: Request, date: str, session=Depends(get_db), view='day',
-      ):
+        request: Request, date: str, session=Depends(get_db), view='day',
+):
     # TODO: add a login session
     user = session.query(User).filter_by(username='test_username').first()
     if not user:
