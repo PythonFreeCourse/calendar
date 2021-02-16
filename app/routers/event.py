@@ -103,9 +103,10 @@ async def create_new_event(request: Request,
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(session, title, start, end,
-                         owner_id, all_day, content,
-                         location, vc_link, invitees=invited_emails,
+    event = create_event(db=session, title=title, start=start, end=end,
+                         owner_id=owner_id, all_day=all_day, content=content,
+                         location=location, vc_link=vc_link,
+                         invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
 
@@ -272,6 +273,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
                  availability: bool = True,
+                 is_google_event: bool = False,
                  ):
     """Creates an event and an association."""
 
@@ -292,6 +294,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         all_day=all_day,
         category_id=category_id,
         availability=availability,
+        is_google_event=is_google_event
     )
     create_model(
         db, UserEvent,
