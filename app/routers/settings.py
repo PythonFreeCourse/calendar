@@ -1,5 +1,3 @@
-import io
-
 from fastapi import APIRouter, Request
 
 from app.dependencies import templates
@@ -10,6 +8,7 @@ router = APIRouter(
     tags=["settings"],
     responses={404: {"description": "Not found"}},
 )
+
 
 @router.get("/")
 async def settings(request: Request):
