@@ -1,5 +1,4 @@
 from app.routers import whatsapp
-import pytest
 
 
 def test_whatsapp_send():
