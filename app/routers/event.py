@@ -35,7 +35,6 @@ UPDATE_EVENTS_FIELDS = {
     'category_id': (int, type(None)),
 }
 
-from app.routers.categories import get_user_categories
 
 router = APIRouter(
     prefix="/event",
