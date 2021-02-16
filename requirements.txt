@@ -15,7 +15,6 @@ atomicwrites==1.4.0
 atpublic==2.1.2
 attrs==20.3.0
 autopep8==1.5.4
-bcrypt==3.2.0
 Babel==2.9.0
 bcrypt==3.2.0
 beautifulsoup4==4.9.3
@@ -28,8 +27,8 @@ chardet==4.0.0
 click==7.1.2
 colorama==0.4.4
 coverage==5.3.1
-databases==0.4.1
 curio==1.4
+databases==0.4.1
 dateparser==1.0.0
 distlib==0.3.1
 dnspython==2.1.0
