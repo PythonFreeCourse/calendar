@@ -37,6 +37,11 @@ WEBSITE_LANGUAGE = "en"
 ASTRONOMY_API_KEY = os.getenv('ASTRONOMY_API_KEY')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 
+# https://developers.google.com/calendar/quickstart/python -
+# follow instracions and make an env variable with the path to the file.
+CLIENT_SECRET_FILE = os.environ.get('CLIENT_SECRET')
+
+
 # EXPORT
 ICAL_VERSION = '2.0'
 PRODUCT_ID = '-//Our product id//'
