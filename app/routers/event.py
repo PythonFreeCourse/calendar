@@ -100,8 +100,10 @@ async def create_new_event(request: Request,
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(session, title, start, end, owner_id, content,
-                         location, vc_link, invitees=invited_emails,
+    event = create_event(db=session, title=title, start=start, end=end,
+                         owner_id=owner_id, content=content,
+                         location=location, vc_link=vc_link,
+                         invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
 
@@ -123,6 +125,31 @@ async def eventview(request: Request, event_id: int,
                                        "start_format": START_FORMAT,
                                        "end_format": end_format,
                                        "messages": messages})
+
+
+@router.post("/{event_id}/owner")
+async def change_owner(request: Request, event_id: int,
+                       db: Session = Depends(get_db)):
+    form = await request.form()
+    if 'username' not in form:
+        return RedirectResponse(router.url_path_for('eventview',
+                                                    event_id=event_id),
+                                status_code=status.HTTP_302_FOUND)
+    username = form['username']
+    user = db.query(User).filter_by(username=username).first()
+    try:
+        user_id = user.id
+    except AttributeError as e:
+        error_message = f"Username does not exist. {form['username']}"
+        logger.exception(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
+    owner_to_update = {'owner_id': user_id}
+    _update_event(db, event_id, owner_to_update)
+    return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event_id),
+                            status_code=status.HTTP_302_FOUND)
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -238,6 +265,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  invitees: List[str] = None,
                  category_id: Optional[int] = None,
                  availability: bool = True,
+                 is_google_event: bool = False,
                  ):
     """Creates an event and an association."""
 
@@ -257,6 +285,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         invitees=invitees_concatenated,
         category_id=category_id,
         availability=availability,
+        is_google_event=is_google_event
     )
     create_model(
         db, UserEvent,
