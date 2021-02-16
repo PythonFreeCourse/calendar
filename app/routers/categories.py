@@ -17,7 +17,11 @@ from tests.conftest import get_test_db
 
 HEX_COLOR_FORMAT = r"^(?:[0-9a-fA-F]{3}){1,2}$"
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/categories",
+    tags=["categories"],
+)
+
 
 
 class CategoryModel(BaseModel):
@@ -36,7 +40,7 @@ class CategoryModel(BaseModel):
 
 
 # TODO(issue#29): get current user_id from session
-@router.get("/categories/by_parameters", include_in_schema=False)
+@router.get("/by_parameters", include_in_schema=False)
 def get_categories(request: Request,
                    db_session: Session = Depends(get_db)) -> List[Category]:
     if validate_request_params(request.query_params):
@@ -47,7 +51,7 @@ def get_categories(request: Request,
                                    f"unallowed params.")
 
 
-@router.get("/categories")
+@router.get("/")
 def category_color_insert(request: Request) -> _TemplateResponse:
     return templates.TemplateResponse("categories.html", {
         "request": request
@@ -55,7 +59,7 @@ def category_color_insert(request: Request) -> _TemplateResponse:
 
 
 # TODO(issue#29): get current user_id from session
-@router.post("/categories")
+@router.post("/")
 async def set_category(request: Request,
                        category: str = Form(None),
                        color: str = Form(None),
