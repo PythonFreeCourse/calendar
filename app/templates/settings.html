@@ -1,112 +1,138 @@
-{% extends "base.html" %}
+{% extends "./partials/base.html" %}
+{% block head %}
+  {{ super() }}
+
+  <!-- CSS -->
+  <link href="{{ url_for('static', path='/grid_style.css') }}" rel="stylesheet" type="text/css">
+  <link href="{{ url_for('static', path='/settings_style.css') }}" rel="stylesheet" type="text/css">
 
 
-{% block content %}
-
-    <main class="settings">
-        <!-- Headline -->
-        <div class="settings-headline">
-            <img src="{{ url_for('media', path='/arrow-left.png') }}" alt="Backwards">
-            <h1>Settings</h1>
-        </div>
-        <section class="settings-layout">
-            <div class="left-options-bar">
+{% endblock head %}
+{% block page_name %}Month View{% endblock page_name %}
+{% block body %}
+  <div class="pyldr-container">
+    {% include 'partials/calendar/navigation.html' %}
+    <div class="background-lightgray" id="feature-settings">
+      {% include 'partials/calendar/feature_settings/example.html' %}
+    </div>
+    <div class="content">
+      {% block content %}
+        <header>
+          <div>
+              <div class="title">SETTINGS</div>
+              <p class="s-paragraph sub-title">Change your preferences</p>
+          </div>
+          <div id="logo-div">
+              <a href="/calendar/month">
+                  <span class="title">PYLENDAR</span>
+              </a>
+          </div>
+      </header>
+        <main class="settings">
+          <div id="settings-left">
+            <!-- Headline -->
+            <!-- <div class="settings-headline">
+                <h1>Settings</h1>
+            </div> -->
+            <section class="settings-layout">
+              <div class="left-options-bar">
                 <!-- <div class="long-slider">
                     <div class="long"></div>
                     <div class="slider"></div>
                 </div> -->
                 <div class="settings-options">
-                    <ul>
-                        <li class="tab"><a onclick="tabs(0)" class="active">
-                            Language and region
-                        </a></li>
-                        <li class="tab"><a onclick="tabs(1)">
-                            Audio settings
-                        </a></li>
-                        <li class="tab"><a onclick="tabs(2)">
-                            View options
-                        </a></li>
-                        <li class="tab"><a onclick="tabs(3)">
-                            Keyboard shortcuts
-                        </a></li>
-                        <li class="tab"><a onclick="tabs(4)">
-                            Event settings
-                        </a></li>
-                    </ul>
+                  <ul>
+                    <li class="tab"><a onclick="tabs(0)" class="active">
+                      Language and region
+                    </a></li>
+                    <li class="tab"><a onclick="tabs(1)">
+                      Audio settings
+                    </a></li>
+                    <li class="tab"><a onclick="tabs(2)">
+                      View options
+                    </a></li>
+                    <li class="tab"><a onclick="tabs(3)">
+                      Keyboard shortcuts
+                    </a></li>
+                    <li class="tab"><a onclick="tabs(4)">
+                      Event settings
+                    </a></li>
+                  </ul>
                 </div>
+              </div>
             </div>
-
-            <div class="settings-main">
-                <!-- Language and region -->
-                <article class="lang_reg tabShow">
-                    <h2>Language and region</h2>
-                    <p>Language</p>
-                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option value="1">English (US)</option>
-                        <option value="2">Hebrew</option>
-                    </select>
-                    <p>Country</p>
-                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option value="1">Israel</option>
-                        <option value="2">United States</option>
-                    </select>
-                    <p>Date format</p>
-                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option value="1">DD/MM/YYYY</option>
-                        <option value="2">MM/DD/YYYY</option>
-                        <option value="3">YYYY/MM/DD</option>
-                    </select>
-                    <p>Time format</p>
-                    <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                        <option value="1">24H</option>
-                        <option value="2">12H</option>
-                    </select>
-                </article>
-                <!-- Audio settings -->
-                <article class="audio-settings tabShow">
-                    <h2>Audio settings</h2>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                        <label class="form-check-label" for="flexSwitchCheckDefault">Music</label>
-                    </div>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Sound Effects</label>
-                    </div>
-                </article>
-                <!-- View options -->
-                <article class="view-options tabShow">
-                    <h2>View options</h2>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="view-tick1">
-                        <label class="form-check-label" for="view-tick1">
-                          Show declined events
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="view-tick2" checked>
-                        <label class="form-check-label" for="view-tick2">
-                            Show week numbers
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="view-tick3" checked>
-                        <label class="form-check-label" for="view-tick3">
-                            View calendars side by side in day view
-                        </label>
-                    </div>
-                </article>
-            </div>
-        </section>
-    </main>
-
+          
+          <div class="settings-main">
+            <!-- Language and region -->
+            <article id="settings_content" class="tabShow">
+              <h2>Language and region</h2>
+              <p>Language</p>
+              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+                <option value="1">English (US)</option>
+                <option value="2">Hebrew</option>
+              </select>
+              <p>Country</p>
+              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+                <option value="1">Israel</option>
+                <option value="2">United States</option>
+              </select>
+              <p>Date format</p>
+              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+                <option value="1">DD/MM/YYYY</option>
+                <option value="2">MM/DD/YYYY</option>
+                <option value="3">YYYY/MM/DD</option>
+              </select>
+              <p>Time format</p>
+              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+                <option value="1">24H</option>
+                <option value="2">12H</option>
+              </select>
+            </article>
+            <!-- Audio settings -->
+            <article id="settings_content" class="audio-settings tabShow">
+              <h2>Audio settings</h2>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Music</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Sound Effects</label>
+              </div>
+            </article>
+            <!-- View options -->
+            <article id="settings_content" class="view-options tabShow">
+              <h2>View options</h2>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="view-tick1">
+                <label class="form-check-label" for="view-tick1">
+                  Show declined events
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="view-tick2" checked>
+                <label class="form-check-label" for="view-tick2">
+                  Show week numbers
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="view-tick3" checked>
+                <label class="form-check-label" for="view-tick3">
+                  View calendars side by side in day view
+                </label>
+              </div>
+            </article>
+          </div>
+        </main>
+      
+      
     <script src="{{ url_for('static', path='jquery.js') }}"></script>
     <script>
         const tabBtn =
         document.querySelectorAll(".tab");
         const tab =
         document.querySelectorAll(".tabShow");
-
+    
         function tabs(panelIndex) {
             tab.forEach(function(node) {
                 node.style.display = "none";
@@ -120,5 +146,8 @@
             $(this).find("a").addClass("active").end().siblings().find("a").removeClass("active");
         })
     </script>
+      {% endblock content %}
+    </div>
+  </div>
 
-{% endblock %}
+{% endblock body %}
