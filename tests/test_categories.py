@@ -25,7 +25,7 @@ class TestCategories:
     def test_creating_new_category(session, client, user):
         response = client.post("/categories/for_categories_test",
                                data={"user_id": user.id,
-                                     "category": "Foo",
+                                     "name": "Foo",
                                      "color": "eecc11"})
         assert response.ok
         assert TestCategories.CREATE_CATEGORY in response.content
@@ -33,7 +33,7 @@ class TestCategories:
     @staticmethod
     def test_creating_not_unique_category_failed(client, sender, category):
         response = client.post("/categories/for_categories_test",
-                               data={"category": "Guitar Lesson",
+                               data={"name": "Guitar Lesson",
                                      "color": "121212",
                                      "user_id": sender.id})
         assert response.ok
@@ -41,8 +41,8 @@ class TestCategories:
 
     @staticmethod
     def test_creating_new_category_bad_color_format(client, user):
-        response = client.post("/categories",
-                               data={"user_id": user.id, "category": "Foo",
+        response = client.post("/categories/",
+                               data={"user_id": user.id, "name": "Foo",
                                      "color": "bad format"})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert TestCategories.BAD_COLOR_FORMAT in response.json()["detail"]

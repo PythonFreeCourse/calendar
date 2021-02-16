@@ -60,7 +60,7 @@ def category_color_insert(request: Request) -> _TemplateResponse:
 # TODO(issue#29): get current user_id from session
 @router.post("/")
 async def set_category(request: Request,
-                       category: str = Form(None),
+                       name: str = Form(None),
                        color: str = Form(None),
                        db_sess: Session = Depends(get_db)):
 
@@ -73,7 +73,7 @@ async def set_category(request: Request,
                                    f"expected format.")
     try:
         Category.create(db_sess,
-                        name=category,
+                        name=name,
                         color=color,
                         user_id=user_id)
     except IntegrityError:
@@ -82,14 +82,14 @@ async def set_category(request: Request,
         return templates.TemplateResponse("categories.html", {
             "request": request,
             "message": message,
-            "category": category,
+            "name": name,
             "color": color,
         })
-    message = f"Congratulation! You have created a new category: {category}"
+    message = f"Congratulation! You have created a new category: {name}"
     return templates.TemplateResponse("categories.html", {
         "request": request,
         "message": message,
-        "category": category,
+        "name": name,
         "color": color,
     })
 
@@ -137,7 +137,7 @@ def get_user_categories(db_session: Session,
 
 @router.post("/for_categories_test")
 async def for_category_test(request: Request,
-                            category: str = Form(None),
+                            name: str = Form(None),
                             color: str = Form(None),
                             db_sess: Session = Depends(get_test_db)):
     """
@@ -154,7 +154,7 @@ async def for_category_test(request: Request,
                                    f"expected format.")
     try:
         Category.create(db_sess,
-                        name=category,
+                        name=name,
                         color=color,
                         user_id=user_id)
     except IntegrityError:
@@ -163,13 +163,13 @@ async def for_category_test(request: Request,
         return templates.TemplateResponse("categories.html", {
             "request": request,
             "message": message,
-            "category": category,
+            "name": name,
             "color": color,
         })
-    message = f"Congratulation! You have created a new category: {category}"
+    message = f"Congratulation! You have created a new category: {name}"
     return templates.TemplateResponse("categories.html", {
         "request": request,
         "message": message,
-        "category": category,
+        "name": name,
         "color": color,
     })
