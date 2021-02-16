@@ -13,7 +13,7 @@ function hiddenDifference() {
         date1 = new Date(date1);
     }
     else {
-        date1 = Date.now()
+        date1 = Date.now();
     }
     const diffDates = Math.abs(date2 - date1);
     const diffInDays = Math.ceil(diffDates / (1000 * 60 * 60 * 24));
