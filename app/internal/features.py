@@ -117,7 +117,7 @@ def is_feature_enabled(route: str):
 
 def create_feature(name: str, route: str,
                    description: str,
-                   icon: str,
+                   icon: str = None,
                    creator: str = None,
                    db: SessionLocal = Depends()):
     """Creates a feature."""

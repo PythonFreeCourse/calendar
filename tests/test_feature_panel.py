@@ -78,7 +78,8 @@ def test_delete_feature(session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
     session.add(test)
     session.commit()
@@ -97,7 +98,8 @@ def test_is_feature_exist_in_db(mocker, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
     session.add(test)
     session.commit()
@@ -117,7 +119,8 @@ def test_update_feature(session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -140,7 +143,8 @@ def test_is_feature_exist_in_enabled(session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -159,7 +163,8 @@ def test_is_feature_exist_in_disabled(mocker, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -178,7 +183,8 @@ def test_is_feature_enabled(mocker, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -217,7 +223,8 @@ def test_add_feature_to_user(features_test_client, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -237,7 +244,8 @@ def test_delete_user_feature_association(features_test_client, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -263,7 +271,8 @@ def test_enable_feature(features_test_client, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -289,7 +298,8 @@ def test_disable_feature(features_test_client, session):
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
@@ -345,7 +355,8 @@ def test_get_user_unlinked_features(
         name='test',
         route='/route',
         description='testing',
-        creator='test'
+        creator='test',
+        icon='icon'
     )
 
     session.add(test)
