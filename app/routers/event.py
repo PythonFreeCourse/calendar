@@ -2,6 +2,7 @@ from datetime import datetime as dt
 import json
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
+import urllib
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -63,7 +64,7 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
     create_event(db=session,
                  title=event.title,
                  start=event.start,
-                 end=event.start,
+                 end=event.end,
                  content=event.content,
                  owner_id=event.owner_id,
                  location=event.location)
@@ -107,18 +108,30 @@ async def create_new_event(request: Request,
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
-                            + f'messages={"---".join(messages)}',
+                            + f'?messages={"---".join(messages)}',
                             status_code=status.HTTP_302_FOUND)
+
+
+def get_waze_link(event: Event) -> str:
+    # if event.latitude and event.longitude:
+    #     coordinates = f"{event.latitude},{event.longitude}"
+    #     return f"https://waze.com/ul?ll={coordinates}&navigate=yes"
+    if event.location:
+        url_location = urllib.parse.quote(event.location)
+        return f"https://waze.com/ul?q={url_location}&navigate=yes"
+    return ""
 
 
 @router.get("/{event_id}", include_in_schema=False)
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)) -> Response:
     event, comments, end_format = get_event_data(db, event_id)
+    waze_link = get_waze_link(event)
     messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request,
                                        "event": event,
+                                       "waze_link": waze_link,
                                        "comments": comments,
                                        "start_format": START_FORMAT,
                                        "end_format": end_format,
@@ -424,9 +437,11 @@ async def view_comments(request: Request, event_id: int,
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
+    waze_link = get_waze_link(event)
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request,
                                        "event": event,
+                                       "waze_link": waze_link,
                                        "comments": comments,
                                        'comment': True,
                                        "start_format": START_FORMAT,
