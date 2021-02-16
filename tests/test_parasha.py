@@ -8,6 +8,6 @@ def test_if_db_correct():
                      'i=on&utm_source=js&utm_medium=api',
                      '2021-01-02']
     result = load_parasha.get_weekly_parasha(Session)[0]
-    assert result.name == first_parasha[1]
-    assert result.date == first_parasha[5]
+    assert result.name is first_parasha[1]
+    assert result.date is first_parasha[5]
     assert result.count() == 1
