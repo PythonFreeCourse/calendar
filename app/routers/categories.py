@@ -23,7 +23,6 @@ router = APIRouter(
 )
 
 
-
 class CategoryModel(BaseModel):
     name: str
     color: str
