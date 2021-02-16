@@ -106,9 +106,14 @@ async def create_new_event(
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(db=session, title=title, start=start, end=end,
-                         owner_id=owner_id, content=content,
-                         location=location, vc_link=vc_link,
+    event = create_event(db=session,
+                         title=title,
+                         start=start,
+                         end=end,
+                         owner_id=owner_id,
+                         content=content,
+                         location=location,
+                         vc_link=vc_link,
                          invitees=invited_emails,
                          category_id=category_id,
                          availability=availability)
@@ -134,11 +139,11 @@ def process_image(img: bytes, event_id: int, img_height: int = HEIGHT) -> str:
     new_width = int(float(width) * float(height_to_req_height))
     resized = image.resize((new_width, img_height), Image.ANTIALIAS)
     file_name = f'{event_id}{PICTURE_EXTENSION}'
-    
+
     image_data = list(resized.getdata())
     image_without_exif = Image.new(resized.mode, resized.size)
     image_without_exif.putdata(image_data)
-    
+
     image_without_exif.save(f'{MEDIA_PATH}/{file_name}')
     return file_name
 
@@ -161,7 +166,8 @@ async def eventview(request: Request,
 
 
 @router.post("/{event_id}/owner")
-async def change_owner(request: Request, event_id: int,
+async def change_owner(request: Request,
+                       event_id: int,
                        db: Session = Depends(get_db)):
     form = await request.form()
     if 'username' not in form:
@@ -175,9 +181,8 @@ async def change_owner(request: Request, event_id: int,
     except AttributeError as e:
         error_message = f"Username does not exist. {form['username']}"
         logger.exception(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=error_message)
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=error_message)
     owner_to_update = {'owner_id': user_id}
     _update_event(db, event_id, owner_to_update)
     return RedirectResponse(router.url_path_for('eventview',
@@ -282,42 +287,42 @@ def update_event(event_id: int, event: Dict, db: Session) -> Optional[Event]:
     return event_updated
 
 
-def create_event(db: Session,
-                 title: str,
-                 start,
-                 end,
-                 owner_id: int,
-                 content: Optional[str] = None,
-                 location: Optional[str] = None,
-                 vc_link: str = None,
-                 color: Optional[str] = None,
-                 invitees: List[str] = None,
-                 category_id: Optional[int] = None,
-                 availability: bool = True,
-                 image: Optional[str] = None):
-                 is_google_event: bool = False,
-                 ):
+def create_event(
+    db: Session,
+    title: str,
+    start,
+    end,
+    owner_id: int,
+    content: Optional[str] = None,
+    location: Optional[str] = None,
+    vc_link: str = None,
+    color: Optional[str] = None,
+    invitees: List[str] = None,
+    category_id: Optional[int] = None,
+    availability: bool = True,
+    image: Optional[str] = None,
+    is_google_event: bool = False,
+):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
 
-    event = create_model(
-        db, Event,
-        title=title,
-        start=start,
-        end=end,
-        content=content,
-        owner_id=owner_id,
-        location=location,
-        vc_link=vc_link,
-        color=color,
-        emotion=get_emotion(title, content),
-        invitees=invitees_concatenated,
-        category_id=category_id,
-        availability=availability,
-        is_google_event=is_google_event
-        image=image
-    )
+    event = create_model(db,
+                         Event,
+                         title=title,
+                         start=start,
+                         end=end,
+                         content=content,
+                         owner_id=owner_id,
+                         location=location,
+                         vc_link=vc_link,
+                         color=color,
+                         emotion=get_emotion(title, content),
+                         invitees=invitees_concatenated,
+                         category_id=category_id,
+                         availability=availability,
+                         is_google_event=is_google_event,
+                         image=image)
     create_model(
         db,
         UserEvent,
@@ -410,8 +415,7 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 @router.post('/{event_id}')
 async def add_comment(
     request: Request, event_id: int,
-    session: Session = Depends(get_db)
-) -> Response:
+    session: Session = Depends(get_db)) -> Response:
     """Creates a comment instance in the DB. Redirects back to the event's
     comments tab upon creation."""
     form = await request.form()
@@ -453,8 +457,7 @@ def get_event_data(db: Session, event_id: int) -> EVENT_DATA:
 @router.get('/{event_id}/comments')
 async def view_comments(
     request: Request, event_id: int,
-    db: Session = Depends(get_db)
-) -> Response:
+    db: Session = Depends(get_db)) -> Response:
     """Renders event comment tab view.
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
@@ -472,8 +475,7 @@ async def view_comments(
 
 @router.post('/comments/delete')
 async def delete_comment(
-    request: Request, db: Session = Depends(get_db)
-) -> Response:
+    request: Request, db: Session = Depends(get_db)) -> Response:
     """Deletes a comment instance from the db.
 
     Redirects back to the event's comments tab upon deletion.
