@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
-from app.database.models import Event, OutOfOffice
+from app.database.models import Event
 
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
 
@@ -90,5 +90,6 @@ def get_messages(session: Session,
         email = 1
         messages.append('Out of office:')
         for user in out_of_office_users:
-            messages.append(f'Username: {user[username]}, Email: {user[email]}')
+            messages.append(f'Username: {user[username]}, '
+                            f'Email: {user[email]}')
     return messages

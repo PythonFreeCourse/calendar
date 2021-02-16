@@ -14,8 +14,9 @@ from app.dependencies import get_db, MEDIA_PATH, templates, GOOGLE_ERROR
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
 from app.internal.on_this_day_events import get_on_this_day_events
-from app.internal.out_of_office import (insert_new_out_of_office, update_out_of_office,
-                                        update_out_of_office_status_to_off_if_time_pass)
+from app.internal.out_of_office import (insert_new_out_of_office,
+                                        update_out_of_office,
+                                        update_out_of_office_status_to_off)
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -53,7 +54,7 @@ async def profile(
 
     out_of_office_data = session.query(OutOfOffice).filter_by(id=1).first()
     out_of_office_updated_data = (
-        update_out_of_office_status_to_off_if_time_pass
+        update_out_of_office_status_to_off
         (out_of_office_data, session))
 
     signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',

@@ -1,5 +1,3 @@
-import uvicorn
-
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
@@ -111,6 +109,3 @@ async def home(request: Request, db: Session = Depends(get_db)):
 
 
 custom_openapi(app)
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)

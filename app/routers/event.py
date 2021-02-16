@@ -107,8 +107,13 @@ async def create_new_event(request: Request,
                          category_id=category_id,
                          availability=availability)
 
-    out_of_office_users = get_who_is_out_of_office(session, start, invited_emails)
-    messages = get_messages(session, event, uninvited_contacts, out_of_office_users)
+    out_of_office_users = get_who_is_out_of_office(session,
+                                                   start,
+                                                   invited_emails)
+    messages = get_messages(session,
+                            event,
+                            uninvited_contacts,
+                            out_of_office_users)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
                             + f'messages={"---".join(messages)}',
                             status_code=status.HTTP_302_FOUND)
@@ -305,8 +310,8 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
 def get_attendees_email(session: Session, event: Event):
     return (
-        session.query(User.email).join(UserEvent)
-            .filter(UserEvent.events == event).all()
+        (session.query(User.email).join(UserEvent).
+         filter(UserEvent.events == event).all())
     )
 
 
