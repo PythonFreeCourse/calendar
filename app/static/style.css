@@ -110,3 +110,7 @@ p {
 .upload-file {
     margin: auto 1em auto 0em;
 }
+
+h2.modal-title {
+  font-size: 1.25rem;
+}

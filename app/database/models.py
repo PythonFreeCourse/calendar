@@ -32,6 +32,7 @@ class User(Base):
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     disabled = Column(Boolean, default=False, nullable=False)
+    privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
 
@@ -45,6 +46,10 @@ class User(Base):
         "SalarySettings", cascade="all, delete", back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
+
+    oauth_credentials = relationship(
+        "OAuthCredentials", cascade="all, delete", back_populates="owner",
+        uselist=False)
 
     def __repr__(self):
         return f'<User {self.id}>'
@@ -65,11 +70,12 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    is_google_event = Column(Boolean)
     vc_link = Column(String)
     color = Column(String, nullable=True)
-    availability = Column(Boolean, default=True, nullable=False)
     invitees = Column(String)
     emotion = Column(String, nullable=True)
+    availability = Column(Boolean, default=True, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
     category_id = Column(Integer, ForeignKey("categories.id"))
@@ -185,6 +191,21 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class OAuthCredentials(Base):
+    __tablename__ = "oauth_credentials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String)
+    refresh_token = Column(String)
+    token_uri = Column(String)
+    client_id = Column(String)
+    client_secret = Column(String)
+    expiry = Column(DateTime)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates=__tablename__, uselist=False)
 
 
 class SalarySettings(Base):

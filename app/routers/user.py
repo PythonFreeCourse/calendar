@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
-from starlette.responses import HTTP_202_ACCEPTED, RedirectResponse
+from starlette.responses import HTTP_200_OK, RedirectResponse
 from typing import List
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -8,8 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
 from app.database.models import Event, User, UserEvent
-from app.internal.user.availability import (
-    disable, enable)
+from app.internal.user.availability import disable, enable
 from app.internal.utils import save, get_current_user
 
 
@@ -109,7 +108,7 @@ def disable_logged_user(
     if disable_successful:
         # disable succeeded- the user will be directed to homepage.
         url = router.url_path_for("home")
-        return RedirectResponse(url=url, status_code=HTTP_202_ACCEPTED)
+        return RedirectResponse(url=url, status_code=HTTP_200_OK)
 
 
 @router.post("/enable")
@@ -123,4 +122,4 @@ def enable_logged_user(
     if enable_successful:
         # enable succeeded- the user will be directed to homepage.
         url = router.url_path_for("home")
-        return RedirectResponse(url=url, status_code=HTTP_202_ACCEPTED)
+        return RedirectResponse(url=url, status_code=HTTP_200_OK)

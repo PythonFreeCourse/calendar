@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="{{ url_for('static', path='/grid_style.css') }}" rel="stylesheet" type="text/css">
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
+    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+    <title>Calendar</title>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="text-lightgray background-darkblue">
+            <div class="menu">
+                <div class="fixed-features">
+                    <div>
+                        <a href="/profile">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </a>
+                    </div>
+                    <div>
+                        <ion-icon name="search" alt="Search icon"></ion-icon>
+                    </div>
+                    <div>
+                        <ion-icon name="settings-outline"></ion-icon>
+                    </div>
+                    <div>
+                        <ion-icon name="calendar-outline"></ion-icon>
+                    </div>
+                    <div>
+                        <ion-icon name="cube-outline"></ion-icon>
+                    </div>
+                    <div>
+                        <a title="About Us" href="{{ url_for('about') }}">
+                            <ion-icon name="information-circle-outline"></ion-icon>
+                        </a>
+                    </div>
+                </div>
+                <div class="user-features">
+                    <div class="feature" name="feather01">
+                        <ion-icon name="chatbox"></ion-icon>
+                    </div>
+                </div>
+                <div id="open-features">
+                    <ion-icon name="ellipsis-vertical"></ion-icon>
+                </div>
+            </div>
+        </nav>
+        <div class="background-lightgray" id="feature-settings">
+            <div class="title"> FEATURE NAME </div>
+        </div>
+        <div>
+            <header>
+                <div>
+                    <div class="title"> {{day.display()}}</div>
+                    <div class="sec-title"> Location 0<sup>o</sup>c 00:00</div>
+                </div>
+                <div id="logo-div">
+                    <a href="/calendar/month">
+                        <h1 class="title"> PYLENDAR </h1>
+                    </a>
+                </div>
+            </header>
+            <main>
+                {% block main %} {% endblock %}
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
