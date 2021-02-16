@@ -5,7 +5,7 @@ from starlette.requests import Request
 from app.database.models import User
 from app.dependencies import get_db
 from app.internal.security.ouath2 import (
-    Depends, check_jwt_token, get_authorization_cookie, Session
+    Depends, get_jwt_token, get_authorization_cookie, Session
 )
 
 
@@ -15,7 +15,7 @@ async def is_logged_in(
     """
     A dependency function protecting routes for only logged in user
     """
-    await check_jwt_token(db, jwt)
+    await get_jwt_token(db, jwt)
     return True
 
 
@@ -25,8 +25,13 @@ async def is_manager(
     """
     A dependency function protecting routes for only logged in manager
     """
-    await check_jwt_token(db, jwt, manager=True)
-    return True
+    jwt_payload = await get_jwt_token(db, jwt)
+    if jwt_payload.get("is_manager"):
+        return True
+    raise HTTPException(
+                status_code=HTTP_401_UNAUTHORIZED,
+                headers=request.url.path,
+                detail="You don't have a permition to enter this page")
 
 
 async def current_user(
@@ -38,7 +43,9 @@ async def current_user(
     Returns logged in User object.
     A dependency function protecting routes for only logged in user.
     """
-    username, user_id = await check_jwt_token(db, jwt)
+    jwt_payload = await get_jwt_token(db, jwt)
+    username = jwt_payload.get("sub")
+    user_id = jwt_payload.get("user_id")
     db_user = await User.get_by_username(db, username=username)
     if db_user and db_user.id == user_id:
         return db_user

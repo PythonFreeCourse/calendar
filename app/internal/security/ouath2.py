@@ -57,10 +57,10 @@ def create_jwt_token(
     return jwt_token
 
 
-async def check_jwt_token(
+async def get_jwt_token(
     db: Session,
-        token: str = Depends(oauth_schema), path: bool = None,
-        manager: bool = False) -> User:
+        token: str = Depends(oauth_schema),
+        path: Union[bool, str] = None) -> User:
     """
     Check whether JWT token is correct.
     Returns jwt payloads if correct.
@@ -69,12 +69,7 @@ async def check_jwt_token(
     try:
         jwt_payload = jwt.decode(
             token, JWT_KEY, algorithms=JWT_ALGORITHM)
-        if not manager or jwt_payload.get("is_manager"):
-            return jwt_payload.get("sub"), jwt_payload.get("user_id")
-        raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED,
-                headers=path,
-                detail="You don't have a permition to enter this page")
+        return jwt_payload
     except InvalidSignatureError:
         raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
