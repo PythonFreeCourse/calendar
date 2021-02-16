@@ -194,3 +194,12 @@ class Zodiac(Base):
             f'{self.start_day_in_month}/{self.start_month}-'
             f'{self.end_day_in_month}/{self.end_month}>'
         )
+
+
+class CursorSettings(Base):
+    __tablename__ = "cursor_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    primary_cursor = Column(String, nullable=False)
+    secondary_cursor = Column(String, nullable=False)

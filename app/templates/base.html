@@ -40,6 +40,9 @@
                         <a class="nav-link" href="{{ url_for('agenda') }}">{{ gettext("Agenda") }}</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('cursor_settings') }}">Cursor Settings</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
                     </li>
                     <li class="nav-item">
@@ -55,6 +58,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
     <script type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for('static', path='/cursor.js') }}"></script>
 
 </body>
 </html>

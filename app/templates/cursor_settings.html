@@ -1,0 +1,27 @@
+{% extends "partials/index/index_base.html" %} 
+{% block content %}
+<div class="container mt-4">
+    <h1>Cursor Settings</h1>
+    <form action="{{ url_for('get_cursor_choices') }}" style="width: 200px; margin: autio" method="post" id="form1">
+        <label for="primary_cusor">Select primary cursor :</label> <br> 
+        <select name="primary_cursor" style="width: 160px; height: 40px; margin-top: 5px;" id="primary_cursor" class="form-control"> 
+            {% for cursor in cursors %}
+            <option value="{{ cursor }}.cur">{{cursor}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="secondary_cusor">Select secondary cursor :</label> <br> 
+        <select name="secondary_cursor" style="width: 160px; height: 40px; margin-top: 5px;" id="secondary_cursor" class="form-control"> 
+            {% for cursor in cursors %}
+            <option value="{{ cursor }}.cur">{{cursor}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button id="activate_cursor" type="submit" form="form1" class="btn btn-primary">
+            Activate
+        </button>
+        <br>
+    </form>
+</div>
+
+{% endblock %}
