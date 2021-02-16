@@ -1,0 +1,53 @@
+{% extends "base.html" %}{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+<link href="{{ url_for('static', path='/about.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', path='/global.css') }}" rel="stylesheet">
+<title>About Us</title>
+{% endblock head %} {% block content %}
+
+<div class="container">
+    <h1 class="moving-words">About The Project</h1>
+    <!--  credit for the animation goes to FrankieDoodie -->
+    <div>
+        <h3>Do you have a dream? How will you make it come true?</h3>
+        <p class="about-text">
+            My dream will require some hard work. I know I MUST be:</p>
+        <ul>
+            <li> Organized</li>
+            <li>Well prepared</li>
+            <li>Plan ahead</li>
+        </ul>
+
+        <p class="about-text">We started this project as a course project. Step by step it became our dream, this calendar is built by programmers. One of its many traits is the ability to add features.</p>
+        <ul>
+            <li> Want to monitor your expenses? We got it.</li>
+            <li>Want to organize a zoom meeting while still under quarantine? We got it.</li>
+        </ul>
+        <p class="about-text">Even better - you got it! Develop your own feature and add it to the calendar. This calendar is open source developed mostly in Python as the finale to an extraordinary course. For the calendar development we selected features, aiming at required
+            and unique. Then each of us began the journey to implement it in the calendar. We worked collaboratively to put it together.
+            <br> if you like what you just read, please <a title="Sign in page" href="sign_in">sign in.</a>
+        </p>
+    </div>
+    <blockquote class="blockquote text-center seprator">
+        <p class="mb-0"><i>“If you want to go fast, go alone. If you want to go far, go together.”</i></p><br>
+        <footer class="blockquote-footer"><cite title="Source Title">African proverb</cite></footer>
+    </blockquote>
+
+    <h1 class="moving-words">Our Story</h1>
+    <div>
+        <p class="about-text"> When this online course started, we did not know what <em>"Hello World"</em> meant.<br> Now, we have created this calendar. This project was created as our concluding project in the online “python free and for all” course by <a title="Yam Mesicka Linkedin account"
+                href="https://www.linkedin.com/in/mesicka/">Yam Mesicka</a>, a course that has helped us set foot in the world of programming. The course took us from complete newbies to decent programmers. The course curriculum can be found in the attached
+            infographic.
+        </p>
+        <p class="about-text">The materials of the first half of the course can be found on GitHub, you can take a look right <a title="Course GitHub" href="https://github.com/PythonFreeCourse/Notebooks">here.</a></p>
+    </div>
+    <div>
+        <img class="infographic" src="{{ url_for('media', path='free-python-course-4k.png') }}" alt="Course infographic">
+    </div>
+
+    <div>
+        <h2> We thank you for letting us share our story and hope you will enjoy our project.</h2>
+        <p>If you enjoy it please consider giving us a star in our <a title="Github for the calendar" href="https://github.com/PythonFreeCourse/calendar">GitHub repository.</a></p>
+    </div>
+</div>
+{% endblock content %}
