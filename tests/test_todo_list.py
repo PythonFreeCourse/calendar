@@ -86,7 +86,7 @@ def test_if_task_edited(home_test_client, session, task2: Task):
 
 
 def test_if_task_has_done(home_test_client, session, task: Task):
-    response = home_test_client.post(f"/task/setDone/{task.id}",
+    response = home_test_client.post(f"/task/done/{task.id}",
                                      data={"task_id": task.id})
     assert response.status_code == 303
     response = home_test_client.get(f"/task/{task.id}", data={})
@@ -96,7 +96,7 @@ def test_if_task_has_done(home_test_client, session, task: Task):
 
 
 def test_if_task_has_not_done(home_test_client, session, task: Task):
-    response = home_test_client.post(f"/task/setUndone/{task.id}",
+    response = home_test_client.post(f"/task/undone/{task.id}",
                                      data={"task_id": task.id,
                                            "session": session})
     assert response.status_code == 303

@@ -4,8 +4,8 @@ from datetime import datetime
 from typing import Any, Dict
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
-    JSON, String, Time, Date, UniqueConstraint)
+    Boolean, Column, Date, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
+    JSON, String, Time, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base

@@ -8,8 +8,8 @@ from starlette import status
 from starlette.responses import RedirectResponse, JSONResponse
 
 from app.config import templates
-from app.dependencies import get_db
 from app.database.models import User
+from app.dependencies import get_db
 from app.internal.todo_list import create_task, by_id
 
 router = APIRouter(
@@ -43,7 +43,8 @@ def delete_task(task_id: int = Form(...), db: Session = Depends(get_db)):
 @router.post("/add")
 async def add_task(title: str = Form(...), description: str = Form(...),
                    datestr: str = Form(...), timestr: str = Form(...),
-                   is_important: bool = Form(False), session=Depends(get_db)):
+                   is_important: bool = Form(False),
+                   session: Session = Depends(get_db)):
     # TODO: add a login session
     user = session.query(User).filter_by(username='test_username').first()
     create_task(session, title, description,
@@ -57,7 +58,8 @@ async def add_task(title: str = Form(...), description: str = Form(...),
 async def edit_task(task_id: int = Form(...), title: str = Form(...),
                     description: str = Form(...),
                     datestr: str = Form(...), timestr: str = Form(...),
-                    is_important: bool = Form(False), session=Depends(get_db)):
+                    is_important: bool = Form(False),
+                    session: Session = Depends(get_db)):
     task = by_id(session, task_id)
     task.title = title
     task.description = description
@@ -69,7 +71,7 @@ async def edit_task(task_id: int = Form(...), title: str = Form(...),
 
 
 @router.post("/setDone/{task_id}")
-async def set_task_done(task_id: int, session=Depends(get_db)):
+async def set_task_done(task_id: int, session: Session = Depends(get_db)):
     task = by_id(session, task_id)
     task.is_done = True
     session.commit()
@@ -78,7 +80,7 @@ async def set_task_done(task_id: int, session=Depends(get_db)):
 
 
 @router.post("/setUndone/{task_id}")
-async def set_task_undone(task_id: int, session=Depends(get_db)):
+async def set_task_undone(task_id: int, session: Session = Depends(get_db)):
     task = by_id(session, task_id)
     task.is_done = False
     session.commit()
@@ -87,7 +89,7 @@ async def set_task_undone(task_id: int, session=Depends(get_db)):
 
 
 @router.get("/{task_id}")
-async def get_task(task_id, session=Depends(get_db)):
+async def get_task(task_id: int, session: Session = Depends(get_db)):
     task = by_id(session, task_id)
     data = jsonable_encoder(task)
     return JSONResponse(content=data)

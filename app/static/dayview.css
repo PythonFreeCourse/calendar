@@ -113,15 +113,15 @@ html {
 }
 
 #table {
-    max-width: 500px;
+    max-width: 31.25em;
 }
 
 .open-button {
     background-color: var(--primary);
     color: #fff;
-    margin-top: 12px;
-    font-size: 20px;
-    padding: 14px;
+    margin-top: 0.75em;
+    font-size: 1.25em;
+    padding: 0.875em;
     border-radius: 20px;
     transition-duration: 0.4s;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
