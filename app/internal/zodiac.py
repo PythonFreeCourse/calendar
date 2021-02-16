@@ -7,21 +7,21 @@ from sqlalchemy.orm import Session
 from app.database.models import Zodiac
 
 
-def get_zodiac(data: Dict[str, Union[str, int]]) -> Zodiac:
+def get_zodiac(zodiac_: Dict[str, Union[str, int]]) -> Zodiac:
     """Returns a Zodiac object from the dictionary data.
 
     Args:
-        data: A dictionary zodiac related information.
+        zodiac_: A dictionary zodiac related information.
 
     Returns:
         A new Zodiac object.
     """
     return Zodiac(
-        name=data['name'],
-        start_month=data['start_month'],
-        start_day_in_month=data['start_day_in_month'],
-        end_month=data['end_month'],
-        end_day_in_month=data['end_day_in_month'],
+        name=zodiac_['name'],
+        start_month=zodiac_['start_month'],
+        start_day_in_month=zodiac_['start_day_in_month'],
+        end_month=zodiac_['end_month'],
+        end_day_in_month=zodiac_['end_day_in_month'],
     )
 
 

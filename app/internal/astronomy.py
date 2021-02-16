@@ -6,7 +6,7 @@ import httpx
 
 from app import config
 
-# This feature requires an API KEY - get yours free @ www.weatherapi.com
+# This feature requires an API key. Get yours free at www.weatherapi.com.
 ASTRONOMY_URL = "https://api.weatherapi.com/v1/astronomy.json"
 NO_API_RESPONSE = _("No response from server.")
 
