@@ -55,7 +55,7 @@ def add_parashot_to_db(session: Session) -> None:
 
 def load_parashot_if_table_empty(session: Session) -> None:
     """loading parashot from file to db """
-    if session.query(Parasha).count() == 0:
+    if session.query(Parasha).first() is None:
         add_parashot_to_db(session)
 
 

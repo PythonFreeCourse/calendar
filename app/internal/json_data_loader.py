@@ -13,7 +13,7 @@ def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
     """This function reads all of the data from a specific JSON file.
     The json file consists of list of dictionaries"""
     try:
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8-sig') as f:
             json_content_list = json.load(f)
     except (IOError, ValueError):
         file_name = os.path.basename(path)

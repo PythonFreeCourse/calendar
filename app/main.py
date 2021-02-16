@@ -106,7 +106,6 @@ async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
     return templates.TemplateResponse("index.html", {
         "request": request,
-        "message": "Hello, World!",
         "quote": quote,
     })
 
