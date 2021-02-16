@@ -6,7 +6,7 @@ from typing import Any, Dict
 
 from sqlalchemy import (
     Boolean, Column, DateTime, DDL, event, Float, ForeignKey, Index, Integer,
-    JSON, String, Time, UniqueConstraint, Numeric)
+    JSON, String, Time, UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.declarative.api import declarative_base
@@ -271,7 +271,7 @@ class CoronaStats(Base):
     vaccinated_population_perc = Column(Integer, nullable=False)
     vaccinated_seconde_dose = Column(Integer, nullable=False)
     vaccinated_seconde_dose_cum = Column(Integer, nullable=False)
-    vaccinated_seconde_dose_population_perc: Column(Numeric, nullable=False)
+    vaccinated_seconde_dose_population_perc = Column(Float, nullable=False)
 
 
 class Quote(Base):

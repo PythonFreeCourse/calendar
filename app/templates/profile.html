@@ -164,12 +164,6 @@
           </div>
           <!-- End profile update menu -->
 
-          <div class="card card-profile">
-
-            <div class="card-body">
-                {% include "corona_stats.html" %}
-            </div>
-        </div>
 
           <img class="card-img-top profile-image rounded-circle mx-auto d-block"
                src="{{ url_for('media', path=user.avatar) }}" alt="Profile image">
@@ -187,6 +181,10 @@
           </div>
         </div>
         <!-- End Profile card -->
+
+        <!-- Corona stats -->
+        {% include "corona_stats.html" %}
+        <!-- End Corona stats -->
 
         <div class="card card-profile">
           <div class="card-body">
