@@ -86,12 +86,14 @@ async def set_shopping_product_has_bought(
 
 
 @router.post("/setUnBought/{shopping_product_id}")
-async def set_shopping_product_has_not_bought(shopping_product_id: int, session=Depends(get_db)):
+async def set_shopping_product_has_not_bought(
+        shopping_product_id: int, session=Depends(get_db)):
     shopping_product = by_id(session, shopping_product_id)
     shopping_product.is_bought = False
     session.commit()
-    return RedirectResponse(f"/day/{shopping_product.date.strftime('%Y-%m-%d')}",
-                            status_code=303)
+    return RedirectResponse(
+        f"/day/{shopping_product.date.strftime('%Y-%m-%d')}",
+        status_code=303)
 
 
 @router.get("/{shopping_product_id}")

@@ -1,5 +1,5 @@
 import json
-from datetime import date, time
+from datetime import date
 
 import pytest
 from sqlalchemy.orm.exc import NoResultFound
