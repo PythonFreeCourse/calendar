@@ -322,7 +322,7 @@ def create_event(
     start,
     end,
     owner_id: int,
-    privacy: str = 'Public',
+    privacy: str = PrivacyKinds.Public.name,
     content: Optional[str] = None,
     location: Optional[str] = None,
     vc_link: str = None,
