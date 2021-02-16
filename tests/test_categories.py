@@ -23,7 +23,7 @@ class TestCategories:
 
     @staticmethod
     def test_creating_new_category(session, client, user):
-        response = client.post("/for_categories_test",
+        response = client.post("/categories/for_categories_test",
                                data={"user_id": user.id,
                                      "category": "Foo",
                                      "color": "eecc11"})
@@ -32,7 +32,7 @@ class TestCategories:
 
     @staticmethod
     def test_creating_not_unique_category_failed(client, sender, category):
-        response = client.post("/for_categories_test",
+        response = client.post("/categories/for_categories_test",
                                data={"category": "Guitar Lesson",
                                      "color": "121212",
                                      "user_id": sender.id})
