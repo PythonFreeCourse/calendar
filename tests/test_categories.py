@@ -5,12 +5,12 @@ from sqlalchemy.testing import mock
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
 
-from app.database.models import Event
+from app.database.models import Event, Category
 from app.routers.categories import get_user_categories, validate_request_params
 
 
 class TestCategories:
-    CATEGORY_ALREADY_EXISTS_MSG = b"category is already exists"
+    CATEGORY_ALREADY_EXISTS_MSG = b"category already exists"
     CREATE_CATEGORY = b"You have created"
     UNALLOWED_PARAMS = "contains unallowed params"
 
@@ -18,22 +18,32 @@ class TestCategories:
     def test_get_categories_logic_succeeded(session, user, category):
         assert get_user_categories(session, category.user_id) == [category]
 
+    # @staticmethod
+    # def test_mocking_constant_a(user, mocker, category, client):
+    #     mocker.patch(Category.create, return_value=Category(name='Foo', color='eecc11', user_id=category.user_id))
+    #     response = client.post("/categories",
+    #                             data={"user_id": user.id,
+    #                                     "category": "Foo",
+    #                                     "color": "eecc11",})
+    #     assert response.ok
+    #     assert TestCategories.CREATE_CATEGORY in response.content
+    
     @staticmethod
     def test_creating_new_category(session, client, user):
         response = client.post("/for_categories_test",
                                data={"user_id": user.id,
-                                     "category_name": "Foo",
-                                     "chosen_color": "eecc11"})
+                                     "category": "Foo",
+                                     "color": "eecc11",})
         assert response.ok
         assert TestCategories.CREATE_CATEGORY in response.content
 
     @staticmethod
     def test_creating_not_unique_category_failed(client, sender, category):
         response = client.post("/for_categories_test",
-                               data={"category_name": "Guitar Lesson",
-                                     "chosen_color": "121212",
+                               data={"category": "Guitar Lesson",
+                                     "color": "121212",
                                      "user_id": sender.id})
-        assert response.status_code == status.HTTP_200_OK
+        assert response.ok
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in response.content
 
     @staticmethod
@@ -83,7 +93,7 @@ class TestCategories:
     @staticmethod
     def test_get_category_ok_request(client):
         response = client.get("/categories")
-        assert response.status_code == status.HTTP_200_OK
+        assert response.ok
 
     @staticmethod
     def test_repr(category):
@@ -118,7 +128,7 @@ class TestCategories:
         session.query = mock.Mock(side_effect=raise_error)
         assert get_user_categories(session, 1) == []
 
-    @staticmethod
-    def test_event_status_ok(client):
-        response = client.get("/event/edit")
-        assert response.ok
+    # @staticmethod
+    # def test_event_status_ok(client):
+    #     response = client.get("/event/edit")
+    #     assert response.ok

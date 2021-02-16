@@ -17,6 +17,8 @@ from app.internal.event import validate_zoom_link
 from app.internal.utils import create_model
 from app.routers.user import create_user
 
+from app.routers.categories import get_user_categories
+
 router = APIRouter(
     prefix="/event",
     tags=["event"],
@@ -25,9 +27,12 @@ router = APIRouter(
 
 
 @router.get("/edit")
-async def eventedit(request: Request):
+async def eventedit(request: Request, db_session: Session = Depends(get_db)):
+    user_id = 1    # until issue#29 will get current user_id from session
+    categories_list = get_user_categories(db_session, user_id)
     return templates.TemplateResponse("event/eventedit.html",
-                                      {"request": request})
+                                      {"request": request,
+                                        "categories_list": categories_list})
 
 
 @router.post("/edit")

@@ -45,18 +45,19 @@ def get_categories(request: Request,
                                    f"unallowed params.")
 
 
-@router.get("/event/edit")
-def your_categories(request: Request,
-                    db_session: Session = Depends(get_db)) -> List[Category]:
-    """
-    will add all user categories to dropdown list
-    """
-    user_id = 1
-    categories_list = get_user_categories(db_session, user_id)
-    return templates.TemplateResponse("event/eventedit.html", {
-        "request": request,
-        "categories_list": categories_list,
-    })
+# @router.get("/event/edit")
+# def your_categories(request: Request,
+#                     db_session: Session = Depends(get_db)) -> List[Category]:
+#     """
+#     Return all categories created by user.
+#     user categories will be shown in dropdown list
+#     """
+#     user_id = 1
+#     categories_list = get_user_categories(db_session, user_id)
+#     return templates.TemplateResponse("event/eventedit.html", {
+#         "request": request,
+#         "categories_list": categories_list,
+#     })
 
 
 @router.get("/categories")
@@ -69,32 +70,32 @@ def category_color_insert(request: Request) -> _TemplateResponse:
 # TODO(issue#29): get current user_id from session
 @router.post("/categories")
 async def set_category(request: Request,
-                       category_name: str = Form(None),
-                       chosen_color: str = Form(None),
+                       category: str = Form(None),
+                       color: str = Form(None),
                        db_sess: Session = Depends(get_db)):
 
     message = ""
     user_id = 1    # until issue#29 will get current user_id from session
     try:
         Category.create(db_sess,
-                        name=category_name,
-                        color=chosen_color,
+                        name=category,
+                        color=color,
                         user_id=user_id)
     except IntegrityError:
         db_sess.rollback()
-        message = "Category is already exists"
+        message = "Category already exists"
         return templates.TemplateResponse("categories.html", {
             "request": request,
             "message": message,
-            "category_name": category_name,
-            "chosen_color": chosen_color,
+            "category": category,
+            "color": color,
         })
-    message = f"Congratulation! You have created the category: {category_name}"
+    message = f"Congratulation! You have created a new category: {category}"
     return templates.TemplateResponse("categories.html", {
         "request": request,
         "message": message,
-        "category_name": category_name,
-        "chosen_color": chosen_color,
+        "category": category,
+        "color": color,
     })
 
 
@@ -128,8 +129,8 @@ def get_user_categories(db_session: Session,
 
 @router.post("/for_categories_test")
 async def for_category_test(request: Request,
-                            category_name: str = Form(None),
-                            chosen_color: str = Form(None),
+                            category: str = Form(None),
+                            color: str = Form(None),
                             db_sess: Session = Depends(get_test_db)):
     """
     This route is only for run tests, user can't know this url and even
@@ -140,22 +141,22 @@ async def for_category_test(request: Request,
     user_id = 1
     try:
         Category.create(db_sess,
-                        name=category_name,
-                        color=chosen_color,
+                        name=category,
+                        color=color,
                         user_id=user_id)
     except IntegrityError:
         db_sess.rollback()
-        message = "category is already exists"
+        message = "category already exists"
         return templates.TemplateResponse("categories.html", {
             "request": request,
             "message": message,
-            "category_name": category_name,
-            "chosen_color": chosen_color,
+            "category": category,
+            "color": color,
         })
-    message = f"Congratulation! You have created the category {category_name}"
+    message = f"Congratulation! You have created a new category: {category}"
     return templates.TemplateResponse("categories.html", {
         "request": request,
         "message": message,
-        "category_name": category_name,
-        "chosen_color": chosen_color,
+        "category": category,
+        "color": color,
     })
