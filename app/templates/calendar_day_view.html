@@ -22,17 +22,17 @@
     </div>
     <div class="schedule">
         <div class="container times bg-primeary position">
-            {% if view == 'day'%}
                 {% for hour in range(25)%}
                 <div class='hour-block'>
                     <div class="row bg-transparent hour-mark">
-                        {% set hour = hour|string() %}
-                        {{hour.zfill(2)}}:00
+                        {% if view == 'day'%}
+                            {% set hour = hour|string() %}
+                            {{hour.zfill(2)}}:00
+                        {% endif %}
                     </div>
                     <div class="hour-bar {{i}} row text-white border-bottom"></div>
                 </div>
                 {% endfor %}
-            {% endif %}
         </div>
         <div class="event-grid">
             {% for event, attr in events %}

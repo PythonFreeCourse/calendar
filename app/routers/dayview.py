@@ -147,3 +147,13 @@ async def dayview(
         "zodiac": zodiac_obj,
         "view": view
     })
+
+from app.routers.user import create_user
+from app.routers.event import create_event
+@router.get('/create-testuser')
+async def create_test_user(request: Request, session=Depends(get_db)):
+    #user = create_user(username='test_username', password='12345678', email='email@test.com', session=session, language_id=1)
+    user = session.query(User).filter_by(username='test_username').first()
+    start = datetime(year=2021, month=1, day=5, hour=16, minute=13)
+    end = datetime(year=2021, month=1, day=5, hour=18, minute=46)
+    create_event(db=session, title='test2', start=start, end=end, owner_id=user.id)
