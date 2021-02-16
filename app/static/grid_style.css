@@ -342,3 +342,8 @@ main {
 .background-yellow {
   background-color: #FFDE4D;
 }
+
+.dates-calc {
+    background-color: #222831;
+    color: white;
+}

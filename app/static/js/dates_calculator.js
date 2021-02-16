@@ -1,3 +1,7 @@
+window.onload = function () {
+  document.getElementById("CalcBtn").addEventListener("click", hiddenDifference);
+}
+
 function hiddenDifference() {
     if (document.getElementById("endDate").value == '') {
         swal("Expected end date");
@@ -11,7 +15,7 @@ function hiddenDifference() {
     else {
         date1 = Date.now()
     }
-    const diffTime = Math.abs(date2 - date1);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    document.getElementById("demo").innerHTML = "The difference: " + (diffDays) + " days";
+    const diffDates = Math.abs(date2 - date1);
+    const diffInDays = Math.ceil(diffDates / (1000 * 60 * 60 * 24));
+    document.getElementById("demo").innerText = "The difference: " + (diffInDays) + " days";
 }
