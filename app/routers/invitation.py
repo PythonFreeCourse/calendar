@@ -66,18 +66,20 @@ async def accept_invitations(
     return RedirectResponse(url=url, status_code=status.HTTP_302_FOUND)
 
 
+# TODO: should be a get request with the path of:
+#  @router.get("/all")
 @router.get("/get_all_invitations")
 def get_all_invitations(
         db=Depends(get_db), **param: Any
 ) -> List[Invitation]:
-    """Returns all invitations filtered by the requested parameters.
+    """Returns all Invitations filtered by the requested parameters.
 
     Args:
         db: Optional; The database connection.
         **param: A list of parameters to filter by.
 
     Returns:
-        A list of all invitations.
+        A list of all Invitations.
     """
     try:
         invitations = list(db.query(Invitation).filter_by(**param))
@@ -87,11 +89,13 @@ def get_all_invitations(
         return invitations
 
 
+# TODO: should be a get request with the path of:
+#  @router.get("/{id}")
 @router.post("/get_invitation_by_id")
 def get_invitation_by_id(
         invitation_id: int, db=Depends(get_db)
 ) -> Optional[Invitation]:
-    """Returns a Invitation by an ID.
+    """Returns an Invitation by an ID.
 
     Args:
         invitation_id: The Invitation ID.
