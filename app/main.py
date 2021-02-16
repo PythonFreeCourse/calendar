@@ -43,10 +43,11 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
 
-    agenda, calendar, categories, celebrity, currency,
-    dayview, email, event, export, four_o_four,
-    invitation, login, logout, parasha, profile,
-    register, search, telegram, user, weekview, whatsapp
+    about_us, agenda, calendar, categories, celebrity,
+    currency, dayview, email, event, export, four_o_four,
+    google_connect, invitation, login, logout, parasha,
+    profile, register, search, telegram, user, weekview,
+    whatsapp,
 )
 
 
@@ -67,6 +68,7 @@ async def swagger_ui_redirect():
 
 
 routers_to_include = [
+    about_us.router,
     agenda.router,
     calendar.router,
     categories.router,
@@ -78,6 +80,7 @@ routers_to_include = [
     event.router,
     export.router,
     four_o_four.router,
+    google_connect.router,
     invitation.router,
     login.router,
     logout.router,
