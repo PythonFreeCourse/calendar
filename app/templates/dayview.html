@@ -56,7 +56,6 @@
                         <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}"></a>
                         <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}"></a>
                         <a href="/event/{{event.id}}" title="See full event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/view.svg')}}"></a>
-                        <button class="event-btn" title="See full event" id="{{event.id}}">event details</button>
                     </div>
                 {% endfor %}
             </div>
