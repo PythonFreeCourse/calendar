@@ -7,6 +7,10 @@
     and let the system load, but not change both at the same time otherwise
     it will create junk and unnecessary duplicates.
 
+    *   IMPORTANT - To enable features panel functionlity the developer must  *
+    *   add the feature_access_filter decorator to ALL the feature routs      *
+    *   Please see the example below.                                         *
+
     Enjoy and good luck :)
 '''
 
@@ -21,29 +25,27 @@ Example to feature stracture:
 }
 '''
 
+'''
+*   IMPORTANT   *
+
+Example to decorator placement:
+
+    @router.get("/<my-route>")
+    @feature_access_filter     <---- just above def keyword!
+    def my_cool_feature_route():
+        ....
+        ...
+            some code.
+        ..
+        .
+
+'''
+
 features = [
     {
-        "name": 'agenda',
-        "route": '/agenda',
-        "description": 'description',
-        "creator": 'creator'
+        "name": 'Google Sync',
+        "route": '/google/sync',
+        "description": 'Sync Google Calendar events with Pylender',
+        "creator": 'Liran Caduri'
     },
-    {
-        "name": 'feature-panel',
-        "route": '/features/',
-        "description": 'description',
-        "creator": 'liran caduri'
-    },
-    {
-        "name": 'invitations',
-        "route": '/invitations/',
-        "description": 'description',
-        "creator": 'creator2'
-    },
-    {
-        "name": 'association',
-        "route": '/features/test-association',
-        "description": 'description',
-        "creator": 'creator2'
-    }
 ]

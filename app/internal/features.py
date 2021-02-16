@@ -2,7 +2,7 @@ from fastapi import Depends
 
 from app.features.index import features
 from app.database.models import UserFeature, Feature
-from app.internal.utils import create_model
+from app.internal.utils import create_model, get_current_user
 from app.dependencies import get_db, SessionLocal
 
 
@@ -83,8 +83,7 @@ def is_feature_exist_in_disabled(feature: Feature,
 def is_feature_enabled(route: str):
     session = SessionLocal()
 
-    # TODO - get active user id.
-    user_id = 1
+    user = get_current_user(session=session)
 
     feature = session.query(Feature).filter_by(route=route).first()
 
@@ -96,7 +95,7 @@ def is_feature_enabled(route: str):
 
     user_pref = session.query(UserFeature).filter_by(
         feature_id=feature.id,
-        user_id=user_id
+        user_id=user.id
     ).first()
 
     if user_pref is None:
@@ -142,11 +141,10 @@ def create_association(
 
 def get_user_enabled_features(session: SessionLocal = Depends(get_db)):
 
-    # TODO - get active user id
-    user_id = 1
+    user = get_current_user(session=session)
 
     data = []
-    user_prefs = session.query(UserFeature).filter_by(user_id=user_id).all()
+    user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
     for pref in user_prefs:
         if pref.is_enable:
             feature = session.query(Feature).filter_by(
@@ -158,11 +156,10 @@ def get_user_enabled_features(session: SessionLocal = Depends(get_db)):
 
 def get_user_disabled_features(session: SessionLocal = Depends(get_db)):
 
-    # TODO - get active user id
-    user_id = 1
+    user = get_current_user(session=session)
 
     data = []
-    user_prefs = session.query(UserFeature).filter_by(user_id=user_id).all()
+    user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
     for pref in user_prefs:
         if not pref.is_enable:
             feature = session.query(Feature).filter_by(

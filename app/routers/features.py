@@ -30,7 +30,7 @@ async def add_feature_to_user(request: Request,
 
     form = await request.form()
 
-    user_id = form['user_id']  # TODO - get active user id
+    user_id = form['user_id']  # OPTION - get active user id instead.
     feat = session.query(Feature).filter_by(id=form['feature_id']).first()
 
     is_exist = is_association_exist_in_db(form=form, session=session)
@@ -57,7 +57,7 @@ async def delete_user_feature_association(
 
     form = await request.form()
 
-    user_id = form['user_id']  # TODO - get active user id
+    user_id = form['user_id']  # OPTION - get active user id instead.
     feature_id = form['feature_id']
 
     is_exist = is_association_exist_in_db(form=form, session=session)
@@ -100,6 +100,7 @@ async def disable_feature(request: Request,
                           session: SessionLocal = Depends(get_db)):
 
     form = await request.form()
+    print(dict(form))
     is_exist = is_association_exist_in_db(form=form, session=session)
 
     if is_exist:
@@ -127,9 +128,6 @@ def show_user_disabled_features(session: SessionLocal = Depends(get_db)):
 
 @router.get('/unlinked')
 def get_user_unlinked_features(session: SessionLocal = Depends(get_db)):
-
-    # TODO - get active user id
-    # user_id = 1
 
     data = []
     all_features = session.query(Feature).all()

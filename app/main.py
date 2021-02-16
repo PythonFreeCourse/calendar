@@ -1,7 +1,6 @@
 from fastapi import Depends, FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from starlette.responses import RedirectResponse
 
 from app import config
 from app.database import engine, models
@@ -13,14 +12,11 @@ from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.utils.extending_openapi import custom_openapi
 from app.routers.salary import routes as salary
-from fastapi import Depends, FastAPI, Request
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
 )
-from fastapi.staticfiles import StaticFiles
 from starlette.status import HTTP_401_UNAUTHORIZED
-from sqlalchemy.orm import Session
 
 
 def create_tables(engine, psql_environment):
@@ -49,7 +45,7 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, export, four_o_four, features, google_connect,
+    email, event, export, features, four_o_four, google_connect,
     invitation, login, logout, profile,
     register, search, telegram, user, weekview, whatsapp,
 )
@@ -84,6 +80,7 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
+    features.router,
     four_o_four.router,
     google_connect.router,
     invitation.router,
@@ -96,31 +93,10 @@ routers_to_include = [
     telegram.router,
     user.router,
     whatsapp.router,
-    features.router,
 ]
 
 for router in routers_to_include:
     app.include_router(router)
-
-
-@app.middleware("http")
-async def filter_access_to_features(request: Request, call_next):
-
-    # getting the url route path for matching with the database.
-    route = '/' + str(request.url).replace(str(request.base_url), '')
-
-    # getting access status.
-    is_enabled = internal_features.is_feature_enabled(route=route)
-    if is_enabled:
-        # in case the feature is enabled or access is allowed.
-        return await call_next(request)
-
-    elif 'referer' not in request.headers:
-        # in case request come straight from address bar in browser.
-        return RedirectResponse(url=app.url_path_for('home'))
-
-    # in case the feature is disabled or access isn't allowed.
-    return RedirectResponse(url=request.headers['referer'])
 
 
 @app.on_event("startup")

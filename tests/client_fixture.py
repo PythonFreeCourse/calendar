@@ -1,4 +1,4 @@
-from async_asgi_testclient import TestClient
+from fastapi.testclient import TestClient
 from app.routers import (
     agenda, event, invitation, profile, google_connect, features
 )
@@ -35,8 +35,8 @@ def create_test_client(get_db_function) -> Iterator[TestClient]:
     Base.metadata.create_all(bind=test_engine)
     main.app.dependency_overrides[get_db_function] = get_test_db
 
-    client = TestClient(main.app)
-    yield client
+    with TestClient(main.app) as client:
+        yield client
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
