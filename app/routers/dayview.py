@@ -9,9 +9,9 @@ from app.database.models import Event, User, ShoppingProduct
 from app.dependencies import get_db, TEMPLATES_PATH
 from app.routers.user import get_all_user_events
 from app.internal import zodiac
-from app.internal.create_shopping_list import sort_by_date
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
+
 
 router = APIRouter()
 
@@ -139,7 +139,6 @@ async def dayview(
     )
     shopping_products = session.query(ShoppingProduct).filter(ShoppingProduct.owner_id == user.id) \
         .filter(ShoppingProduct.date == day.date())
-    shopping_products = sort_by_date(list(shopping_products))
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,
