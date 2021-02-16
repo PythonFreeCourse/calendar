@@ -1,14 +1,17 @@
-from app.routers.world_clock import generate_possible_timezone_path,\
-    get_all_possible_timezone_paths_for_given_place,\
-    get_api_data, get_continent, get_country, \
-    get_current_time_in_place, get_part_of_day_and_feedback,\
-    get_subcountry,\
-    get_timezone_path_for_given_place, get_timezones_parts,\
-    meeting_possibility_feedback,\
-    normalize_continent_name,\
-    parse_timezones_list, search_timezone_by_just_place,\
-    standardize_continent,\
-    standardize_country_or_place, TIMEZONES_BASE_URL
+from app.routers.world_clock import (generate_possible_timezone_path,
+    generate_possible_timezone_path_by_country,
+    get_all_possible_timezone_paths_for_given_place,
+    get_api_data, get_continent, get_country,
+    get_arbitrary_timezone_of_country,
+    get_current_time_in_place, get_part_of_day_and_feedback,
+    get_subcountry, get_timezone_from_subcountry,
+    get_timezone_path_for_given_place, get_timezones_parts,
+    load_city_country_data_set, load_country_continent_data_set,
+    load_country_subcountry_data_set,
+    meeting_possibility_feedback,
+    normalize_continent_name,
+    parse_timezones_list, search_timezone_by_just_place, standardize_continent,
+    standardize_country_or_place, TIMEZONES_BASE_URL)
 
 import pytest
 import requests
@@ -54,8 +57,7 @@ items_details = [
 ]
 
 
-@pytest.mark.parametrize('continent_name, normalized_continent',
-                         items_details)
+@pytest.mark.parametrize('continent_name, normalized_continent', items_details)
 def test_normalize_continent_name(continent_name, normalized_continent):
     assert normalize_continent_name(continent_name) == normalized_continent
 
@@ -74,6 +76,18 @@ def test_get_continent(country_name, continent):
     assert get_continent(country_name) == continent
 
 
+def test_load_city_country_data_set():
+    assert load_city_country_data_set()
+
+
+def test_load_country_continent_data_set():
+    assert load_country_continent_data_set()
+
+
+def test_load_country_subcountry_data_set():
+    assert load_country_subcountry_data_set()
+
+
 items_details = [
     ('rio de janeiro', 'Brazil'),
     ('pago pago', 'American Samoa'),
@@ -86,6 +100,37 @@ items_details = [
 @pytest.mark.parametrize('city_name, country', items_details)
 def test_get_country(city_name, country):
     assert get_country(city_name) == country
+
+
+items_details = [
+    ('Israel', 'Jerusalem', ['Asia/Israel', 'Asia/Jerusalem']),
+]
+
+
+@pytest.mark.parametrize('country, place, res', items_details)
+def test_generate_possible_timezone_path_by_country(country, place, res):
+    assert (generate_possible_timezone_path_by_country(country, place) ==
+            res)
+
+
+items_details = [
+    ('Australia', 'http://worldtimeapi.org/api/timezone/Australia/Sydney'),
+]
+
+
+@pytest.mark.parametrize('country, res', items_details)
+def test_get_arbitrary_timezone_of_country(country, res):
+    assert get_arbitrary_timezone_of_country(country) == res
+
+
+items_details = [
+    ('Haifa', 'http://worldtimeapi.org/api/timezone/Asia/Jerusalem'),
+]
+
+
+@pytest.mark.parametrize('place, res', items_details)
+def test_get_timezone_from_subcountry(place, res):
+    assert get_timezone_from_subcountry(place) == res
 
 
 items_details = [
@@ -167,15 +212,15 @@ items_details = [
     ('Nauru', ['Pacific/Nauru']),
     ('Yaren', ['Pacific/Nauru']),
     ('Haifa', ['Asia/Israel', 'Asia/Haifa']),
-    ('Australia', None),
+    ('Australia', []),
 ]
 
 
 @pytest.mark.parametrize('place_name, possibilities', items_details)
 def test_get_all_possible_timezone_paths_for_given_place(place_name,
                                                          possibilities):
-    assert get_all_possible_timezone_paths_for_given_place(place_name) ==\
-           possibilities
+    assert (get_all_possible_timezone_paths_for_given_place(place_name)
+            == possibilities)
 
 
 items_details = [
@@ -200,13 +245,13 @@ def test_get_current_time_in_place():
 
 
 def test_get_part_of_day_and_feedback():
-    assert get_part_of_day_and_feedback(datetime.strptime(
-        '02:42:45', '%H:%M:%S')) == ('Late night', 'Not possible')
+    assert get_part_of_day_and_feedback(datetime.strptime('02:42:45', '%H:%M:%S'))\
+           == ('Late night', 'Not possible')
 
 
 items_details = [
-    ('22:22:12', 'Haifa', ('20:22:12', 'Evening', 'Better not')),
-    ('22:22:12', 'Australia', ('10:22:12', 'Morning', 'OK')),
+    ('22:22:12', 'Haifa', ('22:22:12', 'Night', 'Better not')),
+    ('22:22:12','Australia', ('12:22:12', 'Early afternoon', 'OK')),
 ]
 
 

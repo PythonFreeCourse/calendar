@@ -1,6 +1,7 @@
 import os
 
 from fastapi_mail import ConnectionConfig
+from pathlib import Path
 from pydantic import BaseSettings
 from starlette.templating import Jinja2Templates
 
@@ -67,6 +68,7 @@ MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.
 
 # PATHS
 STATIC_ABS_PATH = os.path.abspath("static")
+RESOURCES_PATH = Path(__file__).parent / 'resources'
 
 # LOGGER
 LOG_PATH = "./var/log"
