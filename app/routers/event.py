@@ -131,15 +131,20 @@ async def create_new_event(
 
 
 def process_image(img: bytes, event_id: int, img_height: int = HEIGHT) -> str:
-    """Resized and saves picture according to required height,
-    and keeps aspect ratio"""
+    """Resized and saves picture without exif (to avoid malicious date))
+    according to required height and keep aspect ratio"""
     image = Image.open(io.BytesIO(img))
     width, height = image.size
     height_to_req_height = img_height / float(height)
     new_width = int(float(width) * float(height_to_req_height))
     resized = image.resize((new_width, img_height), Image.ANTIALIAS)
     file_name = f'{event_id}{PICTURE_EXTENSION}'
-    resized.save(f'{MEDIA_PATH}/{file_name}')
+    
+    image_data = list(resized.getdata())
+    image_without_exif = Image.new(resized.mode, resized.size)
+    image_without_exif.putdata(image_data)
+    
+    image_without_exif.save(f'{MEDIA_PATH}/{file_name}')
     return file_name
 
 
