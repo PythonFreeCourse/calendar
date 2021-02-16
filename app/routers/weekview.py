@@ -49,7 +49,7 @@ async def get_day_events_and_attributes(
 async def weekview(
           request: Request, firstday: str, session=Depends(get_db)
       ):
-    user = session.query(User).filter_by(username='new_user').first()
+    user = session.query(User).filter_by(username='test_username').first()
     firstday = datetime.strptime(firstday, '%Y-%m-%d')
     week_days = get_week_dates(firstday)
     week = [await get_day_events_and_attributes(

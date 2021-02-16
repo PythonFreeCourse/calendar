@@ -320,7 +320,7 @@ def _delete_event(db: Session, event: Event):
 
         # Delete event
         # db.delete(event)
-        event.deleted_date = datetime.now()
+        event.deleted_date = dt.now()
 
         # Delete user_event
         # db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()

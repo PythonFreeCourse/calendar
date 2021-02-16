@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from typing import List
+
 from app.database.models import Event, UserEvent
 
 
@@ -15,7 +17,7 @@ def delete_events_after_optionals_num_days(days, session):
     session.commit()
 
 
-def get_events_ids_to_restored(events_data):
+def get_events_ids_to_restored(events_data: List) -> List[str]:
     ids = []
     check_element_name = 'check'
     check_element_on_value = 'on'
