@@ -126,7 +126,6 @@
         </main>
       
       
-    <script src="{{ url_for('static', path='jquery.js') }}"></script>
     <script>
         const tabBtn =
         document.querySelectorAll(".tab");
@@ -140,14 +139,12 @@
             tab[panelIndex].style.display = "block";
         }
         tabs(0);
-    </script>
-    <script>
+
         $(".tab").click(function() {
             $(this).find("a").addClass("active").end().siblings().find("a").removeClass("active");
         })
     </script>
-      {% endblock content %}
     </div>
   </div>
-
+{% endblock content %}
 {% endblock body %}

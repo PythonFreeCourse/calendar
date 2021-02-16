@@ -84,7 +84,7 @@
 }
 
 .settings-main .form-select {
-  width: 300px;
+  width: 250px;
 }
 
 #settings_content h2, .settings_content p {
@@ -101,15 +101,16 @@
 }
 
 /* For Mobile */
-@media screen and (max-width: 540px) { 
+@media screen and (max-width: 700px) { 
   .settings {
     display: flex;
     flex-direction: column;
-    font-size: 3vw;
+    font-size: 3.5vw;
   }
   
   #settings-left {
     padding: 3rem 0em 0em 4rem;
+    width: 92vw;
   }
   
   .settings-headline {
