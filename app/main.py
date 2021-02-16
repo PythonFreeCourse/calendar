@@ -1,13 +1,20 @@
-from fastapi import Depends, FastAPI, Request
-from fastapi.staticfiles import StaticFiles
-from sqlalchemy.orm import Session
-
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
+
 from app.internal.languages import set_ui_language
+from app.internal.security.ouath2 import auth_exception_handler
+from app.utils.extending_openapi import custom_openapi
 from app.routers.salary import routes as salary
+from fastapi import Depends, FastAPI, Request
+from fastapi.openapi.docs import (
+    get_swagger_ui_html,
+    get_swagger_ui_oauth2_redirect_html,
+)
+from fastapi.staticfiles import StaticFiles
+from starlette.status import HTTP_401_UNAUTHORIZED
+from sqlalchemy.orm import Session
 
 
 def create_tables(engine, psql_environment):
@@ -23,21 +30,43 @@ def create_tables(engine, psql_environment):
 
 create_tables(engine, config.PSQL_ENVIRONMENT)
 
-app = FastAPI()
+app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.logger = logger
 
+app.add_exception_handler(HTTP_401_UNAUTHORIZED, auth_exception_handler)
+
+json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
 from app.routers import (  # noqa: E402
     agenda, calendar, categories, celebrity, currency, dayview,
-    email, event, invitation, profile, search, telegram, whatsapp,
+    email, event, export, four_o_four, google_connect,
+    invitation, login, logout, profile,
+    register, search, telegram, user, weekview, whatsapp,
     menstrual_predictor,
 )
 
 json_data_loader.load_to_db(next(get_db()))
+
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title=app.title + " - Swagger UI",
+        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        swagger_js_url="/static/swagger/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger/swagger-ui.css",
+    )
+
+
+@app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+async def swagger_ui_redirect():
+    return get_swagger_ui_oauth2_redirect_html()
+
 
 routers_to_include = [
     agenda.router,
@@ -46,13 +75,21 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
+    weekview.router,
     email.router,
     event.router,
+    export.router,
+    four_o_four.router,
+    google_connect.router,
     invitation.router,
+    login.router,
+    logout.router,
     profile.router,
+    register.router,
     salary.router,
     search.router,
     telegram.router,
+    user.router,
     whatsapp.router,
     menstrual_predictor.router,
 ]
@@ -63,11 +100,14 @@ for router in routers_to_include:
 
 # TODO: I add the quote day to the home page
 # until the relevant calendar view will be developed.
-@app.get("/")
+@app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.quote_per_day(db)
-    return templates.TemplateResponse("home.html", {
+    return templates.TemplateResponse("index.html", {
         "request": request,
         "quote": quote,
     })
+
+
+custom_openapi(app)
