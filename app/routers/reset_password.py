@@ -11,8 +11,8 @@ from app.dependencies import get_db, templates
 from app.internal.security.ouath2 import (
     authenticate_user, check_jwt_token,
     create_jwt_token, update_password)
-from app.internal.security.reset_password import (
-    BackgroundTasks, send_mail)
+from app.internal.email import (
+    BackgroundTasks, send_reset_password_mail)
 from app.internal.security.schema import (
     ForgotPassword, ResetPassword)
 
@@ -55,7 +55,7 @@ async def forgot_password(
         user = await authenticate_user(db, user, email=True)
         if user:
             user.token = create_jwt_token(user, jwt_min_exp=15)
-            await send_mail(db, user, background_tasks)
+            await send_reset_password_mail(db, user, background_tasks)
             return templates.TemplateResponse("forgot_password.html", {
                 "request": request,
                 "message": "Email for reseting password was sent"})

@@ -96,7 +96,7 @@ p {
   border: none;
   background-color: whitesmoke;
 }
-  
+
 .error-message {
     line-height: 0;
     color: red;
@@ -114,4 +114,15 @@ p {
 }
 .subtitle {
     font-size: 20px;
+}
+.input-upload-file {
+    margin-top: 1em;
+}
+
+.upload-file {
+    margin: auto 1em auto 0em;
+}
+
+h2.modal-title {
+  font-size: 1.25rem;
 }

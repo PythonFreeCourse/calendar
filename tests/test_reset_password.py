@@ -3,7 +3,7 @@ import pytest
 from starlette.status import HTTP_302_FOUND
 
 from app.internal.security.ouath2 import create_jwt_token
-from app.internal.security.reset_password import mail
+from app.internal.email import mail
 from app.internal.security.schema import ForgotPassword
 
 
