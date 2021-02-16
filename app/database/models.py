@@ -14,6 +14,7 @@ from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
+from app.internal.privacy import PrivacyKinds
 import app.routers.salary.config as SalaryConfig
 
 Base = declarative_base()
@@ -73,7 +74,7 @@ class Event(Base):
     vc_link = Column(String)
     color = Column(String, nullable=True)
     invitees = Column(String)
-    privacy = Column(String, default='Public', nullable=False)
+    privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
