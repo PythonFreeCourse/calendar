@@ -35,7 +35,7 @@ class CategoryModel(BaseModel):
 
 
 # TODO(issue#29): get current user_id from session
-@router.get("/")
+@router.get("/", include_in_schema=False)
 def get_categories(request: Request,
                    db_session: Session = Depends(get_db)) -> List[Category]:
     if validate_request_params(request.query_params):
@@ -44,6 +44,19 @@ def get_categories(request: Request,
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail=f"Request {request.query_params} contains "
                                    f"unallowed params.")
+
+
+@router.get("/list")
+def get_all_categories(
+        db_session: Session = Depends(get_db)) -> List[Category]:
+    return db_session.query(Category).all()
+
+
+@router.get("/")
+def get_categories_by_user_id(
+        user_id: int, db_session: Session = Depends(get_db)
+) -> List[Category]:
+    return get_user_categories(db_session, user_id)
 
 
 # TODO(issue#29): get current user_id from session

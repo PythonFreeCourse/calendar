@@ -25,9 +25,12 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_calendar_extends(client):
-        response = client.get(f"/calendar/month/{DAY.set_id()}")
+        days = 42
+        response = client.get(
+            f"/calendar/month/add/{DAY.set_id()}?days={days}"
+        )
         assert response.ok
-        assert b"08" in response.content
+        assert b"08-May" in response.content
 
     @staticmethod
     def test_create_day():
@@ -57,8 +60,8 @@ class TestCalendarGrid:
     @staticmethod
     def test_get_first_day_month_block(Calendar):
         assert (
-                cg.get_first_day_month_block(DATE)
-                == next(Calendar.itermonthdates(DATE.year, DATE.month))
+            cg.get_first_day_month_block(DATE)
+            == next(Calendar.itermonthdates(DATE.year, DATE.month))
         )
 
     @staticmethod

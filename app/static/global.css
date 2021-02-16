@@ -1,9 +1,38 @@
 :root {
-    --primary:#30465D;
-    --primary-variant:#FFDE4D;
-    --secondary:#EF5454;
-    --borders:#E7E7E7;
-    --borders-variant:#F7F7F7;
+  /* Texts */
+  --text_xs: 0.75rem;  /* 12px */
+  --text_s: 1rem;      /* 16px */
+  --text_m: 1.2rem;   /* 19px */
+  --text_l: 1.5rem;   /* 24px */
+  --text_xl: 1.75rem;  /* 28px */
+  --text_xxl: 2rem;    /* 32px */
+
+  /* Spaces */
+  --space_xs: 0.5rem; /* 6px */
+  --space_s: 0.75rem; /* 12px */
+  --space_m: 1.25rem; /* 20px */
+  --space_l: 2rem;    /* 32px */
+  --space_xl: 4rem;   /* 64px */
+
+  /* colors */
+  --primary: #24396a;
+  --primary-variant: #041E51;
+  --secondary: #fbc44a;
+  --secondary-variant: #ffa201;
+  --background: #F7F7F7; 
+  --surface: #e6e6e6; /* borders */
+  --surface-variant: #d2d1d1; /*up_surface, borders-variant*/
+  --negative: #f24726;
+  --negative-variant: #e83305;
+  --positive: #4ca486;
+  --positive-variant: #008c73;
+
+  --on-primary: #ffffff;
+  --on-secondary: #000000;
+  --on-background: #000000;
+  --on-surface: #000000;
+  --on-negative: #ffffff;
+  --on-positive: #ffffff;
 }
 
 * {
@@ -25,4 +54,9 @@ body {
   text-rendering: optimizeLegibility;
   scroll-behavior: smooth;
   width: 100%;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }

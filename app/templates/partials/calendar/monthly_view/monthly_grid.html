@@ -12,4 +12,22 @@
     {% include 'partials/calendar/monthly_view/add_week.html' %}
   </div>
 </div>
-<div id="day-view">{% set view = 'day' %}{% include 'calendar_day_view.html' %}</div>
+<div>
+    <div class="sticky">
+        <div id="months-navigation">
+            <a href="#{{weeks_block[0].days[0].set_id()}}" class="button background-yellow text-darkblue">
+                TODAY
+            </a>
+            <a id="month-2"></a>
+            <ion-icon name="caret-up-outline"></ion-icon>
+            <a id="month-1"></a>
+            <ion-icon name="caret-up-outline"></ion-icon>
+            <a id="month0"></a>
+            <ion-icon name="caret-down-outline"></ion-icon>
+            <a id="month1"></a>
+            <ion-icon name="caret-down-outline"></ion-icon>
+            <a id="month2"></a>
+        </div>
+    </div>
+</div>
+<div id="day-view"></div>
