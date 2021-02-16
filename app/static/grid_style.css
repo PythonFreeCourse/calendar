@@ -12,6 +12,9 @@
     --backgroundcol:#000000;
     --textcolor:#EEEEEE;
     --start-of-month:#8c28bf;
+    --secondary:#EF5454;
+    --borders:#E7E7E7;
+    --borders-variant:#F7F7F7;
 }
 
 * {
