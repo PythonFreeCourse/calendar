@@ -1,0 +1,43 @@
+.moving-words {
+    margin-top: 4rem;
+    text-transform: uppercase;
+    font-size: 6rem;
+    letter-spacing: 0.1rem;
+    overflow: hidden;
+    background: linear-gradient(90deg, #000, #fff, #000);
+    background-repeat: no-repeat;
+    background-size: 80%;
+    animation: animate 4s linear infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0);
+}
+
+@keyframes animate {
+    0% {
+        background-position: -500%;
+    }
+    100% {
+        background-position: 500%;
+    }
+}
+
+
+/* credit for the animation goes to FrankieDoodie */
+
+.infographic {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.seprator {
+    margin-top: 8rem;
+    margin-bottom: 8rem;
+}
+
+.about-text {
+    font-size: 1.2rem;
+    text-align: justify;
+}
