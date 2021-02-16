@@ -21,6 +21,7 @@ class Day:
         date    (datetime): A single datetime date.
         sday         (str): The day name.
         dailyevents (List): List of tuples represent daily event information.
+                            EX:  [("Front Info", "Back Info")]
         events      (List): List of tuples represent time event name.
                             EX: [("09AP", "Meeting with yam")]
         css         (Dict): All css classes represent day.
@@ -57,8 +58,8 @@ class Day:
         return self.date.strftime("%d %B %y").upper()
 
     def set_id(self) -> str:
-        """Returns day date inf the format of 00-mon-0000"""
-        return self.date.strftime("%d-%b-%Y")
+        """Returns day date inf the format of 00-month-0000"""
+        return self.date.strftime("%d-%B-%Y")
 
     @classmethod
     def get_user_local_time(cls) -> datetime:
@@ -67,7 +68,7 @@ class Day:
 
     @classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:
-        return datetime.strptime(date_string, '%d-%b-%Y')
+        return datetime.strptime(date_string, '%d-%B-%Y')
 
     @classmethod
     def is_weekend(cls, date: date) -> bool:

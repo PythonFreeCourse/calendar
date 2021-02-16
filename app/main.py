@@ -45,9 +45,9 @@ from app.routers import (  # noqa: E402
 
     agenda, calendar, categories, celebrity, currency,
     dayview, email, event, export, four_o_four,
-    invitation, login, logout, parasha, profile,
-    register, search, user, telegram, weekview,
-    whatsapp, using_shopping_list
+    google_connect, invitation, login, logout, parasha,
+    profile, register, search, telegram, user,
+    using_shopping_list, weekview, whatsapp,
 )
 
 
@@ -79,6 +79,7 @@ routers_to_include = [
     event.router,
     export.router,
     four_o_four.router,
+    google_connect.router,
     invitation.router,
     login.router,
     logout.router,
