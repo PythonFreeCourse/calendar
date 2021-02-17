@@ -53,8 +53,9 @@
                 
                 {% for event, attr in events %}
                     <div class="d-flex flex-row justify-content-around align-items-end action-continer" style="grid-row: {{attr.grid_position}};">
-                        <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}" width="15em" height="15em"></a>
-                        <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}" width="15em" height="15em"></a>
+                        <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}"></a>
+                        <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}"></a>
+                        <a href="/event/{{event.id}}" title="See full event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/view.svg')}}"></a>
                     </div>
                 {% endfor %}
             </div>
@@ -67,6 +68,11 @@
                 {% endif %}
             </div>
         </div>
+        <div>
+            <button class="event-btn" title="Add Event" class="add-event-icon"><img class="plus_image" src="{{ url_for('static', path='/images/icons/plus.svg')}}"></a>
+        </div>
+        <div id="here">Have a nice day</div>
        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+       <script type="text/javascript" src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
     </body>
 </html>
