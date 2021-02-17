@@ -22,17 +22,17 @@
   </div>
   <div class="schedule">
     <div class="container times bg-primeary position">
-      {% if view == 'day'%}
-      {% for hour in range(25)%}
-      <div class='hour-block'>
-        <div class="row bg-transparent hour-mark">
-          {% set hour = hour|string() %}
-          {{hour.zfill(2)}}:00
-        </div>
-        <div class="hour-bar {{i}} row text-white border-bottom"></div>
-      </div>
-      {% endfor %}
-      {% endif %}
+        {% for hour in range(25)%}
+          <div class='hour-block'>
+              <div class="row bg-transparent hour-mark">
+                  {% if view == 'day'%}
+                      {% set hour = hour|string() %}
+                      {{hour.zfill(2)}}:00
+                  {% endif %}
+              </div>
+              <div class="hour-bar row text-white border-bottom"></div>
+          </div>
+        {% endfor %}
     </div>
     <div class="event-grid">
       {% for event, attr in events %}
@@ -57,11 +57,13 @@
       {% endfor %}
     </div>
     </div>
+  {% if view == 'day'%}
   <button title="Add Event" class="event-btn add-event-icon">
     <ion-icon name="add"></ion-icon>
   </button>
+  {% endif %}
 </div>
-<div id="event_block"></div>
+{% if view == 'day'%}<div id="event_block"></div>{% endif %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
         crossorigin="anonymous"></script>
