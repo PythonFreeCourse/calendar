@@ -37,7 +37,7 @@ class DivAttributes:
                 minute_deviation = minutes - (i - 1) * self.MAX_MINUTES
                 return {'min_position': i, 'min_deviation': minute_deviation}
             min_minutes = max_minutes
-            max_minutes += MAX_MINUTES
+            max_minutes += self.MAX_MINUTES
 
     def _get_position(self, time: datetime) -> int:
         grid_hour_position = time.hour * self.FULL_GRID_BAR
