@@ -9,10 +9,6 @@ from app.internal.utils import save
 from app.database.models import UserEvent, Event
 from app.routers.event import create_event
 
-# -----------------------------------------------------
-# Fixtures
-# -----------------------------------------------------
-
 
 @pytest.fixture
 def user1(session):
@@ -68,31 +64,6 @@ def event1(session, user2):
     return event
 
 
-@pytest.fixture
-def user3(session, event1):
-    # a user made for testing who participates an event.
-    user = create_user(
-        session=session,
-        username='my_new_test_username2',
-        password='new_test_password2e',
-        email='new_t23est_love.email@gmail.com',
-        language_id='english'
-    )
-
-    association = UserEvent(
-        user_id=user.id,
-        event_id=event1.id
-    )
-    save(association, session)
-
-    return user
-
-
-# -----------------------------------------------------
-# Tests
-# -----------------------------------------------------
-
-
 def test_disabling_no_event_user(session, user1):
     # users without any future event can disable themselves
     disable(session, user1.id)
@@ -109,20 +80,30 @@ def test_disabling_no_event_user(session, user1):
     assert not user1.disabled
 
 
-def test_disabling_user_participating_event(session, user3):
+def test_disabling_user_participating_event(
+        session, user1, event1):
     """making sure only users who only participate in events
     can disable and enable themselves."""
-    disable(session, user3.id)
-    assert user3.disabled
+    association = UserEvent(
+        user_id=user1.id,
+        event_id=event1.id
+    )
+    save(session, association)
+    disable(session, user1.id)
+    assert user1.disabled
     future_events = list(session.query(Event.id)
                          .join(UserEvent)
                          .filter(
-                         UserEvent.user_id == user3.id,
-                         Event.start > datetime
-                         .now()))
+                         UserEvent.user_id == user1.id,
+                         Event.start > datetime.now(),
+                         Event.owner_id == user1.id))
     assert not future_events
-    enable(session, user3.id)
-    assert not user3.disabled
+    enable(session, user1.id)
+    assert not user1.disabled
+    deleted_user_event_connection = session.query(UserEvent).filter(
+        UserEvent.user_id == user1.id,
+        UserEvent.event_id == event1.id).first()
+    session.delete(deleted_user_event_connection)
 
 
 def test_disabling_event_owning_user(session, user2):
