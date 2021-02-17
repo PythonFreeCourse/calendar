@@ -77,7 +77,7 @@ def insert_to_db_if_needed(data: JSON, db: Session = Depends(get_db)):
     if latest_saved is not None:
         # on more recent data arrival, we update the database
         if latest_saved.date_ < latest_date:
-            save_corona_stats(data)
+            save_corona_stats(data, db)
             return data
         else:
             return serialize_stats(latest_saved)
