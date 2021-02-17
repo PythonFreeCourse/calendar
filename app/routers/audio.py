@@ -341,18 +341,17 @@ def handle_audio_settings(
         user_choices (Dict[str, Union[str, int]]):
         including music_on, music_vol, sfx_on, sfx_vol
     """
-    user_id = user.id
     audio_settings = session.query(UserSettings).filter_by(
-        user_id=user_id).first()
+        user_id=user.id).first()
     if not audio_settings:
-        audio_settings = UserSettings(user_id=user_id, **user_choices)
+        audio_settings = UserSettings(user_id=user.id, **user_choices)
         session.add(audio_settings)
 
     else:
         session.query(UserSettings).filter_by(
             user_id=audio_settings.user_id).update(user_choices)
 
-    session.merge(audio_settings)
+    session.commit()
 
 
 def handle_user_audio_tracks(

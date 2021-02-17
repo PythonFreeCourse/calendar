@@ -203,6 +203,7 @@ class UserSettings(Base):
     sfx_vol = Column(Integer, default=None)
     primary_cursor = Column(String, default="default", nullable=False)
     secondary_cursor = Column(String, default="default", nullable=False)
+    video_game_releases = Column(Boolean, default=False)
 
 
 class AudioTracks(Base):
