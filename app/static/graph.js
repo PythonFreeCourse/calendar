@@ -1,6 +1,6 @@
 function busiestDayOfTheWeekGraph(events) {
     events = JSON.parse(events);
-
+    
     const data = Object.values(events);
     const labels = Object.keys(events);
     const ctx = document.getElementById("myChart");
