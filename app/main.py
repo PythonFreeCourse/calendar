@@ -51,7 +51,6 @@ json_data_loader.load_to_db(next(get_db()))
 load_jokes.load_daily_jokes(next(get_db()))
 
 
-
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
     return get_swagger_ui_html(
