@@ -12,7 +12,9 @@ def create_hebrew_dates_object(
     from given fields dictionary.
     It is used for adding the data from the json into the db"""
     return HebrewView(
-        date=datetime.strptime(hebrew_dates_fields['date_gregorian'], '%Y-%m-%d').date(),
+        date=datetime.strptime(
+            hebrew_dates_fields['date_gregorian'],
+            '%Y-%m-%d').date(),
         hebrew_date=hebrew_dates_fields['date_hebrew']
     )
 

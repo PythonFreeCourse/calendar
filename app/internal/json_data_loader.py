@@ -52,8 +52,8 @@ def load_to_db(session) -> None:
         session, 'app/resources/quotes.json',
         Quote, daily_quotes.create_quote_object)
     """The quotes JSON file content is copied from the free API:
-    'https://type.fit/api/quotes'. I saved the content so the API won't be
-    called every time the app is initialized."""
+    'https://type.fit/api/quotes'. I saved the content so the API
+     won't be called every time the app is initialized."""
     load_data(
         session, 'app/resources/hebrew_view.json',
         HebrewView, hebrew_date_view.create_hebrew_dates_object)
