@@ -334,7 +334,8 @@ class Zodiac(Base):
 
 
 class Parasha(Base):
-    """Each year the Json file will need to be re-updated
+    """
+    Each year the Json file will need to be re-updated
     according to this API in this way:
 
     def relevent_details(parasha):
@@ -353,7 +354,7 @@ class Parasha(Base):
         c=on&geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on')
         items = request.json()['items']
         [relevent_details(p) for parasha in items
-        if 'Parashat' in parasha['title]]?
+        if 'Parashat' in parasha['title]]
     """
     __tablename__ = "parashot"
 

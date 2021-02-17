@@ -1,13 +1,8 @@
 from datetime import datetime
 from typing import Dict, Optional, List
 
-from fastapi import APIRouter
-from sqlalchemy.orm import Session
-
 from app.database.models import Parasha
-
-
-router = APIRouter()
+from sqlalchemy.orm import Session
 
 
 def create_parasha_object(parashot_fields: Dict[str, Optional[str]])\
