@@ -35,6 +35,8 @@ virtualenv env
 pip install -r requirements.txt
 # Copy app\config.py.example to app\config.py.
 # Edit the variables' values.
+# Rendering JWT_KEY:
+python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
 uvicorn app.main:app --reload
 ```
 
@@ -45,11 +47,17 @@ source venv/bin/activate
 pip install -r requirements.txt
 cp app/config.py.example app/config.py
 # Edit the variables' values.
-uvicorn app.main:app --reload
-```
-### Running tests
+# Rendering JWT_KEY:
+python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
+
+### Running tox
 ```shell
-python -m pytest --cov-report term-missing --cov=app tests
+# Standard tests: 'coverage' and 'flake8'
+tox
+# Only flake8 tests
+tox -e flake8
+# Coverage with html reports
+tox -e rep
 ```
 
 ## Contributing

@@ -126,3 +126,20 @@ def test_upload_user_photo(profile_test_client):
     new_avatar_path = os.path.join(MEDIA_PATH, 'fake_user.png')
     assert Image.open(new_avatar_path).size == config.AVATAR_SIZE
     os.remove(new_avatar_path)
+
+
+def test_update_calendar_privacy(profile_test_client):
+    new_privacy = {
+        'privacy': "Public"
+    }
+    # Get profile page and initialize database
+    profile = profile_test_client.get('/profile')
+
+    # Post new data
+    profile = profile_test_client.post(
+        '/profile/privacy', data=new_privacy)
+    assert profile.status_code == status.HTTP_302_FOUND
+
+    # Get updated data
+    data = profile_test_client.get('/profile').content
+    assert b"Public" in data
