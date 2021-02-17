@@ -32,7 +32,7 @@ class User(Base):
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
-    target_weight = Column(Float, default=None)
+    target_weight = Column(Float, nullable=True)
 
     owned_events = relationship(
         "Event", cascade="all, delete", back_populates="owner",

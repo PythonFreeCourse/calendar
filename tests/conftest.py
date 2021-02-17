@@ -19,7 +19,6 @@ pytest_plugins = [
     'tests.category_fixture',
     'smtpdfix',
     'tests.quotes_fixture',
-    'tests.jokes_fixture',
     'tests.zodiac_fixture'
 ]
 

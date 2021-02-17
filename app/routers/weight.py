@@ -1,3 +1,4 @@
+from typing import Union
 
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
@@ -15,8 +16,8 @@ router = APIRouter(tags=["weight"],)
 async def weight_form(
         request: Request,
         session: Session = Depends(get_db),
-        target: float = None,
-        current_weight: float = None,
+        target: Union[float, None] = None,
+        current_weight: Union[float, None] = None,
         ):
     user = session.query(User).filter_by(id=1).first()
     target = user.target_weight

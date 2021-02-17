@@ -1,13 +1,13 @@
 
 .weight {
     display: block;
-    margin-top: -20px;
-    margin-left: 20px;
+    margin-top: 1em;
+    margin-left: 1em;
   }
 
 
 .weight_message {
-    display: block;
-    margin-top: -20px;
-    margin-left: 20px;
+  display: block;
+  margin-top: 1em;
+  margin-left: 1em;
   }
