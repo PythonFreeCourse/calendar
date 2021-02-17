@@ -136,7 +136,7 @@ def get_events_and_attributes(
     for event in events:
         if is_specific_time_event_in_day(
             event=event, day=day, day_end=day_end
-            ):
+        ):
             yield (event, DivAttributes(event, day))
 
 
