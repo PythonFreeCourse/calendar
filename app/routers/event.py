@@ -298,6 +298,7 @@ def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error")
 
+
 def update_event(event_id: int, event: Dict, db: Session) -> Optional[Event]:
     # TODO Check if the user is the owner of the event.
     old_event = by_id(db, event_id)

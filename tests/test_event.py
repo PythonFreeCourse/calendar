@@ -331,7 +331,7 @@ def test_update_event_with_category(today_event, category, session):
 
 
 def test_update_db_close(event):
-    data = {'title': 'Problem connecting to db in func update_event',}
+    data = {'title': 'Problem connecting to db in func update_event', }
     with pytest.raises(HTTPException):
         assert (
             evt.update_event(event_id=event.id, event=data,
@@ -350,7 +350,7 @@ def test_update_event_does_not_exist(event, session):
 
 
 def test_db_close_update(session, event):
-    data = {'title': 'Problem connecting to db in func _update_event',}
+    data = {'title': 'Problem connecting to db in func _update_event', }
     with pytest.raises(HTTPException):
         assert (
             evt._update_event(
