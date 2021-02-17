@@ -62,3 +62,4 @@ def load_to_db(session) -> None:
     'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
     mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
     &geonameid=293397&m=50&s=on&d=on&D=on'."""
+    

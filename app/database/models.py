@@ -343,7 +343,7 @@ class HebrewView(Base):
         return hebrew_dates_dict
 
 
-        def get_all_parashot():
+        def get_all_hebrew_dates():
             request = requests.get(
             'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&
             min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&

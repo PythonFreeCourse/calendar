@@ -17,7 +17,7 @@
         {% endfor %}
         {% for hebrew in hebrewView %}
             {% if hebrew.date.date() == day.date %}
-            <div class="parashot">
+            <div class="hebrew-dates">
                 <p>{{hebrew.hebrew_date}}</p>
             </div>
             {% endif %}

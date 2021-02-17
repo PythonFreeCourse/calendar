@@ -56,8 +56,8 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_date_before_n_days():
-        assert calendar_grid.get_date_before_n_days\
-                   (DATE, N_DAYS) == N_DAYS_BEFORE
+        assert calendar_grid.get_date_before_n_days(
+            DATE, N_DAYS) == N_DAYS_BEFORE
 
     @staticmethod
     def test_get_first_day_month_block(Calendar):
