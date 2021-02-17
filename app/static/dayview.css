@@ -1,104 +1,132 @@
 
 :root {
-    --primary:#30465D;
-    --primary-variant:#FFDE4D;
-    --secondary:#EF5454;
-    --borders:#E7E7E7;
-    --borders-variant:#F7F7F7;
+  --primary: #30465D;
+  --primary-variant: #FFDE4D;
+  --secondary: #EF5454;
+  --borders: #E7E7E7;
+  --borders-variant: #F7F7F7;
 }
 
 html {
-    font-family: 'Assistant', sans-serif;
-    text-align: center;
+  font-family: 'Assistant', sans-serif;
+  text-align: center;
 }
 
 #toptab {
-    background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 .schedule {
-    display: grid;
-    grid-template-rows: 1;
+  display: grid;
+  grid-template-rows: 1;
 }
 
 .times {
-    margin-top: 0.65em;
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    z-index: 40;
+  margin-top: 0.65em;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  z-index: 40;
 }
 
 .baselines {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    z-index: 38;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  z-index: 38;
 }
 
 .eventgrid {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-rows: repeat(100, 0.375rem);
-    z-index: 39;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-rows: repeat(100, 0.375rem);
+  z-index: 39;
 }
 
 .hourbar {
-    margin-top: -1px;
+  margin-top: -1px;
 }
 
 .event {
-    font-size: 1rem;
+    font-size: 1.2rem;
+    padding: 0;
 }
 
 .total-time {
-    font-size: 0.4rem;
-    line-height: 1rem;
+    font-size: 0.8rem;
 }
 
 .title_size_small {
-    font-size: 0.6em;
+    font-size: 0.8em;
 }
 
 .title_size_Xsmall {
-    font-size: 0.4em;
+  font-size: 0.4em;
 }
 
 .title_size_tiny {
-    font-size: 0.1em;
-    line-height: 4em;
+
+    font-size: 0.2em;
+    line-height: 1em;
 }
 
 .actiongrid {
-    grid-row: 1 / -1;
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-rows: repeat(100, 0.375rem);
-    z-index: 42;
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-rows: repeat(100, 0.375rem);
+  z-index: 42;
 }
 
 .action-icon {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .action-continer:hover {
-    border-top: 1px dashed var(--borders);
-    border-bottom: 1px dashed var(--borders);
-    transition: 0.3;
+  border-top: 1px dashed var(--borders);
+  border-bottom: 1px dashed var(--borders);
+  transition: 0.3;
 }
 
 .action-continer:hover .action-icon {
-    visibility: visible;
+  visibility: visible;
+}
+
+.week-view-title {
+    font-size: 2em;
 }
 
 .zodiac-sign {
-    position: fixed;
-    right: 1.2em;
-    top: 1.6em;
-    padding-right: 0.4em;
-    padding-left: 0.4em;
-    padding-bottom: 0.2em;
-    border: solid 0.1px var(--primary);
-    background-color: var(--borders-variant);
-    border-radius:50px;
-    box-shadow: 1px 1px 2px #999;
+  position: fixed;
+  right: 1.2em;
+  top: 1.6em;
+  padding-right: 0.4em;
+  padding-left: 0.4em;
+  padding-bottom: 0.2em;
+  border: solid 0.1px var(--primary);
+  background-color: var(--borders-variant);
+  border-radius: 50px;
+  box-shadow: 1px 1px 2px #999;
+}
+
+.event-btn {
+    font-size: 0.625rem;
+    text-align: center;
+    color: #fff;
+    background-color:#30465D;
+    border-radius: 0.938rem;
+    border: 0.063rem solid #30465D;
+}
+
+.add-event-icon {
+    display: inline-block;
+}
+
+.plus_image {
+    width: 3rem;
+    height: 3rem;
+}
+
+.pb-1 {
+    width: 1.2rem;
+    height: 1.2rem;
 }
