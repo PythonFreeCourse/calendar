@@ -67,7 +67,7 @@ def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.create_all(bind=test_engine)
     main.app.dependency_overrides[profile.get_db] = get_test_db
     main.app.dependency_overrides[
-        audio.get_placeholder_user] = get_test_placeholder_user
+        profile.get_placeholder_user] = get_test_placeholder_user
 
     with TestClient(main.app) as client:
         yield client
