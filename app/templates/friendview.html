@@ -9,8 +9,8 @@
 </div>
 <form method="GET" action="/friendview/">
     <div class="mb-3 friend-view">
-        <label for="my_friend">My friend</label>
-        <input class="friend-view" type="text" id="my_friend" name="my_friend" value={{ my_friend }}><br>
+        <label for="my-friend">My friend</label>
+        <input class="friend-view" type="text" id="my-friend" name="my-friend" value={{ my_friend }}><br>
         <input class="friend-view" type="submit" value="Get mutual events">
     </div>
 </form>
@@ -18,7 +18,7 @@
     {% if events | length == 0 %}
       <h2>No mutual events found...</h2>
     {% else %}
-      <h2>Mutual events with {{my_friend}} </h2>
+      <h2>Mutual events with {{ my_friend }} </h2>
         {% for event in events %}
             <div class="event-line">
                 <div>{{ event.start.strftime("%d/%m/%Y %H:%M") }} - {{ event.end.strftime("%d/%m/%Y %H:%M") }} <a href="/event/{{ event.id }}">{{ event.title }} </a><br>Invitees:  {{event.invitees}}</div>
