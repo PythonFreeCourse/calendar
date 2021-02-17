@@ -5,17 +5,18 @@ repos:
     hooks:
     - id: flake8
   # yapf to fix many style mistakes
--   repo: https://github.com/ambv/black
-    name: black
-    description: "Black: The uncompromising Python code formatter"
-    entry: black
-    language: python
-    language_version: python3
-    require_serial: true
-    types_or: [python, pyi]
+  - repo: https://github.com/ambv/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        entry: black
+        language: python
+        language_version: python3
+        require_serial: true
+        types_or: [python, pyi]
   # More built in style checks and fixes
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v3.4.0
     hooks:
     - id: trailing-whitespace
     - id: check-docstring-first
