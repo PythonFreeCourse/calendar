@@ -69,7 +69,6 @@ async def get_jwt_token(
     try:
         jwt_payload = jwt.decode(
             token, JWT_KEY, algorithms=JWT_ALGORITHM)
-        return jwt_payload
     except InvalidSignatureError:
         raise HTTPException(
                 status_code=HTTP_401_UNAUTHORIZED,
@@ -85,6 +84,7 @@ async def get_jwt_token(
             status_code=HTTP_401_UNAUTHORIZED,
             headers=path,
             detail="Your token is incorrect. Please log in again")
+    return jwt_payload
 
 
 async def get_authorization_cookie(request: Request) -> str:
