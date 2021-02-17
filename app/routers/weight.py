@@ -13,12 +13,14 @@ router = APIRouter(tags=["weight"],)
 
 
 @router.get("/weight")
-async def weight_form(
+async def get_weight(
         request: Request,
         session: Session = Depends(get_db),
         target: Union[float, None] = None,
         current_weight: Union[float, None] = None,
         ):
+
+    # TODO Waiting for user registration
     user = session.query(User).filter_by(id=1).first()
     target = user.target_weight
     if current_weight:
@@ -32,7 +34,7 @@ async def weight_form(
 
 
 @router.post("/weight")
-async def weight(
+async def get_weight_diff(
         request: Request,
         session: Session = Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
