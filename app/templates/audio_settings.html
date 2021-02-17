@@ -10,10 +10,10 @@
             <label for="Music_Off" class="form-check-label">Off</label>
         </div>
         <br>
-        <label for="music">Select music tracks:</label> <br> {% for song_name in song_names %}
+        <label for="music">Select music tracks:</label> <br> {% for song in songs %}
         <div class="form-outline">
-            <input type="checkbox" class="music form-check-input" name="music_choices" value="{{song_name}}.mp3" disabled>
-            <label for="music" class="form-check-label">{{song_name}}</label><br> {% endfor %}
+            <input type="checkbox" class="music form-check-input" name="music_choices" value="{{song.name}}.mp3" disabled>
+            <label for="music" class="form-check-label">{{song.name}}</label><br> {% endfor %}
         </div>
         <br>
         <label>Volume</label>
@@ -29,8 +29,8 @@
         <br>
         <label for="Sound Effect">Select sound effect:</label> <br>
         <select name="sfx_choice" style="width: 80px; height: 40px; margin-top: 5px;" id="sfx" disabled class="form-control"> 
-        {% for sfx_name in sfx_names %}
-        <option value="{{sfx_name}}.wav">{{sfx_name}}</option>
+        {% for sfx in sound_effects %}
+        <option value="{{sfx.name}}.wav">{{ sfx.name }}</option>
         {% endfor %}
         </select>
         <br>

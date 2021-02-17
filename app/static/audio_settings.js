@@ -53,16 +53,10 @@ function perform_func_on_click(element_id, func) {
  * @param {string} element_id - the id attribute of the html element. One of: Music On/off, Sound Effects On/Off.
  */
 function set_checked(element_id) {
-  document.getElementById(element_id).setAttribute("checked", "checked");
-  if (element_id == "Music_Off") {
-    set_disabled_or_enabled("music", true, true);
-  } else if (element_id == "Music_On") {
-    set_disabled_or_enabled("music", true, false);
-  } else if (element_id == "Sound_Effects_Off") {
-    set_disabled_or_enabled("sfx", false, true);
-  } else if (element_id == "Sound_Effects_On") {
-    set_disabled_or_enabled("sfx", false, false);
-  }
+  is_music = element_id.includes('Music')
+  is_off = element_id.includes('Off')
+  to_toggle = is_music ? "music" : "sfx"
+  set_disabled_or_enabled(to_toggle, is_music, is_off)
 }
 
 /**
@@ -125,11 +119,11 @@ function prepare_audio() {
     music.play();
   }
 
-  sfx_on = audio_settings["sfxs_on"];
+  sfx_on = audio_settings["sfx_on"];
   if (sfx.muted && (sfx_on || sfx_on == null)) {
     sfx_choice = audio_settings["sfx_choice"];
     sfx.src = "/static/tracks/" + sfx_choice;
-    sfx.volume = audio_settings["sfxs_vol"];
+    sfx.volume = audio_settings["sfx_vol"];
     sfx.muted = false;
   }
 
