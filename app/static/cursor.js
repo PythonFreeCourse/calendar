@@ -1,4 +1,4 @@
-CURSORS_PATH = "../media/cursors/";
+CURSORS_PATH = "../../media/cursors/";
 window.addEventListener("load", get_cursor_choices);
 
 /**
