@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 import pytest
 
 from app import main
-from app.main import app
 from app.database.models import Base, User
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine

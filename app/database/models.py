@@ -205,7 +205,6 @@ class UserSettings(Base):
     secondary_cursor = Column(String, default="default", nullable=False)
 
 
-
 class AudioTracks(Base):
     __tablename__ = "audio_tracks"
 
