@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 from app.dependencies import get_db
-from app.database.models import CursorSettings, User
+from app.database.models import UserSettings, User
 from app.dependencies import CURSORS_PATH, templates
 from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm.session import Session
@@ -118,7 +118,7 @@ def get_cursor_settings(
     """
     primary_cursor, secondary_cursor = None, None
     cursor_settings = session.query(
-        CursorSettings).filter_by(user_id=user_id).first()
+        UserSettings).filter_by(user_id=user_id).first()
     if cursor_settings:
         primary_cursor = cursor_settings.primary_cursor
         secondary_cursor = cursor_settings.secondary_cursor
@@ -135,14 +135,14 @@ def save_cursor_settings(
         user (User): current user.
         cursor_choices (List[str]): primary and secondary cursors.
     """
-    cursor_settings = session.query(CursorSettings).filter_by(
+    cursor_settings = session.query(UserSettings).filter_by(
         user_id=user.id).first()
     if cursor_settings:
-        session.query(CursorSettings).filter_by(
+        session.query(UserSettings).filter_by(
             user_id=cursor_settings.user_id).update(cursor_choices)
         session.commit()
     else:
-        cursor_settings = CursorSettings(user_id=user.id, **cursor_choices)
+        cursor_settings = UserSettings(user_id=user.id, **cursor_choices)
         session.add(cursor_settings)
         session.commit()
 
