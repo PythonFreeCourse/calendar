@@ -32,7 +32,7 @@ class TestCategories:
         assert TestCategories.CREATE_CATEGORY in response.content
 
     @staticmethod
-    def test_create_not_unique_category_failed(categories_test_client, sender, 
+    def test_create_not_unique_category_failed(categories_test_client, sender,
                                                category):
         CATEGORY_ALREADY_EXISTS = {"name": "Guitar Lesson",
                                    "color": "121212",
