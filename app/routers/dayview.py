@@ -104,25 +104,25 @@ class DivAttributes:
         return (start_multiday, end_multiday)
 
 
-def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
+def is_specific_time_event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
     if event.all_day:
-        return None
+        return False
     return (
-        (event.start >= day and event.start < day_end) or
-        (event.end >= day and event.end < day_end) or
-        (event.start < day_end < event.end)
+        (event.start >= day and event.start < day_end)
+        or (event.end >= day and event.end < day_end)
+        or (event.start < day_end < event.end)
         )
 
 
-def all_day_event_in_day(
+def is_all_day_event_in_day(
     event: Event, day: datetime, day_end: datetime
 ) -> bool:
     if not event.all_day:
-        return None
+        return False
     return (
-        (event.start >= day and event.start < day_end) or
-        (event.end >= day and event.end < day_end) or
-        (event.start < day_end < event.end)
+        (event.start >= day and event.start < day_end)
+        or (event.end >= day and event.end < day_end)
+        or (event.start < day_end < event.end)
         )
 
 
@@ -132,7 +132,7 @@ def get_events_and_attributes(
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
     for event in events:
-        if event_in_day(event=event, day=day, day_end=day_end):
+        if is_specific_time_event_in_day(event=event, day=day, day_end=day_end):
             yield (event, DivAttributes(event, day))
 
 
@@ -142,7 +142,7 @@ def get_all_day_events(
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
     for event in events:
-        if all_day_event_in_day(event=event, day=day, day_end=day_end):
+        if is_all_day_event_in_day(event=event, day=day, day_end=day_end):
             yield (event)
 
 

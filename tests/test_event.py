@@ -252,7 +252,6 @@ def test_eventedit_post_without_event_type(client, user):
     """
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)
-    assert response.ok
     assert response.status_code == status.HTTP_302_FOUND
     assert (client.app.url_path_for('eventview', event_id=1).strip('1')
             in response.headers['location'])

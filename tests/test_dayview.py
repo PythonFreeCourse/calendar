@@ -4,7 +4,11 @@ from bs4 import BeautifulSoup
 import pytest
 
 from app.database.models import Event
-from app.routers.dayview import DivAttributes
+from app.routers.dayview import (
+    DivAttributes, is_all_day_event_in_day,
+    is_specific_time_event_in_day
+)
+
 from app.routers.event import create_event
 
 
@@ -62,6 +66,23 @@ def test_div_attr_multiday(multiday_event):
     assert DivAttributes(multiday_event, day).grid_position == '1 / 101'
     day += timedelta(hours=24)
     assert DivAttributes(multiday_event, day).grid_position == '1 / 57'
+
+def test_is_specific_time_event_in_day(event3):
+    day = datetime(year=2021, month=2, day=3, hour=0, minute=0)
+    day_end = day + timedelta(hours=24)
+    test_function = is_specific_time_event_in_day(
+        event=event3, day=day, day_end=day_end
+    )
+    assert test_function
+
+
+def test_is_all_day_event_in_day(all_day_event1):
+    day = datetime(year=2021, month=2, day=3, hour=0, minute=0)
+    day_end = day + timedelta(hours=24)
+    test_function = is_all_day_event_in_day(
+        event=all_day_event1, day=day, day_end=day_end
+    )
+    assert test_function
 
 
 def test_div_attributes_with_costume_color(event2):
