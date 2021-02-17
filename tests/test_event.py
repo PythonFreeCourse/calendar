@@ -13,8 +13,8 @@ from app.dependencies import get_db
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
-from app.routers.event import can_show_event
 from app.routers import event as evt
+from app.routers.event import can_show_event, event_to_show
 
 CORRECT_EVENT_FORM_DATA = {
     'title': 'test title',
@@ -27,7 +27,7 @@ CORRECT_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'Public',
+    'privacy': PrivacyKinds.Public.name,
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -42,7 +42,7 @@ WRONG_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'Public',
+    'privacy': PrivacyKinds.Public.name,
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -57,7 +57,7 @@ BAD_EMAILS_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'Public',
+    'privacy': PrivacyKinds.Public.name,
     'invited': 'a@a.com,b@b.com,ccc'
 }
 
@@ -72,7 +72,7 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'Public',
+    'privacy': PrivacyKinds.Public.name,
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -87,7 +87,7 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'description': 'content',
     'color': 'red',
     'availability': 'busy',
-    'privacy': 'Public',
+    'privacy': PrivacyKinds.Public.name,
     'invited': 'a@a.com,b@b.com'
 }
 
@@ -101,26 +101,13 @@ CORRECT_ADD_EVENT_DATA = {
 }
 
 NONE_UPDATE_OPTIONS = [
-    {},
-    {
-        'test': 'test'
-    },
+    {}, {"test": "test"},
 ]
 
 INVALID_FIELD_UPDATE = [
-    {
-        'start': '20.01.2020'
-    },
-    {
-        'start': datetime(2020, 2, 2),
-        'end': datetime(2020, 1, 1)
-    },
-    {
-        'start': datetime(2030, 2, 2)
-    },
-    {
-        'end': datetime(1990, 1, 1)
-    },
+    {"start": "20.01.2020"},
+    {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
+    {"start": datetime(2030, 2, 2)}, {"end": datetime(1990, 1, 1)},
 ]
 
 
@@ -344,13 +331,13 @@ def test_update_event_with_category(today_event, category, session):
 
 
 def test_update_db_close(event):
-    data = {
-        'title': 'Problem connecting to db in func update_event',
-    }
+    data = {'title': 'Problem connecting to db in func update_event',}
     with pytest.raises(HTTPException):
-        assert (evt.update_event(
-            event_id=event.id, event=data,
-            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            evt.update_event(event_id=event.id, event=data,
+                             db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_update_event_does_not_exist(event, session):
@@ -358,19 +345,20 @@ def test_update_event_does_not_exist(event, session):
     with pytest.raises(HTTPException):
         response = evt.update_event(
             event_id=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            event=data,
-            db=session)
+            event=data, db=session)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
 def test_db_close_update(session, event):
-    data = {
-        'title': 'Problem connecting to db in func _update_event',
-    }
+    data = {'title': 'Problem connecting to db in func _update_event',}
     with pytest.raises(HTTPException):
-        assert (evt._update_event(
-            event_id=event.id, event_to_update=data,
-            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            evt._update_event(
+                event_id=event.id,
+                event_to_update=data,
+                db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_repr(event):
@@ -385,9 +373,10 @@ def test_no_connection_to_db_in_delete(event):
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
-        assert (evt._delete_event(
-            event=event,
-            db=None).status_code == status.HTTP_500_INTERNAL_SERVER_ERROR)
+        assert (
+            evt._delete_event(event=event, db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 def test_successful_deletion(event_test_client, session, event):
@@ -403,10 +392,8 @@ def test_change_owner(client, event_test_client, user, session, event):
     Test change owner of an event
     """
     event_id = event.id
-    event_details = [
-        event.title, event.content, event.location, event.start, event.end,
-        event.color, event.category_id
-    ]
+    event_details = [event.title, event.content, event.location, event.start,
+                     event.end, event.color, event.category_id]
     response = event_test_client.post(f'/event/{event_id}/owner', data=None)
     assert response.status_code == status.HTTP_302_FOUND
     assert response.ok
@@ -430,19 +417,19 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
 
 
 def test_can_show_event_public(event, session, user):
-    assert can_show_event(event, session) == event
-    assert can_show_event(event, session, user) == event
+    assert event_to_show(event, session) == event
+    assert event_to_show(event, session, user) == event
 
 
 def test_can_show_event_hidden(event, session, user):
     event.privacy = PrivacyKinds.Hidden.name
-    assert can_show_event(event, session, user) is None
-    assert can_show_event(event, session) == event
+    assert event_to_show(event, session, user) is None
+    assert event_to_show(event, session) == event
 
 
 def test_can_show_event_private(event, session, user):
     event.privacy = PrivacyKinds.Private.name
-    private_event = can_show_event(event=event, session=session, user=user)
+    private_event = event_to_show(event=event, session=session, user=user)
     private_attributes = [
         private_event.title, private_event.location, private_event.content,
         private_event.invitees

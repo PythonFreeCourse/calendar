@@ -107,23 +107,16 @@ async def create_new_event(
         privacy = PrivacyKinds.Public.name
 
     invited_emails = get_invited_emails(data['invited'])
-    uninvited_contacts = get_uninvited_regular_emails(session, owner_id, title,
-                                                      invited_emails)
+    uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
+                                                      title, invited_emails)
 
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(db=session,
-                         title=title,
-                         start=start,
-                         end=end,
-                         owner_id=owner_id,
-                         privacy=privacy,
-                         content=content,
-                         location=location,
-                         invitees=invited_emails,
-                         category_id=category_id,
-                         availability=availability)
+    event = create_event(
+        session, title, start, end, owner_id, privacy, content,
+        location, invited_emails, category_id, availability,
+    )
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
@@ -144,19 +137,17 @@ async def eventview(request: Request,
                     event_id: int,
                     db: Session = Depends(get_db)) -> Response:
     event, comments, end_format = get_event_data(db, event_id)
-    event_to_show = can_show_event(event, db)
-    if not event_to_show:
+    event_considering_privacy = event_to_show(event, db)
+    if not event_considering_privacy:
         nonexisting_event(event.id)
     messages = request.query_params.get('messages', '').split('---')
-    return templates.TemplateResponse(
-        'event/eventview.html', {
-            'request': request,
-            'event': event_to_show,
-            'comments': comments,
-            'start_format': START_FORMAT,
-            'end_format': end_format,
-            'messages': messages
-        })
+    return templates.TemplateResponse("event/eventview.html",
+                                      {"request": request,
+                                       "event": event_considering_privacy,
+                                       "comments": comments,
+                                       "start_format": START_FORMAT,
+                                       "end_format": end_format,
+                                       "messages": messages})
 
 
 def check_event_owner(
@@ -178,10 +169,10 @@ def check_event_owner(
     return is_owner
 
 
-def can_show_event(event: Event,
-                   session: Depends(get_db),
-                   user: Optional[User] = None) -> Optional[Event]:
-    """Check the given events privacy and return
+def event_to_show(event: Event,
+                  session: Depends(get_db),
+                  user: Optional[User] = None) -> Optional[Event]:
+    """Check the given event's privacy and return
     event/fixed event/ nothing (hidden) accordingly"""
     is_owner = check_event_owner(event, session, user)
     if event.privacy == PrivacyKinds.Private.name and not is_owner:
@@ -225,11 +216,13 @@ async def change_owner(request: Request,
 def by_id(db: Session, event_id: int) -> Event:
     """Get a single event by id"""
     if not isinstance(db, Session):
-        error_message = (f'Could not connect to database. '
-                         f'db instance type received: {type(db)}')
+        error_message = (
+            f'Could not connect to database. '
+            f'db instance type received: {type(db)}')
         logger.critical(error_message)
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=error_message)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
 
     try:
         event = db.query(Event).filter_by(id=event_id).one()
@@ -240,8 +233,9 @@ def by_id(db: Session, event_id: int) -> Event:
             f'Multiple results found when getting event. Expected only one. '
             f'ID: {event_id}')
         logger.critical(error_message)
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=error_message)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
     return event
 
 
@@ -260,8 +254,9 @@ def check_change_dates_allowed(old_event: Event, event: Dict[str, Any]):
     except TypeError:
         allowed = 0
     if allowed == 0:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='Invalid times')
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid times")
 
 
 def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
@@ -270,12 +265,12 @@ def is_fields_types_valid(to_check: Dict[str, Any], types: Dict[str, Any]):
     for field_name, field_type in to_check.items():
         if types[field_name] and not isinstance(field_type, types[field_name]):
             errors.append(
-                f"{field_name} is '{type(field_type).__name__}' and" +
-                f"it should be from type '{types[field_name].__name__}'")
+                f"{field_name} is '{type(field_type).__name__}' and"
+                + f"it should be from type '{types[field_name].__name__}'")
             logger.warning(errors)
     if errors:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=errors)
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail=errors)
 
 
 def get_event_with_editable_fields_only(
@@ -299,9 +294,9 @@ def _update_event(db: Session, event_id: int, event_to_update: Dict) -> Event:
         return by_id(db, event_id)
     except (AttributeError, SQLAlchemyError) as e:
         logger.exception(str(e))
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail='Internal server error')
-
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error")
 
 def update_event(event_id: int, event: Dict, db: Session) -> Optional[Event]:
     # TODO Check if the user is the owner of the event.
@@ -316,45 +311,40 @@ def update_event(event_id: int, event: Dict, db: Session) -> Optional[Event]:
     return event_updated
 
 
-def create_event(
-    db: Session,
-    title: str,
-    start,
-    end,
-    owner_id: int,
-    privacy: str = PrivacyKinds.Public.name,
-    content: Optional[str] = None,
-    location: Optional[str] = None,
-    vc_link: str = None,
-    color: Optional[str] = None,
-    invitees: List[str] = None,
-    category_id: Optional[int] = None,
-    availability: bool = True,
-    is_google_event: bool = False,
-):
+def create_event(db: Session, title: str, start, end, owner_id: int,
+                 privacy: str = PrivacyKinds.Public.name,
+                 content: Optional[str] = None,
+                 location: Optional[str] = None,
+                 vc_link: str = None,
+                 color: Optional[str] = None,
+                 invitees: List[str] = None,
+                 category_id: Optional[int] = None,
+                 availability: bool = True,
+                 is_google_event: bool = False,
+                ):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
 
-    event = create_model(db,
-                         Event,
-                         title=title,
-                         start=start,
-                         end=end,
-                         privacy=privacy,
-                         content=content,
-                         owner_id=owner_id,
-                         location=location,
-                         vc_link=vc_link,
-                         color=color,
-                         emotion=get_emotion(title, content),
-                         invitees=invitees_concatenated,
-                         category_id=category_id,
-                         availability=availability,
-                         is_google_event=is_google_event)
+    event = create_model(
+        db, Event,
+        title=title,
+        start=start,
+        end=end,
+        privacy=privacy,
+        content=content,
+        owner_id=owner_id,
+        location=location,
+        vc_link=vc_link,
+        color=color,
+        emotion=get_emotion(title, content),
+        invitees=invitees_concatenated,
+        category_id=category_id,
+        availability=availability,
+        is_google_event=is_google_event
+    )
     create_model(
-        db,
-        UserEvent,
+        db, UserEvent,
         user_id=owner_id,
         event_id=event.id,
     )
@@ -369,19 +359,21 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 
 
 def get_attendees_email(session: Session, event: Event):
-    return (session.query(
-        User.email).join(UserEvent).filter(UserEvent.events == event).all())
+    return (
+        session.query(User.email).join(UserEvent)
+        .filter(UserEvent.events == event).all()
+    )
 
 
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
     """Returns a list of all the email address of the event invited users,
         by event id."""
-    return [
-        email[0] for email in db.query(User.email).select_from(Event).join(
-            UserEvent, UserEvent.event_id == Event.id).join(
-                User, User.id == UserEvent.user_id).filter(
-                    Event.id == event_id).all()
-    ]
+    return [email[0] for email in db.query(User.email).
+            select_from(Event).
+            join(UserEvent, UserEvent.event_id == Event.id).
+            join(User, User.id == UserEvent.user_id).
+            filter(Event.id == event_id).
+            all()]
 
 
 def _delete_event(db: Session, event: Event):
@@ -396,8 +388,9 @@ def _delete_event(db: Session, event: Event):
 
     except (SQLAlchemyError, AttributeError) as e:
         logger.exception(str(e))
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail='Deletion failed')
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Deletion failed")
 
 
 @router.delete('/{event_id}')
@@ -410,7 +403,8 @@ def delete_event(event_id: int, db: Session = Depends(get_db)) -> Response:
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
-    return RedirectResponse(url='/calendar', status_code=status.HTTP_200_OK)
+    return RedirectResponse(
+        url="/calendar", status_code=status.HTTP_200_OK)
 
 
 def is_date_before(start_time: dt, end_time: dt) -> bool:
@@ -431,10 +425,11 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
     try:
         new_event = create_model(db, Event, **values)
-        create_model(db,
-                     UserEvent,
-                     user_id=values['owner_id'],
-                     event_id=new_event.id)
+        create_model(
+            db, UserEvent,
+            user_id=values['owner_id'],
+            event_id=new_event.id
+        )
         return new_event
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
@@ -442,10 +437,8 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 
 
 @router.post('/{event_id}')
-async def add_comment(
-    request: Request, event_id: int,
-    session: Session = Depends(get_db)
-) -> Response:
+async def add_comment(request: Request, event_id: int,
+                      session: Session = Depends(get_db)) -> Response:
     """Creates a comment instance in the DB. Redirects back to the event's
     comments tab upon creation."""
     form = await request.form()
@@ -479,36 +472,30 @@ def get_event_data(db: Session, event_id: int) -> EVENT_DATA:
     """
     event = by_id(db, event_id)
     comments = json.loads(cmt.display_comments(db, event))
-    end_format = ('%H:%M'
-                  if event.start.date() == event.end.date() else START_FORMAT)
+    end_format = ('%H:%M' if event.start.date() == event.end.date()
+                  else START_FORMAT)
     return event, comments, end_format
 
 
 @router.get('/{event_id}/comments')
-async def view_comments(
-    request: Request, event_id: int,
-    db: Session = Depends(get_db)
-) -> Response:
+async def view_comments(request: Request, event_id: int,
+                        db: Session = Depends(get_db)) -> Response:
     """Renders event comment tab view.
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
-    return templates.TemplateResponse(
-        'event/eventview.html', {
-            'request': request,
-            'event': event,
-            'comments': comments,
-            'comment': True,
-            'start_format': START_FORMAT,
-            'end_format': end_format
-        })
+    return templates.TemplateResponse("event/eventview.html",
+                                      {"request": request,
+                                       "event": event,
+                                       "comments": comments,
+                                       'comment': True,
+                                       "start_format": START_FORMAT,
+                                       "end_format": end_format})
 
 
 @router.post('/comments/delete')
-async def delete_comment(
-    request: Request,
-    db: Session = Depends(get_db)
-) -> Response:
+async def delete_comment(request: Request,
+                         db: Session = Depends(get_db)) -> Response:
     """Deletes a comment instance from the db.
 
     Redirects back to the event's comments tab upon deletion.
