@@ -200,8 +200,9 @@ async def send_reset_password_mail(
          recipient=user.username,
          link=f"{CALENDAR_RESET_PASSWORD_PAGE}?token={user.token}",
          email=user.email)
-    message = MessageSchema(
-        subject="Calendar reset password",
-        recipients=[user.email], body=html, subtype='html')
-    background_tasks.add_task(mail.send_message, message)
+    background_tasks.add_task(send_internal,
+                              subject="Calendar reset password",
+                              recipients=[user.email],
+                              body=html,
+                              subtype='html')
     return True
