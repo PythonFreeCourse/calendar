@@ -41,20 +41,6 @@ def agenda(
 
     user_id = 1  # there is no user session yet, so I use user id- 1.
 
-    get_a_week_int = 6
-    start_date_graph, end_date_graph = calc_dates_range_for_agenda(
-        0, 0, get_a_week_int)
-
-    events_this_week = agenda_events.get_events_per_dates(
-        db, user_id, start_date_graph, end_date_graph
-    )
-    events_for_graph = {
-        str(start_date_graph +
-            timedelta(i)): 0 for i in range(get_a_week_int + 1)}
-
-    for event_obj in events_this_week:
-        events_for_graph[str(event_obj.start.date())] += 1
-
     start_date, end_date = calc_dates_range_for_agenda(
         start_date, end_date, days
     )
@@ -69,11 +55,13 @@ def agenda(
             event_obj.start, event_obj.end
         )
         events[event_obj.start.date()].append((event_obj, event_duration))
-
+    events_for_graph = json.dumps(
+        agenda_events.make_dict_for_graph_data(db, user_id)
+    )
     return templates.TemplateResponse("agenda.html", {
         "request": request,
         "events": events,
         "start_date": start_date,
         "end_date": end_date,
-        "events_for_graph": json.dumps(events_for_graph),
+        "events_for_graph": events_for_graph,
     })

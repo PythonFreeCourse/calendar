@@ -1,15 +1,17 @@
 function busiestDayOfTheWeekGraph(events) {
     events = JSON.parse(events);
 
+    const data = Object.values(events);
+    const labels = Object.keys(events);
     const ctx = document.getElementById("myChart");
     ctx.style.backgroundColor = "rgba(255, 255, 255, 1)";
     const myChart = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: Object.keys(events),
+            labels: labels,
             datasets: [{
                 label: "# Events",
-                data: Object.values(events),
+                data: data,
                 backgroundColor: [
                     "rgba(255, 99, 132, 0.2)",
                     "rgba(54, 162, 235, 0.2)",

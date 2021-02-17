@@ -44,3 +44,10 @@ class TestAgenda:
             end=date.today(),
         )
         assert list(events) == []
+
+    def test_make_dict_for_graph_data(self, today_event, session):
+        events_for_graph = agenda_events.make_dict_for_graph_data(
+            session,
+            user_id=today_event.owner_id,
+        )
+        assert isinstance(events_for_graph, dict)

@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from typing import List, Optional, Union, Iterator
+from typing import Dict, List, Optional, Union, Iterator
 
 import arrow
 from sqlalchemy.orm import Session
@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.database.models import Event
 from app.routers.event import sort_by_date
 from app.routers.user import get_all_user_events
+from app.routers import agenda
 
 
 def get_events_per_dates(
@@ -67,3 +68,22 @@ def filter_dates(
         event for event in events
         if start <= event.start.date() <= end
     )
+
+
+def make_dict_for_graph_data(db: Session, user_id: int) -> Dict:
+    """create a dict with number of events per day for current week"""
+    WEEK_DAYS = 6
+    start_date, end_date = agenda.calc_dates_range_for_agenda(
+        0, 0, WEEK_DAYS)
+
+    events_this_week = get_events_per_dates(
+        db, user_id, start_date, end_date
+    )
+    events_for_graph = {
+        str(start_date + timedelta(i)): 0 for i in range(WEEK_DAYS + 1)
+    }
+
+    for event_obj in events_this_week:
+        event_date = event_obj.start.date()
+        events_for_graph[str(event_date)] += 1
+    return events_for_graph
