@@ -59,4 +59,3 @@ def load_to_db(session) -> None:
     load_data(
         session, 'app/resources/hebrew_view.json',
         HebrewView, hebrew_date_view.create_hebrew_dates_object)
-    
