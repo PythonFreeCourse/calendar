@@ -37,7 +37,7 @@ class DivAttributes:
                 minute_deviation = minutes - (i - 1) * self.MAX_MINUTES
                 return {'min_position': i, 'min_deviation': minute_deviation}
             min_minutes = max_minutes
-            max_minutes += 15
+            max_minutes += MAX_MINUTES
 
     def _get_position(self, time: datetime) -> int:
         grid_hour_position = time.hour * self.FULL_GRID_BAR
@@ -148,7 +148,6 @@ async def dayview(
           request: Request, date: str, session=Depends(get_db), view='day',
       ):
     # TODO: add a login session
-    # user = session.query(User).filter_by(username='test_username').first()
     user = session.query(User).first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
