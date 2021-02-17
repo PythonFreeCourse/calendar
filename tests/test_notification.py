@@ -1,4 +1,4 @@
-from starlette.status import HTTP_302_FOUND, HTTP_200_OK
+from starlette.status import HTTP_200_OK
 
 from app.routers.notification import (
     get_all_invitations, get_invitation_by_id, router
@@ -8,7 +8,7 @@ from app.routers.notification import (
 class TestNotificationRoutes:
     NO_NOTIFICATIONS = b"You don't have any new notifications."
 
-    def test_view_no_notifications(self, notification_test_client):
+    def test_view_no_notifications(self, notification_test_client, user):
         url = router.url_path_for('view_notifications')
         resp = notification_test_client.get(url)
         assert resp.ok
@@ -20,7 +20,7 @@ class TestNotificationRoutes:
         data = {"invite_id ": invitation.id}
         url = router.url_path_for('accept_invitations')
         resp = notification_test_client.post(url, data=data)
-        assert resp.status_code == HTTP_302_FOUND
+        assert resp.ok
 
     def test_decline_invitations(
             self, user, invitation, notification_test_client, session
@@ -28,7 +28,7 @@ class TestNotificationRoutes:
         data = {"invite_id ": invitation.id}
         url = router.url_path_for('decline_invitations')
         resp = notification_test_client.post(url, data=data)
-        assert resp.status_code == HTTP_302_FOUND
+        assert resp.ok
 
     def test_mark_message_as_read(
             self, user, message, notification_test_client, session
@@ -36,7 +36,7 @@ class TestNotificationRoutes:
         data = {"message_id ": message.id}
         url = router.url_path_for('mark_message_as_read')
         resp = notification_test_client.post(url, data=data)
-        assert resp.status_code == HTTP_302_FOUND
+        assert resp.ok
 
     def test_mark_all_as_read(
             self, user, message, sec_message,
@@ -48,7 +48,6 @@ class TestNotificationRoutes:
 
 
 class TestNotification:
-
     def test_get_all_invitations_success(
             self, invitation, event, user, session
     ):
@@ -74,7 +73,7 @@ class TestNotification:
     def test_invitation_repr(self, invitation):
         invitation_repr = (
             f'<Invitation '
-            f'({invitation.event.owner}'
+            f'({invitation.event.owner} '
             f'to {invitation.recipient})>'
         )
         assert invitation.__repr__() == invitation_repr

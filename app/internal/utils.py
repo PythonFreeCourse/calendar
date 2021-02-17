@@ -1,5 +1,4 @@
 from typing import Any, Optional
-from typing import Union
 
 from sqlalchemy.orm import Session
 
@@ -23,15 +22,6 @@ def create_model(session: Session, model_class: Base,
     instance = model_class(**kw)
     save(session, instance)
     return instance
-
-
-def mark_as_read(
-        session: Session,
-        message: Union[Message, Invitation]
-) -> None:
-    """Marks a message as read."""
-    message.status = 'read'
-    save(session, message)
 
 
 def delete_instance(session: Session, instance: Base) -> None:

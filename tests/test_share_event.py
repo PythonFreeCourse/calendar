@@ -1,6 +1,8 @@
+from app.database.models import InvitationStatusEnum
 from app.routers.notification import get_all_invitations
-from app.routers.share import (accept, send_email_invitation,
-                               send_in_app_invitation, share, sort_emails)
+from app.routers.share import (
+    send_email_invitation, send_in_app_invitation, share, sort_emails
+)
 
 
 class TestShareEvent:
@@ -54,5 +56,9 @@ class TestShareEvent:
         assert True
 
     def test_accept(self, invitation, session):
-        accept(invitation, session=session)
-        assert invitation.status == 'accepted'
+        invitation.accept(session=session)
+        assert invitation.status == InvitationStatusEnum.accepted
+
+    def test_decline(self, invitation, session):
+        invitation.decline(session=session)
+        assert invitation.status == InvitationStatusEnum.declined

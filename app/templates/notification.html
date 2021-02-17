@@ -1,57 +1,63 @@
 {% extends "base.html" %}
 
 {% block head %}
+    {{ super() }}
     <link href="{{ url_for('static', path='/notification.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 
     <div class="container mt-4">
-        <h1>{{message}}</h1>
+        <h1>{{ message }}</h1>
     </div>
     <div id="main">
     {% if notifications %}
+        <form action="{{ url_for('mark_all_as_read') }}">
+            <button type="submit" class="btn"
+            {% if not new_messages %}disabled{% endif %}>
+                Mark all as read
+            </button>
+        </form>
+        {% for n in notifications %}
+            {% set type = n.__table__.name %}
 
-            <a href="{{ url_for('mark_all_as_read') }}">Mark all as read</a>
-            {% for n in notifications %}
+            {% if type == "invitations" %}
+                <div class="notification">
+                    <form action="{{ url_for('accept_invitations') }}" method="post"
+                          class="notification-form accept">
+                        <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-accept">
+                            <ion-icon class="icon" name="checkmark-outline"></ion-icon>
+                        </button>
+                    </form>
+                    <form action="{{ url_for('decline_invitations') }}" method="post"
+                          class="notification-form decline">
+                        <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-decline">
+                            <ion-icon class="icon" name="close-outline"></ion-icon>
+                        </button>
+                    </form>
+                    <span>{{ n.event.owner.username }} - </span>
+                    <a href="#">{{ n.event.title }}</a>
+                    <span>({{ n.event.start.strftime('%H:%M %m/%d/%Y') }})</span>
+                </div>
 
-                {% if n.__table__.name == "invitations" %}
-                    <div class="notification">
-                        <form action="{{ url_for('accept_invitations') }}" method="post"
-                              class="notification-form accept">
-                            <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-accept">
-                                <ion-icon class="icon" name="checkmark-outline"></ion-icon>
-                            </button>
-                        </form>
-                        <form action="{{ url_for('decline_invitations') }}" method="post"
-                              class="notification-form decline">
-                            <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-decline">
-                                <ion-icon class="icon" name="close-outline"></ion-icon>
-                            </button>
-                        </form>
-                        <span>{{ n.event.owner.username }} - </span>
-                        <a href="#">{{ n.event.title }}</a>
-                        <span>({{ n.event.start.strftime('%H:%M %m/%d/%Y') }})</span>
-                    </div>
+            {% elif type == "messages" %}
+                <div class="notification">
+                    <form action="{{ url_for('mark_message_as_read') }}" method="post"
+                          class="notification-form mark_as_read">
+                        <button type="submit" name="message_id" value="{{ n.id }}" class="notification-btn btn-read">
+                            <ion-icon class="icon" name="checkmark-outline"></ion-icon>
+                        </button>
+                    </form>
+                    {% if n.link %}
+                        <a href="{{ n.link }}">{{ n.body }}</a>
+                    {% else %}
+                        <span>{{n.status}}-{{ n.body }}</span>
+                    {% endif %}
+                </div>
 
-                {% elif n.__table__.name == "messages" %}
-                    <div class="notification">
-                        <form action="{{ url_for('mark_message_as_read') }}" method="post"
-                              class="notification-form mark_as_read">
-                            <button type="submit" name="message_id" value="{{ n.id }}" class="notification-btn btn-read">
-                                <ion-icon class="icon" name="checkmark-outline"></ion-icon>
-                            </button>
-                        </form>
-                        {% if n.link %}
-                            <a href="{{ n.link }}">{{ n.body }}</a>
-                        {% else %}
-                            <span>{{n.status}}-{{ n.body }}</span>
-                        {% endif %}
-                    </div>
+            {% endif %}
 
-                {% endif %}
-
-            {% endfor %}
+        {% endfor %}
     {% else %}
         <span>You don't have any new notifications.</span>
     {% endif %}

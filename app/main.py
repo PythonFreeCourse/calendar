@@ -44,7 +44,6 @@ from app.routers import (  # noqa: E402
 )
 
 json_data_loader.load_to_db(next(get_db()))
-
 routers_to_include = [
     agenda.router,
     calendar.router,
@@ -52,19 +51,19 @@ routers_to_include = [
     celebrity.router,
     currency.router,
     dayview.router,
-    weekview.router,
     email.router,
     event.router,
-    notification.router,
     export.router,
     four_o_four.router,
     login.router,
     logout.router,
+    notification.router,
     profile.router,
     register.router,
     salary.router,
     search.router,
     telegram.router,
+    weekview.router,
     whatsapp.router,
 ]
 

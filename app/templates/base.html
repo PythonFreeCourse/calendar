@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  {% block head %}{% endblock %}
+  {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,10 +14,9 @@
     <script nomodule="" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.js"></script>
 
     <title>PyLendar {% block title %}{% endblock %}</title>
+    {% endblock %}
 </head>
 
-
-</head>
 <body>
     <div class="bg-gradient2 top-line"></div>
     <div class="relative overflow-hidden">

@@ -7,13 +7,17 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_302_FOUND
 
-from app.database.models import Invitation, Message
+from app.database.models import (
+    Invitation, Message, InvitationStatusEnum, MessageStatusEnum
+)
 from app.dependencies import templates, get_db
-from app.internal.utils import mark_as_read, create_model
-from app.routers.share import accept, decline
+from app.internal.utils import create_model, get_user
 
 NOTIFICATION_TYPE = Union[Invitation, Message]
-
+UNREAD = [
+    InvitationStatusEnum.unread,
+    MessageStatusEnum.unread,
+]
 
 router = APIRouter(
     prefix="/notification",
@@ -23,11 +27,16 @@ router = APIRouter(
 
 
 @router.get("/")
-async def view_notifications(request: Request, db: Session = Depends(get_db)):
-    user_id = 1
+async def view_notifications(
+        request: Request,
+        db: Session = Depends(get_db),
+):
+    # TODO: get current user
+    user = get_user(db, 1)
     return templates.TemplateResponse("notification.html", {
         "request": request,
-        "notifications": get_unread_notifications(session=db, user_id=user_id),
+        'new_messages': bool(get_all_messages),
+        "notifications": get_unread_notifications(session=db, user_id=user.id),
     })
 
 
@@ -40,7 +49,7 @@ async def accept_invitations(
     invite_id = list(data.values())[0]
 
     invitation = get_invitation_by_id(invite_id, session=db)
-    accept(invitation, db)
+    invitation.accept(db)
 
     url = router.url_path_for("view_notifications")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -54,7 +63,7 @@ async def decline_invitations(
     data = await request.form()
     invite_id = list(data.values())[0]
     invitation = get_invitation_by_id(invite_id, session=db)
-    decline(invitation, db)
+    invitation.decline(db)
 
     url = router.url_path_for("view_notifications")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -69,7 +78,8 @@ async def mark_message_as_read(
     message_id = list(data.values())[0]
 
     message = await get_message_by_id(message_id, session=db)
-    mark_as_read(db, message)
+    if message:
+        message.mark_as_read(db)
 
     url = router.url_path_for("view_notifications")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -77,12 +87,12 @@ async def mark_message_as_read(
 
 @router.get("/mark_all_as_read")
 async def mark_all_as_read(
-    db: Session = Depends(get_db)
+        db: Session = Depends(get_db)
 ):
     user_id = 1
-    for m in get_all_messages(db, user_id):
-        if m.status == 'unread':
-            mark_as_read(db, m)
+    for message in get_all_messages(db, user_id):
+        if message.status == 'unread':
+            message.mark_as_read(db)
 
     url = router.url_path_for("view_notifications")
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
@@ -91,14 +101,18 @@ async def mark_all_as_read(
 async def get_message_by_id(
         message_id: int, session: Session
 ) -> Union[Message, None]:
-    """Returns a invitation by an id.
+    """Returns an invitation by an id.
     if id does not exist, returns None."""
-    return session.query(Message).filter_by(id=message_id).one()
+    return session.query(Message).filter_by(id=message_id).first()
+
+
+def is_unread(notification):
+    return notification.status in UNREAD
 
 
 def get_unread_notifications(session: Session, user_id: int):
     return list(filter(
-        lambda x: x.status == 'unread',
+        is_unread,
         get_all_notifications(session, user_id)
     ))
 
@@ -129,9 +143,9 @@ def create_message(
         msg: str,
         recipient_id: int,
         link=None
-) -> None:
+) -> Message:
     """Creates a new message."""
-    create_model(
+    return create_model(
         session,
         Message,
         body=msg,
@@ -152,7 +166,7 @@ def get_all_messages(
 def get_all_invitations(session: Session, **param) -> List[Invitation]:
     """Returns all invitations filter by param."""
     try:
-        invitations = list(session.query(Invitation).filter_by(**param))
+        invitations = session.query(Invitation).filter_by(**param).all()
     except SQLAlchemyError:
         return []
     else:
@@ -162,6 +176,6 @@ def get_all_invitations(session: Session, **param) -> List[Invitation]:
 def get_invitation_by_id(
         invitation_id: int, session: Session
 ) -> Union[Invitation, None]:
-    """Returns a invitation by an id.
+    """Returns an invitation by an id.
     if id does not exist, returns None."""
     return session.query(Invitation).filter_by(id=invitation_id).first()

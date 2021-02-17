@@ -21,7 +21,6 @@ from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.utils import create_model, get_current_user
 
-
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
 TIME_FORMAT = '%Y-%m-%d %H:%M'
 START_FORMAT = '%A, %d/%m/%Y %H:%M'
@@ -202,15 +201,17 @@ def update_event(event_id: int, event: Dict, db: Session
     return event_updated
 
 
-def create_event(db: Session, title: str, start, end, owner_id: int,
-                 content: Optional[str] = None,
-                 location: Optional[str] = None,
-                 vc_link: str = None,
-                 color: Optional[str] = None,
-                 invitees: List[str] = None,
-                 category_id: Optional[int] = None,
-                 availability: bool = True,
-                 ):
+def create_event(
+        db: Session, title: str,
+        start, end, owner_id: int,
+        content: Optional[str] = None,
+        location: Optional[str] = None,
+        vc_link: str = None,
+        color: Optional[str] = None,
+        invitees: List[str] = None,
+        category_id: Optional[int] = None,
+        availability: bool = True,
+):
     """Creates an event and an association."""
 
     invitees_concatenated = ','.join(invitees or [])
@@ -248,7 +249,7 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 def get_attendees_email(session: Session, event: Event):
     return (
         session.query(User.email).join(UserEvent)
-        .filter(UserEvent.events == event).all()
+            .filter(UserEvent.events == event).all()
     )
 
 
