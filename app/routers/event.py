@@ -304,7 +304,7 @@ def sort_by_date(events: List[Event]) -> List[Event]:
 def get_attendees_email(session: Session, event: Event):
     return (
         session.query(User.email).join(UserEvent)
-            .filter(UserEvent.events == event).all()
+        .filter(UserEvent.events == event).all()
     )
 
 

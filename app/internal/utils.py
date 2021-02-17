@@ -2,7 +2,7 @@ from typing import Any, Optional
 
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, User, Message, Invitation
+from app.database.models import Base, User
 from app.routers.profile import get_placeholder_user
 
 

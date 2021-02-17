@@ -11,7 +11,7 @@ from app.database.models import (
     Invitation, Message, InvitationStatusEnum, MessageStatusEnum
 )
 from app.dependencies import templates, get_db
-from app.internal.utils import create_model, get_user
+from app.internal.utils import create_model, get_current_user
 
 NOTIFICATION_TYPE = Union[Invitation, Message]
 UNREAD = [
@@ -32,7 +32,7 @@ async def view_notifications(
         db: Session = Depends(get_db),
 ):
     # TODO: get current user
-    user = get_user(db, 1)
+    user = get_current_user(db)
     return templates.TemplateResponse("notification.html", {
         "request": request,
         'new_messages': bool(get_all_messages),
