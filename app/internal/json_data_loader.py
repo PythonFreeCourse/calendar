@@ -57,9 +57,8 @@ def load_to_db(session) -> None:
     load_data(
         session, 'app/resources/hebrew_view.json',
         HebrewView, hebrew_date_view.create_hebrew_dates_object)
-    """The parashot and hebrew_view JSON files content 
+    """The parashot and hebrew_view JSON files content
     is copied from the free API:
     'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
     mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
     &geonameid=293397&m=50&s=on&d=on&D=on'."""
-    
