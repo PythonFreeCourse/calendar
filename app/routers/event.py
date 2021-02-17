@@ -397,7 +397,8 @@ def get_template_to_share_event(event_id: int, user_name: str,
     event = by_id(db, event_id)
     msg_info = {"sender_name": user_name, "event": event}
     html_temp = templates.TemplateResponse("event/share_event.html",
-                                           {"request": request, "msg_info": msg_info})
+                                           {"request": request,
+                                            "msg_info": msg_info})
     return html_temp
 
 
