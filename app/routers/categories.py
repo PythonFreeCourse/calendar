@@ -13,7 +13,6 @@ from starlette.templating import _TemplateResponse
 from app.database.models import Category
 from app.dependencies import get_db
 from app.dependencies import templates
-from tests.conftest import get_test_db
 
 HEX_COLOR_FORMAT = r"^(?:[0-9a-fA-F]{3}){1,2}$"
 

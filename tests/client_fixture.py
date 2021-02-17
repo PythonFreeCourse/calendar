@@ -1,4 +1,5 @@
-from app.routers import agenda, categories, event, friendview, invitation, profile
+from app.routers import (
+    agenda, categories, event, friendview, invitation, profile)
 from app.routers import google_connect
 from typing import Iterator
 

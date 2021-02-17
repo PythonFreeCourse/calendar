@@ -1,5 +1,4 @@
 import pytest
-import json
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.testing import mock
 
@@ -28,17 +27,18 @@ class TestCategories:
                                      "name": "Foo",
                                      "color": "eecc11"}
         response = categories_test_client.post("/categories/",
-                                            data=CORRECT_ADD_CATEGORY_DATA)
+                                               data=CORRECT_ADD_CATEGORY_DATA)
         assert response.ok
         assert TestCategories.CREATE_CATEGORY in response.content
 
     @staticmethod
-    def test_create_not_unique_category_failed(categories_test_client, sender, category):
+    def test_create_not_unique_category_failed(categories_test_client, sender, 
+                                               category):
         CATEGORY_ALREADY_EXISTS = {"name": "Guitar Lesson",
-                                        "color": "121212",
-                                        "user_id": sender.id}
+                                   "color": "121212",
+                                   "user_id": sender.id}
         response = categories_test_client.post("/categories/",
-                                data=CATEGORY_ALREADY_EXISTS)
+                                               data=CATEGORY_ALREADY_EXISTS)
         print(response.content)
         assert response.ok
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in response.content
