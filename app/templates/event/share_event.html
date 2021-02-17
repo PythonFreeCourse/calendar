@@ -13,28 +13,27 @@
 <body>
     <div class="share_event card">
             <p class="msg_title">Hi!</p>
-            <h6 class="card-subtitle mb-2 text-muted">{{ data.sender_name }} want you to know about event he have,</h6>
+            <p class="card-subtitle mb-2 text-muted">{{ msg_info.sender_name }} want you to know about event he have,</p>
         <div class="event_info card-body">
             <div>
-                The event {{ data.event.title }}
+                The event {{ msg_info.event.title }}
             </div>
             <div>
-                will take place from {{ data.event.start_date }} until {{ data.event.end_date }}
+                will take place from {{ msg_info.event.start_date }} until {{ msg_info.event.end_date }}
             </div>
             <div>
-                {% if data.event.location is not none %}
-                in {{ data.event.location }}
+                {% if msg_info.event.location is not none %}
+                in {{ msg_info.event.location }}
                 {% endif %}
-                {% if data.event.vc_link is not none %}
-                <a href="{{ data.event.vc_link }}" class="card-link">Link to vc here</a>
+                {% if msg_info.event.vc_link is not none %}
+                <a href="{{ msg_info.event.vc_link }}" class="card-link">Link to vc here</a>
                 {% endif %}
                 <!-- TODO get link to the event -->
                 <!-- <p>See the event <a href="--" class="card-link">here</a> </p> -->
             </div>
-            <!-- TODO: get link to register page -->
             <div class="card-footer text-muted">
                 This app was built by <a href="https://github.com/PythonFreeCourse" class="card-link">"PythonFreeCourse"</a>
-                <a href="linktoregister" class="card-link">Join the app!</a>
+                <a href="/app/templates/register.html" class="card-link">Join the app!</a>
             </div>
         </div>
     </div>
