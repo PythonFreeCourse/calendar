@@ -1,4 +1,4 @@
-from app.routers import agenda, event, invitation, profile, google_connect
+from app.routers import agenda, event, invitation, profile, google_connect, categories
 from typing import Iterator
 
 from fastapi.testclient import TestClient
@@ -59,6 +59,11 @@ def home_test_client() -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def invitation_test_client() -> Iterator[TestClient]:
     yield from create_test_client(invitation.get_db)
+
+
+@pytest.fixture(scope="session")
+def categories_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(categories.get_db)
 
 
 @pytest.fixture(scope="session")

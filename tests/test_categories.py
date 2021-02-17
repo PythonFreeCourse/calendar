@@ -1,4 +1,5 @@
 import pytest
+import json
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.testing import mock
 
@@ -12,7 +13,7 @@ from app.routers.categories import (get_user_categories,
 
 
 class TestCategories:
-    CATEGORY_ALREADY_EXISTS_MSG = b"category already exists"
+    CATEGORY_ALREADY_EXISTS_MSG = b"Category already exists"
     CREATE_CATEGORY = b"You have created"
     UNALLOWED_PARAMS = "contains unallowed params"
     BAD_COLOR_FORMAT = "if not from expected format"
@@ -22,20 +23,23 @@ class TestCategories:
         assert get_user_categories(session, category.user_id) == [category]
 
     @staticmethod
-    def test_creating_new_category(session, client, user):
-        response = client.post("/categories/for_categories_test",
-                               data={"user_id": user.id,
+    def test_creating_new_category(categories_test_client, session, user):
+        CORRECT_ADD_CATEGORY_DATA = {"user_id": user.id,
                                      "name": "Foo",
-                                     "color": "eecc11"})
+                                     "color": "eecc11"}
+        response = categories_test_client.post("/categories/",
+                                            data=CORRECT_ADD_CATEGORY_DATA)
         assert response.ok
         assert TestCategories.CREATE_CATEGORY in response.content
 
     @staticmethod
-    def test_creating_not_unique_category_failed(client, sender, category):
-        response = client.post("/categories/for_categories_test",
-                               data={"name": "Guitar Lesson",
-                                     "color": "121212",
-                                     "user_id": sender.id})
+    def test_create_not_unique_category_failed(categories_test_client, sender, category):
+        CATEGORY_ALREADY_EXISTS = {"name": "Guitar Lesson",
+                                        "color": "121212",
+                                        "user_id": sender.id}
+        response = categories_test_client.post("/categories/",
+                                data=CATEGORY_ALREADY_EXISTS)
+        print(response.content)
         assert response.ok
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in response.content
 
