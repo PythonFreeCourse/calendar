@@ -34,7 +34,7 @@ async def get_weight(
 
 
 @router.post("/weight")
-async def get_weight_diff(
+async def get_weight_to_go(
         request: Request,
         session: Session = Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
