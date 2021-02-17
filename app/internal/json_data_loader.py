@@ -5,15 +5,15 @@ from typing import Callable, Dict, List, Union
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, Quote, Zodiac
-from app.internal import daily_quotes, zodiac
+from app.database.models import Base, Quote, Zodiac, HebrewView
+from app.internal import daily_quotes, zodiac, hebrew_date_view
 
 
 def get_data_from_json(path: str) -> List[Dict[str, Union[str, int, None]]]:
     """This function reads all of the data from a specific JSON file.
     The json file consists of list of dictionaries"""
     try:
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding='utf-8-sig') as f:
             json_content_list = json.load(f)
     except (IOError, ValueError):
         file_name = os.path.basename(path)
@@ -54,3 +54,11 @@ def load_to_db(session) -> None:
     """The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'. I saved the content so the API won't be
     called every time the app is initialized."""
+    load_data(
+        session, 'app/resources/hebrew_view.json',
+        HebrewView, hebrew_date_view.create_hebrew_dates_object)
+    """The parashot and hebrew_view JSON files content 
+    is copied from the free API:
+    'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
+    mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
+    &geonameid=293397&m=50&s=on&d=on&D=on'."""

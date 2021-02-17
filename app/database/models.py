@@ -334,6 +334,25 @@ class Zodiac(Base):
 
 
 class HebrewView(Base):
+    """Each year the Json file will need to be re-updated
+        according to this API in this way:
+        def relevent_details(hebrew_date):
+            hebrew_dates_dict = {
+            'date_gregorian': hebrew_date['date'],
+            'date_hebrew': hebrew_date['hebrew']}
+        return hebrew_dates_dict
+
+
+        def get_all_parashot():
+            request = requests.get(
+            'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&
+            min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&
+            c=on&geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on')
+            items = request.json()['items']
+            return[
+            relevent_details(hebrew_date) for hebrew_date in items
+            if 'hebdate' in hebrew_date['category]]
+        """
     __tablename__ = "hebrewView"
 
     id = Column(Integer, primary_key=True, index=True)
