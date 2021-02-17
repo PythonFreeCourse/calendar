@@ -12,8 +12,8 @@ from app.database.models import Event
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
 
 
-def raise_if_zoom_link_invalid(location):
-    if ZOOM_REGEX.search(location) is None:
+def raise_if_zoom_link_invalid(vc_link):
+    if ZOOM_REGEX.search(vc_link) is None:
         raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
                             detail="VC type with no valid zoom link")
 
@@ -73,7 +73,7 @@ def find_pattern(session, event):
 
 def get_messages(session: Session,
                  event: Event,
-                 uninvited_contacts: List[str]) -> List[str]:
+                 uninvited_contacts: Set[str]) -> List[str]:
     messages = []
     if uninvited_contacts:
         messages.append(f'Forgot to invite '
