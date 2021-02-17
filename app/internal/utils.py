@@ -46,8 +46,7 @@ def get_current_user(session: Session) -> User:
 
 def get_available_users(session: Session) -> List[User]:
     """this function return all availible users."""
-    all_available_users = session.query(User).filter(not User.disabled).all()
-    return all_available_users
+    return session.query(User).filter(not User.disabled).all()
 
 
 def get_user(session: Session, user_id: int) -> Optional[User]:

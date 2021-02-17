@@ -25,7 +25,6 @@ def disable(session: Session, user_id: int) -> bool:
 
     user_disabled = session.query(User).get(user_id)
     user_disabled.disabled = True
-    session.merge(user_disabled)
     session.commit()
     return True
 

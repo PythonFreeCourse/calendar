@@ -1,16 +1,16 @@
-from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel, Field
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_200_OK
 from typing import List
 
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, Field
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_200_OK
 
-from app.dependencies import get_db
 from app.database.models import Event, User, UserEvent
+from app.dependencies import get_db
 from app.internal.user.availability import disable, enable
-from app.internal.utils import save, get_current_user
+from app.internal.utils import get_current_user, save
 
 
 router = APIRouter(
