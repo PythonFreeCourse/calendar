@@ -6,9 +6,9 @@ function makejoke() {
 
 
 function addEventsAfterPageLoaded() {
-  const element = document.getElementById("ajoke");
+  const element = document.getElementById("a-joke");
   element.addEventListener("click", makejoke, false);
-  };
+}
 
 
 document.addEventListener("DOMContentLoaded", addEventsAfterPageLoaded);
