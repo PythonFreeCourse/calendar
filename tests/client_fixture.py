@@ -1,4 +1,4 @@
-from app.routers import agenda, event, invitation, profile, google_connect, categories
+from app.routers import agenda, categories, event, invitation, profile, google_connect
 from typing import Iterator
 
 from fastapi.testclient import TestClient
