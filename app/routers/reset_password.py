@@ -9,7 +9,7 @@ from starlette.status import HTTP_302_FOUND
 from app.database.models import User
 from app.dependencies import get_db, templates
 from app.internal.security.ouath2 import (
-    authenticate_user, check_jwt_token,
+    authenticate_user_by_email, check_jwt_token,
     create_jwt_token, update_password)
 from app.internal.email import (
     BackgroundTasks, send_reset_password_mail)
@@ -52,7 +52,7 @@ async def forgot_password(
     except ValidationError:
         user = False
     if user:
-        user = await authenticate_user(db, user, email=True)
+        user = await authenticate_user_by_email(db, user)
         if user:
             user.token = create_jwt_token(user, jwt_min_exp=15)
             await send_reset_password_mail(user, background_tasks)
