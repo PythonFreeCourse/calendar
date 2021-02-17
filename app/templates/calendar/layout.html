@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- CSS -->
     <link href="{{ url_for('static', path='/grid_style.css') }}" rel="stylesheet" type="text/css">
@@ -41,6 +40,11 @@
                     <div>
                         <ion-icon name="cube-outline"></ion-icon>
                     </div>
+                    <div>
+                        <a title="About Us" href="{{ url_for('about') }}">
+                            <ion-icon name="information-circle-outline"></ion-icon>
+                        </a>
+                    </div>
                 </div>
                 <div class="user-features">
                     <div class="feature" name="feather01">
@@ -68,8 +72,7 @@
                 </div>
             </header>
             <main>
-                {% block main %}
-                {% endblock %}
+                {% block main %} {% endblock %}
             </main>
         </div>
     </div>

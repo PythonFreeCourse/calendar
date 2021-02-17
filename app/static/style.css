@@ -96,14 +96,21 @@ p {
   border: none;
   background-color: whitesmoke;
 }
-  
+
 .error-message {
     line-height: 0;
     color: red;
     padding-left: 12.5rem;
 }
 
+.input-upload-file {
+    margin-top: 1em;
+}
 
-.subtitle {
-    font-size: 20px;
+.upload-file {
+    margin: auto 1em auto 0em;
+}
+
+h2.modal-title {
+  font-size: 1.25rem;
 }

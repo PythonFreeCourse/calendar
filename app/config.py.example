@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 from fastapi_mail import ConnectionConfig
 from pydantic import BaseSettings
@@ -35,6 +36,11 @@ WEBSITE_LANGUAGE = "en"
 # Get a free API KEY for Astronomy feature @ www.weatherapi.com/signup.aspx
 ASTRONOMY_API_KEY = os.getenv('ASTRONOMY_API_KEY')
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+
+# https://developers.google.com/calendar/quickstart/python -
+# follow instracions and make an env variable with the path to the file.
+CLIENT_SECRET_FILE = os.environ.get('CLIENT_SECRET')
+
 
 # EXPORT
 ICAL_VERSION = '2.0'
@@ -102,3 +108,6 @@ LOG_FORMAT = ("<level>{level: <8}</level>"
               " <green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green>"
               " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
               " - <level>{message}</level>")
+
+# RESOURCES
+RESOURCES_DIR = pathlib.Path(__file__).parent / 'resources'
