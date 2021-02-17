@@ -51,14 +51,18 @@ def load_to_db(session) -> None:
     load_data(
         session, 'app/resources/quotes.json',
         Quote, daily_quotes.create_quote_object)
-    """The quotes JSON file content is copied from the free API:
+    """
+    The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'. I saved the content so the API
-     won't be called every time the app is initialized."""
+     won't be called every time the app is initialized.
+     """
     load_data(
         session, 'app/resources/hebrew_view.json',
         HebrewView, hebrew_date_view.create_hebrew_dates_object)
-    """The parashot and hebrew_view JSON files content
+    """
+    The parashot and hebrew_view JSON files content 
     is copied from the free API:
     'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
     mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
-    &geonameid=293397&m=50&s=on&d=on&D=on'."""
+    &geonameid=293397&m=50&s=on&d=on&D=on'.
+    """
