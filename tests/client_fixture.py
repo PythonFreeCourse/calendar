@@ -1,3 +1,5 @@
+from app.routers import (agenda, audio, event, invitation,
+                         profile, google_connect)
 from typing import Iterator
 
 from fastapi.testclient import TestClient
@@ -6,9 +8,12 @@ import pytest
 from app import main
 from app.main import app
 from app.database.models import Base, User
-from app.routers import agenda, audio, event, invitation, profile
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
+from . import security_testing_routes
+
+
+main.app.include_router(security_testing_routes.router)
 
 
 def get_test_placeholder_user() -> Iterator[User]:
@@ -63,7 +68,7 @@ def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.create_all(bind=test_engine)
     main.app.dependency_overrides[profile.get_db] = get_test_db
     main.app.dependency_overrides[
-        profile.get_placeholder_user] = get_test_placeholder_user
+        audio.get_placeholder_user] = get_test_placeholder_user
 
     with TestClient(main.app) as client:
         yield client
@@ -72,26 +77,28 @@ def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.drop_all(bind=test_engine)
 
 
-def get_test_placeholder_user2():
-    return User(
-        username='new_user',
-        email='fake@mail.fake',
-        password='123456fake',
-        full_name='FakeName'
-    )
+@pytest.fixture(scope="session")
+def audio_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(audio.get_db)
 
 
 @pytest.fixture(scope="session")
-def audio_test_client():
-    Base.metadata.create_all(bind=test_engine)
-    app.dependency_overrides[audio.get_db] = get_test_db
-    app.dependency_overrides[
-        audio.get_placeholder_user] = get_test_placeholder_user2
-    with TestClient(app) as client:
-        yield client
-    Base.metadata.drop_all(bind=test_engine)
+def security_test_client():
+    yield from create_test_client(event.get_db)
 
 
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
+
+
+@pytest.fixture(scope="session")
+def google_connect_test_client():
+    Base.metadata.create_all(bind=test_engine)
+    main.app.dependency_overrides[google_connect.get_db] = get_test_db
+
+    with TestClient(main.app) as client:
+        yield client
+
+    main.app.dependency_overrides = {}
+    Base.metadata.drop_all(bind=test_engine)

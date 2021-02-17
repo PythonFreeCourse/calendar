@@ -26,6 +26,7 @@ def get_placeholder_user():
         full_name='audioaudio',
     )
 
+
 DEFAULT_MUSIC = ["GASTRONOMICA.mp3"]
 DEFAULT_MUSIC_VOL = 0.5
 DEFAULT_SFX = "click_1.wav"
@@ -65,15 +66,17 @@ def audio_settings(
         templates.TemplateResponse: renders the audio.html page
         with the relevant information.
     """
-    songs = [Sound(SoundKind.SONG, path.stem, path) for path in Path(SOUNDS_PATH).glob("**/*.mp3")]
-    sound_effects = [Sound(SoundKind.SFX, path.stem, path) for path in Path(SOUNDS_PATH).glob("**/*.wav")]
-    sounds = songs + sound_effects
+    mp3_files = Path(SOUNDS_PATH).glob("**/*.mp3")
+    wav_files = Path(SOUNDS_PATH).glob("**/*.wav")
+    songs = [Sound(SoundKind.SONG, path.stem, path) for path in mp3_files]
+    sfxs = [Sound(SoundKind.SFX, path.stem, path) for path in wav_files]
+    sounds = songs + sfxs
     init_audio_tracks(session, sounds)
 
     return templates.TemplateResponse("audio_settings.html", {
         "request": request,
         'songs': songs,
-        'sound_effects': sound_effects,
+        'sound_effects': sfxs,
     })
 
 
@@ -142,12 +145,12 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
         music_vol = DEFAULT_MUSIC_VOL
 
     if not sfx_choice:
-        chosen_sfx  = DEFAULT_SFX
+        chosen_sfx = DEFAULT_SFX
         chosen_sfx_vol = DEFAULT_SFX_VOL
     else:
-        chosen_sfx  = sfx_choice
-        chosen_sfx_vol  = sfx_vol
-    
+        chosen_sfx = sfx_choice
+        chosen_sfx_vol = sfx_vol
+
     return json.dumps(
         {"music_on": music_on,
             "playlist": playlist,
@@ -162,7 +165,7 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
 
 def init_audio_tracks(
         session: Session,
-        sounds : List[Sound]):
+        sounds: List[Sound]):
     """This function fills the AudioTracks table
 
     Args:

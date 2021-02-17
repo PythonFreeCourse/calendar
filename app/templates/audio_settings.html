@@ -30,7 +30,7 @@
         <label for="Sound Effect">Select sound effect:</label> <br>
         <select name="sfx_choice" style="width: 80px; height: 40px; margin-top: 5px;" id="sfx" disabled class="form-control"> 
         {% for sfx in sound_effects %}
-        <option value="{{sfx.name}}.wav">{{ sfx.name }}</option>
+        <option value="{{sfx.name}}.wav">{{sfx.name}}</option>
         {% endfor %}
         </select>
         <br>
