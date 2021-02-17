@@ -7,7 +7,7 @@ from app.internal.search import get_results_by_keywords
 router = APIRouter()
 
 
-@router.get("/search")
+@router.get("/search", include_in_schema=False)
 def search(request: Request):
     # Made up user details until there's a user login system
     current_username = "Chuck Norris"
@@ -18,7 +18,7 @@ def search(request: Request):
     })
 
 
-@router.post("/search")
+@router.post("/search", include_in_schema=False)
 async def show_results(
         request: Request,
         keywords: str = Form(None),

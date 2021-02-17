@@ -89,7 +89,7 @@ def old_event(sender: User, session: Session) -> Event:
         db=session,
         title='event 6',
         start=today_date - timedelta(days=5),
-        end=today_date,
+        end=today_date - timedelta(days=1),
         content='test event',
         owner_id=sender.id,
     )
