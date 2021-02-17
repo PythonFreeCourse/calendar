@@ -13,7 +13,7 @@ router = APIRouter(tags=["weight"],)
 
 
 @router.get("/weight")
-async def weight_form(
+async def get_weight(
         request: Request,
         session: Session = Depends(get_db),
         target: Union[float, None] = None,
