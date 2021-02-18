@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, Request
 from app.internal.timer import get_next_user_event_start_time
 from app.database.models import User
