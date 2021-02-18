@@ -76,10 +76,12 @@ async def set_category(request: Request,
         db_sess.rollback()
         message = "Category already exists"
         return templates.TemplateResponse("categories.html",
-               dictionary_category_request(request, message, name, color))
+                                          dictionary_req(request, message,
+                                                         name, color))
     message = f"Congratulation! You have created a new category: {name}"
     return templates.TemplateResponse("categories.html",
-           dictionary_category_request(request, message, name, color))
+                                      dictionary_req(request, message,
+                                                     name, color))
 
 
 def validate_request_params(query_params: ImmutableMultiDict) -> bool:
@@ -123,7 +125,7 @@ def get_user_categories(db_session: Session,
         return categories
 
 
-def dictionary_category_request(request, message, name, color) -> Dict:
+def dictionary_req(request, message, name, color) -> Dict:
     dictionary_tamplates = {
             "request": request,
             "message": message,
