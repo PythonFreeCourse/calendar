@@ -95,7 +95,7 @@ def weekly_tasks_test_client():
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
- 
+
 
 @pytest.fixture(scope="session")
 def security_test_client():
