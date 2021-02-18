@@ -4,12 +4,13 @@
 {{ super() }}
 <link href="{{ url_for('static', path='/categories_style.css') }}" rel="stylesheet">
 <!-- https://github.com/joshbuchea/HEAD -->
-<link
+<!-- <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
       crossorigin="anonymous"
-    />
+    /> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 {% endblock %}
 
 {% block content %}
@@ -20,11 +21,11 @@
 </h1>
 
 <form action="/categories" method="POST" required>
-  <p>Name your category:</p>
+  <label for="category_name">Name your category:</label>
   <p><input type="text" id ="name" name="name"></p>
-  <p>Choose your favorite color:</p>
+  <label for="category_color">Choose your favorite color:</label>
   <p><input type="color"  class="custom" id ="color", name="color"></p>
-  <p><input type="submit" class="btn btn-success" value="submit" /></p>
+  <p><button type="submit" class="btn btn-success" value="submit">Submit</button></p>
 </form>
 </div>
 {% if message %}

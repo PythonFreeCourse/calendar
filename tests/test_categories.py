@@ -67,7 +67,7 @@ class TestCategories:
 
     @staticmethod
     def test_get_user_categories(client, category):
-        response = client.get(f"/categories/by_parameters/?"
+        response = client.get(f"/categories/user/?"
                               f"user_id={category.user_id}"
                               f"&name={category.name}&color={category.color}")
         assert response.ok
@@ -78,7 +78,7 @@ class TestCategories:
 
     @staticmethod
     def test_get_category_by_name(client, sender, category):
-        response = client.get(f"/categories/by_parameters/?"
+        response = client.get(f"/categories/user/?"
                               f"user_id={category.user_id}"
                               f"&name={category.name}")
         assert response.ok
@@ -89,7 +89,7 @@ class TestCategories:
 
     @staticmethod
     def test_get_category_by_color(client, sender, category):
-        response = client.get(f"/categories/by_parameters/?"
+        response = client.get(f"/categories/user/?"
                               f"user_id={category.user_id}&"
                               f"color={category.color}")
         assert response.ok

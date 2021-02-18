@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import Dict, List
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from pydantic import BaseModel
@@ -38,7 +38,7 @@ class CategoryModel(BaseModel):
 
 
 # TODO(issue#29): get current user_id from session
-@router.get("/by_parameters", include_in_schema=False)
+@router.get("/user", include_in_schema=False)
 def get_categories(request: Request,
                    db_session: Session = Depends(get_db)) -> List[Category]:
     if validate_request_params(request.query_params):
@@ -71,26 +71,15 @@ async def set_category(request: Request,
                             detail=f"Color {color} if not from "
                                    f"expected format.")
     try:
-        Category.create(db_sess,
-                        name=name,
-                        color=color,
-                        user_id=user_id)
+        Category.create(db_sess, name=name, color=color, user_id=user_id)
     except IntegrityError:
         db_sess.rollback()
         message = "Category already exists"
-        return templates.TemplateResponse("categories.html", {
-            "request": request,
-            "message": message,
-            "name": name,
-            "color": color,
-        })
+        return templates.TemplateResponse("categories.html", 
+            dictionary_category_request(request , message, name, color))
     message = f"Congratulation! You have created a new category: {name}"
-    return templates.TemplateResponse("categories.html", {
-        "request": request,
-        "message": message,
-        "name": name,
-        "color": color,
-    })
+    return templates.TemplateResponse("categories.html", 
+        dictionary_category_request(request , message, name, color))
 
 
 def validate_request_params(query_params: ImmutableMultiDict) -> bool:
@@ -132,3 +121,12 @@ def get_user_categories(db_session: Session,
         return []
     else:
         return categories
+
+def dictionary_category_request(request , message, name, color) -> Dict:
+    dictionary_tamplates = {
+            "request": request,
+            "message": message,
+            "name": name,
+            "color": color,
+        }
+    return dictionary_tamplates
