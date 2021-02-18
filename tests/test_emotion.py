@@ -53,13 +53,13 @@ get_emotion_tests = [
 
 create_event_tests = [
     (HAPPY_MESSAGE, datetime.datetime(2019, 5, 21, 0, 0),
-     datetime.datetime(2019, 5, 22, 0, 0), 1, HAPPY_MESSAGE, "location",
+     datetime.datetime(2019, 5, 22, 0, 0), False, 1, HAPPY_MESSAGE, "location",
      "&#128515"),
     (SAD_MESSAGE, datetime.datetime(2019, 5, 21, 0, 0),
-     datetime.datetime(2019, 5, 22, 0, 0), 1, HAPPY_MESSAGE, "location",
+     datetime.datetime(2019, 5, 22, 0, 0), False, 1, HAPPY_MESSAGE, "location",
      "&#128577"),
     (" ", datetime.datetime(2019, 5, 21, 0, 0),
-     datetime.datetime(2019, 5, 22, 0, 0), 1, " ", "location",
+     datetime.datetime(2019, 5, 22, 0, 0), False, 1, " ", "location",
      None)
 ]
 
@@ -89,10 +89,10 @@ def test_get_emotion(title, content, result):
     assert get_emotion(title, content) == result
 
 
-@pytest.mark.parametrize("title, start, end, owner_id, content, " +
+@pytest.mark.parametrize("title, start, end, all_day, owner_id, content, " +
                          "location, result", create_event_tests)
-def test_create_event(title, start, end,
+def test_create_event(title, start, end, all_day,
                       owner_id, content, location, result, session):
     event = create_event(session, title, start,
-                         end, owner_id, content, location)
+                         end, all_day, owner_id, content, location)
     assert event.emotion == result
