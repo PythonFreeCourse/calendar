@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -17,11 +17,9 @@ def save(session: Session, instance: Base) -> bool:
     return False
 
 
-def create_model(session: Session, model_class: Base,
-                 **kw: Dict[str, Any]) -> Base:
+def create_model(session: Session, model_class: Base, **kwargs: Any) -> Base:
     """Creates and saves a db model."""
-
-    instance = model_class(**kw)
+    instance = model_class(**kwargs)
     save(session, instance)
     return instance
 
