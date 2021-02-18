@@ -137,3 +137,14 @@ p {
 h2.modal-title {
   font-size: 1.25rem;
 }
+
+#form1 {
+  width: 200px; 
+  margin: auto;
+}
+
+#sfx {
+  width: 80px;
+  height: 40px;
+  margin-top: 5px;
+}

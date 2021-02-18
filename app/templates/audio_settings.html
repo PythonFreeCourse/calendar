@@ -1,13 +1,13 @@
 {% extends "base.html" %} {% block content %}
 <div class="container mt-4">
     <h1>Audio Settings</h1>
-    <form action="{{ url_for('get_choices') }}" style="width: 200px; margin: autio" method="post" id="form1">
+    <form action="{{ url_for('get_choices') }}" method="post" id="form1">
         <div class="form-outline">
             <label>Music:</label>
-            <input type="radio" id="Music_On" name="music_on" value="True" class="form-check-input">
-            <label for="Music_On" class="form-check-label">On</label>
-            <input type="radio" id="Music_Off" name="music_on" value="False" checked class="form-check-input">
-            <label for="Music_Off" class="form-check-label">Off</label>
+            <input type="radio" id="music-on" name="music_on" value="True" class="form-check-input">
+            <label for="music-on" class="form-check-label">On</label>
+            <input type="radio" id="music-off" name="music_on" value="False" checked class="form-check-input">
+            <label for="music-off" class="form-check-label">Off</label>
         </div>
         <br>
         <label for="music">Select music tracks:</label> <br> {% for song in songs %}
@@ -17,25 +17,25 @@
         </div>
         <br>
         <label>Volume</label>
-        <input id="rangeInput_music" type="range" min="0" max="100" name="music_vol" disabled>
+        <input id="rangeInput-music" type="range" min="0" max="100" name="music_vol" disabled>
         <br>
         <div class="form-outline">
             <label>Sound Effects:</label>
-            <input type="radio" id="Sound_Effects_On" name="sfx_on" value="True" class="form-check-input">
-            <label for="Sound_Effects_On" class="form-check-label">On</label>
-            <input type="radio" id="Sound_Effects_Off" name="sfx_on" value="False" checked class="form-check-input">
-            <label for="Sound_Effects_Off" class="form-check-label">Off</label>
+            <input type="radio" id="sound-effects-on" name="sfx_on" value="True" class="form-check-input">
+            <label for="sound-effects-on" class="form-check-label">On</label>
+            <input type="radio" id="sound-effects-off" name="sfx_on" value="False" checked class="form-check-input">
+            <label for="sound-effects-off" class="form-check-label">Off</label>
         </div>
         <br>
-        <label for="Sound Effect">Select sound effect:</label> <br>
-        <select name="sfx_choice" style="width: 80px; height: 40px; margin-top: 5px;" id="sfx" disabled class="form-control"> 
+        <label for="sound-effect">Select sound effect:</label> <br>
+        <select name="sfx_choice" id="sfx" disabled class="form-control"> 
         {% for sfx in sound_effects %}
         <option value="{{sfx.name}}.wav">{{sfx.name}}</option>
         {% endfor %}
         </select>
         <br>
         <label>Volume</label>
-        <input id="rangeInput_sfx" type="range" min="0" max="100" name="sfx_vol" disabled>
+        <input id="rangeInput-sfx" type="range" min="0" max="100" name="sfx_vol" disabled>
         <br>
         <button id="activate" type="submit" form="form1" class="btn btn-primary">
         Activate

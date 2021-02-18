@@ -1,20 +1,23 @@
 // Event listeners
 const set_checked_ids = [
-  "Music_On",
-  "Music_Off",
-  "Sound_Effects_On",
-  "Sound_Effects_Off",
+  "music-on",
+  "music-off",
+  "sound-effects-on",
+  "sound-effects-off",
 ];
 const other_ids_and_their_funcs = [
   ["activate", set_default],
   ["on", start_audio],
   ["off", stop_audio],
 ];
-set_checked_ids.forEach((val) => {
-  add_set_checked_listener(val);
-});
-other_ids_and_their_funcs.forEach((val) => {
-  perform_func_on_click(val[0], val[1]);
+
+window.addEventListener("load", function () {
+  set_checked_ids.forEach((val) => {
+    add_set_checked_listener(val);
+  });
+  other_ids_and_their_funcs.forEach((val) => {
+    perform_func_on_click(val[0], val[1]);
+  });
 });
 
 /**
@@ -53,18 +56,18 @@ function perform_func_on_click(element_id, func) {
  * @param {string} element_id - the id attribute of the html element. One of: Music On/off, Sound Effects On/Off.
  */
 function set_checked(element_id) {
-  is_music = element_id.includes('Music')
-  is_off = element_id.includes('Off')
-  to_toggle = is_music ? "music" : "sfx"
-  set_disabled_or_enabled(to_toggle, is_music, is_off)
+  is_music = element_id.includes("music");
+  is_off = element_id.includes("off");
+  to_toggle = is_music ? "music" : "sfx";
+  set_disabled_or_enabled(to_toggle, is_music, is_off);
 }
 
 /**
  * @summary This function sets audio options off by default.
  */
 function set_default() {
-  set_default_for_audio_type("Music_On", "Music_Off");
-  set_default_for_audio_type("Sound_Effects_On", "Sound_Effects_Off");
+  set_default_for_audio_type("music-on", "music-off");
+  set_default_for_audio_type("sound-effects-on", "sound-effects-off");
 }
 
 /**
@@ -83,7 +86,7 @@ function set_disabled_or_enabled(name, is_class, to_set) {
   } else {
     document.getElementById(name).disabled = to_set;
   }
-  document.getElementById("rangeInput_" + name).disabled = to_set;
+  document.getElementById("rangeInput-" + name).disabled = to_set;
 }
 
 /**
@@ -102,7 +105,7 @@ function set_default_for_audio_type(audio_id_on, audio_id_off) {
 
 function prepare_audio() {
   var audio_settings = JSON.parse(this.response);
-  music = document.getElementById("my_audio");
+  music = document.getElementById("my-audio");
   sfx = document.getElementById("sfx");
   var audio_settings = JSON.parse(audio_settings);
   var music_on = audio_settings["music_on"];
@@ -155,7 +158,7 @@ function play_sfx() {
  * @summary This function stops the audio.
  */
 function stop_audio() {
-  music = document.getElementById("my_audio");
+  music = document.getElementById("my-audio");
   sfx = document.getElementById("sfx");
 
   if (!music.paused) {
