@@ -2,10 +2,11 @@ from datetime import datetime, timedelta
 import json
 import pytest
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
 from starlette import status
+
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
@@ -429,6 +430,12 @@ def test_change_owner(client, event_test_client, user, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_get_tamplate_to_share_event(event, session):
+    html_template = evt.get_template_to_share_event(
+        event_id=1, user_name='michael', db=session, request=Request.get)
+    assert html_template is not None
 
 
 def test_add_comment(event_test_client: TestClient, session: Session,

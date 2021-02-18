@@ -389,6 +389,28 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
+def get_template_to_share_event(event_id: int, user_name: str,
+                                db: Session, request: Request) -> templates:
+    """Gives shareable template of the event.
+
+    Args:
+        event_id: Event to share
+        user_name: The user who shares the event
+        db: The database to get the event from
+        request: The request we got from the user using FastAPI.
+
+    Returns:
+        Shareable HTML with data from the database about the event.
+    """
+
+    event = by_id(db, event_id)
+    msg_info = {"sender_name": user_name, "event": event}
+    html_temp = templates.TemplateResponse("event/share_event.html",
+                                           {"request": request,
+                                            "msg_info": msg_info})
+    return html_temp
+
+
 @router.post("/{event_id}")
 async def add_comment(request: Request, event_id: int,
                       session: Session = Depends(get_db)) -> Response:
