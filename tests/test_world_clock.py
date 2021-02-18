@@ -1,5 +1,5 @@
-from app.routers.world_clock import \
-    (generate_possible_timezone_path,
+from app.internal.world_clock import (
+     generate_possible_timezone_path,
      generate_possible_timezone_path_by_country,
      get_all_possible_timezone_paths_for_given_place,
      get_api_data, get_continent, get_country,
@@ -24,25 +24,25 @@ from datetime import datetime
 
 
 def test_api_http_error():
-    with patch('app.routers.world_clock.requests.get',
+    with patch('app.internal.world_clock.requests.get',
                side_effect=requests.exceptions.HTTPError):
         assert not get_api_data(TIMEZONES_BASE_URL)
 
 
 def test_api_connection_error():
-    with patch('app.routers.world_clock.requests.get',
+    with patch('app.internal.world_clock.requests.get',
                side_effect=requests.exceptions.ConnectionError):
         assert not get_api_data(TIMEZONES_BASE_URL)
 
 
 def test_api_timeout_error():
-    with patch('app.routers.world_clock.requests.get',
+    with patch('app.internal.world_clock.requests.get',
                side_effect=requests.exceptions.Timeout):
         assert not get_api_data(TIMEZONES_BASE_URL)
 
 
 def test_api_request_exception():
-    with patch('app.routers.world_clock.requests.get',
+    with patch('app.internal.world_clock.requests.get',
                side_effect=requests.exceptions.RequestException):
         assert not get_api_data(TIMEZONES_BASE_URL)
 

@@ -1,14 +1,11 @@
-import dateutil.parser
+from datetime import datetime, timedelta
 import json
 import requests
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
+
+import dateutil.parser
 
 from app import config
-
-from datetime import datetime, timedelta
-
-from collections import namedtuple
-
-from typing import Any, Dict, List, Optional, Tuple
 
 
 TOTAL_SEC_IN_HOUR = 3600
@@ -39,8 +36,14 @@ FEEDBACK_INDEX = 1
 ARB_COUNTRY_TIMEZONE = -1
 PATH_SEPARETOR = '/'
 
-MeetingTime = namedtuple('MeetingTime',
-                         ['time', 'start', 'end', 'desirability'])
+
+class MeetingTime(NamedTuple):
+    time: str
+    start: str
+    end: str
+    desirability: str
+
+
 PARTS_OF_THE_DAY_FEEDBACK = [
     MeetingTime(time='Early Morning', start='05:00:00', end='07:59:59',
                 desirability='Better not'),
@@ -181,7 +184,7 @@ def get_timezones_parts(part: str) -> List[str]:
     return [timezone[TIMEZONE_PARTS_MAP[part]] for timezone in parse_list]
 
 
-def standardize_country_or_place(place_name: str) -> str:
+def standardize_country_or_place(place_name: str) -> Optional[str]:
     """Standardize a given country or place name to the equivalent
        name that appears in the timezone list.
     Args:
@@ -251,14 +254,13 @@ def generate_possible_timezone_path_by_country(
     continent = get_continent(country)
     continent = standardize_continent(continent)
     map_hierarchy[CONTINENT] = continent
-    print(map_hierarchy)
-    if not continent:
-        if country in get_timezones_parts(PLACE):
-            possibilities.append(search_timezone_by_just_place(country))
-            return possibilities
-    else:
+    if continent:
         return possibilities + generate_possible_timezone_path(
             map_hierarchy)
+
+    elif country in get_timezones_parts(PLACE):
+        possibilities.append(search_timezone_by_just_place(country))
+        return possibilities
 
 
 def generate_possible_timezone_path_with_no_extra_data(
@@ -354,7 +356,7 @@ def get_timezone_path_for_given_place(place_name: str) -> Optional[str]:
     for possibility in possibilities:
         if possibility in timezones:
             return f'{TIMEZONES_BASE_URL}/{possibility}'
-    # NO EXPLICIT SUCH TIMEZONES. GET ARBITRARY TIMEZONE OF COUNTRY
+    # No explicit such timezones. Get an arbitrary timezone of country
     if standardize_continent(place_name.title()):
         return get_arbitrary_timezone_of_country(place_name)
     return get_timezone_from_subcountry(place_name)
@@ -368,13 +370,14 @@ def get_current_time_in_place(place_name: str) -> Optional[str]:
         str: The timezone path.
     """
     path = get_timezone_path_for_given_place(place_name)
-    if path:
-        current_datetime_details = get_api_data(path)
-        current_datetime_full = current_datetime_details[CURRENT_TIME_KEY]
-        current_datetime_parsed = (
-            dateutil.parser.parse(current_datetime_full))
-        current_time = current_datetime_parsed.strftime('%H:%M:%S')
-        return current_time
+    if not path:
+        return
+    current_datetime_details = get_api_data(path)
+    current_datetime_full = current_datetime_details[CURRENT_TIME_KEY]
+    current_datetime_parsed = (
+        dateutil.parser.parse(current_datetime_full))
+    current_time = current_datetime_parsed.strftime('%H:%M:%S')
+    return current_time
 
 
 def get_part_of_day_and_feedback(time: datetime) -> Tuple[str, str]:
