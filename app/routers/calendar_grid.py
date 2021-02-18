@@ -29,8 +29,8 @@ class Day:
     def __init__(self, date: datetime):
         self.date: datetime = date
         self.sday: str = self.date.strftime("%A")
-        self.dailyevents: List[Tuple] = []
-        self.events: List[Tuple] = []
+        self.dailyevents: List[Tuple] = [("Yam's Birthday", "Buy a present")]
+        self.events: List[Tuple] = [("09AP", "Meeting with yam")]
         self.css: Dict[str, str] = {
             'day_container': 'day',
             'date': 'day-number',

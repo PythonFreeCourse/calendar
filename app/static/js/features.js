@@ -19,12 +19,14 @@ function display(elements, targetID) {
 }
 
 function searchFeature(event, rows, targetID) {
-    const searchValue = event.target.value.trim();
+    const searchValue = event.target.value.trim().toLowerCase();
     if (!searchValue) {
         appendElement(rows, targetID);
     } else {
         const result = rows.filter(
-            row => { return row.getElementsByClassName("row-feature-name")[0].innerHTML.includes(searchValue) }
+            row => {
+                return row.getElementsByClassName("row-feature-name")[0].innerHTML.toLowerCase().includes(searchValue)
+            }
         );
         return result;
     }
@@ -58,9 +60,22 @@ function setSearchBox(targetID) {
     });
 }
 
+
+function setAdd(className) {
+    const allRows = document.getElementsByClassName(className);
+    for (let i = 0; i < allRows.length; ++i) {
+        if (allRows[i].dataset.state === "available") {
+            setAdd(allRows[i]);
+        } else {
+            setRemove(allRows[i]);
+        }
+    }
+}
+
 document.addEventListener(
     'DOMContentLoaded', function () {
         setSearchBox("available-features");
+        setAdd(className);
     }
 )
 
