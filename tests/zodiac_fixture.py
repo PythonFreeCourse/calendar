@@ -6,7 +6,7 @@ from app.internal.utils import create_model, delete_instance
 
 
 @pytest.fixture
-def zodiac1(session: Session) -> Zodiac:
+def zodiac_sign(session: Session) -> Zodiac:
     zodiac = create_model(
         session, Zodiac,
         name="aries",

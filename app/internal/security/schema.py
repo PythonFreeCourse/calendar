@@ -3,18 +3,25 @@ from typing import Optional, Union
 from pydantic import BaseModel, validator
 
 
-class LoginUser(BaseModel):
+class CurrentUser(BaseModel):
+    """
+    Validating fields types
+    Returns a user details as a class.
+    """
+    user_id: Optional[int]
+    username: str
+
+    class Config:
+        orm_mode = True
+
+
+class LoginUser(CurrentUser):
     """
     Validating fields types
     Returns a User object for signing in.
     """
-    user_id: Optional[int]
     is_manager: Optional[bool]
-    username: str
     password: str
-
-    class Config:
-        orm_mode = True
 
 
 class ForgotPassword(BaseModel):

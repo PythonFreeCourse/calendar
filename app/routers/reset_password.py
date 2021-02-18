@@ -9,7 +9,7 @@ from starlette.status import HTTP_302_FOUND
 from app.database.models import User
 from app.dependencies import get_db, templates
 from app.internal.security.ouath2 import (
-    authenticate_user_by_email, check_jwt_token,
+    authenticate_user_by_email, get_jwt_token,
     create_jwt_token, update_password)
 from app.internal.email import (
     BackgroundTasks, send_reset_password_mail)
@@ -93,7 +93,7 @@ async def reset_password(
     validatting form data against database records.
     If all validations succeed, hashing new password and updating database.
     '''
-    await check_jwt_token(db, token)
+    await get_jwt_token(db, token)
     form = await request.form()
     form_dict = dict(form)
     db_user = await User.get_by_username(
