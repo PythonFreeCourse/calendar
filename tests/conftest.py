@@ -79,3 +79,13 @@ def sqlite_engine():
 @pytest.fixture
 def Calendar():
     return calendar.Calendar(0)
+
+
+@pytest.fixture(scope="session")
+def module_session():
+    Base.metadata.create_all(bind=test_engine)
+    session = get_test_db()
+    yield session
+    session.rollback()
+    session.close()
+    Base.metadata.drop_all(bind=test_engine)

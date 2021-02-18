@@ -339,7 +339,7 @@ class UserMenstrualPeriodLength(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"),
                      nullable=False, unique=True)
-    period_length = Column(Integer)
+    period_length = Column(Integer, nullable=False)
 
 
 # insert language data

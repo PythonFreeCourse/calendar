@@ -25,7 +25,7 @@ MENSTRUAL_PERIOD_CATEGORY_ID = 111
 
 
 @router.get("/")
-def join(request: Request, db: Session = Depends(get_db)):
+def join_menstrual_predictor(request: Request, db: Session = Depends(get_db)):
     current_user_id = get_current_user(db).id
 
     if not is_user_signed_up_to_menstrual_predictor(db, current_user_id):
@@ -82,7 +82,7 @@ async def submit_join_form(
             **user_menstrual_period_length)
     except SQLAlchemyError:
         logger.info(
-            f'User {new_signed_up_to_period.user_id}'
+            'Current user '
             'already signed up to the service, hurray')
         db.rollback()
     url = '/'
@@ -90,16 +90,6 @@ async def submit_join_form(
         db, data['avg_period_length'], last_period_date, current_user.id)
 
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-
-
-@router.get("/get-period-dates/")
-def get_period_days(request: Request, db: Session = Depends(get_db)):
-    period_days = get_all_period_days(db, 1)
-    gaps_list = []
-    for i in range(len(period_days) - 1):
-        gap = get_date_diff(period_days[i].start, period_days[i + 1].start)
-        gaps_list.append(gap.days)
-    logger.critical(get_list_avg(gaps_list))
 
 
 def get_avg_period_gap(db: Session, user_id):
@@ -137,20 +127,23 @@ def generate_predicted_period_dates(
         user_id: int):
     delta = datetime.timedelta(int(period_length))
     period_end_date = period_start_date + delta
-    create_event(db, 'period', period_start_date, period_end_date,
-                 user_id, category_id=MENSTRUAL_PERIOD_CATEGORY_ID)
-    get_all_period_days(db, user_id=user_id)
+    period_event = create_event(
+        db, 'period', period_start_date, period_end_date,
+        user_id, category_id=MENSTRUAL_PERIOD_CATEGORY_ID)
+    return period_event
 
 
 def add_3_month_predictions(db, period_length, period_start_date, user_id):
     avg_gap = get_avg_period_gap(db, user_id)
     avg_gap_delta = datetime.timedelta(avg_gap)
-    for i in range(4):
-        generate_predicted_period_dates(
+    generated_3_months = []
+    for _ in range(4):
+        generated_period = generate_predicted_period_dates(
             db, period_length, period_start_date, user_id)
+        generated_3_months.append(generated_period)
         period_start_date += avg_gap_delta
-        logger.error(period_start_date)
-    logger.error(avg_gap_delta)
+    logger.info(f'Generated predictions: {generated_3_months}')
+    return generated_3_months
 
 
 def get_all_period_days(session: Session, user_id: int) -> List[Event]:
