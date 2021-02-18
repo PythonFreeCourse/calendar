@@ -1,7 +1,62 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<h2>username: {{ user.username }}</h2>
+    <title>PyLendar global var test</title>
 
-{% endblock %}
+</head>
+
+<body>
+
+    <div>
+        <ul>
+            {% if user %}
+            <li>
+                <a href="#"> Profile </a>
+            </li>
+            {% endif %}
+
+            {% if not user %}
+            <li>
+                <a href="#"> Sign In </a>
+            </li>
+            {% endif %}
+
+            {% if user %}
+            <li>
+              <a href="#"> Sign Out </a>
+            </li>
+            {% endif %}
+
+            {% if not user %}
+            <li>
+                <a href="#"> Sign Up </a>
+            </li>
+            {% endif %}
+
+            {% if user %}
+            <li>
+                <a href="#"> Agenda </a>
+            </li>
+            {% endif %}
+
+            {% if user %}
+            <li>
+                <a href="#"> Invitations </a>
+            </li>
+            {% endif %}
+
+            <li>
+                <a href="#">Search</a>
+            </li>
+
+        </ul>
+    </div>
+
+    <h2>username: {{ user.username }}</h2>
+
+</body>
+</html>

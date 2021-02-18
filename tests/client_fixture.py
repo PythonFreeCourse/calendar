@@ -5,7 +5,8 @@ import pytest
 
 from app import main
 from app.database.models import Base, User
-from app.routers import agenda, event, invitation, profile, global_variable
+from app.demos import global_variable
+from app.routers import agenda, event, invitation, profile
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 from . import security_testing_routes
