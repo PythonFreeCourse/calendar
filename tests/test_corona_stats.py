@@ -2,11 +2,9 @@ import json
 from unittest.mock import patch
 
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.sql.operators import exists
 
 from app.database.models import CoronaStats
 from app.internal import corona_stats
-from sqlalchemy.sql.sqltypes import JSON
 
 
 FAKE_DATA = [{
