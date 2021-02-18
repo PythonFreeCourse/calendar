@@ -131,11 +131,12 @@ async def save_or_delete_quote(
 async def delete_quote(
     user_id: int = Form(...),
     quote: str = Form(...),
-    db: Session = Depends(get_db)):
+        db: Session = Depends(get_db)):
     """Deletes a quote from the database."""
     quote_id = get_quote_id(db, quote)
-    record = db.query(UserQuotes).filter(
-        UserQuotes.user_id == user_id, UserQuotes.quote_id == quote_id).delete()
+    db.query(UserQuotes).filter(
+        UserQuotes.user_id == user_id,
+        UserQuotes.quote_id == quote_id).delete()
     db.commit()
 
 
