@@ -39,7 +39,6 @@ class TestCategories:
                                    "user_id": sender.id}
         response = categories_test_client.post("/categories/",
                                                data=CATEGORY_ALREADY_EXISTS)
-        print(response.content)
         assert response.ok
         assert TestCategories.CATEGORY_ALREADY_EXISTS_MSG in response.content
 
@@ -97,6 +96,12 @@ class TestCategories:
         assert set(response.json()[0].items()) == {
             ("user_id", category.user_id), ("color", "121212"),
             ("name", "Guitar Lesson"), ("id", category.id)}
+
+    @staticmethod
+    def test_get_category_bad_request(client):
+        response = client.get("/categories/user")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert TestCategories.UNALLOWED_PARAMS in response.json()["detail"]
 
     @staticmethod
     def test_get_category_ok_request(client):
