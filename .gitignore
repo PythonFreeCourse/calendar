@@ -157,9 +157,6 @@ app/.vscode/
 
 app/routers/stam
 
-bin
-routes 1.py
-
 # PyCharm
 .idea
 
