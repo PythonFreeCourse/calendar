@@ -40,11 +40,12 @@ json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
-from app.routers import (about_us, agenda, calendar, categories,  # noqa: E402
-                         celebrity, credits, currency, dayview, email, event,
-                         export, four_o_four, google_connect, invitation,
-                         login, logout, profile, register, search, telegram,
-                         user, weekview, whatsapp)
+from app.routers import (  # noqa: E402
+    about_us, agenda, calendar, categories, celebrity, credits,
+    currency, dayview, email, event, export, four_o_four, friendview,
+    google_connect, invitation, login, logout, profile,
+    register, search, telegram, user, weekview, whatsapp,
+)
 
 json_data_loader.load_to_db(next(get_db()))
 
@@ -74,6 +75,7 @@ routers_to_include = [
     credits.router,
     currency.router,
     dayview.router,
+    friendview.router,
     weekview.router,
     email.router,
     event.router,
