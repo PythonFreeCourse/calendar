@@ -116,7 +116,7 @@ p {
   margin-bottom: 1em;
 }
 
-#rangeInput_sfx, #rangeInput_music{
+#rangeInput-sfx, #rangeInput-music{
   display:block;
 }
   
@@ -147,11 +147,6 @@ p {
 
 h2.modal-title {
   font-size: 1.25rem;
-}
-
-#form1 {
-  width: 200px; 
-  margin: auto;
 }
 
 #sfx {
