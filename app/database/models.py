@@ -35,6 +35,7 @@ class User(Base):
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    availability = Column(Boolean, default=True, nullable=False)
 
     owned_events = relationship(
         "Event", cascade="all, delete", back_populates="owner",

@@ -139,11 +139,6 @@ INVALID_FIELD_UPDATE = [
 ]
 
 
-# -------------------------------------------------
-# fixtures
-# -------------------------------------------------
-
-
 @pytest.fixture
 def new_event(session, new_user):
     event = add_new_event(TestApp.event_test_data, session)
@@ -161,11 +156,6 @@ def new_user(session):
     )
 
     return user
-
-
-# -------------------------------------------------
-# tests
-# -------------------------------------------------
 
 
 def test_joining_public_event(session, new_event, new_user):

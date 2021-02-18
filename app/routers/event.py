@@ -412,8 +412,8 @@ def add_user_to_event(session: Session, user_id: int, event_id: int):
         save(session, association)
         return True
     else:
-        """if the user has a connection to the event,
-        the function will recognize the duplicate and return false."""
+        # if the user has a connection to the event,
+        # the function will recognize the duplicate and return false.
         return False
 
 
