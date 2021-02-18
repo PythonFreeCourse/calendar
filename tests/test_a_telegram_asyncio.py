@@ -250,7 +250,7 @@ Welcome to PyLendar telegram client!'''
 
         chat = Chat(gen_message('yes'))
         message = MessageHandler(chat, self.TEST_USER)
-        answer = r'public\\private event:\npublic event\n\n'
+        answer = 'public\\private event:\npublic event\n\n'
         answer += 'When does it start?'
         assert await message.process_callback() == answer
 

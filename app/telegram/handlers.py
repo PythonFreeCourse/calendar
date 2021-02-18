@@ -198,6 +198,7 @@ Welcome to PyLendar telegram client!'''
     async def _process_is_public(self, memo_dict):
         is_public_response = self.chat.message.lower
         if is_public_response in ['yes', 'no']:
+            print('yasss')
             return await self._add_is_public()
         return await self._process_bad_bool_input()
 
@@ -212,11 +213,11 @@ Welcome to PyLendar telegram client!'''
     async def _add_is_public(self, memo_dict):
         if self.chat.message.lower == 'yes':
             memo_dict['is_public'] = True
-            answer = r'public\\private event:\npublic event\n\n'
+            answer = 'public\\private event:\npublic event\n\n'
         else:
             answer = 'private event'
             memo_dict['is_public'] = False
-        answer = r'public\\private event:\nprivate event\n\n'
+        answer = 'public\\private event:\nprivate event\n\n'
         answer += '\nWhen does it start?'
         await telegram_bot.send_message(
             chat_id=self.chat.user_id,
