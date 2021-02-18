@@ -8,17 +8,14 @@ class TestShareEvent:
     def test_share_success(self, user, event, session):
         participants = [user.email]
         share(event, participants, session)
-        invitations = get_all_invitations(
-            session=session, recipient_id=user.id
-        )
+        invitations = get_all_invitations(db=session, recipient_id=user.id)
         assert invitations != []
 
     def test_share_failure(self, event, session):
         participants = [event.owner.email]
         share(event, participants, session)
         invitations = get_all_invitations(
-            session=session, recipient_id=event.owner.id
-        )
+            db=session, recipient_id=event.owner.id)
         assert invitations == []
 
     def test_sort_emails(self, user, session):
@@ -38,7 +35,7 @@ class TestShareEvent:
             self, user, sender, event, session
     ):
         assert send_in_app_invitation([user.email], event, session=session)
-        invitation = get_all_invitations(session=session, recipient=user)[0]
+        invitation = get_all_invitations(db=session, recipient=user)[0]
         assert invitation.event.owner == sender
         assert invitation.recipient == user
         session.delete(invitation)

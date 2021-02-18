@@ -119,11 +119,22 @@ p {
 #rangeInput_sfx, #rangeInput_music{
   display:block;
 }
+  
+.error-message {
+    line-height: 0;
+    color: red;
+    padding-left: 12.5rem;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+}
 
 .error-message {
     line-height: 0;
     color: red;
     padding-left: 12.5rem;
+    margin-bottom: 1em;
 }
 
 .input-upload-file {
