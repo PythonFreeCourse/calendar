@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static', path='/dayview.css') }}">
+        <link href="https://fonts.googleapis.com/css2?family=Assistant&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
+        <title>dayview</title>
+    </head>
+    <body>
+        <div id="toptab" class="d-flex justify-content-around sticky-top">
+            {% if view == 'day' %}
+                <a href="/closethedayview" title="close day view"><img class="pb-1" src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}" width="15em" height="15em"></a>
+                <span id="month-num" class="month-num fw-bold text-white">{{month}}</span>
+                <span id="day-num" class="day-num fw-bold text-white">{{day}}</span>
+                {% if zodiac %}
+                  <div class="zodiac-sign">
+                      <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Zodiac-sign: {{zodiac.name}}" target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}" alt="zodiac sign" width="14em" height="13em"></a>
+                  </div>
+                {% endif %}
+            {% else %}
+                <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
+            {% endif %}
+        </div>
+        <div class="all_day_events">
+            {% for event in all_day_events %}
+                <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
+            {% endfor %}
+        </div>
+        <div class="schedule">
+            <div class="container times bg-primeary position">
+                {% if view == 'day'%}
+                    {% for hour in range(24)%}
+                        <div class="row bg-transparent hourmark">
+                        {% set hour = hour|string() %}
+                        {{hour.zfill(2)}}:00
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="eventgrid">
+                {% for event, attr in events %}
+                    <div id="event{{event.id}}" class="text-truncate px-2 d-flex flex-column justify-content-evenly event" style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
+                        <p class="text-truncate my-0 {{ attr.title_size_class }}">{{ event.title }}</p>
+                        {% if attr.total_time_visible %}
+                            <p class="total-time text-truncate fw-light my-0">{{attr.total_time}}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="container baselines bg-transparent">
+                {% for i in range(25)%}
+                    <div class="hourbar {{i}} row text-white border-bottom">---</div>
+                {% endfor %}
+            </div>
+            <div class="actiongrid">
+
+                {% for event, attr in events %}
+                    <div class="d-flex flex-row justify-content-around align-items-end action-continer" style="grid-row: {{attr.grid_position}};">
+                        <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/pencil.svg')}}"></a>
+                        <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/trash-can.svg')}}"></a>
+                        <a href="/event/{{event.id}}" title="See full event" class="action-icon"><img class="pb-1" src="{{ url_for('static', path='/images/icons/view.svg')}}"></a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <button class="event-btn" title="Add Event" class="add-event-icon"><img class="plus_image" src="{{ url_for('static', path='/images/icons/plus.svg')}}"></a>
+        </div>
+        <div id="here">Have a nice day</div>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+       <script type="text/javascript" src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
+    </body>
+</html>
