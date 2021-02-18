@@ -21,6 +21,7 @@ def user(session: Session) -> Generator[User, None, None]:
     delete_instance(session, mock_user)
 
 
+@pytest.fixture
 def user_exercise(session: Session, user: User) -> UserExercise:
     test_user_exercise = create_model(
         session, UserExercise,
