@@ -1,19 +1,19 @@
+from fastapi import Depends, FastAPI, Form, Request
+from fastapi.openapi.docs import (get_swagger_ui_html,
+                                  get_swagger_ui_oauth2_redirect_html)
+from fastapi.staticfiles import StaticFiles
+from sqlalchemy.orm import Session
+from starlette.status import HTTP_401_UNAUTHORIZED
+
 from app import config
 from app.database import engine, models
+from app.database.models import UserQuotes
 from app.dependencies import MEDIA_PATH, STATIC_PATH, get_db, logger, templates
 from app.internal import daily_quotes, json_data_loader
-
+from app.internal.daily_quotes import get_quote_id
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
-from fastapi import Depends, FastAPI, Form, Request
-from fastapi.openapi.docs import (
-    get_swagger_ui_html,
-    get_swagger_ui_oauth2_redirect_html,
-)
-from fastapi.staticfiles import StaticFiles
-from starlette.status import HTTP_401_UNAUTHORIZED
-from sqlalchemy.orm import Session
 
 
 def create_tables(engine, psql_environment):
@@ -40,12 +40,11 @@ json_data_loader.load_to_db(next(get_db()))
 # This MUST come before the app.routers imports.
 set_ui_language()
 
-from app.routers import (  # noqa: E402
-    about_us, agenda, calendar, categories, celebrity, credits,
-    currency, dayview, email, event, export, four_o_four,
-    google_connect, invitation, login, logout, profile,
-    register, search, telegram, user, weekview, whatsapp,
-)
+from app.routers import (about_us, agenda, calendar, categories,  # noqa: E402
+                         celebrity, credits, currency, dayview, email, event,
+                         export, four_o_four, google_connect, invitation,
+                         login, logout, profile, register, search, telegram,
+                         user, weekview, whatsapp)
 
 json_data_loader.load_to_db(next(get_db()))
 
@@ -116,13 +115,26 @@ async def home(request: Request, db: Session = Depends(get_db)):
 async def save_or_delete_quote(
     user_id: int = Form(...),
     quote: str = Form(...),
-    to_save: bool = Form(...),
         db: Session = Depends(get_db)):
-    """Saves or deletes a quote from the database."""
-    if to_save:
-        daily_quotes.save_quote(db, user_id, quote)
-    else:
-        daily_quotes.remove_quote(db, user_id, quote)
+    """Saves a quote in the database."""
+    quote_id = get_quote_id(db, quote)
+    record = db.query(UserQuotes).filter(
+        UserQuotes.user_id == user_id, UserQuotes.quote_id == quote_id).first()
+    if not record:
+        db.add(UserQuotes(user_id=user_id, quote_id=quote_id))
+        db.commit()
+
+
+@app.delete("/")
+async def delete_quote(
+    user_id: int = Form(...),
+    quote: str = Form(...),
+    db: Session = Depends(get_db)):
+    """Deletes a quote from the database."""
+    quote_id = get_quote_id(db, quote)
+    record = db.query(UserQuotes).filter(
+        UserQuotes.user_id == user_id, UserQuotes.quote_id == quote_id).delete()
+    db.commit()
 
 
 @app.get("/favorite_quotes")

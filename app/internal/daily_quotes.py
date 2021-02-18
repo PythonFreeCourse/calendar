@@ -44,24 +44,3 @@ def get_quotes(session, user_id):
 def get_quote_id(session, quote):
     """Retrieve quote id given the text of the quote."""
     return session.query(Quote).filter_by(text=quote).first().id
-
-
-def save_quote(session, user_id, quote):
-    """Saves a quote in the database."""
-    quote_id = get_quote_id(session, quote)
-    record = session.query(UserQuotes).filter(
-        UserQuotes.user_id == user_id, UserQuotes.quote_id == quote_id).first()
-    if not record:
-        user_quote = UserQuotes(user_id=user_id, quote_id=quote_id)
-        session.add(user_quote)
-        session.commit()
-
-
-def remove_quote(session, user_id, quote):
-    """Removes a quote from the database."""
-    quote_id = get_quote_id(session, quote)
-    record = session.query(UserQuotes).filter(
-        UserQuotes.user_id == user_id, UserQuotes.quote_id == quote_id).first()
-    if record:
-        session.delete(record)
-        session.commit()

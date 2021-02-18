@@ -24,10 +24,10 @@ function on_heart_click() {
   const author = author_element.innerHTML.split("\\ ")[1].split("\n")[0];
   if (this.src.split("/").pop() == "empty_heart.png") {
     this.src = "../media/full_heart.png";
-    save_or_remove_quote(1, quote, author, true);
+    save_or_remove_quote(1, quote, true);
   } else {
     this.src = "../media/empty_heart.png";
-    save_or_remove_quote(1, quote, author, false);
+    save_or_remove_quote(1, quote, false);
     if (this.classList.contains("favorites")) {
       this.parentNode.parentNode.innerHTML = null;
     }
@@ -37,11 +37,13 @@ function on_heart_click() {
 /**
  * @summary Saves or removes a quote from favorites.
  */
-function save_or_remove_quote(user_id, quote, author, to_save) {
+function save_or_remove_quote(user_id, quote, to_save) {
+  method = to_save == true ? "post": "delete"
+  console.log(method)
   let xhr = new XMLHttpRequest();
-  xhr.open("post", "/");
+  xhr.open(method, "/");
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.send(
-    `user_id=${user_id}&quote=${quote}&author=${author}&to_save=${to_save}`
+    `user_id=${user_id}&quote=${quote}`
   );
 }
