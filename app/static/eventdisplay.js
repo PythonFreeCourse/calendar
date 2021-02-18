@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.text();
             })
             .then(function(body) {
-                document.querySelector('#here').innerHTML = body;
-                scrollTo(document.getElementById("here"));
+                document.querySelector('#event_block').innerHTML = body;
+                scrollTo(document.getElementById("event_block"));
             });
         });
     }
