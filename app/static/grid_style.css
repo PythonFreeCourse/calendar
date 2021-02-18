@@ -69,7 +69,7 @@ nav {
 }
 
 .fixed-features div:hover {
-  color: var(--bold_primary);
+  color: var(--secondary);
 }
 
 .user-features div {
@@ -77,19 +77,19 @@ nav {
   width: 1.75rem;
   font-size: var(--text_m);
   margin: var(--space_s) auto auto auto;
-  color: var(--primary);
-  background-color: var(--bold_tertiary);
+  color: var(--background);
+  background-color: var(--positive);
   border-radius: 0.125rem;
 }
 
 .user-features div:hover {
-  color: var(--secondary);
-  background-color: var(--bold_primary);
+  color: var(--primary);
+  background-color: var(--secondary);
 }
 
 .user-features div:visited:active {
-  color: var(--secondary);
-  background-color: var(--bold_primary);
+  color: var(--primary);
+  background-color: var(--secondary);
 }
 
 #open-features {
@@ -107,7 +107,7 @@ nav {
     width: 20rem;
 }
 
-img {fill: var(--primary);}
+img {fill: var(--background);}
 
 header {
   z-index: 5;
@@ -188,7 +188,7 @@ main {
 }
 
 .week:hover {
-  box-shadow: -0.25rem 0 0 0 var(--bold_primary);
+  box-shadow: -0.25rem 0 0 0 var(--secondary);
 }
 
 .day {
@@ -214,9 +214,9 @@ main {
   font-weight: 400;
 }
 
-.day:hover {border: 0.1rem solid var(--secondary);}
+.day:hover {border: 0.1rem solid var(--primary);}
 
-.day:hover .day-number{color: var(--bold_secondary);}
+.day:hover .day-number{color: var(--negative);}
 
 .day:hover .add-small {
   display: block;
@@ -229,7 +229,7 @@ main {
 }
 
 .day_current {
-  background-color: var(--bold_primary);
+  background-color: var(--secondary);
   color: white;
 }
 
@@ -356,29 +356,29 @@ main {
 }
 
 /* Text Colors */
-.text-yellow {color: var(--bold_primary);}
+.text-yellow {color: var(--secondary);}
 
-.text-gray {color: var(--up_surface);}
+.text-gray {color: var(--on-surface);}
 
-.text-lightgray {color: var(--primary);}
+.text-lightgray {color: var(--background);}
 
-.text-darkblue {color: var(--secondary);}
+.text-darkblue {color: var(--primary);}
 
 /* Borders */
-.border-dash-darkblue {border: 0.125rem dashed  var(--secondary);}
+.border-dash-darkblue {border: 0.125rem dashed  var(--primary);}
 
-.border-darkblue {border: 0.125rem solid  var(--secondary);}
+.border-darkblue {border: 0.125rem solid  var(--primary);}
 
-.underline-yellow {border-bottom: 0.25rem solid  var(--bold_primary);}
+.underline-yellow {border-bottom: 0.25rem solid  var(--secondary);}
 
 /* Background Color */
-.background-darkblue {background-color: var(--secondary);}
+.background-darkblue {background-color: var(--primary-variant);}
 
-.background-red {background-color: var(--bold_secondary);}
+.background-red {background-color: var(--negative);}
 
-.background-lightgray {background-color: var(--surface);}
+.background-yellow {background-color: var(--secondary);}
 
-.background-yellow {background-color: var(--bold_primary);}
+.background-green {background-color: var(--positive);}
 
 .background-lightgray {
   background-color: var(--start-of-month);
