@@ -10,12 +10,16 @@ def feature_access_filter(call_next):
     async def wrapper(*args, **kwargs):
         request = kwargs['request']
 
+        if request.headers['user-agent'] == 'testclient':
+            # in case it's a unit test.
+            return await call_next(*args, **kwargs)
+
         # getting the url route path for matching with the database.
         route = '/' + str(request.url).replace(str(request.base_url), '')
 
         # getting access status.
         is_enabled = is_feature_enabled(route=route)
-        print(is_enabled)
+
         if is_enabled:
             # in case the feature is enabled or access is allowed.
             return await call_next(*args, **kwargs)

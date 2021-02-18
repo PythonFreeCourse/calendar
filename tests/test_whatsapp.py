@@ -38,7 +38,6 @@ def test_no_number():
 
 
 def test_end_to_end_testing(client):
-    resp = client.get(
-        '/whatsapp?phone_number=972536106106&message=testing')
+    resp = client.get('/whatsapp?phone_number=972536106106&message=testing')
     assert resp.ok
     assert resp.json

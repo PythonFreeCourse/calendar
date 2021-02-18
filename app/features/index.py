@@ -8,7 +8,7 @@
     it will create junk and unnecessary duplicates.
 
     *   IMPORTANT - To enable features panel functionlity the developer must  *
-    *   add the feature_access_filter decorator to ALL the feature routs      *
+    *   add the feature_access_filter decorator to ALL the feature routes     *
     *   Please see the example below.                                         *
 
     Enjoy and good luck :)
@@ -35,7 +35,7 @@ Example to feature icon stracture:
     .
     .
     .
-    "<feature name>": '<icon name>',
+    "<feature name>": "<icon name>",
     .
     .
     .
@@ -44,7 +44,8 @@ Example to feature icon stracture:
 
 # Add to last!
 icons = {
-    'feature-panel': 'albums-outline'
+    "feature-panel": "albums-outline",
+    "Google Sync": "sync-outline"
     }
 
 
@@ -52,10 +53,10 @@ icons = {
 Example to feature stracture:
 
 {
-    "name": '<feature name>',
-    "route": '/<the route like: /features >',
-    "description": '<description>',
-    "creator": '<creator name or nickname>'
+    "name": "<feature name - str>",
+    "route": "/<the route like: /features - str>",
+    "description": "<description - str>",
+    "creator": "<creator name or nickname - str>"
 }
 '''
 
@@ -77,9 +78,9 @@ Example to decorator placement:
 
 features = [
     {
-        "name": 'Google Sync',
-        "route": '/google/sync',
-        "description": 'Sync Google Calendar events with Pylender',
-        "creator": 'Liran Caduri'
+        "name": "Google Sync",
+        "route": "/google/sync",
+        "description": "Sync Google Calendar events with Pylender",
+        "creator": "Liran Caduri"
     },
 ]
