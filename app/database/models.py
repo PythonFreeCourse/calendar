@@ -31,7 +31,10 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
+    privacy = Column(String, default="Private", nullable=False)
+    is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    availability = Column(Boolean, default=True, nullable=False)
 
     owned_events = relationship(
         "Event", cascade="all, delete", back_populates="owner",
@@ -44,8 +47,18 @@ class User(Base):
     )
     comments = relationship("Comment", back_populates="user")
 
+    oauth_credentials = relationship(
+        "OAuthCredentials", cascade="all, delete", back_populates="owner",
+        uselist=False)
+
     def __repr__(self):
         return f'<User {self.id}>'
+
+    @staticmethod
+    async def get_by_username(db: Session, username: str) -> User:
+        """query database for a user by unique username"""
+        return db.query(User).filter(
+            User.username == username).first()
 
 
 class Event(Base):
@@ -57,9 +70,10 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
+    is_google_event = Column(Boolean, default=False)
     vc_link = Column(String)
     color = Column(String, nullable=True)
-    availability = Column(Boolean, default=True, nullable=False)
+    all_day = Column(Boolean, default=False)
     invitees = Column(String)
     is_public = Column(Boolean, default=False)
     emotion = Column(String, nullable=True)
@@ -179,6 +193,21 @@ class Invitation(Base):
             f'({self.event.owner}'
             f'to {self.recipient})>'
         )
+
+
+class OAuthCredentials(Base):
+    __tablename__ = "oauth_credentials"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String)
+    refresh_token = Column(String)
+    token_uri = Column(String)
+    client_id = Column(String)
+    client_secret = Column(String)
+    expiry = Column(DateTime)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates=__tablename__, uselist=False)
 
 
 class SalarySettings(Base):

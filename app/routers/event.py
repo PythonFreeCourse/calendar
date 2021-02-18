@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime as dt
 import json
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
@@ -27,9 +28,11 @@ TIME_FORMAT = '%Y-%m-%d %H:%M'
 START_FORMAT = '%A, %d/%m/%Y %H:%M'
 UPDATE_EVENTS_FIELDS = {
     'title': str,
-    'start': datetime,
-    'end': datetime,
+    'start': dt,
+    'end': dt,
     'availability': bool,
+    'all_day': bool,
+    'is_google_event': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
     'vc_link': (str, type(None)),
@@ -43,27 +46,60 @@ router = APIRouter(
 )
 
 
+class EventModel(BaseModel):
+    title: str
+    start: dt
+    end: dt
+    content: str
+    owner_id: int
+    location: str
+    is_google_event: bool
+
+
+@router.get("/")
+async def get_events(session=Depends(get_db)):
+    return session.query(Event).all()
+
+
+@router.post("/")
+async def create_event_api(event: EventModel, session=Depends(get_db)):
+    create_event(db=session,
+                 title=event.title,
+                 start=event.start,
+                 end=event.start,
+                 content=event.content,
+                 owner_id=event.owner_id,
+                 location=event.location,
+                 is_google_event=event.is_google_event
+                 )
+    return {'success': True}
+
+
+@router.get("/edit", include_in_schema=False)
 @router.get("/edit")
 async def eventedit(request: Request) -> Response:
     return templates.TemplateResponse("event/eventedit.html",
                                       {"request": request})
 
 
-@router.post("/edit")
+@router.post("/edit", include_in_schema=False)
 async def create_new_event(request: Request,
                            session=Depends(get_db)) -> Response:
     data = await request.form()
     title = data['title']
     content = data['description']
-    start = datetime.strptime(data['start_date'] + ' ' + data['start_time'],
-                              TIME_FORMAT)
-    end = datetime.strptime(data['end_date'] + ' ' + data['end_time'],
-                            TIME_FORMAT)
+    start = dt.strptime(data['start_date'] + ' ' +
+                        data['start_time'], TIME_FORMAT)
+    end = dt.strptime(data['end_date'] + ' ' + data['end_time'],
+                      TIME_FORMAT)
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
+    all_day = data['event_type'] and data['event_type'] == 'on'
+
     vc_link = data['vc_link']
     category_id = data.get('category_id')
+    is_google_event = data.get('is_google_event', 'True') == 'True'
 
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
@@ -72,10 +108,13 @@ async def create_new_event(request: Request,
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
 
-    event = create_event(session, title, start, end, owner_id, content,
-                         location, vc_link, invitees=invited_emails,
+    event = create_event(db=session, title=title, start=start, end=end,
+                         owner_id=owner_id, all_day=all_day, content=content,
+                         location=location, vc_link=vc_link,
+                         invitees=invited_emails,
                          category_id=category_id,
-                         availability=availability)
+                         availability=availability,
+                         is_google_event=is_google_event)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -83,18 +122,47 @@ async def create_new_event(request: Request,
                             status_code=status.HTTP_302_FOUND)
 
 
-@router.get("/{event_id}")
+@router.get("/{event_id}", include_in_schema=False)
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)) -> Response:
     event, comments, end_format = get_event_data(db, event_id)
+    start_format = START_FORMAT
+    if event.all_day:
+        start_format = '%A, %d/%m/%Y'
+        end_format = ""
     messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request,
                                        "event": event,
                                        "comments": comments,
-                                       "start_format": START_FORMAT,
+                                       "start_format": start_format,
                                        "end_format": end_format,
                                        "messages": messages})
+
+
+@router.post("/{event_id}/owner")
+async def change_owner(request: Request, event_id: int,
+                       db: Session = Depends(get_db)):
+    form = await request.form()
+    if 'username' not in form:
+        return RedirectResponse(router.url_path_for('eventview',
+                                                    event_id=event_id),
+                                status_code=status.HTTP_302_FOUND)
+    username = form['username']
+    user = db.query(User).filter_by(username=username).first()
+    try:
+        user_id = user.id
+    except AttributeError as e:
+        error_message = f"Username does not exist. {form['username']}"
+        logger.exception(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=error_message)
+    owner_to_update = {'owner_id': user_id}
+    _update_event(db, event_id, owner_to_update)
+    return RedirectResponse(router.url_path_for('eventview',
+                                                event_id=event_id),
+                            status_code=status.HTTP_302_FOUND)
 
 
 def by_id(db: Session, event_id: int) -> Event:
@@ -127,8 +195,8 @@ def by_id(db: Session, event_id: int) -> Event:
     return event
 
 
-def is_end_date_before_start_date(start_date: datetime,
-                                  end_date: datetime) -> bool:
+def is_end_date_before_start_date(start_date: dt,
+                                  end_date: dt) -> bool:
     """Check if the start date is earlier than the end date"""
     return start_date > end_date
 
@@ -170,6 +238,9 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
     # Convert `availability` value into boolean.
     if 'availability' in edit_event.keys():
         edit_event['availability'] = (edit_event['availability'] == 'True')
+    if 'is_google_event' in edit_event.keys():
+        edit_event['is_google_event'] = (
+            edit_event["is_google_event"] == 'True')
     return edit_event
 
 
@@ -203,6 +274,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
+                 all_day: bool = False,
                  content: Optional[str] = None,
                  location: Optional[str] = None,
                  vc_link: str = None,
@@ -211,6 +283,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
                  is_public: bool = False,
                  category_id: Optional[int] = None,
                  availability: bool = True,
+                 is_google_event: bool = False,
                  ):
     """Creates an event and an association."""
 
@@ -229,8 +302,10 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
         is_public=is_public,
+        all_day=all_day,
         category_id=category_id,
         availability=availability,
+        is_google_event=is_google_event
     )
     create_model(
         db, UserEvent,
@@ -288,7 +363,7 @@ def delete_event(event_id: int,
     event = by_id(db, event_id)
     participants = get_participants_emails_by_event(db, event_id)
     _delete_event(db, event)
-    if participants and event.start > datetime.now():
+    if participants and event.start > dt.now():
         pass
         # TODO: Send them a cancellation notice
         # if the deletion is successful
@@ -296,7 +371,7 @@ def delete_event(event_id: int,
         url="/calendar", status_code=status.HTTP_200_OK)
 
 
-def is_date_before(start_time: datetime, end_time: datetime) -> bool:
+def is_date_before(start_time: dt, end_time: dt) -> bool:
     """Check if the start_date is smaller then the end_time"""
     try:
         return start_time < end_time
@@ -337,9 +412,31 @@ def add_user_to_event(session: Session, user_id: int, event_id: int):
         save(session, association)
         return True
     else:
-        """if the user has a connection to the event,
-        the function will recognize the duplicate and return false."""
+        # if the user has a connection to the event,
+        # the function will recognize the duplicate and return false.
         return False
+
+      
+def get_template_to_share_event(event_id: int, user_name: str,
+                                db: Session, request: Request) -> templates:
+    """Gives shareable template of the event.
+
+    Args:
+        event_id: Event to share
+        user_name: The user who shares the event
+        db: The database to get the event from
+        request: The request we got from the user using FastAPI.
+
+    Returns:
+        Shareable HTML with data from the database about the event.
+    """
+
+    event = by_id(db, event_id)
+    msg_info = {"sender_name": user_name, "event": event}
+    html_temp = templates.TemplateResponse("event/share_event.html",
+                                           {"request": request,
+                                            "msg_info": msg_info})
+    return html_temp
 
 
 @router.post("/{event_id}")
@@ -352,7 +449,7 @@ async def add_comment(request: Request, event_id: int,
         'user_id': get_current_user(session).id,
         'event_id': event_id,
         'content': form['comment'],
-        'time': datetime.now(),
+        'time': dt.now(),
     }
     create_model(session, Comment, **data)
     path = router.url_path_for('view_comments', event_id=event_id)

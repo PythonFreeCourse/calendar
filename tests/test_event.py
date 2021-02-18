@@ -1,18 +1,20 @@
 from datetime import datetime, timedelta
-
-from fastapi import HTTPException
-from fastapi.testclient import TestClient
+import json
 import pytest
+
+from fastapi import HTTPException, Request
+from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
 from starlette import status
+
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
 from app.internal.utils import delete_instance
 from app.main import app
+from app.routers import event as evt
 from app.routers.event import add_new_event, add_user_to_event
 from app.routers.user import create_user
-from app.routers import event as evt
 
 
 CORRECT_EVENT_FORM_DATA = {
@@ -28,6 +30,24 @@ CORRECT_EVENT_FORM_DATA = {
     'availability': 'True',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
+    'event_type': 'on'
+}
+
+CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'event_type': 'on',
+    'is_google_event': 'False',
+
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -42,7 +62,9 @@ WRONG_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'True',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 BAD_EMAILS_FORM_DATA = {
@@ -57,7 +79,9 @@ BAD_EMAILS_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com,ccc'
+    'invited': 'a@a.com,b@b.com,ccc',
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 WEEK_LATER_EVENT_FORM_DATA = {
@@ -72,7 +96,9 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'event_type': 'on',
+    'invited': 'a@a.com,b@b.com',
+    'is_google_event': 'False',
 }
 
 TWO_WEEKS_LATER_EVENT_FORM_DATA = {
@@ -87,7 +113,19 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'event_type': 'on',
+    'is_google_event': 'False',
+}
+
+CORRECT_ADD_EVENT_DATA = {
+    "title": "test",
+    "start": "2021-02-13T09:03:49.560Z",
+    "end": "2021-02-13T09:03:49.560Z",
+    "content": "test",
+    "owner_id": 0,
+    "location": "test",
+    'is_google_event': 'False',
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -99,12 +137,6 @@ INVALID_FIELD_UPDATE = [
     {"start": datetime(2020, 2, 2), "end": datetime(2020, 1, 1)},
     {"start": datetime(2030, 2, 2)}, {"end": datetime(1990, 1, 1)},
 ]
-
-
-# -------------------------------------------------
-# fixtures
-# -------------------------------------------------
-
 
 @pytest.fixture
 def new_event(session, new_user):
@@ -125,11 +157,6 @@ def new_user(session):
     return user
 
 
-# -------------------------------------------------
-# tests
-# -------------------------------------------------
-
-
 def test_joining_public_event(session, new_event, new_user):
     """test in order to make sure user is added the first time
     he asks to join event, yet won't join the same user twice"""
@@ -141,6 +168,17 @@ def test_joining_public_event(session, new_event, new_user):
     assert not second_join
 
 
+def test_get_events(event_test_client, session, event):
+    response = event_test_client.get("/event/")
+    assert response.ok
+
+
+def test_create_event_api(event_test_client, session, event):
+    response = event_test_client.post("/event/",
+                                      data=json.dumps(CORRECT_ADD_EVENT_DATA))
+    assert response.ok
+
+
 def test_eventedit(event_test_client):
     response = event_test_client.get("/event/edit")
     assert response.ok
@@ -149,15 +187,16 @@ def test_eventedit(event_test_client):
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
-    event_details = [event.title, event.content, event.location,
-                     event.vc_link, event.start,
-                     event.end, event.color, event.category_id]
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"View Event" in response.content
-    for event_detail in event_details:
-        assert str(event_detail).encode('utf-8') in response.content, \
-            f'{event_detail} not in view event page'
+
+
+def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
+    event_id = all_day_event.id
+    response = event_test_client.get(f"/event/{event_id}")
+    assert response.ok
+    assert b"View Event" in response.content
 
 
 def test_create_event_with_default_availability(client, user, session):
@@ -189,6 +228,7 @@ def test_create_event_with_free_availability(client, user, session):
         'content': 'content',
         'owner_id': user.id,
         'availability': False,
+        'is_google_event': False,
     }
 
     event = evt.create_event(session, **data)
@@ -240,6 +280,18 @@ def test_eventedit_post_correct(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)
     assert response.ok
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
+def test_eventedit_post_without_event_type(client, user):
+    """
+    Test create new event successfully,
+    When the event type is not defined by the user.
+    """
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.status_code == status.HTTP_302_FOUND
     assert (client.app.url_path_for('eventview', event_id=1).strip('1')
             in response.headers['location'])
 
@@ -360,9 +412,9 @@ def test_update_db_close(event):
     data = {"title": "Problem connecting to db in func update_event", }
     with pytest.raises(HTTPException):
         assert (
-                evt.update_event(event_id=event.id, event=data,
-                                 db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            evt.update_event(event_id=event.id, event=data,
+                             db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -381,11 +433,11 @@ def test_db_close_update(session, event):
     data = {"title": "Problem connecting to db in func _update_event", }
     with pytest.raises(HTTPException):
         assert (
-                evt._update_event(
-                    event_id=event.id,
-                    event_to_update=data,
-                    db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            evt._update_event(
+                event_id=event.id,
+                event_to_update=data,
+                db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -397,16 +449,16 @@ def test_no_connection_to_db_in_delete(event):
     with pytest.raises(HTTPException):
         response = evt.delete_event(event_id=1, db=None)
         assert (
-                response.status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            response.status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
 def test_no_connection_to_db_in_internal_deletion(event):
     with pytest.raises(HTTPException):
         assert (
-                evt._delete_event(event=event, db=None).status_code ==
-                status.HTTP_500_INTERNAL_SERVER_ERROR
+            evt._delete_event(event=event, db=None).status_code ==
+            status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
 
@@ -418,9 +470,42 @@ def test_successful_deletion(event_test_client, session, event):
             db=session, event_id=1).content
 
 
+def test_change_owner(client, event_test_client, user, session, event):
+    """
+    Test change owner of an event
+    """
+    event_id = event.id
+    event_details = [event.title, event.content, event.location, event.start,
+                     event.end, event.color, event.category_id]
+    response = event_test_client.post(f"/event/{event_id}/owner",
+                                      data=None)
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response.ok
+    assert b"View Event" not in response.content
+    for event_detail in event_details:
+        assert str(event_detail).encode('utf-8') not in response.content, \
+            f'{event_detail} not in view event page'
+    data = {'username': "worng_username"}
+    response = event_test_client.post(f"/event/{event_id}/owner",
+                                      data=data)
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+    assert b'Username does not exist.' in response.content
+    data = {'username': user.username}
+    response = event_test_client.post(f"/event/{event_id}/owner",
+                                      data=data)
+    assert response.ok
+    assert response.status_code == status.HTTP_302_FOUND
+
+
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_get_tamplate_to_share_event(event, session):
+    html_template = evt.get_template_to_share_event(
+        event_id=1, user_name='michael', db=session, request=Request.get)
+    assert html_template is not None
 
 
 def test_add_comment(event_test_client: TestClient, session: Session,
@@ -485,7 +570,9 @@ class TestApp:
         "start": date_test_data[0],
         "end": date_test_data[1],
         "content": "Any Words",
-        "owner_id": 123}
+        "owner_id": 123,
+        'invitees': 'user1, user2'
+    }
 
     @staticmethod
     def test_get_db():
