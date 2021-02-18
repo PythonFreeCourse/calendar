@@ -1,4 +1,5 @@
-from typing import Any, Dict, Optional
+from typing import Any, List, Optional
+
 from sqlalchemy.orm import Session
 
 from app.database.models import Base, User
@@ -16,11 +17,9 @@ def save(session: Session, instance: Base) -> bool:
     return False
 
 
-def create_model(session: Session, model_class: Base,
-                 **kw: Dict[str, Any]) -> Base:
+def create_model(session: Session, model_class: Base, **kwargs: Any) -> Base:
     """Creates and saves a db model."""
-
-    instance = model_class(**kw)
+    instance = model_class(**kwargs)
     save(session, instance)
     return instance
 
@@ -41,6 +40,11 @@ def get_current_user(session: Session) -> User:
         user = session.query(User).first()
 
     return user
+
+
+def get_available_users(session: Session) -> List[User]:
+    """this function return all availible users."""
+    return session.query(User).filter(not User.disabled).all()
 
 
 def get_user(session: Session, user_id: int) -> Optional[User]:
