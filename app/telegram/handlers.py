@@ -196,7 +196,7 @@ Welcome to PyLendar telegram client!'''
         return answer
 
     async def _process_is_public(self, memo_dict):
-        is_public_response = self.chat.message.lower
+        is_public_response = self.chat.message.lower()
         if is_public_response in ['yes', 'no']:
             print('yasss')
             return await self._add_is_public()
