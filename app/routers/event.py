@@ -88,7 +88,7 @@ async def eventedit(request: Request,
     categories_list = get_user_categories(db_session, user_id)
     return templates.TemplateResponse("eventedit.html",
                                       {"request": request,
-                                      "categories_list": categories_list})
+                                       "categories_list": categories_list})
 
 
 @router.post("/edit", include_in_schema=False)
