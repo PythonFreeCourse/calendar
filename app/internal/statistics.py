@@ -8,13 +8,13 @@ from sqlalchemy.util import symbol
 from app.database.models import Event, UserEvent
 from app.routers.user import does_user_exist, get_users
 
-SUCCESS_STATUS = 0
-ERROR_STATUS = -1
+SUCCESS_STATUS = True
+ERROR_STATUS = False
 INVALID_DATE_RANGE = "End date must be later than start date"
 INVALID_USER = "Invalid user id"
 NIN_IN_DAY = 1440
 
-ValidateResult = NamedTuple('ValidateResult', [
+ValidationResult = NamedTuple('ValidationResult', [
         ('valid_input', bool), ('error_text', str),
         ('start', datetime.datetime), ('end', datetime.datetime)])
 DailyEventsStatistics = NamedTuple('DailyEventsStatistics', [
@@ -27,7 +27,7 @@ EventsDurationStatistics = NamedTuple('EventsDurationStatistics', [
 
 def validate_input(
         db: Session, userid: int, start: datetime.datetime,
-        end: datetime.datetime) -> NamedTuple('ValidateResult'):
+        end: datetime.datetime) -> ValidationResult:
     """ 1. input validations:
             valid userid.
             end date > start date.
@@ -49,7 +49,7 @@ def validate_input(
         end: end of date range.
     """
     if not does_user_exist(session=db, user_id=userid):
-        return ValidateResult(
+        return ValidationResult(
             valid_input=False, error_text=INVALID_USER, start=start, end=end)
     date = start or datetime.datetime.now()
     start = datetime.datetime(date.year, date.month, date.day)
@@ -57,10 +57,10 @@ def validate_input(
     date = end or start
     end = datetime.datetime(date.year, date.month, date.day) + single_day
     if start >= end:
-        return ValidateResult(
+        return ValidationResult(
             valid_input=False, error_text=INVALID_DATE_RANGE,
             start=start, end=end)
-    return ValidateResult(
+    return ValidationResult(
         valid_input=True, error_text="", start=start, end=end)
 
 
@@ -139,7 +139,7 @@ def get_events_by_date(
 def calc_daily_events_statistics(
         events_by_date: List[Tuple[datetime.datetime, int]],
         start: datetime.datetime,
-        end: datetime.datetime) -> NamedTuple('DailyEventsStatistics'):
+        end: datetime.datetime) -> DailyEventsStatistics:
     """ go over sets of data retrieved from the db and calculate:
             minimum, maximum and average number of daily events
     Args:
@@ -161,9 +161,7 @@ def calc_daily_events_statistics(
     avg_events_per_day = round(
         sum_events_per_period / num_of_days_in_period, 2)
     return DailyEventsStatistics(
-        min_events_in_day=min_events_in_day,
-        max_events_in_day=max_events_in_day,
-        avg_events_per_day=avg_events_per_day)
+        min_events_in_day, max_events_in_day, avg_events_per_day)
 
 
 def get_daily_events_statistics(
@@ -198,7 +196,7 @@ def get_daily_events_statistics(
 
 def get_events_duration_statistics_from_db(
         db: Session, userid: int, start: datetime.datetime,
-        end: datetime.datetime) -> NamedTuple('EventsDurationStatistics'):
+        end: datetime.datetime) -> EventsDurationStatistics:
     """ get data of shortest, longest and average event duration from the db
 
     Args:
@@ -230,7 +228,7 @@ def get_events_duration_statistics_from_db(
 
 def get_events_duration_statistics(
         db: Session, userid: int, start: datetime.datetime,
-        end: datetime.datetime) -> Dict[str, Dict[str, int]]:
+        end: datetime.datetime) -> Dict[str, Dict[str, float]]:
     """ calculate statistics for events durations relevant for
         the requested user and the requested date range.
         all logic is performed in the db, while the rest is in the code.
@@ -340,7 +338,7 @@ def prepare_display_text(
 
 def get_statistics(
         db: Session, userid: int, start: datetime.datetime = None,
-        end: datetime.datetime = None) -> Dict[str, str]:
+        end: datetime.datetime = None) -> Dict[str, Union[str, bool]]:
     """ calculate statistics for user and date-range - main function.
 
     Args:
@@ -377,11 +375,11 @@ def get_statistics(
     if not validate_result.valid_input:
         output["start"] = validate_result.start
         output["end"] = validate_result.end
-        output["Status"] = ERROR_STATUS
-        output["ErrorDescription"] = validate_result.error_text
+        output["status"] = ERROR_STATUS
+        output["error_description"] = validate_result.error_text
         return output
-    output["Status"] = SUCCESS_STATUS
-    output["ErrorDescription"] = ""
+    output["status"] = SUCCESS_STATUS
+    output["error_description"] = ""
     output.update(get_events_count_stats(
         db, userid, validate_result.start, validate_result.end))
     output.update(get_daily_events_statistics(

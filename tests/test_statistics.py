@@ -1,8 +1,8 @@
 import datetime
 
 from app.internal.statistics import get_statistics
-from app.internal.statistics import INVALID_DATE_RANGE, INVALID_USER,\
-    SUCCESS_STATUS
+from app.internal.statistics import INVALID_DATE_RANGE, INVALID_USER
+from app.internal.statistics import SUCCESS_STATUS
 from app.routers.event import create_event
 from app.routers.user import create_user
 from app.routers.share import send_in_app_invitation, accept
@@ -41,20 +41,20 @@ def test_statistics_invalid_date_range(session):
     start = datetime.datetime.now() + datetime.timedelta(days=-2)
     end = datetime.datetime.now() + datetime.timedelta(days=-3)
     statistics = get_statistics(session, 1, start, end)
-    assert statistics["ErrorDescription"] == INVALID_DATE_RANGE
+    assert statistics["error_description"] == INVALID_DATE_RANGE
 
 
 def test_statistics_invalid_user(session):
     start = datetime.datetime.now()
     end = datetime.datetime.now() + datetime.timedelta(minutes=50)
     statistics = get_statistics(session, 666, start, end)
-    assert statistics["ErrorDescription"] == INVALID_USER
+    assert statistics["error_description"] == INVALID_USER
 
 
 def test_statistics_no_date_input(session):
     create_data(session)
     statistics = get_statistics(db=session, userid=1, start=None, end=None)
-    assert statistics["Status"] == SUCCESS_STATUS
+    assert statistics["status"] == SUCCESS_STATUS
 
 
 def test_statistics_no_data_for_date_range(session):
@@ -62,7 +62,7 @@ def test_statistics_no_data_for_date_range(session):
     start = datetime.datetime.now() + datetime.timedelta(days=-20)
     end = datetime.datetime.now() + datetime.timedelta(days=-18, hours=1)
     statistics = get_statistics(session, 1, start, end)
-    assert statistics["Status"] == SUCCESS_STATUS
+    assert statistics["status"] == SUCCESS_STATUS
 
 
 def test_statistics_success(session):
@@ -70,4 +70,4 @@ def test_statistics_success(session):
     start = datetime.datetime.now() + datetime.timedelta(days=-2)
     end = datetime.datetime.now() + datetime.timedelta(days=2, hours=1)
     statistics = get_statistics(session, 1, start, end)
-    assert statistics["Status"] == SUCCESS_STATUS
+    assert statistics["status"] == SUCCESS_STATUS
