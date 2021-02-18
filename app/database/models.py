@@ -131,14 +131,14 @@ class Category(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     @staticmethod
-    def create(db_session: Session, name: str, color: str,
+    def create(session: Session, name: str, color: str,
                user_id: int) -> Category:
         try:
             category = Category(name=name, color=color, user_id=user_id)
-            db_session.add(category)
-            db_session.flush()
-            db_session.commit()
-            db_session.refresh(category)
+            session.add(category)
+            session.flush()
+            session.commit()
+            session.refresh(category)
         except (SQLAlchemyError, IntegrityError) as e:
             logger.error(f"Failed to create category: {e}")
             raise e

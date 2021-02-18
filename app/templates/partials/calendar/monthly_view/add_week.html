@@ -20,7 +20,8 @@
             <div class="parashot">
                 <p>{{parasha.name}} / {{parasha.hebrew_name}}<br>
                     <a style="background-color:powderblue;" href={{parasha.link}} target="_blank">
-                        <b>פירוט בלינק נפרד על {{parasha.hebrew_name}}</b></a></p>
+                        <b>{{ gettext(" פירוט בלינק נפרד על %(parashah)s",
+                            parashah=parasha.hebrew_name) }}</b></a></p>
             </div>
             {% endif %}
         {% endfor %}

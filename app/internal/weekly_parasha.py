@@ -17,7 +17,7 @@ def create_parasha_object(parashot_fields: Dict[str, Optional[str]])\
     )
 
 
-def get_all_parahot_list(db_session: Session) \
+def get_all_parahot_list(session: Session) \
         -> List[Dict[str, Optional[str]]]:
     """This function return all parashot object in list"""
-    return db_session.query(Parasha).all()
+    return session.query(Parasha).all()
