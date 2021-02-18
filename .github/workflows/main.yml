@@ -1,0 +1,20 @@
+# This is a basic workflow to help you get started with Actions
+name: HTML5 Validator
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: HTML5 Validator
+        uses: Cyb3r-Jak3/html5validator-action@master
+        with:
+          root: app/templates/name
