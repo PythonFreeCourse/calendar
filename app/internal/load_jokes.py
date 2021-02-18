@@ -20,10 +20,7 @@ def get_jokes_from_json() -> List[Dict[str, Optional[str]]]:
 def add_jokes_to_db(session: Session) -> None:
     """This function reads the jokes and inserts them into the db"""
     all_jokes = get_jokes_from_json()
-    jokes_objects = [
-        Joke(text=joke['text'])
-        for joke in all_jokes
-        ]
+    jokes_objects = [Joke(text=joke['text']) for joke in all_jokes]
     session.add_all(jokes_objects)
     session.commit()
 
