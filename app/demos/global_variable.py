@@ -32,7 +32,6 @@ def create_test_logged_user(session: Session):
 
 
 # The way it will be written on the page
-
 # getting the logged in user
 session = next(get_db())
 create_test_logged_user(session)
