@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from starlette import status
 from starlette.responses import RedirectResponse, Response
+from starlette.templating import _TemplateResponse
 
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
@@ -24,7 +25,7 @@ from app.internal.emotion import get_emotion
 from app.internal.utils import create_model, get_current_user
 
 
-EVENT_DATA = Tuple[Event, List[Dict[str, str]], str, str]
+EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
 UPDATE_EVENTS_FIELDS = {
@@ -352,12 +353,7 @@ def create_event(
         availability=availability,
         is_google_event=is_google_event,
     )
-    create_model(
-        db,
-        UserEvent,
-        user_id=owner_id,
-        event_id=event.id,
-    )
+    create_model(db, UserEvent, user_id=owner_id, event_id=event.id)
     return event
 
 
@@ -457,7 +453,7 @@ def get_template_to_share_event(
     user_name: str,
     db: Session,
     request: Request,
-) -> templates:
+) -> _TemplateResponse:
     """Gives shareable template of the event.
 
     Args:
@@ -472,11 +468,10 @@ def get_template_to_share_event(
 
     event = by_id(db, event_id)
     msg_info = {"sender_name": user_name, "event": event}
-    html_temp = templates.TemplateResponse(
-        "event/share_event.html",
+    return templates.TemplateResponse(
+        "share_event.html",
         {"request": request, "msg_info": msg_info},
     )
-    return html_temp
 
 
 @router.post("/{event_id}")
@@ -495,7 +490,7 @@ async def add_comment(
         "time": dt.now(),
     }
     create_model(session, Comment, **data)
-    path = router.url_path_for("view_comments", event_id=event_id)
+    path = router.url_path_for("view_comments", event_id=str(event_id))
     return RedirectResponse(path, status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -557,8 +552,14 @@ async def delete_comment(
     Redirects back to the event's comments tab upon deletion.
     """
     form = await request.form()
-    comment_id = form["comment_id"]
-    event_id = form["event_id"]
+    try:
+        comment_id = int(form["comment_id"])
+        event_id = int(form["event_id"])
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid comment or event id",
+        )
     cmt.delete_comment(db, comment_id)
-    path = router.url_path_for("view_comments", event_id=event_id)
+    path = router.url_path_for("view_comments", event_id=str(event_id))
     return RedirectResponse(path, status_code=303)

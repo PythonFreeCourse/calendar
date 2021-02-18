@@ -169,7 +169,6 @@ def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
     event_id = all_day_event.id
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
-    assert b"View Event" in response.content
 
 
 def test_create_event_with_default_availability(client, user, session):
