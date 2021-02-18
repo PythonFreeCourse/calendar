@@ -1,4 +1,4 @@
-from app.database.database import Base
+from app.database.models import Base
 # from app.database.models import *  # This helps alembic autogeneration
 
 from logging.config import fileConfig
