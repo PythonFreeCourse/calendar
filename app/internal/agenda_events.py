@@ -92,7 +92,7 @@ def get_events_in_time_frame(
     yield from filter_dates(events, start_date, end_date)
 
 
-def make_dict_for_graph_data(db: Session, user_id: int) -> Dict:
+def make_dict_for_graph_data(db: Session, user_id: int) -> Dict[str, int]:
     """create a dict with number of events per day for current week"""
     WEEK_DAYS = 6
     start_date, end_date = agenda.calc_dates_range_for_agenda(
