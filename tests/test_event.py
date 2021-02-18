@@ -2,10 +2,11 @@ from datetime import datetime, timedelta
 import json
 import pytest
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
 from starlette import status
+
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
@@ -43,7 +44,9 @@ CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'event_type': 'on'
+    'event_type': 'on',
+    'is_google_event': 'False',
+
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -59,7 +62,8 @@ WRONG_EVENT_FORM_DATA = {
     'availability': 'True',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
-    'event_type': 'on'
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 BAD_EMAILS_FORM_DATA = {
@@ -75,7 +79,8 @@ BAD_EMAILS_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com,ccc',
-    'event_type': 'on'
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 WEEK_LATER_EVENT_FORM_DATA = {
@@ -91,7 +96,8 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'event_type': 'on',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'is_google_event': 'False',
 }
 
 TWO_WEEKS_LATER_EVENT_FORM_DATA = {
@@ -107,7 +113,8 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
-    'event_type': 'on'
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 CORRECT_ADD_EVENT_DATA = {
@@ -116,7 +123,8 @@ CORRECT_ADD_EVENT_DATA = {
     "end": "2021-02-13T09:03:49.560Z",
     "content": "test",
     "owner_id": 0,
-    "location": "test"
+    "location": "test",
+    'is_google_event': 'False',
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -190,6 +198,7 @@ def test_create_event_with_free_availability(client, user, session):
         'content': 'content',
         'owner_id': user.id,
         'availability': False,
+        'is_google_event': False,
     }
 
     event = evt.create_event(session, **data)
@@ -461,6 +470,12 @@ def test_change_owner(client, event_test_client, user, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_get_tamplate_to_share_event(event, session):
+    html_template = evt.get_template_to_share_event(
+        event_id=1, user_name='michael', db=session, request=Request.get)
+    assert html_template is not None
 
 
 def test_add_comment(event_test_client: TestClient, session: Session,

@@ -32,6 +32,7 @@ UPDATE_EVENTS_FIELDS = {
     'end': dt,
     'availability': bool,
     'all_day': bool,
+    'is_google_event': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
     'vc_link': (str, type(None)),
@@ -52,6 +53,7 @@ class EventModel(BaseModel):
     content: str
     owner_id: int
     location: str
+    is_google_event: bool
 
 
 @router.get("/")
@@ -67,7 +69,9 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
                  end=event.start,
                  content=event.content,
                  owner_id=event.owner_id,
-                 location=event.location)
+                 location=event.location,
+                 is_google_event=event.is_google_event
+                 )
     return {'success': True}
 
 
@@ -95,6 +99,7 @@ async def create_new_event(request: Request,
 
     vc_link = data['vc_link']
     category_id = data.get('category_id')
+    is_google_event = data.get('is_google_event', 'True') == 'True'
 
     invited_emails = get_invited_emails(data['invited'])
     uninvited_contacts = get_uninvited_regular_emails(session, owner_id,
@@ -108,7 +113,8 @@ async def create_new_event(request: Request,
                          location=location, vc_link=vc_link,
                          invitees=invited_emails,
                          category_id=category_id,
-                         availability=availability)
+                         availability=availability,
+                         is_google_event=is_google_event)
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(router.url_path_for('eventview', event_id=event.id)
@@ -232,6 +238,9 @@ def get_event_with_editable_fields_only(event: Dict[str, Any]
     # Convert `availability` value into boolean.
     if 'availability' in edit_event.keys():
         edit_event['availability'] = (edit_event['availability'] == 'True')
+    if 'is_google_event' in edit_event.keys():
+        edit_event['is_google_event'] = (
+            edit_event["is_google_event"] == 'True')
     return edit_event
 
 
@@ -387,6 +396,28 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+def get_template_to_share_event(event_id: int, user_name: str,
+                                db: Session, request: Request) -> templates:
+    """Gives shareable template of the event.
+
+    Args:
+        event_id: Event to share
+        user_name: The user who shares the event
+        db: The database to get the event from
+        request: The request we got from the user using FastAPI.
+
+    Returns:
+        Shareable HTML with data from the database about the event.
+    """
+
+    event = by_id(db, event_id)
+    msg_info = {"sender_name": user_name, "event": event}
+    html_temp = templates.TemplateResponse("event/share_event.html",
+                                           {"request": request,
+                                            "msg_info": msg_info})
+    return html_temp
 
 
 @router.post("/{event_id}")

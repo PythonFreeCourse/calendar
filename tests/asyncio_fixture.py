@@ -39,6 +39,7 @@ def fake_user_events(session):
         content='test event',
         owner_id=user.id,
         location="Here",
+        is_google_event=False,
     )
     create_event(
         db=session,
@@ -49,6 +50,7 @@ def fake_user_events(session):
         content='this week test event',
         owner_id=user.id,
         location="Here",
+        is_google_event=False,
     )
     yield user
     Base.metadata.drop_all(bind=test_engine)
