@@ -38,8 +38,7 @@ function on_heart_click() {
  * @summary Saves or removes a quote from favorites.
  */
 function save_or_remove_quote(user_id, quote, to_save) {
-  method = to_save ? "post": "delete"
-  console.log(method)
+  method = to_save ? "post": "delete";
   let xhr = new XMLHttpRequest();
   xhr.open(method, "/");
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
