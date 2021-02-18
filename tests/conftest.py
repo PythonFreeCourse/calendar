@@ -1,16 +1,16 @@
 import calendar
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
 from app.config import PSQL_ENVIRONMENT
-from app.database.database import Base
-
+from app.database.models import Base
 
 pytest_plugins = [
     'tests.user_fixture',
     'tests.event_fixture',
+    'tests.dayview_fixture',
     'tests.invitation_fixture',
     'tests.association_fixture',
     'tests.client_fixture',
@@ -19,7 +19,8 @@ pytest_plugins = [
     'tests.category_fixture',
     'smtpdfix',
     'tests.quotes_fixture',
-    'tests.zodiac_fixture'
+    'tests.zodiac_fixture',
+    'tests.comment_fixture',
 ]
 
 # When testing in a PostgreSQL environment please make sure that:

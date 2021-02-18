@@ -123,6 +123,9 @@ venv.bak/
 .vscode/
 Scripts/*
 pyvenv.cfg
+.history
+calender-venv/
+
 
 # Spyder project settings
 .spyderproject
@@ -142,9 +145,19 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# mac env
+bin
+
+# register stuff
+run.txt
+
 # VScode
-.vscode/
+.vscode
 app/.vscode/
+
+app/routers/stam
 
 # PyCharm
 .idea
+
+junit/

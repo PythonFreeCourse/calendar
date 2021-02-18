@@ -38,7 +38,7 @@ def test_get_weather_data(requested_date, location, expected, requests_mock):
 def test_get_forecast_weather_data(requests_mock):
     temp_date = datetime.datetime.now() + datetime.timedelta(days=2)
     response_from_mock = RESPONSE_FROM_MOCK
-    response_from_mock["locations"]["Tel Aviv"]["values"][0]["datetimeStr"] =\
+    response_from_mock["locations"]["Tel Aviv"]["values"][0]["datetimeStr"] = \
         temp_date.isoformat()
     requests_mock.get(FORECAST_URL, json=response_from_mock)
     output = get_weather_data(temp_date, "tel aviv")
