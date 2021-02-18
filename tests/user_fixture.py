@@ -30,6 +30,7 @@ def user_exercise(session: Session, user: User) -> UserExercise:
     yield test_user_exercise
     delete_instance(session, test_user_exercise)
 
+
 @pytest.fixture
 def sender(session: Session) -> Generator[User, None, None]:
     mock_user = create_model(
