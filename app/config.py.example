@@ -73,12 +73,12 @@ CALENDAR_HOME_PAGE = "calendar.pythonic.guru"
 # link to the application registration page
 CALENDAR_REGISTRATION_PAGE = r"calendar.pythonic.guru/registration"
 
-# import
+# IMPORT
 MAX_FILE_SIZE_MB = 5  # 5MB
 VALID_FILE_EXTENSION = (".txt", ".csv", ".ics")  # Can import only these files.
 # Events must be within 20 years range from the current year.
 EVENT_VALID_YEARS = 20
-EVENT_HEADER_NOT_EMPTY = 1  # 1- for not empty, 0- for empty.
+EVENT_HEADER_NOT_EMPTY = True
 EVENT_HEADER_LIMIT = 50  # Max characters for event header.
 EVENT_CONTENT_LIMIT = 500  # Max characters for event content.
 MAX_EVENTS_START_DATE = 10  # Max Events with the same start date.

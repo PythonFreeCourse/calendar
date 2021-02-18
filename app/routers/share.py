@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, UserEvent
 from app.internal.utils import save
-from app.internal.export import event_to_ical
+from app.internal.export import get_icalendar
 from app.routers.user import does_user_exist, get_users
 
 
@@ -33,7 +33,7 @@ def send_email_invitation(
 ) -> bool:
     """Sends an email with an invitation."""
 
-    ical_invitation = event_to_ical(event, participants)  # noqa: F841
+    ical_invitation = get_icalendar(event, participants)  # noqa: F841
     for _ in participants:
         # TODO: send email
         pass
