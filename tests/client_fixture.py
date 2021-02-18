@@ -1,3 +1,4 @@
+
 from fastapi.testclient import TestClient
 
 from typing import Iterator
@@ -6,7 +7,7 @@ import pytest
 from app import main
 from app.database.models import Base, User
 from app.routers import (
-    agenda, event, invitation, profile, google_connect, features)
+    agenda, event, invitation, profile, google_connect, features, friendview)
 from app.routers.salary import routes as salary
 from tests.conftest import get_test_db, test_engine
 from . import security_testing_routes
@@ -45,6 +46,11 @@ def create_test_client(get_db_function) -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def agenda_test_client() -> Iterator[TestClient]:
     yield from create_test_client(agenda.get_db)
+
+
+@pytest.fixture(scope="session")
+def friendview_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(friendview.get_db)
 
 
 @pytest.fixture(scope="session")

@@ -92,7 +92,7 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String)
-    is_google_event = Column(Boolean)
+    is_google_event = Column(Boolean, default=False)
     vc_link = Column(String)
     color = Column(String, nullable=True)
     invitees = Column(String)
