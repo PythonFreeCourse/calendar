@@ -72,6 +72,7 @@ class Event(Base):
     is_google_event = Column(Boolean, default=False)
     vc_link = Column(String)
     color = Column(String, nullable=True)
+    all_day = Column(Boolean, default=False)
     invitees = Column(String)
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)

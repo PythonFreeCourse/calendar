@@ -23,6 +23,11 @@
                 <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
             {% endif %}
         </div>
+        <div class="all_day_events">
+            {% for event in all_day_events %}
+                <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
+            {% endfor %}
+        </div>
         <div class="schedule">
             <div class="container times bg-primeary position">
                 {% if view == 'day'%}
