@@ -134,12 +134,8 @@ Welcome to PyLendar telegram client!'''
             return await self._process_content(memo_dict)
         elif 'location' not in memo_dict:
             return await self._process_location(memo_dict)
-        elif 'is_public' not in memo_dict:
-            return await self._process_is_public(memo_dict)
         elif 'start' not in memo_dict:
             return await self._process_start_date(memo_dict)
-        elif 'end' not in memo_dict:
-            return await self._process_end_date(memo_dict)
         elif 'end' not in memo_dict:
             return await self._process_end_date(memo_dict)
         elif self.chat.message == 'create':
@@ -188,37 +184,7 @@ Welcome to PyLendar telegram client!'''
     async def _process_location(self, memo_dict):
         memo_dict['location'] = self.chat.message
         answer = f'Location:\n{memo_dict["location"]}\n\n'
-        answer += 'is the event public? (yes\\no)'
-        await telegram_bot.send_message(
-            chat_id=self.chat.user_id,
-            text=answer,
-            reply_markup=field_kb)
-        return answer
-
-    async def _process_is_public(self, memo_dict):
-        is_public_response = self.chat.message.lower()
-        if is_public_response in ['yes', 'no']:
-            print('yasss')
-            return await self._add_is_public()
-        return await self._process_bad_bool_input()
-
-    async def _process_bad_bool_input(self):
-        answer = '❗️ Please, enter an answer of yes/no.'
-        await telegram_bot.send_message(
-            chat_id=self.chat.user_id,
-            text=answer,
-            reply_markup=field_kb)
-        return answer
-
-    async def _add_is_public(self, memo_dict):
-        if self.chat.message.lower == 'yes':
-            memo_dict['is_public'] = True
-            answer = 'public\\private event:\npublic event\n\n'
-        else:
-            answer = 'private event'
-            memo_dict['is_public'] = False
-        answer = 'public\\private event:\nprivate event\n\n'
-        answer += '\nWhen does it start?'
+        answer += 'When does it start?'
         await telegram_bot.send_message(
             chat_id=self.chat.user_id,
             text=answer,
@@ -282,7 +248,6 @@ Welcome to PyLendar telegram client!'''
             content=memo_dict['content'],
             owner_id=self.user.id,
             location=memo_dict['location'],
-            is_public=memo_dict['is_public'],
         )
         # Delete current session
         del telegram_bot.MEMORY[self.chat.user_id]
