@@ -1,8 +1,6 @@
 from app.demos import global_variable
-from app.routers import (
-  agenda, event, invitation, profile,
-  global_variable, google_connect
-)
+from app.routers import agenda, event, friendview, invitation, profile
+from app.routers import google_connect
 from typing import Iterator
 
 from fastapi.testclient import TestClient
@@ -53,6 +51,11 @@ def global_var_test_client() -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def agenda_test_client() -> Iterator[TestClient]:
     yield from create_test_client(agenda.get_db)
+
+
+@pytest.fixture(scope="session")
+def friendview_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(friendview.get_db)
 
 
 @pytest.fixture(scope="session")
