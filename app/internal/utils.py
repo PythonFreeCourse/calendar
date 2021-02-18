@@ -1,4 +1,5 @@
-from typing import Any, Optional
+from typing import Any, List, Optional
+
 from sqlalchemy.orm import Session
 
 from app.database.models import Base, User
@@ -39,6 +40,11 @@ def get_current_user(session: Session) -> User:
         user = session.query(User).first()
 
     return user
+
+
+def get_available_users(session: Session) -> List[User]:
+    """this function return all availible users."""
+    return session.query(User).filter(not User.disabled).all()
 
 
 def get_user(session: Session, user_id: int) -> Optional[User]:
