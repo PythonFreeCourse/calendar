@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-18 16:23+0000\n"
+"POT-Creation-Date: 2021-02-18 17:15+0000\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -74,45 +74,45 @@ msgstr ""
 msgid "About Us"
 msgstr ""
 
-#: app/templates/profile.html:63
+#: app/templates/profile.html:68
 msgid "Update name"
 msgstr ""
 
-#: app/templates/profile.html:71 app/templates/profile.html:93
-#: app/templates/profile.html:115 app/templates/profile.html:139
-#: app/templates/profile.html:161
+#: app/templates/profile.html:76 app/templates/profile.html:98
+#: app/templates/profile.html:120 app/templates/profile.html:144
+#: app/templates/profile.html:166
 msgid "Save changes"
 msgstr ""
 
-#: app/templates/profile.html:85
+#: app/templates/profile.html:90
 msgid "Update email"
 msgstr ""
 
-#: app/templates/profile.html:107
+#: app/templates/profile.html:112
 msgid "Update description"
 msgstr ""
 
-#: app/templates/profile.html:130
+#: app/templates/profile.html:135
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:279
+#: app/templates/profile.html:284
 msgid "Upcoming event on (date)"
 msgstr ""
 
-#: app/templates/profile.html:305
+#: app/templates/profile.html:310
 msgid "The Event (event)"
 msgstr ""
 
-#: app/templates/profile.html:308
+#: app/templates/profile.html:313
 msgid "Last updated (time) ago"
 msgstr ""
 
-#: app/templates/profile.html:345
+#: app/templates/profile.html:350
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:353
+#: app/templates/profile.html:358
 msgid "Your Card"
 msgstr ""
 
