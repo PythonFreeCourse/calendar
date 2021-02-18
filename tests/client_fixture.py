@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-from app.routers import (
-    agenda, categories, event, friendview, invitation, profile)
-from app.routers import google_connect
-from typing import Iterator
-=======
 from typing import Generator, Iterator
->>>>>>> 1d8bdf5f3580419497698c9523920b15a800a973
 
 from fastapi.testclient import TestClient
 import pytest
@@ -14,7 +7,8 @@ from sqlalchemy.orm import Session
 from app import main
 from app.database.models import Base, User
 from app.routers import (
-    agenda, event, friendview, google_connect, invitation, profile
+    agenda, categories, event, friendview, google_connect,
+    invitation, profile
 )
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
