@@ -20,18 +20,21 @@
         </a>
       </div>
       <div>
-        <a href="/features">
-          <ion-icon name="cube-outline" title="Features panel page link"></ion-icon>
-        </a>
+        <ion-icon name="cube-outline"></ion-icon>
       </div>
     </div>
     <div class="user-features">
-      <div name="feather01">
+      <div class="feature" name="feather01">
         <ion-icon name="chatbox"></ion-icon>
       </div>
     </div>
     <div id="open-features">
       <ion-icon name="ellipsis-vertical"></ion-icon>
+    </div>
+    <div>
+      <a title="About Us" href="{{ url_for('about') }}">
+        <ion-icon name="information-circle-outline"></ion-icon>
+      </a>
     </div>
   </div>
 </nav>

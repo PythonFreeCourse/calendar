@@ -1,0 +1,35 @@
+<link href="{{ url_for('static', path='event/eventview.css') }}" rel="stylesheet">
+  <div class = "event_view_wrapper container col col-12">
+    <!-- Temporary nav layout based on bootstrap -->
+    <ul class="nav nav-tabs" id="event_view_nav" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link {% if not comment %}active{% endif %}" id="eventdetails-tab" data-bs-toggle="tab" href="#eventdetails" role="tab" aria-controls="eventdetails" aria-selected="true">
+          Event Details
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if comment %}active{% endif %}" id="comments-tab" data-bs-toggle="tab" href="#comments" role="tab" aria-controls="comments" aria-selected="true">
+          Comments
+        </a>
+      </li>
+      <!-- Copy commented section to add another navigation item -->
+      <!-- <li class="nav-item">
+        <a class="nav-link" id="(CHANGE_ME)-tab" data-bs-toggle="tab" href="#(CHANGE_ME)" role="tab" aria-controls="(CHANGE_ME)" aria-selected="true">
+          (CHANGE_ME)
+        </a>
+      </li> -->
+    </ul>
+
+    <div class="tab-content" id="event_view_tabs">
+      <div class="tab-pane fade {% if not comment %}show active{% endif %}" id="eventdetails" role="tabpanel" aria-labelledby="eventdetails-tab">
+        {% include "partials/calendar/event/view_event_details_tab.html" %}
+      </div>
+      <div class="tab-pane fade {% if comment %}show active{% endif %}" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+        {% include 'partials/calendar/event/comments_tab.html' %}
+      </div>
+      <!-- Copy commented section to add another tab -->
+      <!-- <div class="tab-pane fade" id="(CHANGE_ME)" role="tabpanel" aria-labelledby="(CHANGE_ME)-tab">
+        ADD INCLUDE HERE
+      </div> -->
+    </div>
+  </div>

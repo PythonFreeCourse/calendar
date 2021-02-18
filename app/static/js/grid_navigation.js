@@ -36,7 +36,7 @@ function displayMonthYear(id) {
 }
 
 function setMonthNav() {
-    const allFirst = document.querySelectorAll('*[id^="01"]');
+    const allFirst = document.querySelectorAll('[id^="01"]');
     const currentMonth = OnlyOnScreen(allFirst);
     for (let i = -2; i < 3; ++i) {
         const date = getDateInNMonths(currentMonth.id, i);
@@ -65,7 +65,7 @@ function calcDaysToLoad(number, weekDays = 7, monthBlock = 6) {
 }
 
 function loadDaysIfNeeded(dateId, link) {
-    const allFirst = Array.from(document.querySelectorAll('*[id^="01"]'));
+    const allFirst = Array.from(document.querySelectorAll('[id^="01"]'));
     const allId = allFirst.map(x => x.id);
     if (allId.includes(dateId)) {
         return false;
