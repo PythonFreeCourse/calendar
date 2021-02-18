@@ -31,6 +31,7 @@ UPDATE_EVENTS_FIELDS = {
     'start': dt,
     'end': dt,
     'availability': bool,
+    'all_day': bool,
     'is_google_event': bool,
     'content': (str, type(None)),
     'location': (str, type(None)),
@@ -94,6 +95,8 @@ async def create_new_event(request: Request,
     owner_id = get_current_user(session).id
     availability = data.get('availability', 'True') == 'True'
     location = data['location']
+    all_day = data['event_type'] and data['event_type'] == 'on'
+
     vc_link = data['vc_link']
     category_id = data.get('category_id')
     is_google_event = data.get('is_google_event', 'True') == 'True'
@@ -106,7 +109,7 @@ async def create_new_event(request: Request,
         raise_if_zoom_link_invalid(vc_link)
 
     event = create_event(db=session, title=title, start=start, end=end,
-                         owner_id=owner_id, content=content,
+                         owner_id=owner_id, all_day=all_day, content=content,
                          location=location, vc_link=vc_link,
                          invitees=invited_emails,
                          category_id=category_id,
@@ -123,12 +126,16 @@ async def create_new_event(request: Request,
 async def eventview(request: Request, event_id: int,
                     db: Session = Depends(get_db)) -> Response:
     event, comments, end_format = get_event_data(db, event_id)
+    start_format = START_FORMAT
+    if event.all_day:
+        start_format = '%A, %d/%m/%Y'
+        end_format = ""
     messages = request.query_params.get('messages', '').split("---")
     return templates.TemplateResponse("event/eventview.html",
                                       {"request": request,
                                        "event": event,
                                        "comments": comments,
-                                       "start_format": START_FORMAT,
+                                       "start_format": start_format,
                                        "end_format": end_format,
                                        "messages": messages})
 
@@ -267,6 +274,7 @@ def update_event(event_id: int, event: Dict, db: Session
 
 
 def create_event(db: Session, title: str, start, end, owner_id: int,
+                 all_day: bool = False,
                  content: Optional[str] = None,
                  location: Optional[str] = None,
                  vc_link: str = None,
@@ -292,6 +300,7 @@ def create_event(db: Session, title: str, start, end, owner_id: int,
         color=color,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
+        all_day=all_day,
         category_id=category_id,
         availability=availability,
         is_google_event=is_google_event

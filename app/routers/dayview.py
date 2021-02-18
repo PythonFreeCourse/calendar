@@ -104,11 +104,27 @@ class DivAttributes:
         return (start_multiday, end_multiday)
 
 
-def event_in_day(event: Event, day: datetime, day_end: datetime) -> bool:
+def is_specific_time_event_in_day(
+    event: Event, day: datetime, day_end: datetime
+) -> bool:
+    if event.all_day:
+        return False
     return (
-        (event.start >= day and event.start < day_end) or
-        (event.end >= day and event.end < day_end) or
-        (event.start < day_end < event.end)
+        (event.start >= day and event.start < day_end)
+        or (event.end >= day and event.end < day_end)
+        or (event.start < day_end < event.end)
+        )
+
+
+def is_all_day_event_in_day(
+    event: Event, day: datetime, day_end: datetime
+) -> bool:
+    if not event.all_day:
+        return False
+    return (
+        (event.start >= day and event.start < day_end)
+        or (event.end >= day and event.end < day_end)
+        or (event.start < day_end < event.end)
         )
 
 
@@ -118,8 +134,20 @@ def get_events_and_attributes(
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
     for event in events:
-        if event_in_day(event=event, day=day, day_end=day_end):
+        if is_specific_time_event_in_day(
+            event=event, day=day, day_end=day_end
+        ):
             yield (event, DivAttributes(event, day))
+
+
+def get_all_day_events(
+    day: datetime, session, user_id: int,
+) -> Event:
+    events = get_all_user_events(session, user_id)
+    day_end = day + timedelta(hours=24)
+    for event in events:
+        if is_all_day_event_in_day(event=event, day=day, day_end=day_end):
+            yield (event)
 
 
 @router.get('/day/{date}', include_in_schema=False)
@@ -127,7 +155,7 @@ async def dayview(
           request: Request, date: str, session=Depends(get_db), view='day',
       ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username='test_username').first()
+    user = session.query(User).first()
     try:
         day = datetime.strptime(date, '%Y-%m-%d')
     except ValueError as err:
@@ -136,10 +164,14 @@ async def dayview(
     events_n_attrs = get_events_and_attributes(
         day=day, session=session, user_id=user.id,
     )
+    all_day_events = get_all_day_events(
+        day=day, session=session, user_id=user.id,
+    )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse("dayview.html", {
         "request": request,
         "events": events_n_attrs,
+        "all_day_events": all_day_events,
         "month": month,
         "day": day.day,
         "zodiac": zodiac_obj,

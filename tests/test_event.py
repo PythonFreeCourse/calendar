@@ -29,7 +29,24 @@ CORRECT_EVENT_FORM_DATA = {
     'availability': 'True',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
+    'event_type': 'on'
+}
+
+CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'event_type': 'on',
     'is_google_event': 'False',
+
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -45,6 +62,7 @@ WRONG_EVENT_FORM_DATA = {
     'availability': 'True',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
+    'event_type': 'on',
     'is_google_event': 'False',
 }
 
@@ -61,6 +79,7 @@ BAD_EMAILS_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com,ccc',
+    'event_type': 'on',
     'is_google_event': 'False',
 }
 
@@ -76,6 +95,7 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
+    'event_type': 'on',
     'invited': 'a@a.com,b@b.com',
     'is_google_event': 'False',
 }
@@ -93,6 +113,7 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'availability': 'busy',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
+    'event_type': 'on',
     'is_google_event': 'False',
 }
 
@@ -136,6 +157,13 @@ def test_eventedit(event_test_client):
 
 def test_eventview_with_id(event_test_client, session, event):
     event_id = event.id
+    response = event_test_client.get(f"/event/{event_id}")
+    assert response.ok
+    assert b"View Event" in response.content
+
+
+def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
+    event_id = all_day_event.id
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"View Event" in response.content
@@ -222,6 +250,18 @@ def test_eventedit_post_correct(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)
     assert response.ok
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
+def test_eventedit_post_without_event_type(client, user):
+    """
+    Test create new event successfully,
+    When the event type is not defined by the user.
+    """
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.status_code == status.HTTP_302_FOUND
     assert (client.app.url_path_for('eventview', event_id=1).strip('1')
             in response.headers['location'])
 
