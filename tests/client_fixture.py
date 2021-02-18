@@ -69,7 +69,8 @@ def invitation_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(invitation.get_db)
 
 
-def categories_test_client() -> Iterator[TestClient]:
+@pytest.fixture(scope="session")
+def categories_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(categories.get_db)
 
 
