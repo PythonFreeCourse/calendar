@@ -29,7 +29,7 @@ function on_heart_click() {
     this.src = "../media/empty_heart.png";
     save_or_remove_quote(1, quote, false);
     if (this.classList.contains("favorites")) {
-      this.parentNode.parentNode.innerHTML = null;
+      this.parentNode.parentNode.remove();
     }
   }
 }
