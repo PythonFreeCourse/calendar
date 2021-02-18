@@ -1,4 +1,4 @@
-from app.routers import agenda, event, invitation, profile, google_connect
+from app.routers import agenda, cursor, event, invitation, profile, google_connect
 from typing import Iterator
 
 from fastapi.testclient import TestClient
@@ -76,17 +76,8 @@ def profile_test_client() -> Iterator[TestClient]:
 
 
 @pytest.fixture(scope="session")
-def cursor_test_client():
-    Base.metadata.create_all(bind=test_engine)
-    main.app.dependency_overrides[profile.get_db] = get_test_db
-    main.app.dependency_overrides[
-        profile.get_placeholder_user] = get_test_placeholder_user
-
-    with TestClient(main.app) as client:
-        yield client
-
-    main.app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
+def cursor_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(cursor.get_db)
 
 
 @pytest.fixture(scope="session")

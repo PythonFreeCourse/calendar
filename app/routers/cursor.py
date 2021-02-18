@@ -2,9 +2,9 @@ import json
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from app.dependencies import get_db
-from app.database.models import UserSettings, User
-from app.dependencies import CURSORS_PATH, templates
+from app.database.models import User, UserSettings
+from app.dependencies import CURSORS_PATH, get_db, templates
+from app.routers.profile import get_placeholder_user
 from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
@@ -15,20 +15,6 @@ router = APIRouter(
     tags=["cursor"],
     responses={404: {"description": "Not found"}},
 )
-
-
-def get_placeholder_user():
-    """Creates a placeholder user
-
-    Returns:
-        User: the new user.
-    """
-    return User(
-        username='cursor_user',
-        email='cursor@cursor',
-        password='cursor123',
-        full_name='cursaouer',
-    )
 
 
 @router.get("/settings")
@@ -74,7 +60,7 @@ async def get_cursor_choices(
     Returns:
         RedirectResponse: redirects to the homepage.
     """
-    user = get_user(session, "cursor_user", user)
+    user = get_user(session, "new_user", user)
     cursor_choices = ({
         "primary_cursor": primary_cursor,
         "secondary_cursor": secondary_cursor})
