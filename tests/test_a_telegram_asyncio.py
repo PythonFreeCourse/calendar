@@ -245,6 +245,12 @@ Welcome to PyLendar telegram client!'''
         chat = Chat(gen_message('Universe'))
         message = MessageHandler(chat, self.TEST_USER)
         answer = 'Location:\nUniverse\n\n'
+        answer += 'is the event public? (yes\\no)'
+        assert await message.process_callback() == answer
+
+        chat = Chat(gen_message('yes'))
+        message = MessageHandler(chat, self.TEST_USER)
+        answer = r'public\\private event:\npublic event\n\n'
         answer += 'When does it start?'
         assert await message.process_callback() == answer
 
