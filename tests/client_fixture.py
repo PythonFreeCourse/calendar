@@ -1,4 +1,5 @@
 from typing import Generator, Iterator
+from typing import Iterator
 
 from fastapi.testclient import TestClient
 import pytest
@@ -6,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
-from app.routers import agenda, event, google_connect, invitation, profile
+from app.routers import agenda, event, friendview, google_connect, invitation, profile
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
 from tests.conftest import get_test_db, test_engine
@@ -44,6 +45,11 @@ def create_test_client(get_db_function) -> Generator[Session, None, None]:
 @pytest.fixture(scope="session")
 def agenda_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(agenda.get_db)
+
+
+@pytest.fixture(scope="session")
+def friendview_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(friendview.get_db)
 
 
 @pytest.fixture(scope="session")

@@ -2,10 +2,11 @@ from datetime import datetime, timedelta
 import json
 import pytest
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
 from sqlalchemy.orm.session import Session
 from starlette import status
+
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
@@ -28,6 +29,24 @@ CORRECT_EVENT_FORM_DATA = {
     'availability': 'True',
     'privacy': 'public',
     'invited': 'a@a.com,b@b.com',
+    'event_type': 'on'
+}
+
+CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
+    'title': 'test title',
+    'start_date': '2021-01-28',
+    'start_time': '15:59',
+    'end_date': '2021-01-27',
+    'end_time': '15:01',
+    'location_type': 'vc_url',
+    'location': 'https://us02web.zoom.us/j/875384596',
+    'description': 'content',
+    'color': 'red',
+    'availability': 'busy',
+    'privacy': 'public',
+    'event_type': 'on',
+    'is_google_event': 'False',
+
 }
 
 WRONG_EVENT_FORM_DATA = {
@@ -42,7 +61,9 @@ WRONG_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'True',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 BAD_EMAILS_FORM_DATA = {
@@ -57,7 +78,9 @@ BAD_EMAILS_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com,ccc'
+    'invited': 'a@a.com,b@b.com,ccc',
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 WEEK_LATER_EVENT_FORM_DATA = {
@@ -72,7 +95,9 @@ WEEK_LATER_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'event_type': 'on',
+    'invited': 'a@a.com,b@b.com',
+    'is_google_event': 'False',
 }
 
 TWO_WEEKS_LATER_EVENT_FORM_DATA = {
@@ -87,7 +112,9 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     'color': 'red',
     'availability': 'busy',
     'privacy': 'public',
-    'invited': 'a@a.com,b@b.com'
+    'invited': 'a@a.com,b@b.com',
+    'event_type': 'on',
+    'is_google_event': 'False',
 }
 
 CORRECT_ADD_EVENT_DATA = {
@@ -96,7 +123,8 @@ CORRECT_ADD_EVENT_DATA = {
     "end": "2021-02-13T09:03:49.560Z",
     "content": "test",
     "owner_id": 0,
-    "location": "test"
+    "location": "test",
+    'is_google_event': 'False',
 }
 
 NONE_UPDATE_OPTIONS = [
@@ -134,6 +162,13 @@ def test_eventview_with_id(event_test_client, session, event):
     assert b"View Event" in response.content
 
 
+def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
+    event_id = all_day_event.id
+    response = event_test_client.get(f"/event/{event_id}")
+    assert response.ok
+    assert b"View Event" in response.content
+
+
 def test_create_event_with_default_availability(client, user, session):
     """
     Test create event with default availability. (busy)
@@ -163,6 +198,7 @@ def test_create_event_with_free_availability(client, user, session):
         'content': 'content',
         'owner_id': user.id,
         'availability': False,
+        'is_google_event': False,
     }
 
     event = evt.create_event(session, **data)
@@ -214,6 +250,18 @@ def test_eventedit_post_correct(client, user):
     response = client.post(client.app.url_path_for('create_new_event'),
                            data=CORRECT_EVENT_FORM_DATA)
     assert response.ok
+    assert (client.app.url_path_for('eventview', event_id=1).strip('1')
+            in response.headers['location'])
+
+
+def test_eventedit_post_without_event_type(client, user):
+    """
+    Test create new event successfully,
+    When the event type is not defined by the user.
+    """
+    response = client.post(client.app.url_path_for('create_new_event'),
+                           data=CORRECT_EVENT_FORM_DATA)
+    assert response.status_code == status.HTTP_302_FOUND
     assert (client.app.url_path_for('eventview', event_id=1).strip('1')
             in response.headers['location'])
 
@@ -422,6 +470,12 @@ def test_change_owner(client, event_test_client, user, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_get_tamplate_to_share_event(event, session):
+    html_template = evt.get_template_to_share_event(
+        event_id=1, user_name='michael', db=session, request=Request.get)
+    assert html_template is not None
 
 
 def test_add_comment(event_test_client: TestClient, session: Session,
