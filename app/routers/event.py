@@ -115,6 +115,13 @@ async def create_new_event(request: Request,
 
 
 def get_waze_link(event: Event) -> str:
+    """Get a waze navigation link to the event location.
+
+    Returns:
+        If there are coordinates, waze will navigate to the exact location.
+        Otherwise, waze will look for the address that appears in the location.
+        If there is no address, an empty string will be returned."""
+
     # if event.latitude and event.longitude:
     #     coordinates = f"{event.latitude},{event.longitude}"
     #     return f"https://waze.com/ul?ll={coordinates}&navigate=yes"
