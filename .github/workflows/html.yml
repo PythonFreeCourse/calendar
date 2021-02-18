@@ -17,4 +17,4 @@ jobs:
       - name: HTML5 Validator
         uses: Cyb3r-Jak3/html5validator-action@master
         with:
-          root: app/templates/name
+          root: app/templates
