@@ -11,6 +11,7 @@ from app.internal import daily_quotes, zodiac, weekly_parasha
 
 def load_to_database(session: Session) -> None:
     """Loads data from JSON data files into the database.
+
     On startup, data from the JSON files should be added to the
     database and not be accessed from a network call for each
     request as it is costly.
@@ -21,6 +22,7 @@ def load_to_database(session: Session) -> None:
     'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
     mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
     &geonameid=293397&m=50&s=on&d=on&D=on'.
+
     Args:
         session: The database connection.
     """
@@ -74,9 +76,11 @@ def _insert_into_database(
 
 def _is_table_empty(session: Session, table: Base) -> bool:
     """Returns True if the table is empty.
+
     Args:
         session: The database connection.
         table: A model entity table.
+        
     Returns:
         True if the table is empty, otherwise returns False.
     """
@@ -85,10 +89,13 @@ def _is_table_empty(session: Session, table: Base) -> bool:
 
 def _get_data_from_json(path: str) -> List[Dict[str, Any]]:
     """Returns a list of dictionary objects.
+
     Reads the data from a specific JSON file and converts the data into
     a list of dictionary items.
+
     Args:
         path: The file path.
+
     Returns:
         A list of dictionary objects.
     """
