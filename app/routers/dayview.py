@@ -57,9 +57,7 @@ class CurrentTimeAttributes(DivAttributes):
 
     def _date_is_today(self) -> bool:
         today = datetime.now().date()
-        if today == self.dayview_date:
-            return True
-        return False
+        return today == self.dayview_date
 
 
 class EventsAttributes(DivAttributes):
@@ -202,7 +200,8 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
+    # user = session.query(User).filter_by(username="test_username").first()
+    user = session.query(User).filter_by(username="tamar").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(

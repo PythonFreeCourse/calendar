@@ -34,7 +34,7 @@ def test_minutes_position_calculation(event_with_no_minutes_modified):
 
 
 def test_div_attributes(event1):
-    div_attr = DivAttributes(event1)
+    div_attr = EventsAttributes(event1)
     assert div_attr.total_time == "07:05 - 09:15"
     assert div_attr.grid_position == "32 / 40"
     assert div_attr.length == 130
@@ -121,7 +121,7 @@ def test_is_all_day_event_in_day(all_day_event1, event3):
 
 
 def test_div_attributes_with_costume_color(event2):
-    div_attr = DivAttributes(event2)
+    div_attr = EventsAttributes(event2)
     assert div_attr.color == "blue"
 
 
