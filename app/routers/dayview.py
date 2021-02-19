@@ -4,9 +4,10 @@ from typing import Iterator, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
-from app.database.models import Event, User
+from app.database.models import Event
 from app.dependencies import get_db, templates
 from app.internal import zodiac
+from app.internal.security.dependancies import current_user, schema
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -171,9 +172,8 @@ async def dayview(
     date: str,
     session=Depends(get_db),
     view="day",
+    user: schema.CurrentUser = Depends(current_user),
 ):
-    # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -189,13 +189,13 @@ async def dayview(
         get_events_and_attributes(
             day=day,
             session=session,
-            user_id=user.id,
+            user_id=user.user_id,
         ),
     )
     all_day_events = get_all_day_events(
         day=day,
         session=session,
-        user_id=user.id,
+        user_id=user.user_id,
     )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
