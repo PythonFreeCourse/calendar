@@ -10,8 +10,8 @@
                 <!-- Exercises -->
                 {% if user.is_active_exercise %}
                     <div class="exercise">
-                        <!--<iframe src="{{ url_for('static', path=exercise) }}" width="250%" height="1200" seamless></iframe> -->
-                        <img src="{{ url_for('static', path=exercise) }}" alt="exercise image" width="150%" height="200%">
+                        <iframe src="{{ url_for('static', path=exercise) }}" width="250%" height="1200" seamless></iframe>
+                        <!--<img src="{{ url_for('static', path=exercise) }}" alt="exercise image" width="150%" height="200%"> -->
                     </div>
                 {% endif %}
             </div>
