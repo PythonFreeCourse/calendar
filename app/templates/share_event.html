@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="/app/static/share_event.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="share_event card">
+            <p class="msg_title">Hi!</p>
+            <p class="card-subtitle mb-2 text-muted">{{ msg_info.sender_name }} want you to know about event he have,</p>
+        <div class="event_info card-body">
+            <div>
+                The event {{ msg_info.event.title }}
+            </div>
+            <div>
+                will take place from {{ msg_info.event.start_date }} until {{ msg_info.event.end_date }}
+            </div>
+            <div>
+                {% if msg_info.event.location is not none %}
+                in {{ msg_info.event.location }}
+                {% endif %}
+                {% if msg_info.event.vc_link is not none %}
+                <a href="{{ msg_info.event.vc_link }}" class="card-link">Link to vc here</a>
+                {% endif %}
+                <!-- TODO get link to the event -->
+                <!-- <p>See the event <a href="--" class="card-link">here</a> </p> -->
+            </div>
+            <div class="card-footer text-muted">
+                This app was built by <a href="https://github.com/PythonFreeCourse" class="card-link">"PythonFreeCourse"</a>
+                <a href="/app/templates/register.html" class="card-link">Join the app!</a>
+            </div>
+        </div>
+    </div>
+</body>

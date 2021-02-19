@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ super() }}
+    <link href="{{ url_for('static', path='/credits_style.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h1>Say hello to our developers:</h1>
+    {% for credit in credit_list %}
+        <div class="gallery">
+            <img src="{{ url_for('static', path='/credits_pictures/' + credit.picture + '.PNG') }}" alt="{{credit.name}}">
+            <div class="credit-details">{{credit.name}}</div>
+            <div class="credit-details">
+                {% if credit.linkedin  %}
+                    <a class="contact" href={{credit.linkedin}}>LinkedIn</a>
+                {% else %}
+                    <p>{{credit.mail}}</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
