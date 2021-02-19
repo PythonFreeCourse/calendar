@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.sql.elements import Null
 from starlette import status
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
@@ -22,13 +23,8 @@ from app.internal.event import (
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
-
-# TODO add this when the user system is merged (PR#195)
-# from app.internal.security.dependancies import (
-# current_user, CurrentUser)
-from app.internal.privacy import PrivateEvent, PrivacyKinds
+from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
-from app.routers.user import create_user
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
@@ -87,7 +83,7 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
 @router.get("/edit")
 async def eventedit(request: Request) -> Response:
     return templates.TemplateResponse(
-        "event/eventedit.html",
+        "eventedit.html",
         {"request": request, "privacy": PrivacyKinds},
     )
 
@@ -112,6 +108,7 @@ async def create_new_event(
 
     vc_link = data["vc_link"]
     category_id = data.get("category_id")
+    privacy = data["privacy"]
     privacy_kinds = [kind.name for kind in PrivacyKinds]
     if privacy not in privacy_kinds:
         privacy = PrivacyKinds.Public.name
@@ -194,23 +191,10 @@ def check_event_owner(
     event: Event,
     session: Depends(get_db),
     user: Optional[User] = None,
-    # TODO after user system is merged (PR#195):
-    # CurrentUser = Depends(current_user)
 ) -> bool:
-    if not user:
-        user = session.query(User).filter_by(id=1).first()
-        user = (
-            user
-            if user
-            else create_user(
-                username="u",
-                password="p",
-                email="e@mail.com",
-                language_id=1,
-                session=session,
-            )
-        )
     # TODO use current_user after user system merge
+    if not user:
+        user = get_current_user(session)
     is_owner = event.owner_id == user.id
     return is_owner
 
@@ -221,14 +205,21 @@ def event_to_show(
     user: Optional[User] = None,
 ) -> Optional[Event]:
     """Check the given event's privacy and return
-    event/fixed event/ nothing (hidden) accordingly"""
+    event/fixed private event/ nothing (hidden) accordingly"""
     is_owner = check_event_owner(event, session, user)
     if event.privacy == PrivacyKinds.Private.name and not is_owner:
-        private_event = PrivateEvent(
-            start=event.start,
-            end=event.end,
-            owner_id=event.owner_id,
-        )
+        event_dict = event.__dict__.copy()
+        if event_dict.get("_sa_instance_state", None):
+            event_dict.pop("_sa_instance_state")
+        event_dict.pop("id")
+        private_event = Event(**event_dict)
+        private_event.title = PrivacyKinds.Private.name
+        private_event.content = PrivacyKinds.Private.name
+        private_event.location = PrivacyKinds.Private.name
+        private_event.color = Null
+        private_event.invitees = PrivacyKinds.Private.name
+        private_event.category_id = Null
+        private_event.emotion = Null
         return private_event
     elif event.privacy == PrivacyKinds.Hidden.name and not is_owner:
         return

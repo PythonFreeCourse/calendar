@@ -540,7 +540,7 @@ def test_can_show_event_hidden(event, session, user):
 
 def test_can_show_event_private(event, session, user):
     event.privacy = PrivacyKinds.Private.name
-    private_event = event_to_show(event=event, session=session, user=user)
+    private_event = event_to_show(event, session, user)
     private_attributes = [
         private_event.title,
         private_event.location,
