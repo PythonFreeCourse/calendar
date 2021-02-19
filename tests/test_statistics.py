@@ -11,8 +11,9 @@ from app.routers.invitation import get_all_invitations
 
 def create_events_and_user_events(session, start, end, owner, invitations):
     for _ in range(1, 3):
-        event = create_event(session, "title" + str(_), start, end, owner,
-                             "content" + str(_), "location" + str(_))
+        event = create_event(
+            db=session, title="title" + str(_), start=start, end=end,
+            owner_id=owner,location="location" + str(_))
         send_in_app_invitation(invitations, event, session)
 
 
