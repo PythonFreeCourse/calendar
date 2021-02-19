@@ -7,6 +7,8 @@
 {% endblock %}
 
 {% block content %}
+<style id="cssFilter">
+</style>
   <div class="agenda_grid">
     <div class="agenda_filter_grid">
       <form method="GET" action="/agenda#dates" class="mx-3 pt-3">
@@ -29,7 +31,7 @@
       <input type="text" id="category" name="category" class="form-control-sm"
              placeholder="category ID" value="{{ category }}"
              onfocus="this.value=''" required>
-      <button class="btn btn-outline-info btn-sm" onclick='filterByCategory({{ events | tojson | safe }})'>
+      <button class="btn btn-outline-info btn-sm" id="category-button">
         Filter by Categories
       </button>
     </div>
@@ -61,16 +63,18 @@
 
   <div id="events">
     {% for events_date, events_list in events.items() %}
-    <div class="p-3">{{ events_date }}</div>
-      {% for event in events_list %}
-      <div class="event_line" style="background-color: {{ event.color }}">
-          {% set availability = 'Busy' if event.availability else 'Free' %}
-          <div class="{{ availability | lower }}" title="{{ availability }}"></div>
-          <div><b>{{ event.start }} - <a class="event-title" href="/event/{{ event.id }}">{{ event.title | safe }}</a></b><br>
-            <span class="duration">duration: {{ event.duration }}</span>
-          </div>
+      <div class="wrapper">
+        <div class="p-3">{{ events_date }}</div>
+        {% for event in events_list %}
+        <div class="event_line" style="background-color: {{ event.color }}" data-name="{{event.category_id}}">
+            {% set availability = 'Busy' if event.availability else 'Free' %}
+            <div class="{{ availability | lower }}" title="{{ availability }}"></div>
+            <div><b>{{ event.start }} - <a class="event-title" href="/event/{{ event.id }}">{{ event.title | safe }}</a></b><br>
+              <span class="duration">duration: {{ event.duration }}</span>
+            </div>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     {% endfor %}
   </div>
 
