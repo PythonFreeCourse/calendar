@@ -113,7 +113,7 @@ async def create_new_event(
     if privacy not in privacy_kinds:
         privacy = PrivacyKinds.Public.name
     is_google_event = data.get("is_google_event", "True") == "True"
-
+    print(is_google_event)
     invited_emails = get_invited_emails(data["invited"])
     uninvited_contacts = get_uninvited_regular_emails(
         session,
@@ -130,9 +130,8 @@ async def create_new_event(
         title=title,
         start=start,
         end=end,
-        owner_id=owner_id,
-        privacy=privacy,
         all_day=all_day,
+        owner_id=owner_id,
         content=content,
         location=location,
         vc_link=vc_link,
@@ -140,6 +139,7 @@ async def create_new_event(
         category_id=category_id,
         availability=availability,
         is_google_event=is_google_event,
+        privacy=privacy,
     )
 
     messages = get_messages(session, event, uninvited_contacts)
@@ -377,7 +377,6 @@ def create_event(
     start,
     end,
     owner_id: int,
-    privacy: str = PrivacyKinds.Public.name,
     all_day: bool = False,
     content: Optional[str] = None,
     location: Optional[str] = None,
@@ -387,6 +386,7 @@ def create_event(
     category_id: Optional[int] = None,
     availability: bool = True,
     is_google_event: bool = False,
+    privacy: str = PrivacyKinds.Public.name,
 ):
     """Creates an event and an association."""
 
