@@ -1,7 +1,5 @@
-import asyncio
 from datetime import datetime, timedelta
 import json
-import requests
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import dateutil.parser
