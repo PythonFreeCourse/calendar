@@ -16,7 +16,8 @@ mail = FastMail(email_conf)
 
 def send(
         session: Session, event_used: int, user_to_send: int,
-        title: str, background_tasks: BackgroundTasks = BackgroundTasks
+        title: str, content: str = "",
+        background_tasks: BackgroundTasks = BackgroundTasks
 ) -> bool:
     """This function is being used to send emails in the background.
     It takes an event and a user and it sends the event to the user.
@@ -48,25 +49,20 @@ def send(
     background_tasks.add_task(send_internal,
                               subject=subject,
                               recipients=recipients,
-                              body=body)
+                              body=body + content)
     return True
 
 
 def send_email_to_event_participants(
         session: Session, event_id: int,
-        title: str, content: str,
-        background_tasks: BackgroundTasks = BackgroundTasks
-) -> bool:
-    """This function is being used to send emails in the background.
-    it uses the main elements of the func writen above.
-    It takes an event and a user and it sends the event to the user.
+        title: str, content: str) -> bool:
+    """This function sends emails to a mailing list of all event participants.
+    it uses the function send above to do this and avoid double codes..
     Args:
         session(Session): The session to redirect to the database.
-        title (str): Title of the email that is being sent.
         event_id (int): Id number of the event that is used.
+        title (str): Title of the email that is being sent.
         content (str): body of email sent.
-        background_tasks (BackgroundTasks): Function from fastapi that lets
-            you apply tasks in the background.
     Returns:
         bool: Returns True if emails were sent, False if none.
     """
@@ -74,21 +70,20 @@ def send_email_to_event_participants(
     if event_owner != get_current_user(session):
         return False
     # makes sure only event owner can send an email via this func.
-    mailing_list = session.query(User.email).join(
+    mailing_list = session.query(User.id, User.email).join(
         UserEvent, User.id == UserEvent.user_id
         ).filter(
             event_id == event_id).all()
-    valid_mailing_list = list(filter(verify_email_pattern, mailing_list))
+    valid_mailing_list = list(filter(verify_email_pattern, mailing_list.email))
     if not valid_mailing_list:
         return False
     # making sure app doesn't crash if emails are invalid
+
     event = session.query(Event).get(event_id)
     subject = f"{event.title}: {title}"
     for r in valid_mailing_list:
-        background_tasks.add_task(send_internal,
-                                  subject=subject,
-                                  recipients=r,
-                                  body=content)
+        send(session, event, r.id, subject, content)
+    # sends the send email function parameters to send on the mailing list
     return True
 
 
