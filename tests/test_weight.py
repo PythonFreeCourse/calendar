@@ -1,5 +1,5 @@
 
-def test_post_ok(client, user):
+def test_weight_route_ok(client, user):
     new_data = {'target': user.target_weight, 'current_weight': 60}
     resp = client.post('/weight/', data=new_data)
     assert resp.ok

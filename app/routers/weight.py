@@ -21,7 +21,8 @@ async def get_weight(
         ):
 
     # TODO Waiting for user registration
-    user = session.query(User).filter_by(id=1).first()
+    user_id = 1
+    user = session.query(User).filter_by(id=user_id).first()
     target = user.target_weight
     if current_weight:
         return RedirectResponse(url='/')
@@ -37,7 +38,8 @@ async def get_weight(
 async def weight(
         request: Request,
         session: Session = Depends(get_db)):
-    user = session.query(User).filter_by(id=1).first()
+    user_id = 1
+    user = session.query(User).filter_by(id=user_id).first()
     data = await request.form()
     target = data['target']
     current_weight = data['current_weight']
