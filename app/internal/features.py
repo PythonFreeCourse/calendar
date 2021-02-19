@@ -1,4 +1,5 @@
 from fastapi import Depends
+from typing import List
 
 from app.database.models import UserFeature, Feature
 from app.dependencies import get_db, SessionLocal
@@ -79,12 +80,9 @@ def is_feature_exists_in_disabled(
 
 def is_feature_enabled(route: str) -> bool:
     session = SessionLocal()
-
     user = get_current_user(session=session)
-
     feature = session.query(Feature).filter_by(route=route).first()
 
-    # *This condition must be before line 168 to avoid AttributeError!*
     if feature is None:
         # in case there is no feature exists in the database that match the
         # route that gived by to the request.
@@ -106,11 +104,10 @@ def create_feature(name: str, route: str,
     """Creates a feature."""
 
     db = SessionLocal()
-
     if icon is None:
         icon = "extension-puzzle"
 
-    feature = create_model(
+    return create_model(
         db, Feature,
         name=name,
         route=route,
@@ -118,30 +115,25 @@ def create_feature(name: str, route: str,
         description=description,
         icon=icon
     )
-    return feature
 
 
 def create_association(
     db: SessionLocal, feature_id: int, user_id: int, is_enable: bool
 ) -> UserFeature:
     """Creates an association."""
-
-    association = create_model(
+    return create_model(
         db, UserFeature,
         user_id=user_id,
         feature_id=feature_id,
         is_enable=is_enable
     )
 
-    return association
 
-
-def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> list:
+def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> List:
     user = get_current_user(session=session)
-
     data = []
-
     user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
+
     for pref in user_prefs:
         if pref.is_enable:
             feature = session.query(Feature).filter_by(
@@ -153,11 +145,11 @@ def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> list:
 
 def get_user_disabled_features(
     session: SessionLocal = Depends(get_db)
-) -> list:
+) -> List:
     user = get_current_user(session=session)
-
     data = []
     user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
+
     for pref in user_prefs:
         if not pref.is_enable:
             feature = session.query(Feature).filter_by(
