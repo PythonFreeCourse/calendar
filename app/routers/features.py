@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, Depends
+from typing import List
 
 from app.dependencies import get_db, SessionLocal
 from app.database.models import UserFeature, Feature
@@ -21,7 +22,7 @@ router = APIRouter(
 @router.get('/')
 async def index(
     request: Request, session: SessionLocal = Depends(get_db)
-) -> list:
+) -> List:
     features = session.query(Feature).all()
     return features
 
@@ -99,7 +100,6 @@ async def enable_feature(request: Request,
 async def disable_feature(request: Request,
                           session: SessionLocal = Depends(get_db)) -> bool:
     form = await request.form()
-    print(dict(form))
     is_exist = is_association_exists_in_db(form=form, session=session)
 
     if not is_exist:
@@ -119,21 +119,21 @@ async def disable_feature(request: Request,
 @router.get('/active')
 def show_user_enabled_features(
     session: SessionLocal = Depends(get_db)
-) -> list:
+) -> List:
     return get_user_enabled_features(session=session)
 
 
 @router.get('/deactive')
 def show_user_disabled_features(
     session: SessionLocal = Depends(get_db)
-) -> list:
+) -> List:
     return get_user_disabled_features(session=session)
 
 
 @router.get('/unlinked')
 def get_user_unlinked_features(
     session: SessionLocal = Depends(get_db)
-) -> list:
+) -> List:
     data = []
     all_features = session.query(Feature).all()
 
