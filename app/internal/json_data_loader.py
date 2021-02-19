@@ -80,7 +80,7 @@ def _is_table_empty(session: Session, table: Base) -> bool:
     Args:
         session: The database connection.
         table: A model entity table.
-        
+
     Returns:
         True if the table is empty, otherwise returns False.
     """
