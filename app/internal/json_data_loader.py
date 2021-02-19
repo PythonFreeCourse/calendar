@@ -96,7 +96,7 @@ def _get_data_from_json(path: str) -> List[Dict[str, Any]]:
 
     Args:
         path: The file path.
-        
+
     Returns:
         A list of dictionary objects.
     """
