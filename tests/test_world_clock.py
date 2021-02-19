@@ -1,3 +1,10 @@
+from datetime import datetime
+import pytest
+import requests
+
+import httpx
+import respx
+
 from app.internal.world_clock import (
      generate_possible_timezone_path,
      generate_possible_timezone_path_by_country,
@@ -15,40 +22,18 @@ from app.internal.world_clock import (
      standardize_continent,
      standardize_country_or_place, TIMEZONES_BASE_URL)
 
-import pytest
-import requests
 
-from unittest.mock import patch
-
-from datetime import datetime
-
-
-def test_api_http_error():
-    with patch('app.internal.world_clock.requests.get',
-               side_effect=requests.exceptions.HTTPError):
-        assert not get_api_data(TIMEZONES_BASE_URL)
+@respx.mock
+@pytest.mark.asyncio
+async def test_api_http_error():
+    respx.get(TIMEZONES_BASE_URL).mock(return_value=httpx.Response(500))
+    output = await get_api_data(TIMEZONES_BASE_URL)
+    assert not output
 
 
-def test_api_connection_error():
-    with patch('app.internal.world_clock.requests.get',
-               side_effect=requests.exceptions.ConnectionError):
-        assert not get_api_data(TIMEZONES_BASE_URL)
-
-
-def test_api_timeout_error():
-    with patch('app.internal.world_clock.requests.get',
-               side_effect=requests.exceptions.Timeout):
-        assert not get_api_data(TIMEZONES_BASE_URL)
-
-
-def test_api_request_exception():
-    with patch('app.internal.world_clock.requests.get',
-               side_effect=requests.exceptions.RequestException):
-        assert not get_api_data(TIMEZONES_BASE_URL)
-
-
-def test_get_api_data():
-    timezones_data = get_api_data(TIMEZONES_BASE_URL)
+@pytest.mark.asyncio
+async def test_get_api_data():
+    timezones_data = await get_api_data(TIMEZONES_BASE_URL)
     assert isinstance(timezones_data, list)
 
 
@@ -59,7 +44,8 @@ items_details = [
 ]
 
 
-@pytest.mark.parametrize('continent_name, normalized_continent', items_details)
+@pytest.mark.parametrize('continent_name, normalized_continent',
+                         items_details)
 def test_normalize_continent_name(continent_name, normalized_continent):
     assert normalize_continent_name(continent_name) == normalized_continent
 
@@ -109,10 +95,12 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('country, place, res', items_details)
-def test_generate_possible_timezone_path_by_country(country, place, res):
-    assert (generate_possible_timezone_path_by_country(country, place) ==
-            res)
+async def test_generate_possible_timezone_path_by_country(
+        country, place, res):
+    assert (await generate_possible_timezone_path_by_country(country, place)
+            == res)
 
 
 items_details = [
@@ -120,9 +108,10 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('country, res', items_details)
-def test_get_arbitrary_timezone_of_country(country, res):
-    assert get_arbitrary_timezone_of_country(country) == res
+async def test_get_arbitrary_timezone_of_country(country, res):
+    assert await get_arbitrary_timezone_of_country(country) == res
 
 
 items_details = [
@@ -147,8 +136,9 @@ def test_get_subcountry(city_name, subcountry):
     assert get_subcountry(city_name) == subcountry
 
 
-def test_parse_timezones_list():
-    assert ('Africa', 'Abidjan') in parse_timezones_list()
+@pytest.mark.asyncio
+async def test_parse_timezones_list():
+    assert ('Africa', 'Abidjan') in await parse_timezones_list()
 
 
 items_details = [
@@ -157,9 +147,11 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('param, res', items_details)
-def test_get_timezones_parts(param, res):
-    assert res == get_timezones_parts(param)[0]
+async def test_get_timezones_parts(param, res):
+    time_zone_parts = await get_timezones_parts(param)
+    assert res == time_zone_parts[0]
 
 
 items_details = [
@@ -181,10 +173,13 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('continent_name, standardized_continent',
                          items_details)
-def test_standardize_continent(continent_name, standardized_continent):
-    assert standardize_continent(continent_name) == standardized_continent
+async def test_standardize_continent(
+        continent_name, standardized_continent):
+    assert (await standardize_continent(continent_name)
+            == standardized_continent)
 
 
 items_details = [
@@ -193,9 +188,10 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('place_name, timezone', items_details)
-def test_search_timezone_by_just_place(place_name, timezone):
-    assert search_timezone_by_just_place(place_name) == timezone
+async def test_search_timezone_by_just_place(place_name, timezone):
+    assert await search_timezone_by_just_place(place_name) == timezone
 
 
 items_details = [
@@ -218,10 +214,11 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('place_name, possibilities', items_details)
-def test_get_all_possible_timezone_paths_for_given_place(place_name,
-                                                         possibilities):
-    assert (get_all_possible_timezone_paths_for_given_place(place_name)
+async def test_get_all_possible_timezone_paths_for_given_place(
+        place_name, possibilities):
+    assert (await get_all_possible_timezone_paths_for_given_place(place_name)
             == possibilities)
 
 
@@ -236,13 +233,15 @@ items_details = [
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('place_name, path', items_details)
-def test_get_timezone_path_for_given_place(place_name, path):
-    assert get_timezone_path_for_given_place(place_name) == path
+async def test_get_timezone_path_for_given_place(place_name, path):
+    assert await get_timezone_path_for_given_place(place_name) == path
 
 
-def test_get_current_time_in_place():
-    current_time = get_current_time_in_place('pago pago')
+@pytest.mark.asyncio
+async def test_get_current_time_in_place():
+    current_time = await get_current_time_in_place('pago pago')
     assert len(current_time) == 8
 
 
@@ -253,11 +252,14 @@ def test_get_part_of_day_and_feedback():
 
 
 items_details = [
-    ('22:22:12', 'Haifa', ('20:22:12', 'Evening', 'Better not')),
-    ('22:22:12', 'Australia', ('10:22:12', 'Morning', 'OK')),
+    ('22:22:12', 'Haifa', [('20:22:12', 'Evening', 'Better not'),
+                           ('21:22:12', 'Night', 'Better not')]),
+    ('22:22:12', 'Australia', [('10:22:12', 'Morning', 'OK'),
+                               ('11:22:12', 'Late morning', 'OK')]),
 ]
 
 
+@pytest.mark.asyncio
 @pytest.mark.parametrize('time_str, place_name, res', items_details)
-def test_meeting_possibility_feedback(time_str, place_name, res):
-    assert meeting_possibility_feedback(time_str, place_name) == res
+async def test_meeting_possibility_feedback(time_str, place_name, res):
+    assert await meeting_possibility_feedback(time_str, place_name) in res
