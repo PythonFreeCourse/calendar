@@ -10,8 +10,10 @@
 <div class="event_info_row">
     <span class="icon">ICON</span>
     <time datetime="{{ event.start }}">{{ event.start.strftime(start_format )}}</time>
+    {% if end_format != "" %}
     -
-    <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
+    <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+    {% endif %}
     <div>{{ 'Busy' if event.availability == True else 'Free' }}</div>
 </div>
 
@@ -50,7 +52,6 @@
 
 <div class="event_info_buttons_row event_info_row_end">
     <!-- Buttons could and should be replaced with button-like anchors if need so -->
-    <button type="button">Delete</button>
     <button type="button">Duplicate</button>
     <button type="button">Edit</button>
 </div>
