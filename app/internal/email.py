@@ -84,14 +84,11 @@ def send_email_to_event_participants(
     # making sure app doesn't crash if emails are invalid
     event = session.query(Event).get(event_id)
     subject = f"{event.title}: {title}"
-    recipients = valid_mailing_list
-    body = content
-    for r in recipients:
-        print(r)
+    for r in valid_mailing_list:
         background_tasks.add_task(send_internal,
                                   subject=subject,
                                   recipients=r,
-                                  body=body)
+                                  body=content)
     return True
 
 
