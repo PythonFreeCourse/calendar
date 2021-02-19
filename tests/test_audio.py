@@ -1,4 +1,4 @@
-from app.routers.audio import get_user, router
+from app.routers.audio import router
 
 AUDIO_SETTINGS_URL = router.url_path_for("audio_settings")
 GET_CHOICES_URL = router.url_path_for("get_choices")
@@ -62,8 +62,3 @@ def test_start_audio_sfx_off(audio_test_client):
     response = audio_test_client.get(
         url=START_AUDIO_URL)
     assert response.ok
-
-
-def test_get_user(session, user):
-    new_user = get_user(session, "bla", user)
-    assert new_user.username == user.username

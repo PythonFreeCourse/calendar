@@ -1,30 +1,16 @@
 import json
+from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
-from app.dependencies import get_db
-from app.database.models import (UserSettings, AudioTracks, User,
-                                 UserAudioTracks)
-from app.dependencies import SOUNDS_PATH, templates
+from app.database.models import (AudioTracks, User, UserAudioTracks,
+                                 UserSettings)
+from app.dependencies import SOUNDS_PATH, get_db, templates
+from app.internal.security.dependancies import current_user
 from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-from enum import Enum
-
-
-def get_placeholder_user():
-    """Creates a placeholder user
-
-    Returns:
-        User: the new user.
-    """
-    return User(
-        username='audio_user',
-        email='audio@audio',
-        password='audio525',
-        full_name='audioaudio',
-    )
 
 
 DEFAULT_MUSIC = ["GASTRONOMICA.mp3"]
@@ -54,7 +40,8 @@ router = APIRouter(
 
 @router.get("/settings")
 def audio_settings(
-    request: Request, session: Session = Depends(get_db)
+    request: Request, session: Session = Depends(get_db),
+    user: User = Depends(current_user)
         ) -> templates.TemplateResponse:
     """A route to the audio settings.
 
@@ -83,22 +70,19 @@ def audio_settings(
 @router.post("/settings")
 async def get_choices(
     session: Session = Depends(get_db),
-    new_user: User = Depends(get_placeholder_user),
     music_on: bool = Form(...),
     music_choices: Optional[List[str]] = Form(None),
     music_vol: Optional[int] = Form(None),
     sfx_on: bool = Form(...),
     sfx_choice: Optional[str] = Form(None),
-    sfx_vol: Optional[int] = Form(None)
+    sfx_vol: Optional[int] = Form(None),
+    user: User = Depends(current_user),
         ) -> RedirectResponse:
     """This function saves users' choices in the db.
 
     Args:
         request (Request): the http request
         session (Session): the database.
-        new_user (User): default user.
-        need to be replaced with real one,
-        after registration is implemented.
         music_on_off (str, optional): On if the user chose to enable music,
         false otherwise.
         music_choices (Optional[List[str]], optional): a list of music tracks
@@ -111,6 +95,7 @@ async def get_choices(
         mouse click if sound effects are enabled, None otherwise.
         sfx_vol (Optional[int], optional): a number in the range (0, 1)
         indicating the desired sfx volume, or None if disabled.
+        user (User): current user.
 
     Returns:
         RedirectResponse: redirect the user to home.html.
@@ -119,13 +104,14 @@ async def get_choices(
         {"music_on": music_on, "music_vol": music_vol,
          "sfx_on": sfx_on, "sfx_vol": sfx_vol})
     save_audio_settings(
-        session, new_user, music_choices, sfx_choice, user_choices)
+        session, music_choices, sfx_choice, user_choices, user)
 
     return RedirectResponse("/", status_code=HTTP_302_FOUND)
 
 
 @router.get("/start")
-async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
+async def start_audio(session: Session = Depends(get_db),
+                      user: User = Depends(current_user)) -> RedirectResponse:
     """Starts audio according to audio settings.
 
     Args:
@@ -135,7 +121,7 @@ async def start_audio(session: Session = Depends(get_db),) -> RedirectResponse:
         RedirectResponse: redirect the user to home.html.
     """
     (music_on, playlist, music_vol,
-        sfx_on, sfx_choice, sfx_vol) = get_audio_settings(session)
+        sfx_on, sfx_choice, sfx_vol) = get_audio_settings(session, user.user_id)
     if music_on is not None:
         music_vol = handle_vol(music_on, music_vol)
         sfx_vol = handle_vol(sfx_on, sfx_vol)
@@ -226,7 +212,7 @@ def get_tracks(
 
 
 def get_audio_settings(
-    session: Session, user_id: int = 1
+    session: Session, user_id: int
 ) -> Tuple[Optional[List[str]], Optional[int], Optional[str], Optional[int]]:
     """Retrieves audio settings from the database.
 
@@ -238,6 +224,7 @@ def get_audio_settings(
         Tuple[str, Optional[List[str]], Optional[int],
         str, Optional[str], Optional[int]]: the audio settings.
     """
+
     music_on, music_vol, sfx_on, sfx_vol = None, None, None, None
     playlist, sfx_choice = get_tracks(session, user_id)
     audio_settings = session.query(
@@ -279,57 +266,30 @@ def handle_vol(
 
 def save_audio_settings(
     session: Session,
-    new_user: User,
     music_choices: Optional[List[str]],
     sfx_choice: Optional[str],
-        user_choices: Dict[str, Union[str, int]]):
+    user_choices: Dict[str, Union[str, int]],
+        user: User):
+    print("user in save")
+    print(user)
     """Save audio settings in the db.
 
     Args:
         session (Session): the database
-        new_user (User): default user. need to be replaced with real
-        one after registration is implemented
         music_choices (Optional[List[str]]): a list of music tracks
-        f music is enabled, None otherwise.
+        if music is enabled, None otherwise.
         sfx_choice (Optional[str]): choice for sound effect.
         user_choices (Dict[str, Union[str, int]]):
         including music_on, music_vol, sfx_on, sfx_vol
+        user (User): current user
     """
-    # need to change later to get the real user,
-    # when registration feature is ready.
-    user_name = "audio_user"
-    user = get_user(session, user_name, new_user)
-    user_id = user.id
-
-    handle_audio_settings(session, user, user_choices)
-    handle_user_audio_tracks(session, user_id, music_choices, sfx_choice)
-
-
-def get_user(session: Session, user_name: str, new_user: User) -> User:
-    """Retrieves user according to user_name.
-    if he doesn't exist - returns default user (new_user).
-
-    Args:
-        session (Session): the database.
-        user_name (str): name of the user.
-        new_user (User): defualt user for the case that the
-        user with user_name isn't found in the database.
-
-    Returns:
-        User: a user object.
-    """
-    user = session.query(User).filter_by(username=user_name).first()
-    if not user:
-        session.add(new_user)
-        session.commit()
-        user = session.query(User).filter_by(
-            username=new_user.username).first()
-    return user
+    handle_audio_settings(session, user.user_id, user_choices)
+    handle_user_audio_tracks(session, user.user_id, music_choices, sfx_choice)
 
 
 def handle_audio_settings(
     session: Session,
-    user: User,
+    user_id: int,
         user_choices: Dict[str, Union[str, int]]):
     """Insert or update a new record into UserSettings table.
     The table stores the following information:
@@ -337,14 +297,14 @@ def handle_audio_settings(
 
     Args:
         session (Session): the database
-        user (User): current user.
+        user_id (int): current users' id.
         user_choices (Dict[str, Union[str, int]]):
         including music_on, music_vol, sfx_on, sfx_vol
     """
     audio_settings = session.query(UserSettings).filter_by(
-        user_id=user.id).first()
+        user_id=user_id).first()
     if not audio_settings:
-        audio_settings = UserSettings(user_id=user.id, **user_choices)
+        audio_settings = UserSettings(user_id=user_id, **user_choices)
         session.add(audio_settings)
 
     else:
