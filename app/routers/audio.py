@@ -121,7 +121,8 @@ async def start_audio(session: Session = Depends(get_db),
         RedirectResponse: redirect the user to home.html.
     """
     (music_on, playlist, music_vol,
-        sfx_on, sfx_choice, sfx_vol) = get_audio_settings(session, user.user_id)
+        sfx_on, sfx_choice, sfx_vol) = get_audio_settings(
+            session, user.user_id)
     if music_on is not None:
         music_vol = handle_vol(music_on, music_vol)
         sfx_vol = handle_vol(sfx_on, sfx_vol)
