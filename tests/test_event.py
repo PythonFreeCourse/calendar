@@ -126,15 +126,6 @@ CORRECT_ADD_EVENT_DATA = {
     "is_google_event": "False",
 }
 
-CORRECT_ADD_EVENT_DATA = {
-    "title": "test",
-    "start": "2021-02-13T09:03:49.560Z",
-    "end": "2021-02-13T09:03:49.560Z",
-    "content": "test",
-    "owner_id": 0,
-    "location": "test"
-}
-
 NONE_UPDATE_OPTIONS = [
     {},
     {"test": "test"},
