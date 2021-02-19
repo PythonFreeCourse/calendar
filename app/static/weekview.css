@@ -6,7 +6,7 @@
     --borders-variant:#F7F7F7;
 }
 
-.day {
+.day-weekview {
     border-left: 1px solid var(--borders);
     width: 100%;
 }
@@ -27,8 +27,9 @@
 #hoursgrid {
     grid-row: 1;
     grid-column: 1;
-    margin-top: 2.1em;
-    margin-left: -0.1em;
+    flex: 1;
+    margin-top: 4em;
+    margin-left: 0.8em;
     z-index: 30;
 }
 
@@ -38,4 +39,3 @@
     margin-left: -2;
     overflow: hidden;
 }
-
