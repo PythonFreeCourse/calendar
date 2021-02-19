@@ -270,8 +270,6 @@ def save_audio_settings(
     sfx_choice: Optional[str],
     user_choices: Dict[str, Union[str, int]],
         user: User):
-    print("user in save")
-    print(user)
     """Save audio settings in the db.
 
     Args:
