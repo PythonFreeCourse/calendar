@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app import config
 from app.database import engine, models
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
-from app.internal import daily_quotes, json_data_loader, load_jokes
+from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
@@ -46,7 +46,6 @@ from app.routers import (  # noqa: E402
     register, search, telegram, user, weekview, whatsapp,
 )
 
-load_jokes.load_daily_jokes(next(get_db()))
 json_data_loader.load_to_database(next(get_db()))
 
 
@@ -83,6 +82,7 @@ routers_to_include = [
     four_o_four.router,
     google_connect.router,
     invitation.router,
+    joke.router,
     login.router,
     logout.router,
     profile.router,
@@ -92,7 +92,6 @@ routers_to_include = [
     telegram.router,
     user.router,
     whatsapp.router,
-    joke.router,
 ]
 
 for router in routers_to_include:
