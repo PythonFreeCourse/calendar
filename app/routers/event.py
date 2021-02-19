@@ -115,7 +115,7 @@ async def create_new_event(
         invited_emails,
     )
 
-    if vc_link is not None:
+    if vc_link:
         raise_if_zoom_link_invalid(vc_link)
 
     event = create_event(
