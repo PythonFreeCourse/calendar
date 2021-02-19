@@ -8,11 +8,15 @@
 {% block content %}
 
     <div class="container mt-4">
-        <h1>{{ message }}</h1>
+        <h1>New notifications</h1>
     </div>
     <div id="main">
+        <div>
+            <a href="{{ url_for('view_old_notifications') }}">Historical notifications</a>
+        </div>
     {% if notifications %}
-        <form action="{{ url_for('mark_all_as_read') }}">
+        <form action="{{ url_for('mark_all_as_read') }}" method="post">
+            <input type="hidden" name="next" value="{{ url_for('view_notifications') }}">
             <button type="submit" class="btn"
             {% if not new_messages %}disabled{% endif %}>
                 Mark all as read
@@ -21,16 +25,18 @@
         {% for n in notifications %}
             {% set type = n.__table__.name %}
 
-            {% if type == "invitations" %}
-                <div class="notification">
+            <div class="notification" id="{{loop.index}}">
+                {% if type == "invitations" %}
                     <form action="{{ url_for('accept_invitations') }}" method="post"
                           class="notification-form accept">
+                        <input type="hidden" name="next" value="{{ url_for('view_notifications') }}">
                         <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-accept">
                             <ion-icon class="icon" name="checkmark-outline"></ion-icon>
                         </button>
                     </form>
                     <form action="{{ url_for('decline_invitations') }}" method="post"
                           class="notification-form decline">
+                        <input type="hidden" name="next" value="{{ url_for('view_notifications') }}">
                         <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-decline">
                             <ion-icon class="icon" name="close-outline"></ion-icon>
                         </button>
@@ -38,22 +44,21 @@
                     <span>{{ n.event.owner.username }} - </span>
                     <a href="#">{{ n.event.title }}</a>
                     <span>({{ n.event.start.strftime('%H:%M %m/%d/%Y') }})</span>
-                </div>
+                {% elif type == "messages" %}
 
-            {% elif type == "messages" %}
-                <div class="notification">
-                    <form action="{{ url_for('mark_message_as_read') }}" method="post"
-                          class="notification-form mark_as_read">
-                        <button type="submit" name="message_id" value="{{ n.id }}" class="notification-btn btn-read">
-                            <ion-icon class="icon" name="checkmark-outline"></ion-icon>
-                        </button>
+                <form action="{{ url_for('mark_message_as_read') }}" method="post"
+                      class="notification-form mark_as_read">
+                    <input type="hidden" name="next" value="{{ url_for('view_notifications') }}">
+                    <button type="submit" name="message_id" value="{{ n.id }}" class="notification-btn btn-read">
+                        <ion-icon class="icon" name="checkmark-outline"></ion-icon>
+                    </button>
                     </form>
                     {% if n.link %}
                         <a href="{{ n.link }}">{{ n.body }}</a>
                     {% else %}
-                        <span>{{n.status}}-{{ n.body }}</span>
+                        <span>{{ n.body }}</span>
                     {% endif %}
-                </div>
+            </div>
 
             {% endif %}
 

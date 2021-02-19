@@ -1,12 +1,12 @@
-from starlette.status import HTTP_200_OK
-
-from app.routers.notification import (
-    get_all_invitations, get_invitation_by_id, router
+from app.internal.notification import (
+    get_all_invitations, get_invitation_by_id
 )
+from app.routers.notification import router
 
 
 class TestNotificationRoutes:
     NO_NOTIFICATIONS = b"You don't have any new notifications."
+    NEW_NOTIFICATIONS_URL = router.url_path_for('view_notifications')
 
     def test_view_no_notifications(self, notification_test_client, user):
         url = router.url_path_for('view_notifications')
@@ -17,7 +17,7 @@ class TestNotificationRoutes:
     def test_accept_invitations(
             self, user, invitation,
             notification_test_client):
-        data = {"invite_id ": invitation.id}
+        data = {"invite_id": invitation.id, "next": self.NEW_NOTIFICATIONS_URL}
         url = router.url_path_for('accept_invitations')
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
@@ -25,7 +25,7 @@ class TestNotificationRoutes:
     def test_decline_invitations(
             self, user, invitation, notification_test_client, session
     ):
-        data = {"invite_id ": invitation.id}
+        data = {"invite_id": invitation.id, "next": self.NEW_NOTIFICATIONS_URL}
         url = router.url_path_for('decline_invitations')
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
@@ -33,7 +33,7 @@ class TestNotificationRoutes:
     def test_mark_message_as_read(
             self, user, message, notification_test_client, session
     ):
-        data = {"message_id ": message.id}
+        data = {"message_id": message.id, "next": self.NEW_NOTIFICATIONS_URL}
         url = router.url_path_for('mark_message_as_read')
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
@@ -43,8 +43,9 @@ class TestNotificationRoutes:
             notification_test_client, session
     ):
         url = router.url_path_for('mark_all_as_read')
-        resp = notification_test_client.get(url)
-        assert resp.status_code == HTTP_200_OK
+        data = {"next": self.NEW_NOTIFICATIONS_URL}
+        resp = notification_test_client.post(url, data=data)
+        assert resp.ok
 
 
 class TestNotification:

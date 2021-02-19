@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from datetime import datetime
 import enum
 from typing import Any, Dict
@@ -174,9 +173,14 @@ if PSQL_ENVIRONMENT:
 
 
 class InvitationStatusEnum(enum.Enum):
-    unread = 0
-    accepted = 1
-    declined = 2
+    UNREAD = 0
+    ACCEPTED = 1
+    DECLINED = 2
+
+
+class MessageStatusEnum(enum.Enum):
+    UNREAD = 0
+    READ = 1
 
 
 class Invitation(Base):
@@ -186,7 +190,7 @@ class Invitation(Base):
     creation = Column(DateTime, default=datetime.now)
     status = Column(
         Enum(InvitationStatusEnum),
-        default=InvitationStatusEnum.unread,
+        default=InvitationStatusEnum.UNREAD,
         nullable=False,
     )
 
@@ -197,8 +201,8 @@ class Invitation(Base):
 
     def decline(self, session: Session) -> None:
         """declines the invitation."""
-        self.status = InvitationStatusEnum.declined
-        session.add(self)
+        self.status = InvitationStatusEnum.DECLINED
+        session.flush()
         session.commit()
 
     def accept(self, session: Session) -> None:
@@ -210,8 +214,8 @@ class Invitation(Base):
             user_id=self.recipient.id,
             event_id=self.event.id
         )
-        self.status = InvitationStatusEnum.accepted
-        session.add(self)
+        self.status = InvitationStatusEnum.ACCEPTED
+        session.flush()
         session.add(association)
         session.commit()
 
@@ -223,11 +227,6 @@ class Invitation(Base):
         )
 
 
-class MessageStatusEnum(enum.Enum):
-    unread = 0
-    read = 1
-
-
 class Message(Base):
     __tablename__ = "messages"
 
@@ -237,7 +236,7 @@ class Message(Base):
     creation = Column(DateTime, default=datetime.now)
     status = Column(
         Enum(MessageStatusEnum),
-        default=MessageStatusEnum.unread,
+        default=MessageStatusEnum.UNREAD,
         nullable=False,
     )
 
@@ -245,8 +244,8 @@ class Message(Base):
     recipient = relationship("User")
 
     def mark_as_read(self, session):
-        self.status = MessageStatusEnum.read
-        session.add(self)
+        self.status = MessageStatusEnum.READ
+        session.flush()
         session.commit()
 
     def __repr__(self):

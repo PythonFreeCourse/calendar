@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ super() }}
+    <link href="{{ url_for('static', path='/notification.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-4">
+        <h1>Historical notifications</h1>
+    </div>
+    <div id="main">
+        <div>
+            <a href="{{ url_for('view_notifications') }}">New notifications</a>
+        </div>
+    {% if notifications %}
+        {% for n in notifications %}
+            {% set type = n.__table__.name %}
+
+            <div class="notification" id="{{loop.index}}">
+                {% if type == "invitations" %}
+
+                    <form action="{{ url_for('accept_invitations') }}" method="post"
+                          class="notification-form accept">
+                        <input type="hidden" name="next" value="{{ url_for('view_old_notifications') }}">
+                        <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-accept">
+                            <ion-icon class="icon" name="checkmark-outline"></ion-icon>
+                        </button>
+                    </form>
+                    <span>{{ n.event.owner.username }} - </span>
+                    <a href="#">{{ n.event.title }}</a>
+                    <span>({{ n.status }})</span>
+
+                {% elif type == "messages" %}
+
+                    {% if n.link %}
+                        <a href="{{ n.link }}">{{ n.body }}</a>
+                    {% else %}
+                        <span>{{ n.body }}</span>
+                    {% endif %}
+
+                {% endif %}
+            </div>
+
+        {% endfor %}
+    {% else %}
+        <span>You don't have any historical notifications.</span>
+    {% endif %}
+    </div>
+
+{% endblock %}
