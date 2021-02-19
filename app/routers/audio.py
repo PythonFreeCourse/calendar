@@ -12,7 +12,6 @@ from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
-
 DEFAULT_MUSIC = ["GASTRONOMICA.mp3"]
 DEFAULT_MUSIC_VOL = 0.5
 DEFAULT_SFX = "click_1.wav"
@@ -225,7 +224,6 @@ def get_audio_settings(
         Tuple[str, Optional[List[str]], Optional[int],
         str, Optional[str], Optional[int]]: the audio settings.
     """
-
     music_on, music_vol, sfx_on, sfx_vol = None, None, None, None
     playlist, sfx_choice = get_tracks(session, user_id)
     audio_settings = session.query(
