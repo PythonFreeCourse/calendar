@@ -384,6 +384,13 @@ class Zodiac(Base):
         )
 
 
+class Joke(Base):
+    __tablename__ = "jokes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String, nullable=False)
+
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
