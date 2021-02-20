@@ -41,7 +41,12 @@ EventsDurationStatistics = NamedTuple(
 )
 
 
-def validate_input(*params) -> ValidationResult:
+def validate_input(
+        db: Session,
+        userid: int,
+        start: datetime.datetime = None,
+        end: datetime.datetime = None,
+) -> ValidationResult:
     """1. input validations:
             valid userid.
             end date > start date.
@@ -50,11 +55,11 @@ def validate_input(*params) -> ValidationResult:
             end: will be at 23:59:59 on input date (today if None).
     All statistics are based on full days (00:00:00-23:59:59).
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns: NamedTuple with the following data:
         valid_input: boolean stating if input values are valid.
@@ -62,17 +67,17 @@ def validate_input(*params) -> ValidationResult:
         start: start of date range.
         end: end of date range.
     """
-    if not does_user_exist(session=params[0], user_id=params[1]):
+    if not does_user_exist(session=db, user_id=userid):
         return ValidationResult(
             valid_input=False,
             error_text=INVALID_USER,
-            start=params[2],
-            end=params[3],
+            start=start,
+            end=end,
         )
-    date = params[2] or datetime.datetime.now()
+    date = start or datetime.datetime.now()
     start = datetime.datetime(date.year, date.month, date.day)
     single_day = datetime.timedelta(days=1, seconds=-1)
-    date = params[3] or start
+    date = end or start
     end = datetime.datetime(date.year, date.month, date.day) + single_day
     if start >= end:
         return ValidationResult(
@@ -103,16 +108,21 @@ def get_date_filter_between_dates(
     )
 
 
-def get_events_count_stats(*params) -> Dict[str, Dict[str, int]]:
+def get_events_count_stats(
+        db: Session,
+        userid: int,
+        start: datetime.datetime,
+        end: datetime.datetime,
+) -> Dict[str, Dict[str, int]]:
     """calculate statistics and events relevant for the requested user
         and the requested date range.
         all logic is performed in the db.
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns: json with
         events_count_stats: (for requested date range).
@@ -120,21 +130,21 @@ def get_events_count_stats(*params) -> Dict[str, Dict[str, int]]:
             created_by_user: events that the user has created.
     """
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
-    by_user_id = UserEvent.user_id == params[1]
-    by_owner_id = Event.owner_id == params[1]
+    by_user_id = UserEvent.user_id == userid
+    by_owner_id = Event.owner_id == userid
     meetings_for_user = (
-        params[0]
+        db
         .query(Event.id)
         .join(user_to_event)
         .filter(by_user_id)
-        .filter(get_date_filter_between_dates(params[2], params[3]))
+        .filter(get_date_filter_between_dates(start, end))
         .count()
     )
     created_by_user = (
-        params[0]
+        db
         .query(Event.id)
         .filter(by_owner_id)
-        .filter(get_date_filter_between_dates(params[2], params[3]))
+        .filter(get_date_filter_between_dates(start, end))
         .count()
     )
     return {
@@ -145,28 +155,33 @@ def get_events_count_stats(*params) -> Dict[str, Dict[str, int]]:
     }
 
 
-def get_events_by_date(*params) -> List[Tuple[datetime.datetime, int]]:
+def get_events_by_date(
+        db: Session,
+        userid: int,
+        start: datetime.datetime,
+        end: datetime.datetime,
+) -> List[Tuple[datetime.datetime, int]]:
     """get date + number of events on it
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns:
         data of date + number of events on it.
     """
     start_date = func.date(Event.start)
     events_count = func.count(start_date)
-    by_user_id = UserEvent.user_id == params[1]
+    by_user_id = UserEvent.user_id == userid
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
     return (
-        params[0]
+        db
         .query(start_date, events_count)
         .join(user_to_event)
         .filter(by_user_id)
-        .filter(get_date_filter_between_dates(params[2], params[3]))
+        .filter(get_date_filter_between_dates(start, end))
         .all()
     )
 
@@ -202,17 +217,22 @@ def calc_daily_events_statistics(
     )
 
 
-def get_daily_events_statistics(*params) -> Dict[str, Dict[str, int]]:
+def get_daily_events_statistics(
+        db: Session,
+        userid: int,
+        start: datetime.datetime,
+        end: datetime.datetime,
+) -> Dict[str, Dict[str, int]]:
     """calculate statistics for daily events relevant for the requested user
         and the requested date range. logic is performed in:
         the db (get_events_by_date function),
         while the rest is in the code (calc_daily_events_statistics function).
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns: json with
         day_events_stats: (for requested date range).
@@ -220,9 +240,9 @@ def get_daily_events_statistics(*params) -> Dict[str, Dict[str, int]]:
             max_events_in_day: maximum number of daily events the user has.
             avg_events_in_day: average number of daily events the user has.
     """
-    events_by_date = get_events_by_date(*params)
+    events_by_date = get_events_by_date(db, userid, start, end)
     daily_events_statistics = calc_daily_events_statistics(
-        events_by_date, params[2], params[3]
+        events_by_date, start, end
     )
     return {
         "day_events_stats": {
@@ -234,24 +254,27 @@ def get_daily_events_statistics(*params) -> Dict[str, Dict[str, int]]:
 
 
 def get_events_duration_statistics_from_db(
-    *params,
+        db: Session,
+        userid: int,
+        start: datetime.datetime,
+        end: datetime.datetime,
 ) -> EventsDurationStatistics:
     """get data of shortest, longest and average event duration from the db
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns:
         NamedTuple of: shortest_event, longest_event, average_event
     """
     event_duration = func.julianday(Event.end) - func.julianday(Event.start)
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
-    by_user_id = UserEvent.user_id == params[1]
+    by_user_id = UserEvent.user_id == userid
     events_duration_statistics = (
-        params[0]
+        db
         .query(
             (func.min(event_duration) * NIN_IN_DAY),
             (func.max(event_duration) * NIN_IN_DAY),
@@ -259,7 +282,7 @@ def get_events_duration_statistics_from_db(
         )
         .join(user_to_event)
         .filter(by_user_id)
-        .filter(get_date_filter_between_dates(params[2], params[3]))
+        .filter(get_date_filter_between_dates(start, end))
         .all()
     )
     if events_duration_statistics[0][0]:
@@ -273,16 +296,21 @@ def get_events_duration_statistics_from_db(
     )
 
 
-def get_events_duration_statistics(*params) -> Dict[str, Dict[str, float]]:
+def get_events_duration_statistics(
+        db: Session,
+        userid: int,
+        start: datetime.datetime,
+        end: datetime.datetime,
+) -> Dict[str, Dict[str, float]]:
     """calculate statistics for events durations relevant for
         the requested user and the requested date range.
         all logic is performed in the db, while the rest is in the code.
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns: json with
         events_duration_statistics: (for requested date range, in minutes).
@@ -291,7 +319,7 @@ def get_events_duration_statistics(*params) -> Dict[str, Dict[str, float]]:
             average_event: average event the user has.
     """
     events_duration_statistics = get_events_duration_statistics_from_db(
-        *params
+        db, userid, start, end,
     )
     return {
         "events_duration_statistics": {
@@ -303,38 +331,41 @@ def get_events_duration_statistics(*params) -> Dict[str, Dict[str, float]]:
 
 
 def get_participants_statistics(
-    *params,
+        db: Session,
+        userid: int,
+        start: datetime.datetime,
+        end: datetime.datetime,
 ) -> Dict[str, Dict[str, Union[str, int]]]:
     """calculate statistics for events participants relevant for
         the requested user and the requested date range.
         part of the logic is performed in the db,
         while the rest is in the code.
 
-    Args: list of parameters:
-        params[0] - db: db session.
-        params[1] - userid: requested user id number for statistics.
-        params[2] - start: start of date range.
-        params[3] - end: end of date range.
+    Args:
+        db: db session.
+        userid: requested user id number for statistics.
+        start: start of date range.
+        end: end of date range.
 
     Returns: json with
         max_events: maximum number of events the user has
             with same participant.
         participant_name: relevant participant name.
     """
-    by_user_id = UserEvent.user_id == params[1]
-    by_not_user_id = UserEvent.user_id != params[1]
+    by_user_id = UserEvent.user_id == userid
+    by_not_user_id = UserEvent.user_id != userid
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
     participant_count = func.count(UserEvent.user_id)
     subquery = (
-        params[0]
+        db
         .query(Event.id)
         .join(user_to_event)
         .filter(by_user_id)
-        .filter(get_date_filter_between_dates(params[2], params[3]))
+        .filter(get_date_filter_between_dates(start, end))
         .subquery()
     )
     event_participants = (
-        params[0]
+        db
         .query(UserEvent.user_id, participant_count)
         .filter(by_not_user_id)
         .filter(UserEvent.event_id.in_(subquery))
@@ -347,7 +378,7 @@ def get_participants_statistics(
             "participants_statistics": {
                 "max_events": event_participants[1],
                 "participant_name": get_users(
-                    params[0], id=event_participants[0]
+                    db, id=event_participants[0]
                 )[0].username,
             }
         }
@@ -424,7 +455,11 @@ def update_output(output, *params) -> Dict[str, Union[str, bool]]:
     ]
     for call_function in call_functions:
         output.update(call_function(*params))
-    output.update(prepare_display_text(output, params[2], params[3]))
+    output.update(prepare_display_text(
+        output,
+        start=params[2],
+        end=params[3],
+    ))
     return output
 
 
