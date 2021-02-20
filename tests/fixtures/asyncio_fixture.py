@@ -35,18 +35,22 @@ def fake_user_events(session):
         title='Cool today event',
         start=today_date,
         end=today_date + timedelta(days=2),
+        all_day=False,
         content='test event',
         owner_id=user.id,
         location="Here",
+        is_google_event=False,
     )
     create_event(
         db=session,
         title='Cool (somewhen in two days) event',
         start=today_date + timedelta(days=1),
         end=today_date + timedelta(days=3),
+        all_day=False,
         content='this week test event',
         owner_id=user.id,
         location="Here",
+        is_google_event=False,
     )
     yield user
     Base.metadata.drop_all(bind=test_engine)

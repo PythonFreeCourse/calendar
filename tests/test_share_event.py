@@ -1,5 +1,5 @@
 from app.database.models import InvitationStatusEnum
-from app.routers.notification import get_all_invitations
+from app.internal.notification import get_all_invitations
 from app.routers.share import (
     send_email_invitation, send_in_app_invitation, share, sort_emails
 )
@@ -10,17 +10,14 @@ class TestShareEvent:
     def test_share_success(self, user, event, session):
         participants = [user.email]
         share(event, participants, session)
-        invitations = get_all_invitations(
-            session=session, recipient_id=user.id
-        )
+        invitations = get_all_invitations(session=session, recipient_id=user.id)
         assert invitations != []
 
     def test_share_failure(self, event, session):
         participants = [event.owner.email]
         share(event, participants, session)
         invitations = get_all_invitations(
-            session=session, recipient_id=event.owner.id
-        )
+            session=session, recipient_id=event.owner.id)
         assert invitations == []
 
     def test_sort_emails(self, user, session):
@@ -57,8 +54,8 @@ class TestShareEvent:
 
     def test_accept(self, invitation, session):
         invitation.accept(session=session)
-        assert invitation.status == InvitationStatusEnum.accepted
+        assert invitation.status == InvitationStatusEnum.ACCEPTED
 
     def test_decline(self, invitation, session):
         invitation.decline(session=session)
-        assert invitation.status == InvitationStatusEnum.declined
+        assert invitation.status == InvitationStatusEnum.DECLINED

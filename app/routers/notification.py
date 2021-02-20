@@ -23,6 +23,15 @@ async def view_notifications(
         request: Request,
         db: Session = Depends(get_db),
 ):
+    """Returns the Notifications page route.
+
+        Args:
+            request: The HTTP request.
+            db: Optional; The database connection.
+
+        Returns:
+            The Notifications HTML page.
+        """
     # TODO: get current user
     user = get_current_user(db)
     return templates.TemplateResponse("new_notification.html", {
@@ -37,6 +46,15 @@ async def view_old_notifications(
         request: Request,
         db: Session = Depends(get_db),
 ):
+    """Returns the Historical Notifications page route.
+
+        Args:
+            request: The HTTP request.
+            db: Optional; The database connection.
+
+        Returns:
+            The Historical Notifications HTML page.
+        """
     user = get_current_user(db)
     return templates.TemplateResponse("old_notification.html", {
         "request": request,
@@ -49,6 +67,18 @@ async def accept_invitations(
         request: Request,
         db: Session = Depends(get_db),
 ):
+    """Creates a new connection between the User and the Event in the database.
+
+        See Also:
+            models.Invitation.accept for more information.
+
+        Args:
+            request: The HTTP request.
+            db: Optional; The database connection.
+
+        Returns:
+            A redirect to where the user called the route from.
+        """
     data = await request.form()
     invite_id = int(data["invite_id"])
 
@@ -63,6 +93,15 @@ async def decline_invitations(
         request: Request,
         db: Session = Depends(get_db),
 ):
+    """Declines an invitations.
+
+        Args:
+            request: The HTTP request.
+            db: Optional; The database connection.
+
+        Returns:
+            A redirect to where the user called the route from.
+        """
     data = await request.form()
     invite_id = int(data["invite_id"])
     invitation = get_invitation_by_id(invite_id, session=db)
@@ -76,6 +115,15 @@ async def mark_message_as_read(
         request: Request,
         db: Session = Depends(get_db),
 ):
+    """Marks a message as read.
+
+        Args:
+            request: The HTTP request.
+            db: Optional; The database connection.
+
+        Returns:
+            A redirect to where the user called the route from.
+        """
     data = await request.form()
     message_id = int(data["message_id"])
 
@@ -91,6 +139,15 @@ async def mark_all_as_read(
         request: Request,
         db: Session = Depends(get_db)
 ):
+    """Marks all messages as read.
+
+        Args:
+            request: The HTTP request.
+            db: Optional; The database connection.
+
+        Returns:
+            A redirect to where the user called the route from.
+        """
     user_id = 1
     data = await request.form()
 

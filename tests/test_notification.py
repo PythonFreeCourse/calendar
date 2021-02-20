@@ -72,11 +72,7 @@ class TestNotification:
         assert get_invitation == invitation
 
     def test_invitation_repr(self, invitation):
-        invitation_repr = (
-            f'<Invitation '
-            f'({invitation.event.owner} '
-            f'to {invitation.recipient})>'
-        )
+        invitation_repr = f"<Invitation " f"({invitation.event.owner}" f"to {invitation.recipient})>"
         assert invitation.__repr__() == invitation_repr
 
     def test_message_repr(self, message):
