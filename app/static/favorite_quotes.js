@@ -32,8 +32,6 @@ function on_heart_click() {
     save_or_remove_quote(1, quote, false);
     if (this.classList.contains("favorites")) {
       this.parentNode.parentNode.remove();
-      this.parentNode.remove();
-      this.remove();
     }
   }
 }
