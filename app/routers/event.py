@@ -149,7 +149,7 @@ async def create_new_event(
     )
 
 
-def nonexisting_event(event_id: int) -> None:
+def raise_for_nonexisting_event(event_id: int) -> None:
     error_message = f"Event ID does not exist. ID: {event_id}"
     logger.exception(error_message)
     raise HTTPException(
@@ -171,7 +171,7 @@ async def eventview(
         end_format = ""
     event_considering_privacy = event_to_show(event, db)
     if not event_considering_privacy:
-        nonexisting_event(event.id)
+        raise_for_nonexisting_event(event.id)
     messages = request.query_params.get("messages", "").split("---")
     return templates.TemplateResponse(
         "eventview.html",
@@ -273,7 +273,7 @@ def by_id(db: Session, event_id: int) -> Event:
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
-        nonexisting_event(event_id)
+        raise_for_nonexisting_event(event_id)
     except MultipleResultsFound:
         error_message = (
             f"Multiple results found when getting event. Expected only one. "
