@@ -42,24 +42,24 @@ body {
   grid-column: 1 / -1;
 }
 
-.timegrid {
-  display: grid;
+.event-grid {
   grid-row: 1 / -1;
   grid-column: 1 / -1;
-  grid-template-rows: repeat(100, 0.375rem);
+  display: grid;
+  grid-template-rows: repeat(100, auto);
+}
+
+.timegrid {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-rows: repeat(100, auto);
   z-index: 43;
 }
 
 .sub-timegrid {
   display: grid;
-  grid-template-rows: repeat(15, 1fr);
-}
-
-.event-grid {
-  grid-row: 1 / -1;
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-rows: repeat(100, 1fr);
+  grid-template-rows: repeat(15, auto);
 }
 
 .hour-block {
@@ -176,4 +176,8 @@ body {
 .pb-1 {
   width: 1.2rem;
   height: 1.2rem;
+}
+
+#current_time_cursor {
+  border-bottom: 2.5px dotted rgba(255, 0, 0, 0.808);
 }

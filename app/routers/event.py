@@ -101,11 +101,9 @@ async def create_new_event(
     availability = data.get("availability", "True") == "True"
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
-
     vc_link = data["vc_link"]
     category_id = data.get("category_id")
     is_google_event = data.get("is_google_event", "True") == "True"
-
     invited_emails = get_invited_emails(data["invited"])
     uninvited_contacts = get_uninvited_regular_emails(
         session,

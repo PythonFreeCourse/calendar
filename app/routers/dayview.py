@@ -81,23 +81,6 @@ class EventsAttributes(DivAttributes):
             return self.DEFAULT_COLOR
         return color
 
-    def _minutes_position(self, minutes: int) -> Union[int, None]:
-        min_minutes = self.MIN_MINUTES
-        max_minutes = self.MAX_MINUTES
-        for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
-            if min_minutes < minutes <= max_minutes:
-                return i
-            min_minutes = max_minutes
-            max_minutes += 15
-        return None
-
-    def _get_position(self, time: datetime) -> int:
-        grid_hour_position = time.hour * self.FULL_GRID_BAR
-        grid_minutes_modifier = self._minutes_position(time.minute)
-        if grid_minutes_modifier is None:
-            grid_minutes_modifier = 0
-        return grid_hour_position + grid_minutes_modifier + self.BASE_GRID_BAR
-
     def _set_grid_position(self) -> str:
         if self.start_multiday:
             start = self.FIRST_GRID_BAR
@@ -172,12 +155,12 @@ def get_events_and_attributes(
     day: datetime,
     session,
     user_id: int,
-) -> Iterator[Tuple[Event, DivAttributes]]:
+) -> Iterator[Tuple[Event, EventsAttributes]]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
     for event in events:
         if is_specific_time_event_in_day(event, day, day_end):
-            yield event, DivAttributes(event, day)
+            yield event, EventsAttributes(event, day)
 
 
 def get_all_day_events(
@@ -189,7 +172,7 @@ def get_all_day_events(
     day_end = day + timedelta(hours=24)
     for event in events:
         if is_all_day_event_in_day(event=event, day=day, day_end=day_end):
-            yield (event)
+            yield CurrentTimeAttributes(event)
 
 
 @router.get("/day/{date}", include_in_schema=False)
@@ -200,8 +183,7 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    # user = session.query(User).filter_by(username="test_username").first()
-    user = session.query(User).filter_by(username="tamar").first()
+    user = session.query(User).filter_by(username="test_username").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -213,7 +195,7 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
-    events_n_attrs = get_events_and_attributes(
+    events_with_attrs = get_events_and_attributes(
         day=day,
         session=session,
         user_id=user.id,
@@ -223,18 +205,18 @@ async def dayview(
         session=session,
         user_id=user.id,
     )
-    current_time_n_attrs = CurrentTimeAttributes(date=day)
+    current_time_with_attrs = CurrentTimeAttributes(date=day)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
         {
             "request": request,
-            "events": events_n_attrs,
+            "events": events_with_attrs,
             "all_day_events": all_day_events,
             "month": month,
             "day": day.day,
             "zodiac": zodiac_obj,
             "view": view,
-            "current_time": current_time_n_attrs
+            "current_time": current_time_with_attrs
         },
     )
