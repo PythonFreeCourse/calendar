@@ -83,14 +83,20 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
 
 @router.get("/edit", include_in_schema=False)
 @router.get("/edit")
-async def eventedit(request: Request,
-                    db_session: Session = Depends(get_db)) -> Response:
-    user_id = 1    # until issue#29 will get current user_id from session
+async def eventedit(
+    request: Request,
+    db_session: Session = Depends(get_db),
+) -> Response:
+    user_id = 1  # until issue#29 will get current user_id from session
     categories_list = get_user_categories(db_session, user_id)
-    return templates.TemplateResponse("eventedit.html",
-                                      {"request": request,
-                                       "categories_list": categories_list,
-                                        "privacy": PrivacyKinds})
+    return templates.TemplateResponse(
+        "eventedit.html",
+        {
+            "request": request,
+            "categories_list": categories_list,
+            "privacy": PrivacyKinds,
+        },
+    )
 
 
 @router.post("/edit", include_in_schema=False)
