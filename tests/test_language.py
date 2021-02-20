@@ -23,8 +23,8 @@ class TestLanguage:
     NUMBER_OF_LANGUAGES = 2
 
     @staticmethod
-    @pytest.mark.parametrize("language_code, translation, is_valid",
-                             LANGUAGE_TESTS)
+    @pytest.mark.parametrize(
+        "language_code, translation, is_valid", LANGUAGE_TESTS)
     def test_gettext_python(language_code, translation, is_valid):
         languages.set_ui_language(language_code)
 
@@ -34,8 +34,8 @@ class TestLanguage:
                 or (not is_valid and gettext_translation == translation))
 
     @staticmethod
-    @pytest.mark.parametrize("language_code, translation, is_valid",
-                             LANGUAGE_TESTS)
+    @pytest.mark.parametrize(
+        "language_code, translation, is_valid", LANGUAGE_TESTS)
     def test_gettext_html(language_code, translation, is_valid):
         languages.set_ui_language(language_code)
 
