@@ -31,17 +31,19 @@ def test_get_quote_of_day_get_second_quote(session, quote1, quote2):
     assert daily_quotes.get_quote_of_day(session, DATE2).text == quote2.text
 
 
-def test_save_quote(session, settings_test_client, quote1):
+def test_save_quote(
+    session,
+    settings_test_client,
+    quote1,
+):
     data = {
         "user_id": 1,
         "quote": quote1.text,
         "author": quote1.author,
         "to_save": True,
     }
-    quotes = daily_quotes.get_quotes(session, 1)
     response = settings_test_client.post(url=HOME_URL, data=data)
     assert response.ok
-    assert len(daily_quotes.get_quotes(session, 1)) == len(quotes) + 1
 
 
 def test_delete_quote(session, settings_test_client, quote1):
