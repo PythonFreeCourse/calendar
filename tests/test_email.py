@@ -2,10 +2,10 @@ from fastapi import BackgroundTasks, status
 import pytest
 from sqlalchemy.orm import Session
 
-from app.database.models import User
+from app.database.models import User, UserEvent
 from app.internal.email import (mail, send, send_email_file,
                                 send_email_invitation, verify_email_pattern)
-from app.internal.utils import create_model, delete_instance
+from app.internal.utils import create_model, delete_instance, save
 
 
 def test_email_send(client, user, event, smtpd):
@@ -240,3 +240,14 @@ def test_send(session, bad_user, event):
                                    "test@mail-com"])
 def test_verify_email_pattern(email):
     assert not verify_email_pattern(email)
+
+
+def test_sending_mailing_list(session, no_event_user,
+                              event_owning_user,
+                              event_example):
+
+    association = UserEvent(
+        user_id=no_event_user.id,
+        event_id=event_example.id
+    )
+    save(session, association)
