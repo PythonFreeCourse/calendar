@@ -94,7 +94,7 @@ def test_create_features_at_startup(mocker, session, mock_features):
         mock_features
     )
     mocker.patch(
-        'app.internal.features.is_feature_exists_in_db',
+        'app.internal.features.is_feature_exists',
         return_value=False
     )
 
@@ -102,7 +102,7 @@ def test_create_features_at_startup(mocker, session, mock_features):
 
 
 def test_create_association(session, user):
-    assert internal.create_association(
+    assert internal.create_user_feature_association(
         db=session, feature_id=1, user_id=user.id, is_enable=False
     ) is not None
 
@@ -132,7 +132,7 @@ def test_delete_feature(session, feature):
 
 
 def test_is_feature_exist_in_db(session, feature, update_dict):
-    assert internal.is_feature_exists_in_db(update_dict, session)
+    assert internal.is_feature_exists(update_dict, session)
 
 
 def test_update_feature(session, feature, update_dict):
@@ -142,12 +142,12 @@ def test_update_feature(session, feature, update_dict):
 
 def test_is_feature_exist_in_enabled(session, feature, association_on):
     feat = session.query(Feature).filter_by(name=feature.name).first()
-    assert internal.is_feature_exists_in_enabled(feat, session)
+    assert internal.is_feature_enabled(feat, session)
 
 
 def test_is_feature_exist_in_disabled(session, feature, association_off):
     feat = session.query(Feature).filter_by(name=feature.name).first()
-    assert internal.is_feature_exists_in_disabled(feat, session)
+    assert internal.is_feature_disabled(feat, session)
 
 
 def test_is_feature_enabled(mocker, session, association_on):
@@ -155,7 +155,7 @@ def test_is_feature_enabled(mocker, session, association_on):
         'app.internal.features.SessionLocal',
         return_value=session
     )
-    assert internal.is_feature_enabled(route='/route') is True
+    assert internal.is_access_allowd(route='/route') is True
 
 
 def test_create_feature(session):
@@ -247,11 +247,11 @@ def test_get_user_unlinked_features(mocker, features_test_client, session):
     session.commit()
 
     mocker.patch(
-        'app.routers.features.is_feature_exists_in_disabled',
+        'app.routers.features.is_feature_disabled',
         return_value=False
     )
     mocker.patch(
-        'app.routers.features.is_feature_exists_in_enabled',
+        'app.routers.features.is_feature_enabled',
         return_value=False
     )
 
