@@ -22,7 +22,7 @@ img {
 .btn1 {
   border: none;
   outline: none;
-  height: 3.125rem;
+  height: 3.125em;
   width: 100%;
   background-color: black;
   color: white;
@@ -62,11 +62,11 @@ img {
 .table-title .btn {
   color: #fff;
   float: right;
-  min-width: 3rem;
+  min-width: 3em;
   margin-left: 1rem;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.247);
 }
 
 table.table tr th:last-child {
-  width: 3.75rem;
+  width: 3.75em;
 }
