@@ -55,7 +55,7 @@ def send(
 
 def send_email_to_event_participants(
         session: Session, event_id: int,
-        title: str, content: str) -> bool:
+        title: str, content: str) -> int:
     """This function sends emails to a mailing list of all event participants.
     it uses the function send above to do this and avoid double codes..
     Args:
@@ -64,11 +64,12 @@ def send_email_to_event_participants(
         title (str): Title of the email that is being sent.
         content (str): body of email sent.
     Returns:
-        bool: Returns True if emails were sent, False if none.
+        int: Returns the number of emails sent
+        (number of valid emails in event's participants)
     """
     event_owner = session.query(Event.owner).filter(id == event_id).first()
     if event_owner != get_current_user(session):
-        return False
+        return 0
     # makes sure only event owner can send an email via this func.
     mailing_list = session.query(User.id, User.email).join(
         UserEvent, User.id == UserEvent.user_id
@@ -76,7 +77,7 @@ def send_email_to_event_participants(
             event_id == event_id).all()
     valid_mailing_list = list(filter(verify_email_pattern, mailing_list.email))
     if not valid_mailing_list:
-        return False
+        return 0
     # making sure app doesn't crash if emails are invalid
 
     event = session.query(Event).get(event_id)
@@ -84,7 +85,7 @@ def send_email_to_event_participants(
     for r in valid_mailing_list:
         send(session, event, r.id, subject, content)
     # sends the send email function parameters to send on the mailing list
-    return True
+    return len(valid_mailing_list)
 
 
 def send_email_invitation(sender_name: str,

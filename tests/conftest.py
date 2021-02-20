@@ -86,7 +86,7 @@ def Calendar():
 
 @pytest.fixture
 def no_event_user(session):
-    # a user made for testing who doesn't own any event.
+    """a user made for testing who doesn't own any event."""
     user = create_user(
         session=session,
         username='new_test_username',
@@ -100,7 +100,7 @@ def no_event_user(session):
 
 @pytest.fixture
 def event_owning_user(session):
-    # a user made for testing who already owns an event.
+    """a user made for testing who already owns an event."""
     user = create_user(
         session=session,
         username='new_test_username2',
@@ -120,6 +120,19 @@ def event_owning_user(session):
 
     create_event(session, **data)
 
+    return user
+
+
+@pytest.fixture
+def user1(session):
+    """another user made for testing"""
+    user = create_user(
+        session=session,
+        username='user2user2',
+        password='verynicepass',
+        email='trulyyours1.email@gmail.com',
+        language_id='english'
+    )
     return user
 
 
