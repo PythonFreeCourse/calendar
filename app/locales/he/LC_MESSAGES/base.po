@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-18 17:16+0000\n"
+"POT-Creation-Date: 2021-02-07 21:31+0000\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -18,106 +18,82 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: app/internal/astronomy.py:11
-msgid "No response from server."
-msgstr ""
-
-#: app/routers/export.py:17
+#: app/routers/profile.py:20
 msgid "Not found"
-msgstr ""
-
-#: app/routers/search.py:53
-msgid "Invalid request."
-msgstr ""
-
-#: app/routers/search.py:58
-msgid "No matching results for '{keywords}'."
 msgstr ""
 
 #: app/templates/agenda.html:11
 msgid "From"
 msgstr ""
 
-#: app/templates/agenda.html:15
-msgid "To"
+#: app/templates/agenda.html:13
+msgid "to"
 msgstr ""
 
-#: app/templates/agenda.html:19
+#: app/templates/agenda.html:15
 msgid "Get Agenda"
 msgstr ""
 
-#: app/templates/agenda.html:25
+#: app/templates/agenda.html:20
 msgid "Today"
 msgstr ""
 
-#: app/templates/agenda.html:28
-msgid "Next 7 days"
+#: app/templates/agenda.html:23
+msgid "Next week"
 msgstr ""
 
-#: app/templates/agenda.html:31
-msgid "Next 30 days"
+#: app/templates/agenda.html:26
+msgid "Next month"
 msgstr ""
 
-#: app/templates/agenda.html:37
+#: app/templates/agenda.html:33
 msgid "Start date is greater than end date"
 msgstr ""
 
-#: app/templates/agenda.html:39
+#: app/templates/agenda.html:35
 msgid "No events found..."
 msgstr ""
 
-#: app/templates/base.html:41
-msgid "Sign Out"
-msgstr ""
-
-#: app/templates/base.html:59 app/templates/partials/index/navigation.html:33
-msgid "About Us"
-msgstr ""
-
-#: app/templates/profile.html:68
+#: app/templates/profile.html:50
 msgid "Update name"
 msgstr ""
 
-#: app/templates/profile.html:76 app/templates/profile.html:98
-#: app/templates/profile.html:120 app/templates/profile.html:144
-#: app/templates/profile.html:166
+#: app/templates/profile.html:57 app/templates/profile.html:77
+#: app/templates/profile.html:97 app/templates/profile.html:120
+#: app/templates/profile.html:140
 msgid "Save changes"
 msgstr ""
 
-#: app/templates/profile.html:90
+#: app/templates/profile.html:70
 msgid "Update email"
 msgstr ""
 
-#: app/templates/profile.html:112
+#: app/templates/profile.html:90
 msgid "Update description"
 msgstr ""
 
-#: app/templates/profile.html:135
+#: app/templates/profile.html:111
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:284
+#: app/templates/profile.html:220
 msgid "Upcoming event on (date)"
 msgstr ""
 
-#: app/templates/profile.html:310
+#: app/templates/profile.html:246
 msgid "The Event (event)"
 msgstr ""
 
-#: app/templates/profile.html:313
+#: app/templates/profile.html:249
 msgid "Last updated (time) ago"
 msgstr ""
 
-#: app/templates/profile.html:350
+#: app/templates/profile.html:285
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:358
+#: app/templates/profile.html:293
 msgid "Your Card"
-msgstr ""
-
-#: app/templates/partials/calendar/event/view_event_details_tab.html:33
-msgid "Choose user"
 msgstr ""
 
 #. i18n: String used in testing. Do not change.
@@ -153,13 +129,4 @@ msgstr "בדיקת תרגום בפייתון"
 #~ msgstr ""
 
 #~ msgid "Agenda"
-#~ msgstr ""
-
-#~ msgid "to"
-#~ msgstr ""
-
-#~ msgid "Next week"
-#~ msgstr ""
-
-#~ msgid "Next month"
 #~ msgstr ""
