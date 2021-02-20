@@ -1,7 +1,7 @@
 from datetime import datetime
+from typing import Optional, Union
 
 from pydantic import BaseModel, validator, EmailStr, EmailError
-from typing import Optional, Union
 
 EMPTY_FIELD_STRING = "field is required"
 MIN_FIELD_LENGTH = 3
