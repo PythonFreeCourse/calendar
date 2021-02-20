@@ -65,7 +65,7 @@ a {
 }
 
 .search-box {
-  width: 95%;
+  width: 98%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -115,13 +115,12 @@ a {
 }
 
 .feature-row:hover {
-  border: 2px solid var(--secondary);
+  border: 2px solid var(--primary);
 }
 
 .feature-row div {
   justify-self: start;
   width: 100%;
-  height: 100%;
 }
 
 .feature-button {

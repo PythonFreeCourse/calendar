@@ -43,7 +43,7 @@ from app.routers import (  # noqa: E402
     about_us, agenda, calendar, categories, celebrity, credits,
     currency, dayview, email, event, export, four_o_four, friendview,
     google_connect, invitation, login, logout, profile,
-    register, search, telegram, user, weekview, whatsapp,
+    register, search, telegram, user, weekview, whatsapp, features
 )
 
 json_data_loader.load_to_database(next(get_db()))

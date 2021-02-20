@@ -13,69 +13,80 @@ function deleteElements(targetID) {
     }
 }
 
-function display(elements, targetID) {
-    deleteElements(targetID);
+function display(elements, targetID, empty) {
+    if (!empty) {
+        deleteElements(targetID);
+    }
     appendElement(elements, targetID);
 }
 
-function searchFeature(event, rows, targetID) {
-    const searchValue = event.target.value.trim().toLowerCase();
-    if (!searchValue) {
-        appendElement(rows, targetID);
-    } else {
-        const result = rows.filter(
-            row => {
-                return row.getElementsByClassName("row-feature-name")[0].innerHTML.toLowerCase().includes(searchValue)
-            }
-        );
-        return result;
-    }
+function searchFeature(searchValue, elements) {
+    const result = elements.filter(
+        element => {
+            return element.getElementsByClassName("row-feature-name")[0].innerHTML.toLowerCase().includes(searchValue)
+        }
+    );
+    return result;
 }
 
-function getAvailable() {
-    let allAva = []
-    const allAvailable = document.getElementsByClassName("feature-row");
-    for (let i = 0; i < allAvailable.length; ++i) {
-        if (allAvailable[i].dataset.state === "available") {
-            allAva.push(allAvailable[i]);
+function getAvailable(elements) {
+    let availables = [];
+    for (let i = 0; i < elements.length; ++i) {
+        const element = elements[i];
+        if (element.dataset.state === "available") {
+            availables.push(element);
         }
     }
-    return allAva;
+    return availables;
 }
 
 function setSearchBox(targetID) {
-    searchBox = document.getElementsByClassName("search-input");
-    if (!searchBox) {
-        return false;
-    }
-    const rows = getAvailable();
-    searchBox[0].addEventListener('input', function (evt) {
-        if (evt.which === null) {
-            appendElement(rows, targetID)
-        }
-        deleteElements(targetID);
-        const result = searchFeature(evt, rows, targetID);
-        display(result, targetID);
-
-    });
+    const rows = document.getElementsByClassName("feature-row");
+    const searchBox = document.getElementsByClassName("search-input");
+    searchBox[0].addEventListener(
+        'input', function (evt) {
+            console.log(rows);
+            const value = evt.target.value.trim().toLowerCase();
+            if (!value) {
+                display(rows, targetID, true);
+            } else {
+                const result = searchFeature(value, rows);
+                display(result, targetID, false);
+            }
+        });
 }
 
+function moveColumn(rows) {
+    const row = this.parentElement;
+    const category = row.parentElement;
+    if (category.id === "available-features") {
+        this.innerHTML = "REMOVE";
+        this.classList.remove("background-green");
+        this.classList.add("background-red");
+        row.dataset.state = "installed";
+        document.getElementById("installed-features").appendChild(row);
+    } else {
+        this.innerHTML = "ADD";
+        this.classList.remove("background-red");
+        this.classList.add("background-green");
+        row.dataset.state = "available";
+        document.getElementById("available-features").appendChild(row);
+    }
+}
 
-function setAdd(className) {
-    const allRows = document.getElementsByClassName(className);
-    for (let i = 0; i < allRows.length; ++i) {
-        if (allRows[i].dataset.state === "available") {
-            setAdd(allRows[i]);
-        } else {
-            setRemove(allRows[i]);
-        }
+function setRemoveAdd(className) {
+    const rows = document.getElementsByClassName(className);
+    for (let i = 0; i < rows.length; ++i) {
+        const row = rows[i];
+        const button = row.getElementsByClassName("feature-button")[0];
+        button.addEventListener('click', moveColumn);
     }
 }
 
 document.addEventListener(
     'DOMContentLoaded', function () {
         setSearchBox("available-features");
-        setAdd(className);
+        setRemoveAdd("feature-row");
     }
 )
 

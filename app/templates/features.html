@@ -41,12 +41,12 @@
                 <div class="m-title underline-yellow"> Your Features </div>
                 <div id="available-features">
                     {% for i in range(3) %}
-                    <div class="feature-row" data-state="available" id="available">
+                    <div class="feature-row" data-state="available">
                         <div>
                             <ion-icon class="feature-icon" name="airplane"></ion-icon>
                         </div>
                         <div>
-                            <span class="row-feature-name">Name</span>
+                            <span class="row-feature-name">Name{{i}}</span>
                             <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
                         </div>
                         <div><b>Creator:</b> Username</div>
@@ -54,20 +54,20 @@
                             <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
                             <span><b>Followers:</b> 0K</span>
                         </div>
-                        <div class="button feature-button background-green text-lightgray">
+                        <div class="button feature-button background-green text-lightgray" id="feature{{i}}">
                             ADD
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-                <div>
+                <div id="installed-features">
                     {% for i in range(3) %}
-                    <div class="feature-row">
+                    <div class="feature-row" data-state="installed">
                         <div>
                             <ion-icon class="feature-icon" name="airplane"></ion-icon>
                         </div>
                         <div>
-                            <b>Name</b>
+                            <b>Name{{i * 4}}</b>
                             <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
                         </div>
                         <div><b>Creator:</b> Username</div>

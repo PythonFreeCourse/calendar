@@ -177,7 +177,7 @@ main {
 
   font-size: var(--text_xs);
   padding: 0 var(--space_s);
-  border: 0.095rem solid var(--surface);
+  border: 0.075rem solid var(--surface);
 
   overflow-y: auto;
   -ms-overflow-style: none; /* IE and Edge */
@@ -358,6 +358,8 @@ main {
 .text-lightgray {color: var(--background);}
 
 .text-darkblue {color: var(--primary);}
+
+.text-red {color: var(--negative)}
 
 /* Borders */
 .border-dash-darkblue {border: 0.125rem dashed  var(--primary);}
