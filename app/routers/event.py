@@ -11,6 +11,7 @@ from app.internal.event import (get_invited_emails, get_location_coordinates,
                                 get_messages, get_uninvited_regular_emails,
                                 raise_if_zoom_link_invalid)
 from app.internal.utils import create_model, get_current_user
+from app.routers.categories import get_user_categories
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
@@ -36,6 +37,7 @@ UPDATE_EVENTS_FIELDS = {
     "vc_link": (str, type(None)),
     "category_id": (int, type(None)),
 }
+
 
 router = APIRouter(
     prefix="/event",
@@ -76,8 +78,13 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
 
 @router.get("/edit", include_in_schema=False)
 @router.get("/edit")
-async def eventedit(request: Request) -> Response:
-    return templates.TemplateResponse("eventedit.html", {"request": request})
+async def eventedit(request: Request,
+                    db_session: Session = Depends(get_db)) -> Response:
+    user_id = 1    # until issue#29 will get current user_id from session
+    categories_list = get_user_categories(db_session, user_id)
+    return templates.TemplateResponse("eventedit.html",
+                                      {"request": request,
+                                       "categories_list": categories_list})
 
 
 @router.post("/edit", include_in_schema=False)
