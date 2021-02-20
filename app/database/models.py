@@ -48,6 +48,7 @@ class User(Base):
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    target_weight = Column(Float, nullable=True)
 
     owned_events = relationship(
         "Event",
