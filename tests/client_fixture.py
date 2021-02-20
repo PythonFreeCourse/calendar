@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from app import main
 from app.database.models import Base, User
 from app.routers import (
-    agenda, event, friendview, google_connect, invitation, profile, weight
+    agenda, categories, event, friendview, google_connect,
+    invitation, profile, weight,
 )
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
@@ -71,6 +72,11 @@ def home_test_client() -> Generator[TestClient, None, None]:
 @pytest.fixture(scope="session")
 def invitation_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(invitation.get_db)
+
+
+@pytest.fixture(scope="session")
+def categories_test_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(categories.get_db)
 
 
 @pytest.fixture(scope="session")
