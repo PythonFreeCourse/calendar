@@ -1,8 +1,10 @@
 from fastapi import BackgroundTasks, status
 import pytest
 from sqlalchemy.orm import Session
+# from starlette.status import HTTP_302_FOUND
 
 from app.database.models import User, UserEvent
+from app.internal.security.dependancies import current_user
 from app.internal.email import (mail, send, send_email_file,
                                 send_email_invitation,
                                 send_email_to_event_participants,
@@ -248,7 +250,7 @@ def test_sending_mailing_list_with_no_user(session, no_event_user,
                                            event_owning_user,
                                            user1,
                                            event_example):
-
+    """this test assures a wrong user won't be able to use the mailing list"""
     association = UserEvent(
         user_id=no_event_user.id,
         event_id=event_example.id
@@ -264,3 +266,24 @@ def test_sending_mailing_list_with_no_user(session, no_event_user,
     num_emails_send = send_email_to_event_participants(
         session, event_example.id, 'this mail example', 'booboo')
     assert num_emails_send == 0
+
+
+def test_sending_mailing_list_from_event_owner(session, no_event_user,
+                                               event_owning_user,
+                                               user1,
+                                               event_example, client,
+                                               security_test_client):
+    """this test assures mailing list is sent successfuly from
+    the event owner. assiciations were created already at the test above."""
+    logged_user_data = {'username': event_owning_user.username,
+                        'password': event_owning_user.password}
+
+    # res = security_test_client.post(
+    #     security_test_client.app.url_path_for('login'),
+    #     data=logged_user_data)
+    # TODO: log in event_owning_user to assure successful mailing list send
+
+    # if res.status_code == HTTP_302_FOUND:
+    #     num_emails_send = send_email_to_event_participants(
+    #         session, event_example.id, 'this mail example', 'booboo')
+    #     assert num_emails_send == 2
