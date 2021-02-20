@@ -26,10 +26,10 @@ function on_heart_click() {
   }
   if (this.src.split("/").pop() == "empty_heart.png") {
     this.src = "../media/full_heart.png";
-    save_or_remove_quote(1, quote, true);
+    save_or_remove_quote(quote, true);
   } else {
     this.src = "../media/empty_heart.png";
-    save_or_remove_quote(1, quote, false);
+    save_or_remove_quote(quote, false);
     if (this.classList.contains("favorites")) {
       this.parentNode.parentNode.remove();
     }
@@ -39,11 +39,11 @@ function on_heart_click() {
 /**
  * @summary Saves or removes a quote from favorites.
  */
-function save_or_remove_quote(user_id, quote, to_save) {
+function save_or_remove_quote(quote, to_save) {
   method = to_save ? "post" : "delete";
   quote = encodeURIComponent(quote);
   let xhr = new XMLHttpRequest();
   xhr.open(method, "/");
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send(`user_id=${user_id}&quote=${quote}`);
+  xhr.send(`quote=${quote}`);
 }

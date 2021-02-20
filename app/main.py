@@ -8,13 +8,14 @@ from sqlalchemy.orm import Session
 
 from app import config
 from app.database import engine, models
-from app.database.models import UserQuotes
+from app.database.models import User, UserQuotes
 from app.internal.daily_quotes import get_quote_id
 from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
+from app.internal.security.dependancies import current_user
 
 
 def create_tables(engine, psql_environment):
@@ -125,10 +126,14 @@ FULL_HEART_PATH = "media/full_heart.png"
 
 @app.get("/", include_in_schema=False)
 @logger.catch()
-async def home(request: Request, db: Session = Depends(get_db)):
+async def home(
+    request: Request,
+    db: Session = Depends(get_db),
+    user: User = Depends(current_user),
+):
     """Home page for the website."""
     quote = daily_quotes.get_quote_of_day(db)
-    user_quotes = daily_quotes.get_quotes(db, 1)
+    user_quotes = daily_quotes.get_quotes(db, user.user_id)
     for user_quote in user_quotes:
         if user_quote.id == quote.id:
             quote.is_favorite = True
@@ -145,7 +150,7 @@ async def home(request: Request, db: Session = Depends(get_db)):
 
 @app.post("/")
 async def save_quote(
-    user_id: int = Form(...),
+    user: User = Depends(current_user),
     quote: str = Form(...),
     db: Session = Depends(get_db),
 ):
@@ -153,24 +158,27 @@ async def save_quote(
     quote_id = get_quote_id(db, quote)
     record = (
         db.query(UserQuotes)
-        .filter(UserQuotes.user_id == user_id, UserQuotes.quote_id == quote_id)
+        .filter(
+            UserQuotes.user_id == user.user_id,
+            UserQuotes.quote_id == quote_id,
+        )
         .first()
     )
     if not record:
-        db.add(UserQuotes(user_id=user_id, quote_id=quote_id))
+        db.add(UserQuotes(user_id=user.user_id, quote_id=quote_id))
         db.commit()
 
 
 @app.delete("/")
 async def delete_quote(
-    user_id: int = Form(...),
+    user: User = Depends(current_user),
     quote: str = Form(...),
     db: Session = Depends(get_db),
 ):
     """Deletes a quote from the database."""
     quote_id = get_quote_id(db, quote)
     db.query(UserQuotes).filter(
-        UserQuotes.user_id == user_id,
+        UserQuotes.user_id == user.user_id,
         UserQuotes.quote_id == quote_id,
     ).delete()
     db.commit()
@@ -180,10 +188,10 @@ async def delete_quote(
 async def favorite_quotes(
     request: Request,
     db: Session = Depends(get_db),
-    user_id: int = 1,
+    user: User = Depends(current_user),
 ):
     """html page for displaying the users' favorite quotes."""
-    quotes = daily_quotes.get_quotes(db, user_id)
+    quotes = daily_quotes.get_quotes(db, user.user_id)
     return templates.TemplateResponse(
         "favorite_quotes.html",
         {
