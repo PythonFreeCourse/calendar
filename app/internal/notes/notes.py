@@ -1,10 +1,13 @@
 from datetime import datetime
+from typing import Any, Dict, List
+
 from app.database.models import Note
 from app.database.schemas import NoteSchema
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 
-async def post(session: Session, payload: NoteSchema):
+async def create(session: Session, payload: NoteSchema) -> int:
     note = Note(title=payload.title, description=payload.description)
     session.add(note)
     session.commit()
@@ -12,26 +15,52 @@ async def post(session: Session, payload: NoteSchema):
     return note.id
 
 
-async def get(session: Session, id: int):
-    return session.query(Note).filter_by(id=id).first()
+async def view(session: Session, id: int) -> Note:
+    note = session.query(Note).filter_by(id=id).first()
+    if not note:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Note with id {id} not found",
+        )
+    return note
 
 
-async def get_all(session: Session, skip: int = 0, limit: int = 100):
+async def get_all(session: Session, skip: int = 0, limit: int = 100) -> List[Note]:
     return session.query(Note).offset(skip).limit(limit).all()
 
 
-async def put(session: Session, id: int, payload: NoteSchema):
-    note = session.query(Note).filter_by(id=id).first()
-    note.title = payload.title
-    note.description = payload.description
-    note.timestamp = datetime.utcnow
+async def update(request: NoteSchema, session: Session, id: int) -> str:
+    note = session.query(Note).filter_by(id=id)
+    if not note.first():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Note with id {id} not found",
+        )
+    if request.timestamp is None:
+        request.timestamp = datetime.utcnow()
+    note.update(request)
     session.commit()
-    session.refresh(note)
-    return note
+    return "updated"
 
 
-async def delete(session: Session, id: int):
-    note = session.query(Note).filter_by(id=id).first()
-    session.query(Note).filter_by(id=id).delete()
+async def delete(session: Session, id: int) -> str:
+    note = session.query(Note).filter_by(id=id)
+    if not note.first():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Note with id {id} not found",
+        )
+    note.delete(synchronize_session=False)
     session.commit()
-    return note
+    return "deleted"
+
+
+async def create_note(note: NoteSchema, session: Session) -> Dict[str, Any]:
+    note_id = await create(session, note)
+    response_object = {
+        "id": note_id,
+        "title": note.title,
+        "description": note.description,
+        "timestamp": note.timestamp,
+    }
+    return response_object

@@ -20,7 +20,8 @@
         </div>
         <div class="col-lg-7 px-5 pt-3">
             <h1 class="font font-bold">Update a note...</h1>
-            <form method="PUT">
+            <form action="/notes/view/{{ data.id }}?_method=PUT" method="POST">
+                <input type="hidden" name="_method" value="PUT">
                 <div class="form-row">
                     <div class="col-lg-7">
                         <input class="form-control my-3 p-3" type="text" value={{ data.title }} name="title" id="title">
