@@ -1,4 +1,4 @@
-var items_num = 1;
+let items_num = 1;
 
 document.addEventListener('click', function(e) {
     if (e.target && e.target.id.includes('btnRemoveItem')){
