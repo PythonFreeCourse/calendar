@@ -129,9 +129,6 @@ async def home(request: Request, db: Session = Depends(get_db)):
     """Home page for the website."""
     quote = daily_quotes.get_quote_of_day(db)
     user_quotes = daily_quotes.get_quotes(db, 1)
-    print(quote.id)
-    print(quote.text)
-    print(quote.is_favorite)
     for user_quote in user_quotes:
         if user_quote.id == quote.id:
             quote.is_favorite = True
