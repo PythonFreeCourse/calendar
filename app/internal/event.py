@@ -6,8 +6,6 @@ from typing import List, Set
 
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
-# from sqlalchemy.dialects import postgresql
-# from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
@@ -118,13 +116,6 @@ def add_countries_to_db(session: Session) -> None:
             if not existing:
                 new_country = Country(name=name, timezone=str(capital))
                 session.add(new_country)
-            # insert_country = insert(Country).values(
-            # name=name, timezone=str(capital)
-            # )
-            # insert_country = insert_country.on_conflict_do_nothing(
-            # index_elements=['name']
-            # )
-            # session.execute(insert_country)
     session.commit()
     session.close()
 
@@ -177,6 +168,8 @@ def get_all_countries_names(session: Session) -> List:
     """
     Returns a cached list of the countries names.
     """
-    add_countries_to_db(session=session)
+    db_entity = session.query(Country).first()
+    if not db_entity:
+        add_countries_to_db(session=session)
     countries_names = session.query(Country.name).all()
     return countries_names
