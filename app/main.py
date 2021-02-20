@@ -44,6 +44,7 @@ from app.routers import (  # noqa: E402
     currency, dayview, email, event, export, four_o_four, friendview,
     google_connect, invitation, login, logout, profile,
     register, search, telegram, user, weekview, whatsapp,
+    game_release_dates_service,
 )
 
 json_data_loader.load_to_database(next(get_db()))
@@ -91,6 +92,7 @@ routers_to_include = [
     telegram.router,
     user.router,
     whatsapp.router,
+    game_release_dates_service.router,
 ]
 
 for router in routers_to_include:

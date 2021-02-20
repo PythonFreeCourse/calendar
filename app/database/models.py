@@ -382,6 +382,19 @@ class Zodiac(Base):
         )
 
 
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    music_on = Column(Boolean, default=False, nullable=False)
+    music_vol = Column(Integer, default=None)
+    sfx_on = Column(Boolean, default=False, nullable=False)
+    sfx_vol = Column(Integer, default=None)
+    primary_cursor = Column(String, default="default", nullable=False)
+    secondary_cursor = Column(String, default="default", nullable=False)
+    video_game_releases = Column(Boolean, default=False)
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
