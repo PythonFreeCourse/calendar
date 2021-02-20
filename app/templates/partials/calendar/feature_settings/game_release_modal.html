@@ -1,0 +1,52 @@
+ <!-- upcomingGames Modal -->
+ <div class="modal modal-lg" id="upcomingGamesModal" tabindex="-1" data-bs-backdrop="static"
+ aria-labelledby="upcomingGamesModal" aria-hidden="true">
+<div class="modal-dialog modal-dialog-scrollable profile-modal-dialog profile-modal-fadeIn">
+<div class="modal-content">
+  <div class="modal-header profile-modal-header">
+    <h2 class="modal-title">{{ gettext("Upcoming Games") }}</h2>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form action="/game-releases/get_releases_by_dates" method="post">
+      <input type="date" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+             name="from_date" placeholder="From Date" value="x">
+      <input type="date" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+             name="to_date" placeholder="To Date" value="y">
+      {% for game in games %}
+        <strong class="game">{{game['name']}}</strong>
+        <div>-Platforms</div>
+        {% for platform in game['platforms']%}
+          <div>{{platform}}</div>
+        {% endfor %}
+        <div>-Release date</div>
+        {{game['release_date']}}
+        <div>&nbsp;</div>
+      {% endfor %}
+      <div class="d-flex flex-row-reverse mt-4">
+        <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const chosen_button = document.getElementsByClassName('event-btn');
+  for (let i = 0; i < chosen_button.length; i++) {
+      chosen_button[i].addEventListener("click", function(e) {
+      let clickedElem = e.target.id
+          fetch('/event/edit')
+          .then(function(response) {
+              return response.text();
+          })
+          .then(function(body) {
+              document.querySelector('#event_block').innerHTML = body;
+              scrollTo(document.getElementById("event_block"));
+          });
+      });
+  }
+});
+</script> -->
