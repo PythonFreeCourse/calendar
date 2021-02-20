@@ -113,7 +113,6 @@ async def create_new_event(
     if privacy not in privacy_kinds:
         privacy = PrivacyKinds.Public.name
     is_google_event = data.get("is_google_event", "True") == "True"
-    print(is_google_event)
     invited_emails = get_invited_emails(data["invited"])
     uninvited_contacts = get_uninvited_regular_emails(
         session,
