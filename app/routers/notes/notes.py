@@ -77,7 +77,9 @@ async def create_note_form(request: Request) -> _TemplateResponse:
 
 
 @router.get("/all", response_model=List[NoteDB])
-async def get_all_notes(session: Session = Depends(get_db)) -> Sequence[NoteDB]:
+async def get_all_notes(
+    session: Session = Depends(get_db),
+) -> Sequence[NoteDB]:
     return await notes.get_all(session)
 
 
