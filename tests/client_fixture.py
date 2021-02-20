@@ -1,4 +1,4 @@
-from app.routers import agenda, event, friendview, invitation, profile
+from app.routers import agenda, event, friendview, invitation, profile, weight
 from app.routers import google_connect
 from typing import Iterator
 
@@ -45,6 +45,11 @@ def create_test_client(get_db_function) -> Iterator[TestClient]:
 @pytest.fixture(scope="session")
 def agenda_test_client() -> Iterator[TestClient]:
     yield from create_test_client(agenda.get_db)
+
+
+@pytest.fixture(scope="session")
+def weight_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(weight.get_db)
 
 
 @pytest.fixture(scope="session")

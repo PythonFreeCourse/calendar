@@ -12,7 +12,8 @@ def user(session: Session) -> User:
         username='test_username',
         password='test_password',
         email='test.email@gmail.com',
-        language_id=1
+        language_id=1,
+        target_weight=60
     )
     yield test_user
     delete_instance(session, test_user)
