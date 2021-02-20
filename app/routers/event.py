@@ -2,7 +2,6 @@ from app.config import PICTURE_EXTENSION
 from datetime import datetime as dt
 import json
 import io
-import imghdr
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 from PIL import Image
@@ -95,8 +94,6 @@ async def create_new_event(
     session=Depends(get_db),
 ) -> Response:
     data = await request.form()
-    print(data)
-    print(imghdr.what("", h=io.BytesIO(event_img)))
     title = data["title"]
     content = data["description"]
     start = dt.strptime(
@@ -163,6 +160,8 @@ def process_image(
     try:
         image = Image.open(io.BytesIO(img))
     except IOError:
+        error_message = "The uploaded file is not a valid image"
+        logger.exception(error_message)
         return
     width, height = image.size
     height_to_req_height = img_height / float(height)
