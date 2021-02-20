@@ -28,7 +28,6 @@
             integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
             crossorigin="anonymous"></script>
     <script defer type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
-    <script defer type="text/javascript" src="{{ url_for('static', path='/favorite_quotes.js') }}"></script>
   {% endblock head %}
   {% block title %}
     <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>

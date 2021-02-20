@@ -14,19 +14,20 @@
             </p>
             <div class="d-flex position-relative">
                 <div class="container mx-auto gap-3">
-                    {% if quote %}
-                    {% if not quote.author %}
-                      <p><i>"{{ quote.text }}"</i></p>
+                {% if quote %}
+                    <p><cite><q id="quote">{{ quote.text }}</q></cite>
+                    {% if quote.author %}
+                        <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
                     {% else %}
-                    <p><i id="quote">"{{ quote.text }}"</i> <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
-                      {% if quote.is_favorite %} 
-                        <img src="../media/full_heart.png" class="heart">
-                      {% else %}
-                        <img src="../media/empty_heart.png" class="heart">
-                      {% endif %}
-                      </span>
-                    </p>
+                        <span >&nbsp;
                     {% endif %}
+                    {% if quote.is_favorite %}
+                    <img src="{{full_heart}}" class="heart">
+                    {% else %}
+                    <img src="{{empty_heart}}" class="heart">
+                    {% endif %}
+                    </span>
+                    </p>
                   {% endif %}
                 </div>
             </div>

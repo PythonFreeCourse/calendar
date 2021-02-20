@@ -1,9 +1,11 @@
 // Adding event listeners
 let hearts = Array.from(document.getElementsByClassName("heart"));
-hearts.forEach((heart) => {
-  if (heart) {
-    heart.addEventListener("click", on_heart_click);
-  }
+window.addEventListener("load", function () {
+  hearts.forEach((heart) => {
+    if (heart) {
+      heart.addEventListener("click", on_heart_click);
+    }
+  });
 });
 
 /**
@@ -16,12 +18,12 @@ hearts.forEach((heart) => {
  * Uses the save_or_remove_quote function to handle db operations.
  */
 function on_heart_click() {
-  const quote = this.parentNode.previousElementSibling.innerHTML.replaceAll(
-    '"',
-    ""
-  );
+  const quote = this.parentNode.previousElementSibling.innerText;
   const author_element = this.parentNode;
-  const author = author_element.innerHTML.split("\\ ")[1].split("\n")[0];
+
+  if (author_element.innerHTML.includes("\\")) {
+    const author = author_element.innerHTML.split("\\ ")[1].split("\n")[0];
+  }
   if (this.src.split("/").pop() == "empty_heart.png") {
     this.src = "../media/full_heart.png";
     save_or_remove_quote(1, quote, true);
@@ -30,6 +32,8 @@ function on_heart_click() {
     save_or_remove_quote(1, quote, false);
     if (this.classList.contains("favorites")) {
       this.parentNode.parentNode.remove();
+      this.parentNode.remove();
+      this.remove();
     }
   }
 }
@@ -38,11 +42,10 @@ function on_heart_click() {
  * @summary Saves or removes a quote from favorites.
  */
 function save_or_remove_quote(user_id, quote, to_save) {
-  method = to_save ? "post": "delete";
+  method = to_save ? "post" : "delete";
+  quote = encodeURIComponent(quote);
   let xhr = new XMLHttpRequest();
   xhr.open(method, "/");
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send(
-    `user_id=${user_id}&quote=${quote}`
-  );
+  xhr.send(`user_id=${user_id}&quote=${quote}`);
 }

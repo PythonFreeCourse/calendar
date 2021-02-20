@@ -5,18 +5,15 @@
   <div class="container mx-auto gap-3">
     <h2 id="favorite-quotes">Favorite Quotes</h2>
     {% for quote in quotes %}
-      {% if not quote.author %}
-        <p><i>"{{ quote.text }}"</i></p>
+      <p id="p-quote"><cite><q id="quote">{{ quote.text }}</q></cite>
+      {% if quote.author %}
+        <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
       {% else %}
-        <p id="p_quote"><i id="quote">"{{ quote.text }}"</i> <span id="author" style="font-size: small;">&nbsp; \ {{ quote.author }}
-        {% if quote.is_favorite %} 
-            <img src="../media/full_heart.png" class="heart favorites">
-        {% else %}
-            <img src="../media/empty_heart.png" class="heart favorites">
-        {% endif %}
-            </span>
-        </p>
+        <span>&nbsp;
       {% endif %}
+        <img src="{{full_heart}}" class="heart favorites">
+      </span>
+      </p>
     {% endfor %}
   </div>
 </div>

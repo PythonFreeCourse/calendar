@@ -33,7 +33,7 @@ p {
   justify-content: space-around;
 }
 
-p#p_quote {
+p#p-quote {
   align-items: center;
   justify-content: center;
 }
@@ -103,16 +103,16 @@ p#p_quote {
 }
 
 .subtitle {
-    font-size: 20px;
+    font-size: 1.25rem;
 }
 
 .heart {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.5em;
+  height: 1.5em;
 }
 
 #favorite-quotes {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5em;
 }
 
 .error-message {
