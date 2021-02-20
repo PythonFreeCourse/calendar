@@ -1,0 +1,71 @@
+{% extends "partials/calendar/calendar_base.html" %}
+{% block body %}
+<div id="day-view">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/dayview.css') }}">
+  <div id="top-tab" class="d-flex justify-content-around align-items-center sticky-top">
+    {% if view == 'day' %}
+    <a href="/closethedayview" title="close day view"><img class="pb-1"
+                                                           src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
+                                                           width="15em" height="15em"></a>
+    <span id="month-num" class="month-title fw-bold text-white">{{month}}</span>
+    <span id="day-num" class="day-title fw-bold text-white">{{day}}</span>
+    {% if zodiac %}
+    <div class="zodiac-sign">
+      <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Zodiac-sign: {{zodiac.name}}"
+         target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
+                              alt="zodiac sign" width="14em" height="13em"></a>
+    </div>
+    {% endif %}
+    {% else %}
+    <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
+    {% endif %}
+  </div>
+  <div class="schedule">
+    <div class="container times bg-primeary position">
+        {% for hour in range(25)%}
+          <div class='hour-block'>
+              <div class="row bg-transparent hour-mark">
+                  {% if view == 'day'%}
+                      {% set hour = hour|string() %}
+                      {{hour.zfill(2)}}:00
+                  {% endif %}
+              </div>
+              <div class="hour-bar row text-white border-bottom"></div>
+          </div>
+        {% endfor %}
+    </div>
+    <div class="event-grid">
+      {% for event, attr in events %}
+      <div id="event{{event.id}}" class="d-flex flex-column text-truncate px-2 event"
+           style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
+        <div class="d-flex flex-column justify-content-evenly event-details">
+          <p class="text-truncate my-0 {{attr.title_size_class}}">{{ event.title }}</p>
+          {% if attr.total_time_visible %}
+          <p class="total-time text-truncate fw-light my-0">{{attr.total_time}}</p>
+          {% endif %}
+        </div>
+        <div class="d-flex flex-row justify-content-around align-items-end action-container"
+             style="grid-row: {{attr.grid_position}};">
+          <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1"
+                                                                                   src="{{ url_for('static', path='/images/icons/pencil.svg')}}"></a>
+          <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1"
+                                                                                       src="{{ url_for('static', path='/images/icons/trash-can.svg')}}"></a>
+          <a href="/event/{{event.id}}" title="See full event" class="action-icon"><img class="pb-1"
+                                                                                        src="{{ url_for('static', path='/images/icons/view.svg')}}"></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    </div>
+  {% if view == 'day'%}
+  <button title="Add Event" class="event-btn add-event-icon">
+    <ion-icon name="add"></ion-icon>
+  </button>
+  {% endif %}
+</div>
+{% if view == 'day'%}<div id="event_block"></div>{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+<script type="text/javascript" src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
+{% endblock body %}
