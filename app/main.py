@@ -43,8 +43,8 @@ set_ui_language()
 
 from app.routers import (  # noqa: E402
     about_us, agenda, calendar, categories, celebrity, credits,
-    currency, dayview, email, event, export, four_o_four, features, friendview,
-    google_connect, invitation, login, logout, profile,
+    currency, dayview, email, event, export, features, four_o_four, friendview,
+    google_connect, invitation, joke, login, logout, profile,
     register, search, telegram, user, weekview, whatsapp,
 )
 
@@ -85,6 +85,7 @@ routers_to_include = [
     four_o_four.router,
     google_connect.router,
     invitation.router,
+    joke.router,
     login.router,
     logout.router,
     profile.router,
