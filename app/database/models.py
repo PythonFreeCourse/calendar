@@ -425,6 +425,7 @@ class SharedList(Base):
             f'Items: {self.items}>'
         )
 
+
 class Joke(Base):
     __tablename__ = "jokes"
 
