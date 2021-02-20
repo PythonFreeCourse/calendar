@@ -8,7 +8,7 @@ from app import main
 from app.database.models import Base, User
 from app.routers import (
     agenda, categories, event, friendview, google_connect,
-    invitation, profile
+    invitation, profile, weight,
 )
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
@@ -52,6 +52,11 @@ def agenda_test_client() -> Generator[TestClient, None, None]:
 @pytest.fixture(scope="session")
 def friendview_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(friendview.get_db)
+
+
+@pytest.fixture(scope="session")
+def weight_test_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(weight.get_db)
 
 
 @pytest.fixture(scope="session")
