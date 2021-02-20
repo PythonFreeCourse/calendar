@@ -2,6 +2,7 @@ from app.config import PICTURE_EXTENSION
 from datetime import datetime as dt
 import json
 import io
+import imghdr
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 from PIL import Image
@@ -94,6 +95,8 @@ async def create_new_event(
     session=Depends(get_db),
 ) -> Response:
     data = await request.form()
+    print(data)
+    print(imghdr.what("", h=io.BytesIO(event_img)))
     title = data["title"]
     content = data["description"]
     start = dt.strptime(
@@ -106,7 +109,7 @@ async def create_new_event(
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
 
-    vc_link = data["vc_link"]
+    vc_link = data.get("vc_url")
     category_id = data.get("category_id")
     is_google_event = data.get("is_google_event", "True") == "True"
 
@@ -157,7 +160,10 @@ def process_image(
 ) -> str:
     """Resized and saves picture without exif (to avoid malicious date))
     according to required height and keep aspect ratio"""
-    image = Image.open(io.BytesIO(img))
+    try:
+        image = Image.open(io.BytesIO(img))
+    except IOError:
+        return
     width, height = image.size
     height_to_req_height = img_height / float(height)
     new_width = int(float(width) * float(height_to_req_height))
