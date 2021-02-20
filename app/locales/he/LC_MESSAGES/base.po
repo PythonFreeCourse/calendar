@@ -163,4 +163,3 @@ msgstr "בדיקת תרגום בפייתון"
 
 #~ msgid "Next month"
 #~ msgstr ""
-
