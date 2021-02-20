@@ -245,9 +245,9 @@ def test_verify_email_pattern(email):
 
 
 def test_sending_mailing_list_with_no_user(session, no_event_user,
-                              event_owning_user,
-                              user1,
-                              event_example):
+                                           event_owning_user,
+                                           user1,
+                                           event_example):
 
     association = UserEvent(
         user_id=no_event_user.id,
