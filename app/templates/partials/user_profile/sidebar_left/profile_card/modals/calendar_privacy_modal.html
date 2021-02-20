@@ -7,10 +7,10 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="update_calendar_privacy" method="post">
+        <form action="privacy" method="post">
           <select class="form-control-sm" name="privacy">
-            <option value="private">Private</option>
-            <option value="public">Public</option>
+            <option value="{{ privacy.Private.name }}">{{ privacy.Private.name }}</option>
+            <option value="{{ privacy.Public.name }}">{{ privacy.Public.name }}</option>
           </select>
           <div class="d-flex flex-row-reverse mt-4">
             <button type="submit" class="btn btn-sm btn-success">Save changes</button>
