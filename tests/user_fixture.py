@@ -16,6 +16,7 @@ def user(session: Session) -> Generator[User, None, None]:
         password="test_password",
         email="test.email@gmail.com",
         language_id=1,
+        target_weight=60,
     )
     yield mock_user
     delete_instance(session, mock_user)

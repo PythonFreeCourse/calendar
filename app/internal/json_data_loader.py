@@ -5,8 +5,9 @@ from typing import Any, Callable, Dict, List
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, Quote, Zodiac, HebrewView
-from app.internal import daily_quotes, zodiac, hebrew_date_view
+
+from app.database.models import Base, HebrewView, Joke, Quote, Zodiac
+from app.internal import daily_quotes, hebrew_date_view, jokes, zodiac
 
 
 def load_to_database(session: Session) -> None:
@@ -44,6 +45,13 @@ def load_to_database(session: Session) -> None:
         'app/resources/hebrew_view.json',
         HebrewView,
         hebrew_date_view.create_hebrew_dates_object,
+    )
+
+    _insert_into_database(
+        session,
+        'app/resources/jokes.json',
+        Joke,
+        jokes.get_joke,
     )
 
 
