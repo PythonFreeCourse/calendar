@@ -44,12 +44,6 @@ def test_save_quote(session, settings_test_client, quote1):
     assert len(daily_quotes.get_quotes(session, 1)) == len(quotes) + 1
 
 
-def test_home(session, settings_test_client, quote1):
-    response = settings_test_client.get(url=HOME_URL)
-    assert response.ok
-    assert b"Search" in response.content
-
-
 def test_delete_quote(session, settings_test_client, quote1):
     test_save_quote(session, settings_test_client, quote1)
     data = {
