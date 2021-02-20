@@ -53,6 +53,26 @@
   <textarea id="say" name="description" placeholder="Description"></textarea>
 </div>
 
+<div class="shared_list" id="SharedList">
+  <div class="card card-body" id="SharedList">
+    <input type="text" class="form-control" name="shared_list_title" placeholder="Title">
+    <div id="Items">
+      <div class="form_row" id="shared_list_item">
+        <input type="text" class="form-control" name="item_name" placeholder="Item name">
+        <input type="text" class="form-control" name="item_amount" placeholder="Amount">
+        <input type="text" class="form-control" name="item_participant" placeholder="Participant">
+        <button type="button" class="btn btn-labeled btn-danger" id="btnRemoveItem">
+          <i id="btnRemoveLabel" class="fa fa-minus-circle"></i>
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btnAddItem" type="button">
+      Add an item
+    </button>
+  </div>
+</div>
+
+
 <div class="form_row">
   <label for="event_type">All-day:</label>
   <select id="event_type" name="event_type" required>
@@ -105,3 +125,4 @@
 
   </div>
 </div>
+<script src="{{ url_for('static', path='js/shared_list.js') }}"></script>

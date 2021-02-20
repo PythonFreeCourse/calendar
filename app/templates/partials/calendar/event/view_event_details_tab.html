@@ -50,12 +50,12 @@
 
 {% if event.shared_list is not none %}
   <div class="event_info_row">
-    {% for i in range(event.shared_list.items|length) %}
+    {% for item in event.shared_list.items %}
       <span class="icon">ICON</span>
       <div class="list_item">
-        <p>Item {{ i + 1 }}: {{ event.shared_list.items[i].name }}</p>
-        <p>Amount: {{ event.shared_list.items[i].amount }}</p>
-        <p>Participant: {{ event.shared_list.items[i].participant }}</p>
+        <p>Item {{ loop.index }}: {{ item.name }}</p>
+        <p>Amount: {{ item.amount }}</p>
+        <p>Participant: {{ item.participant }}</p>
       </div>
     {% endfor %}
   </div>

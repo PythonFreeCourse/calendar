@@ -26,6 +26,7 @@ from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
+
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
@@ -136,7 +137,10 @@ async def create_new_event(
         title,
         invited_emails,
     )
-    shared_list = extract_shared_list_from_data(data, session)
+    shared_list = extract_shared_list_from_data(
+        event_info=data,
+        db=session
+    )
 
     if vc_link is not None:
         raise_if_zoom_link_invalid(vc_link)
@@ -525,7 +529,7 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
         return None
 
 
-def extract_shared_list_from_data(data: ImmutableMultiDict,
+def extract_shared_list_from_data(event_info: ImmutableMultiDict,
                                   db: Session) -> Optional[SharedList]:
     """Extract shared list items from POST data.
     Return:
@@ -533,53 +537,45 @@ def extract_shared_list_from_data(data: ImmutableMultiDict,
     """
 
     Item = namedtuple("Item", ["name", "amount", "participant"])
-    shared_list_raw = {
-        'item_name': data.getlist('item_name'),
-        'item_amount': data.getlist('item_amount'),
-        'item_participant': data.getlist('item_participant')
-    }
-    shared_list = {"title": data.get("title"),
-                   "items": []}
-    for i in range(len(shared_list_raw.get('item_name'))):
-        try:
-            item = Item(
-                name=shared_list_raw["item_name"][i],
-                amount=shared_list_raw["item_amount"][i],
-                participant=shared_list_raw["item_participant"][i]
-            )
-            if _check_item_is_valid(item):
-                item_dict = item._asdict()
-                item_dict["amount"] = float(item_dict["amount"])
-                shared_list["items"].append(item_dict)
-        except (KeyError, IndexError):
-            continue
+    items = zip(
+        event_info.getlist('item_name'),
+        event_info.getlist('item_amount'),
+        event_info.getlist('item_participant')
+    )
+    shared_list = {"title": event_info.get("title"), "items": []}
+    for item in items:
+        item = Item(
+            name=item[0],
+            amount=item[1],
+            participant=item[2]
+        )
+        if _check_item_is_valid(item):
+            item_dict = item._asdict()
+            item_dict["amount"] = float(item_dict["amount"])
+            shared_list["items"].append(item_dict)
     return _create_shared_list(shared_list, db)
 
 
 def _check_item_is_valid(item: Item) -> bool:
-    if (
-        item.name == ''
-        or item.amount.isnumeric() is False
-        or item.participant == ''
-    ):
-        return False
-    return True
+    return item != '' and item.amount.isnumeric() and item.participant != ''
 
 
 def _create_shared_list(raw_shared_list: Dict[str, Union[str, Dict[str, Any]]],
                         db: Session) -> Optional[SharedList]:
+    title = raw_shared_list.get('title')
+    if title is None:
+        title = 'Shared List'
+    shared_list = create_model(db, SharedList, title=title)
     try:
-        title = raw_shared_list.get('title')
-        if title is None:
-            title = 'Shared List'
-        shared_list = create_model(db, SharedList, title=title)
         for item in raw_shared_list['items']:
             item = create_model(db, SharedListItem, **item)
             shared_list.items.append(item)
         return shared_list
-    except (AssertionError, AttributeError, TypeError, KeyError) as e:
+    except (AttributeError, KeyError) as e:
         logger.exception(e)
         return None
+
+
 def get_template_to_share_event(
     event_id: int,
     user_name: str,
