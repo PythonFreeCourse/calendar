@@ -6,16 +6,18 @@ import pytest
 from PIL import Image
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
+from sqlalchemy.sql.elements import Null
 from sqlalchemy.orm.session import Session
 from starlette import status
 
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
+from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
-
 from app.routers import event as evt
+from app.routers.event import event_to_show
 
 CORRECT_EVENT_FORM_DATA = {
     "title": "test title",
@@ -28,7 +30,7 @@ CORRECT_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "True",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
 }
@@ -44,7 +46,7 @@ CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "event_type": "on",
     "is_google_event": "False",
 }
@@ -60,7 +62,7 @@ WRONG_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "True",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
     "is_google_event": "False",
@@ -77,7 +79,7 @@ BAD_EMAILS_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com,ccc",
     "event_type": "on",
     "is_google_event": "False",
@@ -94,7 +96,7 @@ WEEK_LATER_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "event_type": "on",
     "invited": "a@a.com,b@b.com",
     "is_google_event": "False",
@@ -111,7 +113,7 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
     "is_google_event": "False",
@@ -558,6 +560,38 @@ def test_event_with_image(event_test_client, client, session):
     os.remove("pil_red.png")
     session.delete(event_created)
     session.commit()
+
+
+def test_can_show_event_public(event, session, user):
+    assert event_to_show(event, session) == event
+    assert event_to_show(event, session, user) == event
+
+
+def test_can_show_event_hidden(event, session, user):
+    event.privacy = PrivacyKinds.Hidden.name
+    assert event_to_show(event, session, user) is None
+    assert event_to_show(event, session) == event
+
+
+def test_can_show_event_private(event, session, user):
+    event.privacy = PrivacyKinds.Private.name
+    private_event = event_to_show(event, session, user)
+    private_attributes = [
+        private_event.title,
+        private_event.location,
+        private_event.content,
+        private_event.invitees,
+    ]
+    null_attributes = [
+        private_event.color,
+        private_event.emotion,
+        private_event.category_id,
+    ]
+    is_private_attributes = [
+        attr == event.privacy for attr in private_attributes
+    ]
+    is_null_attributes = [attr is Null for attr in null_attributes]
+    assert all(is_private_attributes) and all(is_null_attributes)
 
 
 def test_get_tamplate_to_share_event(event, session):
