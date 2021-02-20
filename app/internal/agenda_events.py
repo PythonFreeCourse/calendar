@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from app.database.models import Event
 from app.routers.event import sort_by_date
 from app.routers.user import get_all_user_events
-from app.routers import agenda
 
 
 def get_events_per_dates(
@@ -93,7 +92,7 @@ def get_events_in_time_frame(
 
 
 def get_events_for_the_week(db: Session, user_id: int
-                        ) -> Tuple[Union[Iterator[Event], list], Dict]:
+                            ) -> Tuple[Union[Iterator[Event], list], Dict]:
     WEEK_DAYS = 7
     start_date = date.today()
     end_date = start_date + timedelta(days=WEEK_DAYS - 1)
