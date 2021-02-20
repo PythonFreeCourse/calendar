@@ -16,7 +16,7 @@
       "header filter"
       "sidebar sidebar";
    grid-template-columns: 5fr 2fr;
-   grid-gap: 0 20px;
+   grid-gap: 0 1.25em;
 }
 
 .category_filter {
