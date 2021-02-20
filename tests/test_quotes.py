@@ -1,6 +1,9 @@
 from datetime import date
 
 from app.internal import daily_quotes
+from app.internal.security.dependancies import current_user
+from tests.test_login import test_login_successfull
+
 from app.main import app
 
 DATE = date(2021, 1, 1)
@@ -31,25 +34,23 @@ def test_get_quote_of_day_get_second_quote(session, quote1, quote2):
     assert daily_quotes.get_quote_of_day(session, DATE2).text == quote2.text
 
 
-def test_save_quote(
-    session,
-    settings_test_client,
-    quote1,
-):
+def test_save_quote(session, settings_test_client, quote1):
+    test_login_successfull(session, settings_test_client)
     data = {
-        "user_id": 1,
         "quote": quote1.text,
         "author": quote1.author,
         "to_save": True,
+        "user": current_user,
     }
+    quotes = daily_quotes.get_quotes(session, 1)
     response = settings_test_client.post(url=HOME_URL, data=data)
     assert response.ok
+    assert len(daily_quotes.get_quotes(session, 1)) == len(quotes) + 1
 
 
 def test_delete_quote(session, settings_test_client, quote1):
     test_save_quote(session, settings_test_client, quote1)
     data = {
-        "user_id": 1,
         "quote": quote1.text,
         "to_save": False,
     }
@@ -63,3 +64,9 @@ def test_get_favorite_quotes(session, settings_test_client, quote1):
     response = settings_test_client.get(url=FAVORITE_QUOTES_URL)
     assert response.ok
     assert b"Favorite Quotes" in response.content
+
+
+def test_home(session, settings_test_client, quote1):
+    response = settings_test_client.get(url=HOME_URL)
+    assert response.ok
+    assert b"Search" in response.content
