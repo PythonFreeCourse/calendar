@@ -58,7 +58,7 @@ WRONG_EVENT_FORM_DATA = {
     "end_date": "2021-01-27",
     "end_time": "15:01",
     "location": "fake city",
-    "vc_url": "not a zoom link",
+    "vc_link": "not a zoom link",
     "description": "content",
     "color": "red",
     "availability": "True",
