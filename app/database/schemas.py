@@ -65,21 +65,21 @@ class UserCreate(UserBase):
         return confirm_password
 
     @validator("username")
-    def username_length(cls, username: str) -> Union[ValueError, str]:
+    def username_length(cls, username: str) -> str:
         """Validating username length is legal"""
         if not (MIN_FIELD_LENGTH < len(username) < MAX_FIELD_LENGTH):
             raise ValueError("Must contain between 3 to 20 charactars")
         return username
 
     @validator("password")
-    def password_length(cls, password: str) -> Union[ValueError, str]:
+    def password_length(cls, password: str) -> str:
         """Validating username length is legal"""
         if not (MIN_FIELD_LENGTH < len(password) < MAX_FIELD_LENGTH):
             raise ValueError("Must contain between 3 to 20 charactars")
         return password
 
     @validator("email")
-    def confirm_mail(cls, email: str) -> Union[ValueError, str]:
+    def confirm_mail(cls, email: str) -> str:
         """Validating email is valid mail address."""
         try:
             EmailStr.validate(email)
