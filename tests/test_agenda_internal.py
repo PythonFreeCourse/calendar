@@ -53,7 +53,7 @@ class TestAgenda:
         assert isinstance(events_for_graph, dict)
 
     def test_get_events_for_the_week_success(self, today_event, session):
-        events, events_for_graph = agenda_events.events_for_the_week(
+        events, events_for_graph = agenda_events.get_events_for_the_week(
             session,
             user_id=today_event.owner_id,
         )
@@ -61,7 +61,7 @@ class TestAgenda:
         assert list(events) == [today_event]
 
     def test_get_events_for_the_week_failure(self, yesterday_event, session):
-        events, events_for_graph = agenda_events.events_for_the_week(
+        events, events_for_graph = agenda_events.get_events_for_the_week(
             session,
             user_id=yesterday_event.owner_id,
         )
