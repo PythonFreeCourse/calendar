@@ -25,7 +25,9 @@ async def view(session: Session, id: int) -> Note:
     return note
 
 
-async def get_all(session: Session, skip: int = 0, limit: int = 100) -> List[Note]:
+async def get_all(
+    session: Session, skip: int = 0, limit: int = 100
+) -> List[Note]:
     return session.query(Note).offset(skip).limit(limit).all()
 
 
