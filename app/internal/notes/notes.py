@@ -1,10 +1,11 @@
 from datetime import datetime
 from typing import Any, Dict, List
 
-from app.database.models import Note
-from app.database.schemas import NoteSchema
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
+
+from app.database.models import Note
+from app.database.schemas import NoteSchema
 
 
 async def create(session: Session, payload: NoteSchema) -> int:

@@ -1,12 +1,13 @@
-from app.database.schemas import NoteDB, NoteSchema
-from app.dependencies import get_db, templates
-from app.internal.notes import notes
+from typing import Any, Dict, List
+
 from fastapi import APIRouter, Request, status, HTTPException
 from fastapi.param_functions import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 
-from typing import Any, Dict, List
+from app.database.schemas import NoteDB, NoteSchema
+from app.dependencies import get_db, templates
+from app.internal.notes import notes
 
 
 router = APIRouter(
