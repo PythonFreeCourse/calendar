@@ -20,7 +20,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.ext.declarative.api import declarative_base
+from sqlalchemy.ext.declarative.api import declarative_base, DeclarativeMeta
 from sqlalchemy.orm import relationship, Session
 from sqlalchemy.sql.schema import CheckConstraint
 
@@ -28,7 +28,7 @@ from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
 import app.routers.salary.config as SalaryConfig
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 
 
 class User(Base):
@@ -43,6 +43,7 @@ class User(Base):
     avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
+    disabled = Column(Boolean, default=False, nullable=False)
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
@@ -88,10 +89,11 @@ class Event(Base):
     start = Column(DateTime, nullable=False)
     end = Column(DateTime, nullable=False)
     content = Column(String)
-    location = Column(String)
-    is_google_event = Column(Boolean)
+    location = Column(String, nullable=True)
+    is_google_event = Column(Boolean, default=False)
     vc_link = Column(String)
     color = Column(String, nullable=True)
+    all_day = Column(Boolean, default=False)
     invitees = Column(String)
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
@@ -186,7 +188,7 @@ if PSQL_ENVIRONMENT:
     ON events
     FOR EACH ROW EXECUTE PROCEDURE
     tsvector_update_trigger(events_tsv,'pg_catalog.english','title','content')
-    """
+    """,
     )
 
     event.listen(
@@ -379,6 +381,13 @@ class Zodiac(Base):
             f"{self.start_day_in_month}/{self.start_month}-"
             f"{self.end_day_in_month}/{self.end_month}>"
         )
+
+
+class Joke(Base):
+    __tablename__ = "jokes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String, nullable=False)
 
 
 # insert language data
