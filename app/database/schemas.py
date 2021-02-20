@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import BaseModel, validator, EmailStr, EmailError
 
@@ -9,7 +9,7 @@ MIN_FIELD_LENGTH = 3
 MAX_FIELD_LENGTH = 20
 
 
-def fields_not_empty(field: Optional[str]) -> Union[ValueError, str]:
+def fields_not_empty(field: Optional[str]) -> str:
     """Global function to validate fields are not empty."""
     if not field:
         raise ValueError(EMPTY_FIELD_STRING)
