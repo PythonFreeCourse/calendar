@@ -164,3 +164,24 @@ body {
   width: 1.2rem;
   height: 1.2rem;
 }
+
+.hebrew-dates {
+    position: absolute;
+    right: 1.2rem;
+    top: 5rem;
+    padding-right: var(--space_xs);
+    padding-left: var(--space_xs);
+    padding-bottom: var(--space_xxs);
+    border: solid 0.1px var(--primary);
+    background-color: var(--surface-variant);
+    box-shadow: 1px 1px 2px #999;
+    line-height: 1;
+    height: 3.5rem;
+    width: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem
+    font-weight: bold;
+}
+

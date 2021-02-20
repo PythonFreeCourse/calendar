@@ -22,7 +22,7 @@
   </div>
     {% if hebrewView %}
       <div class="hebrew-dates">
-        <p>{{hebrewView.hebrew_date}}</p>
+        {{ gettext("%(hebrewDate)s", hebrewDate=hebrewView.hebrew_date) }}
       </div>
     {% endif %}
   <div class="all_day_events">
