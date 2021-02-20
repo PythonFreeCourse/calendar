@@ -15,7 +15,7 @@ REGISTER_FORM_VALIDATORS = [
     ('admin', 'admin_user', 'password', 'wrong_password', 'example@mail.com',
         'description', b"match"),
     ('admin', 'admin_user', 'password', 'password', 'invalid_mail',
-        'description', b"Email address is not valid"),
+        'description', b"Email address is invalid"),
     ('', 'admin_user', 'password', 'password', 'example@mail.com',
         'description', b'Username field is required'),
     ('admin', '', 'password', 'password', 'example@mail.com',
