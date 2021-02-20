@@ -94,7 +94,6 @@ header {
   position: sticky;
   top: 0;
   display: flex;
-  /* grid-flow: row wrap; */
   margin: 0 var(--space_s);
   background-color: var(--background);
 }

@@ -28,139 +28,99 @@
               </a>
           </div>
       </header>
-        <main class="settings">
-          <div id="settings-left">
-            <!-- Headline -->
-            <!-- <div class="settings-headline">
-                <h1>Settings</h1>
-            </div> -->
-            <section class="settings-layout">
-              <div class="left-options-bar">
-                <!-- <div class="long-slider">
-                    <div class="long"></div>
-                    <div class="slider"></div>
-                </div> -->
-                <div class="settings-options">
-                  <ul id="options">
-                    <li class="tab"><a id="tab0" onclick="tabClick(this.id);" class="active">
-                      Language and region
-                    </a></li>
-                    <li class="tab"><a id="tab1" onclick="tabClick(this.id);">
-                      Audio settings
-                    </a></li>
-                    <li class="tab"><a id="tab2" onclick="tabClick(this.id);">
-                      View options
-                    </a></li>
-                    <li class="tab"><a id="tab3" onclick="tabClick(this.id);">
-                      Keyboard shortcuts
-                    </a></li>
-                    <li class="tab"><a id="tab4" onclick="tabClick(this.id);">
-                      Event settings
-                    </a></li>
-                  </ul>
-                </div>
+      <main class="settings">
+        <div id="settings-left">
+          <section class="settings-layout">
+            <div class="left-options-bar">
+              <div class="settings-options">
+                <ul id="options">
+                  <li class="tab"><a id="tab0" onclick="tabClick(this.id);" class="active">
+                    Language and region
+                  </a></li>
+                  <li class="tab"><a id="tab1" onclick="tabClick(this.id);">
+                    Audio settings
+                  </a></li>
+                  <li class="tab"><a id="tab2" onclick="tabClick(this.id);">
+                    View options
+                  </a></li>
+                  <li class="tab"><a id="tab3" onclick="tabClick(this.id);">
+                    Keyboard shortcuts
+                  </a></li>
+                  <li class="tab"><a id="tab4" onclick="tabClick(this.id);">
+                    Event settings
+                  </a></li>
+                </ul>
               </div>
-            </section>
-          </div>
-          
-          <div id="settings-main" class="settings-main">
-            <!-- Language and region -->
-            <article id="settings_content" class="tabShow">
-              <h2>Language and region</h2>
-              <p>Language</p>
-              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
-                <option value="1">English (US)</option>
-                <option value="2">Hebrew</option>
-              </select>
-              <p>Country</p>
-              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
-                <option value="1">Israel</option>
-                <option value="2">United States</option>
-              </select>
-              <p>Date format</p>
-              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
-                <option value="1">DD/MM/YYYY</option>
-                <option value="2">MM/DD/YYYY</option>
-                <option value="3">YYYY/MM/DD</option>
-              </select>
-              <p>Time format</p>
-              <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
-                <option value="1">24H</option>
-                <option value="2">12H</option>
-              </select>
-            </article>
-            <!-- Audio settings -->
-            <article id="settings_content" class="audio-settings tabShow">
-              <h2>Audio settings</h2>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-                <label class="form-check-label" for="flexSwitchCheckDefault">Music</label>
-              </div>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-                <label class="form-check-label" for="flexSwitchCheckChecked">Sound Effects</label>
-              </div>
-            </article>
-            <!-- View options -->
-            <article id="settings_content" class="view-options tabShow">
-              <h2>View options</h2>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="view-tick1">
-                <label class="form-check-label" for="view-tick1">
-                  Show declined events
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="view-tick2" checked>
-                <label class="form-check-label" for="view-tick2">
-                  Show week numbers
-                </label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="view-tick3" checked>
-                <label class="form-check-label" for="view-tick3">
-                  View calendars side by side in day view
-                </label>
-              </div>
-            </article>
-          </div>
-        </main>
-      
-      
-      <script>
-          const tabBtn =
-          document.querySelectorAll(".tab");
-          const tab =
-          document.querySelectorAll(".tabShow");
-          
-          function clearMenu(options) {
-            for (var i=0, l=options.length; i<l; i++) {
-                  cat = document.getElementById("options").children[i].children[0]
-                  if (!(cat.classList.contains("active"))) {
-                      options[i].style.display = "none";
-                  }
-              }
-          }
-          clearMenu(document.getElementById("settings-main").children)
-          function tabClick(tab_id) {
-              tab.forEach(function(node) {
-                  node.style.display = "none";
-              });
-              tab_elem = document.getElementById(tab_id)
-              tab_num = parseInt(tab_id.slice(-1))
-              tab[tab_num].style.display = "block";
-              tab_elem.classList.add("active")
-
-              var els = document.getElementById("options").children;
-              for (var i=0, l=els.length; i<l; i++) {
-                if (els[i].childNodes[0].id != tab_id) {
-                  els[i].childNodes[0].classList.remove("active")
-                }
-              }
-            }
-
-      </script>
+            </div>
+          </section>
+        </div>
+        
+        <div id="settings-main" class="settings-main">
+          <!-- Language and region -->
+          <article id="settings_content" class="tabShow">
+            <h2>Language and region</h2>
+            <p>Language</p>
+            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+              <option value="1">English (US)</option>
+              <option value="2">Hebrew</option>
+            </select>
+            <p>Country</p>
+            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+              <option value="1">Israel</option>
+              <option value="2">United States</option>
+            </select>
+            <p>Date format</p>
+            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+              <option value="1">DD/MM/YYYY</option>
+              <option value="2">MM/DD/YYYY</option>
+              <option value="3">YYYY/MM/DD</option>
+            </select>
+            <p>Time format</p>
+            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+              <option value="1">24H</option>
+              <option value="2">12H</option>
+            </select>
+          </article>
+          <!-- Audio settings -->
+          <article id="settings_content" class="audio-settings tabShow">
+            <h2>Audio settings</h2>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+              <label class="form-check-label" for="flexSwitchCheckDefault">Music</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+              <label class="form-check-label" for="flexSwitchCheckChecked">Sound Effects</label>
+            </div>
+          </article>
+          <!-- View options -->
+          <article id="settings_content" class="view-options tabShow">
+            <h2>View options</h2>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="view-tick1">
+              <label class="form-check-label" for="view-tick1">
+                Show declined events
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="view-tick2" checked>
+              <label class="form-check-label" for="view-tick2">
+                Show week numbers
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="view-tick3" checked>
+              <label class="form-check-label" for="view-tick3">
+                View calendars side by side in day view
+              </label>
+            </div>
+          </article>
+        </div>
+      </main>
     </div>
   </div>
+
+<!-- Script -->
+<script src="{{ url_for('static', path='/js/settings.js') }}"></script>
 {% endblock content %}
 {% endblock body %}

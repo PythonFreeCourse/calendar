@@ -58,11 +58,7 @@
   text-decoration: none;
 }
 
-.settings-options ul li a:hover {
-  color: #5786f5;
-}
-
-.settings-options ul li a.active {
+.settings-options ul li a:hover, .settings-options ul li a.active {
   color: #5786f5;
 }
 
@@ -80,7 +76,7 @@
 }
 
 .settings-main p {
-  margin: 1rem 0px;
+  margin: 1rem 0rem;
 }
 
 .settings-main .form-select {
