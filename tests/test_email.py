@@ -244,7 +244,7 @@ def test_verify_email_pattern(email):
     assert not verify_email_pattern(email)
 
 
-def test_sending_mailing_list(session, no_event_user,
+def test_sending_mailing_list_with_no_user(session, no_event_user,
                               event_owning_user,
                               user1,
                               event_example):
@@ -263,4 +263,4 @@ def test_sending_mailing_list(session, no_event_user,
 
     num_emails_send = send_email_to_event_participants(
         session, event_example.id, 'this mail example', 'booboo')
-    assert num_emails_send == 2
+    assert num_emails_send == 0
