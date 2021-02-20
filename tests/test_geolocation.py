@@ -54,7 +54,7 @@ class TestGeolocation:
     async def test_get_location_coordinates_correct(location):
         # Test geolocation search using valid locations.
         location = await get_location_coordinates(location)
-        assert all(list(location))
+        assert all(location)
 
     @staticmethod
     @pytest.mark.asyncio

@@ -1,18 +1,17 @@
-from collections import namedtuple
 import logging
 import re
+from collections import namedtuple
 from typing import List, NamedTuple, Set, Union
-
-from loguru import logger
 
 from app.database.models import Event
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
+from geopy.adapters import AioHTTPAdapter
 from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
-from geopy.geocoders.nominatim import Nominatim
+from geopy.geocoders import Nominatim
+from loguru import logger
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
-
 
 ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
 LOCATION_TIMEOUT = 20
@@ -106,14 +105,19 @@ async def get_location_coordinates(
     """Return location coordinates and accurate
     address of the specified location."""
     Location = namedtuple('Location', 'latitude, longitude, location')
-    geolocator = Nominatim(user_agent="calendar", timeout=timeout)
     try:
-        geolocation = geolocator.geocode(address)
+        async with Nominatim(
+            user_agent="Pylendar",
+            adapter_factory=AioHTTPAdapter
+            ) as geolocator:
+            geolocation = await geolocator.geocode(address)
+    except (GeocoderTimedOut, GeocoderUnavailable) as e:
+        logger.exception(str(e))
+    else:
         if geolocation is not None:
             location = Location(geolocation.latitude,
                                 geolocation.longitude,
                                 geolocation.raw["display_name"])
             return location
-    except (GeocoderTimedOut, GeocoderUnavailable) as e:
-        logger.exception(str(e))
     return address
+
