@@ -1,9 +1,10 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Sequence
 
 from fastapi import APIRouter, Request, status, HTTPException
 from fastapi.param_functions import Depends
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
+from starlette.templating import _TemplateResponse
 
 from app.database.schemas import NoteDB, NoteSchema
 from app.dependencies import get_db, templates
@@ -63,7 +64,7 @@ async def update_note(
 @router.get("/view/{id}", include_in_schema=False)
 async def view_note(
     request: Request, id: int, session: Session = Depends(get_db)
-) -> templates:
+) -> _TemplateResponse:
     note = await notes.view(session, id)
     return templates.TemplateResponse(
         "notes/note_view.html", {"request": request, "data": note}
@@ -71,12 +72,12 @@ async def view_note(
 
 
 @router.get("/add", include_in_schema=False)
-async def create_note_form(request: Request) -> templates:
+async def create_note_form(request: Request) -> _TemplateResponse:
     return templates.TemplateResponse("notes/note.html", {"request": request})
 
 
 @router.get("/all", response_model=List[NoteDB])
-async def get_all_notes(session: Session = Depends(get_db)) -> List[NoteDB]:
+async def get_all_notes(session: Session = Depends(get_db)) -> Sequence[NoteDB]:
     return await notes.get_all(session)
 
 
@@ -94,7 +95,7 @@ async def read_note(id: int, session: Session = Depends(get_db)) -> NoteDB:
 @router.get("/", include_in_schema=False)
 async def view_notes(
     request: Request, session: Session = Depends(get_db)
-) -> templates:
+) -> _TemplateResponse:
     data = await notes.get_all(session)
     return templates.TemplateResponse(
         "notes/notes.html", {"request": request, "data": data}
