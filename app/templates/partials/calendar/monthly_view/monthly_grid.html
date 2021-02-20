@@ -1,0 +1,33 @@
+<div class="calendar">
+  <div class="calender-days-titles">
+    {% for d in week_days %}
+      {% if d == day.sday %}
+        <div class="day-title underline-yellow"><b>{{ d.upper() }}</b></div>
+      {% else %}
+        <div class="day-title"> {{ d.upper() }}</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div id="calender-grid">
+    {% include 'partials/calendar/monthly_view/add_week.html' %}
+  </div>
+</div>
+<div>
+    <div class="sticky">
+        <div id="months-navigation">
+            <a href="#{{weeks_block[0].days[0].set_id()}}" class="button background-yellow text-darkblue">
+                TODAY
+            </a>
+            <a id="month-2"></a>
+            <ion-icon name="caret-up-outline"></ion-icon>
+            <a id="month-1"></a>
+            <ion-icon name="caret-up-outline"></ion-icon>
+            <a id="month0"></a>
+            <ion-icon name="caret-down-outline"></ion-icon>
+            <a id="month1"></a>
+            <ion-icon name="caret-down-outline"></ion-icon>
+            <a id="month2"></a>
+        </div>
+    </div>
+</div>
+<div id="day-view"></div>

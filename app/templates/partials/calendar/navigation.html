@@ -1,0 +1,36 @@
+<nav class="text-lightgray background-darkblue">
+    <div class="menu">
+        <div class="fixed-features">
+            <div>
+                <a href="/profile">
+                    <ion-icon name="person-circle-outline"></ion-icon>
+                </a>
+            </div>
+            <div>
+                <ion-icon name="search" alt="Search icon"></ion-icon>
+            </div>
+            <div>
+                <ion-icon name="settings-outline"></ion-icon>
+            </div>
+            <div>
+                <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+            <div>
+                <ion-icon name="cube-outline"></ion-icon>
+            </div>
+        </div>
+        <div class="user-features">
+            <div class="feature" name="feather01">
+                <ion-icon name="chatbox"></ion-icon>
+            </div>
+        </div>
+        <div id="open-features">
+            <ion-icon name="ellipsis-vertical"></ion-icon>
+        </div>
+        <div>
+            <a title="About Us" href="{{ url_for('about') }}">
+                <ion-icon name="information-circle-outline"></ion-icon>
+            </a>
+        </div>
+    </div>
+</nav>

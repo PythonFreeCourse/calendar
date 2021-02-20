@@ -1,14 +1,14 @@
 import calendar
+from datetime import date, datetime, timedelta
 import itertools
 import locale
-from datetime import date, datetime, timedelta
 from typing import Dict, Iterator, List, Tuple
 
 import pytz
 
 MONTH_BLOCK: int = 6
 
-locale.setlocale(locale.LC_TIME, ("en", "UTF-8"))
+locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 
 class Day:
@@ -20,6 +20,7 @@ class Day:
         date    (datetime): A single datetime date.
         sday         (str): The day name.
         dailyevents (List): List of tuples represent daily event information.
+                            EX:  [("Front Info", "Back Info")]
         events      (List): List of tuples represent time event name.
                             EX: [("09AP", "Meeting with yam")]
         css         (Dict): All css classes represent day.
@@ -29,7 +30,7 @@ class Day:
         self.date: datetime = date
         self.sday: str = self.date.strftime("%A")
         self.dailyevents: List[Tuple] = []
-        self.events:  List[Tuple] = []
+        self.events: List[Tuple] = []
         self.css: Dict[str, str] = {
             'day_container': 'day',
             'date': 'day-number',
@@ -56,8 +57,8 @@ class Day:
         return self.date.strftime("%d %B %y").upper()
 
     def set_id(self) -> str:
-        """Returns day date inf the format of 00-mon-0000"""
-        return self.date.strftime("%d-%b-%Y")
+        """Returns day date inf the format of 00-month-0000"""
+        return self.date.strftime("%d-%B-%Y")
 
     @classmethod
     def get_user_local_time(cls) -> datetime:
@@ -66,7 +67,7 @@ class Day:
 
     @classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:
-        return datetime.strptime(date_string, '%d-%b-%Y')
+        return datetime.strptime(date_string, '%d-%B-%Y')
 
     @classmethod
     def is_weekend(cls, date: date) -> bool:
@@ -79,7 +80,7 @@ class DayWeekend(Day):
         super().__init__(date)
         self.css = {
             'day_container': 'day ',
-            'date': ' '.join(['day-number',  'text-gray']),
+            'date': ' '.join(['day-number', 'text-gray']),
             'daily_event': 'month-event',
             'daily_event_front': ' '.join([
                 'daily',
@@ -100,7 +101,7 @@ class Today(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'day_container':  ' '.join([
+            'day_container': ' '.join([
                 'day',
                 'text-darkblue',
                 'background-yellow'
@@ -134,7 +135,7 @@ class FirstDayMonth(Day):
             ]),
             'date': 'day-number',
             'daily_event': 'month-event',
-            'daily_event_front':  ' '.join([
+            'daily_event_front': ' '.join([
                 'daily front',
                 'text-lightgray',
                 'background-red'
@@ -196,8 +197,8 @@ def get_n_days(date: datetime, n: int) -> Iterator[Day]:
 
 
 def create_weeks(
-    days: Iterator[Day],
-    length: int = Week.WEEK_DAYS
+        days: Iterator[Day],
+        length: int = Week.WEEK_DAYS
 ) -> List[Week]:
     """Return lists of Weeks objects."""
     ndays: List[Day] = list(days)
