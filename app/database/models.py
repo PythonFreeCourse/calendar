@@ -26,6 +26,7 @@ from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
+from app.internal.privacy import PrivacyKinds
 import app.routers.salary.config as SalaryConfig
 
 Base: DeclarativeMeta = declarative_base()
@@ -95,6 +96,7 @@ class Event(Base):
     color = Column(String, nullable=True)
     all_day = Column(Boolean, default=False)
     invitees = Column(String)
+    privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
@@ -380,6 +382,13 @@ class Zodiac(Base):
             f"{self.start_day_in_month}/{self.start_month}-"
             f"{self.end_day_in_month}/{self.end_month}>"
         )
+
+
+class Joke(Base):
+    __tablename__ = "jokes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String, nullable=False)
 
 
 # insert language data
