@@ -4,25 +4,25 @@ function countdownTimer() {
     .then(response => response.json())
     .then(data => {
 
-  let countDownDate = new Date(data.timer).getTime();
+    let countDownDate = new Date(data.timer).getTime();
 
-  // Update the countdown every 1 second
-  const timerInterval = setInterval(function() {
-    const now = new Date().getTime();
-    const distance = countDownDate - now;
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-  // Output the result to base.html in an element with id="eventtimer"
-    document.getElementById("eventtimer").innerHTML = "Upcoming event in: " + days + "d " + hours + "h "
-    + minutes + "m " + seconds + "s ";
-  // Countdown had finished
-    if (distance < 0) {
-      clearInterval(timerInterval);
-      document.getElementById("eventtimer").innerHTML = "Your Event Starts NOW:)";
-    }
-  }, 1000);
+    // Update the countdown every 1 second
+    const timerInterval = setInterval(function() {
+      const now = new Date().getTime();
+      const distance = countDownDate - now;
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      // Output the result to base.html in an element with id="eventtimer"
+      document.getElementById("eventtimer").innerText = "Upcoming event in: " + days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+      // Countdown had finished
+      if (distance < 0) {
+        clearInterval(timerInterval);
+        document.getElementById("eventtimer").innerText = "Your Event Starts NOW:)";
+      }
+    }, 1000);
   } );
 }
 

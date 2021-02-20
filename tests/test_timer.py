@@ -15,4 +15,4 @@ def test_time_left(event, session):
         session=session,
         user_id=event.owner_id,
     )
-    assert type(time_left["timer"]) is str
+    assert isinstance(time_left["timer"], str)
