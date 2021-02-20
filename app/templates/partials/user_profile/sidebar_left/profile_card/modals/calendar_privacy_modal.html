@@ -1,0 +1,22 @@
+<div class="modal modal-sm" id="calendar-privacy-modal" tabindex="-1" data-bs-backdrop="static"
+     aria-labelledby="update-calendar-privacy-modal-label" aria-hidden="true">
+  <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+    <div class="modal-content">
+      <div class="modal-header profile-modal-header">
+        <h2 class="modal-title">Set your calendar privacy</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="privacy" method="post">
+          <select class="form-control-sm" name="privacy">
+            <option value="{{ privacy.Private.name }}">{{ privacy.Private.name }}</option>
+            <option value="{{ privacy.Public.name }}">{{ privacy.Public.name }}</option>
+          </select>
+          <div class="d-flex flex-row-reverse mt-4">
+            <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -14,8 +14,8 @@ from app.dependencies import get_db, MEDIA_PATH, templates, GOOGLE_ERROR
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
+from app.internal.privacy import PrivacyKinds
 from app.routers.user_exercise import create_user_exercise
-
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -62,8 +62,9 @@ async def profile(
         "user": user,
         "events": upcoming_events,
         "signs": signs,
-        'google_error': GOOGLE_ERROR,
+        "google_error": GOOGLE_ERROR,
         "on_this_day_data": on_this_day_data,
+        "privacy": PrivacyKinds
     })
 
 
