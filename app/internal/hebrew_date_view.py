@@ -19,7 +19,16 @@ def create_hebrew_dates_object(
     )
 
 
-def get_all_hebrew_dates_list(db_session: Session) \
-        -> List[Dict[str, Optional[str]]]:
-    """This function return all hebrew dates object in list"""
-    return db_session.query(HebrewView).all()
+def get_hebrew_date_object(session: Session, date: datetime) -> HebrewView:
+    """Returns the HebrewView object for the specific day.
+
+    Args:
+        session: The database connection.
+        date: The requested date.
+
+    Returns:
+        A HebrewView object.
+    """
+    for hebrew in session.query(HebrewView).all():
+        if hebrew.date == date:
+            return hebrew

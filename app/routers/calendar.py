@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from app.dependencies import get_db, templates
-from app.internal import hebrew_date_view
 from app.routers import calendar_grid
 from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
@@ -19,7 +18,6 @@ router = APIRouter(
 async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
     user_local_time = calendar_grid.Day.get_user_local_time()
     day = calendar_grid.create_day(user_local_time)
-    hebrew_obj = hebrew_date_view.get_all_hebrew_dates_list(db_session)
     return templates.TemplateResponse(
         "calendar_monthly_view.html",
         {
@@ -27,7 +25,6 @@ async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
             "day": day,
             "week_days": calendar_grid.Week.DAYS_OF_THE_WEEK,
             "weeks_block": calendar_grid.get_month_block(day),
-            "hebrewView": hebrew_obj,
         }
     )
 
