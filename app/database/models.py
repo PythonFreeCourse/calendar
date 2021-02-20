@@ -26,6 +26,7 @@ from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
+from app.internal.privacy import PrivacyKinds
 import app.routers.salary.config as SalaryConfig
 
 Base: DeclarativeMeta = declarative_base()
@@ -47,6 +48,7 @@ class User(Base):
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    target_weight = Column(Float, nullable=True)
 
     owned_events = relationship(
         "Event",
@@ -95,6 +97,7 @@ class Event(Base):
     color = Column(String, nullable=True)
     all_day = Column(Boolean, default=False)
     invitees = Column(String)
+    privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
@@ -395,7 +398,6 @@ class Parasha(Base):
         'date': parasha['date']}
         return parashot_dict
 
-
     def get_all_parashot():
         request = requests.get(
         'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&
@@ -405,6 +407,7 @@ class Parasha(Base):
         [relevent_details(p) for parasha in items
         if 'Parashat' in parasha['title]]
     """
+
     __tablename__ = "parashot"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -412,6 +415,13 @@ class Parasha(Base):
     hebrew_name = Column(String, nullable=False)
     link = Column(String, nullable=False)
     date = Column(DateTime, nullable=False)
+
+
+class Joke(Base):
+    __tablename__ = "jokes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String, nullable=False)
 
 
 # insert language data
