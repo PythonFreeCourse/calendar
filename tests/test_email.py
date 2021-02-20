@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 # from starlette.status import HTTP_302_FOUND
 
 from app.database.models import User, UserEvent
-from app.internal.security.dependancies import current_user
+# from app.internal.security.dependancies import current_user
 from app.internal.email import (mail, send, send_email_file,
                                 send_email_invitation,
                                 send_email_to_event_participants,
@@ -275,9 +275,9 @@ def test_sending_mailing_list_from_event_owner(session, no_event_user,
                                                security_test_client):
     """this test assures mailing list is sent successfuly from
     the event owner. assiciations were created already at the test above."""
-    logged_user_data = {'username': event_owning_user.username,
-                        'password': event_owning_user.password}
-
+    # logged_user_data = {'username': event_owning_user.username,
+    #                     'password': event_owning_user.password}
+    pass
     # res = security_test_client.post(
     #     security_test_client.app.url_path_for('login'),
     #     data=logged_user_data)
