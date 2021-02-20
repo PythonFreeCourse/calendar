@@ -84,6 +84,18 @@
       <option value="public" selected>Public</option>
     </select>
 
+    <label for="user_categories">Category</label>
+    <select id="categories" name="the_categories">
+        {% if categories_list[0] is defined %}
+            <option style="color:#{{categories_list[0]['color'] |safe }}" value="{{categories_list[0]['name'] |safe }}" selected>{{categories_list[0]['name'] |safe }}</option>
+        {% endif %}
+        {% if categories_list[1] is defined %}
+            {% for category in categories_list[1:] %}
+                <option style="color:#{{category['color'] |safe }}" value="{{category['name'] |safe }}" selected>{{category['name'] |safe }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+
     <label for="is_google_event">Google event:</label>
     <select id="is_google_event" name="is_google_event">
       <option value="True">Yes</option>
