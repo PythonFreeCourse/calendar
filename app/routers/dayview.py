@@ -183,8 +183,7 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    # user = session.query(User).filter_by(username="test_username").first()
-    user = session.query(User).filter_by(username="tamar").first()
+    user = session.query(User).filter_by(username="test_username").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(

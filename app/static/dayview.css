@@ -181,3 +181,7 @@ body {
 #current_time_cursor {
   border-bottom: 2.5px dotted rgba(255, 0, 0, 0.808);
 }
+
+#all-day-events {
+  background-color: var(--primary);
+}
