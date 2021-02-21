@@ -519,20 +519,19 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
 
 
 def add_user_to_event(session: Session, user_id: int, event_id: int):
-    user_already_connected = session.query(UserEvent)\
-        .filter_by(event_id=event_id, user_id=user_id).all()
+    user_already_connected = (
+        session.query(UserEvent)
+        .filter_by(event_id=event_id, user_id=user_id)
+        .all()
+    )
     if not user_already_connected:
-        """ if user is not registered to the event, the system will add him"""
-        association = UserEvent(
-            user_id=user_id,
-            event_id=event_id
-        )
+        """if user is not registered to the event, the system will add him"""
+        association = UserEvent(user_id=user_id, event_id=event_id)
         save(session, association)
         return True
-    else:
-        # if the user has a connection to the event,
-        # the function will recognize the duplicate and return false.
-        return False
+    # if the user has a connection to the event,
+    # the function will recognize the duplicate and return false.
+    return False
 
 
 def get_template_to_share_event(
