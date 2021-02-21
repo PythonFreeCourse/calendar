@@ -12,21 +12,21 @@ function filterByCategory(){
     for (event of allEvents) {
       if (event.dataset.name == category)
       {
-        event.style.display = "grid";
+        event.dataset.value = "visible";
       }
       else {
-        event.style.display = "none";
+        event.dataset.value = "hidden";
       }
       if (!Number.isInteger(+category) || !category || 0 === category.length) {
-        event.style.display = "grid";
+        event.dataset.value = "visible";
       }
-      event.parentNode.style.display = "none" ;
+      event.parentNode.dataset.value = "hidden";
     }
 
-    // Set wrapper div to display "block" if at least one child is visible
+    // Set wrapper div to display "visible" if at least one child is visible.
     for (event of allEvents) {
-      if (window.getComputedStyle(event).display !== 'none') {
-        event.parentNode.style.display = "block" ;
+      if (event.dataset.value === "visible") {
+        event.parentNode.dataset.value = "visible";
       }
     }
 }

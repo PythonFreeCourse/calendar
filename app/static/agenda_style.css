@@ -35,6 +35,22 @@
   grid-gap: 0.6em;
 }
 
+.event_line[data-value="hidden"],
+.wrapper[data-value="hidden"]
+{
+  display: none;
+}
+
+.event_line[data-value="visible"]
+{
+  display: grid;
+}
+
+.wrapper[data-value="visible"]
+{
+  display: block;
+}
+
 .duration {
   font-size: small;
 }
