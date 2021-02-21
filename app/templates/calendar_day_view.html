@@ -19,6 +19,14 @@
     {% else %}
     <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
     {% endif %}
+    {% if parasha %}
+      <div class="parashot">
+        פרשת השבוע:
+        {{parasha.hebrew_name}}<br>
+        {{parasha.name}}<br>
+        <a href={{parasha.link}} target="_blank">{{ gettext(" פירוט בלינק נפרד על %(parashah)s", parashah=parasha.hebrew_name) }}</a>
+      </div>
+    {% endif %}
   </div>
   <div class="all_day_events">
     {% for event in all_day_events %}

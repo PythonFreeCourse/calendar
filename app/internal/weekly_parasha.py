@@ -17,7 +17,14 @@ def create_parasha_object(parashot_fields: Dict[str, Optional[str]])\
     )
 
 
-def get_all_parahot_list(session: Session) \
-        -> List[Dict[str, Optional[str]]]:
-    """This function return all parashot object in list"""
-    return session.query(Parasha).all()
+def get_parasha_object(session: Session, date: datetime) -> Parasha:
+    """Returns the parasha object for the specific day.
+    Args:
+        session: The database connection.
+        date: The requested date.
+    Returns:
+        A HebrewView object.
+    """
+    for parasha in session.query(Parasha).all():
+        if parasha.date == date:
+            return parasha

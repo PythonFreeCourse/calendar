@@ -1,10 +1,9 @@
 from http import HTTPStatus
 
 
-from app.dependencies import get_db, templates
-from app.internal import weekly_parasha
+from app.dependencies import templates
 from app.routers import calendar_grid
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from starlette.responses import Response
 
@@ -18,10 +17,9 @@ router = APIRouter(
 
 
 @router.get("/")
-async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
+async def calendar(request: Request) -> Response:
     user_local_time = calendar_grid.Day.get_user_local_time()
     day = calendar_grid.create_day(user_local_time)
-    parasha_obj = weekly_parasha.get_all_parahot_list(db_session)
     return templates.TemplateResponse(
         "calendar_monthly_view.html",
         {
@@ -29,7 +27,6 @@ async def calendar(request: Request, db_session=Depends(get_db)) -> Response:
             "day": day,
             "week_days": calendar_grid.Week.DAYS_OF_THE_WEEK,
             "weeks_block": calendar_grid.get_month_block(day),
-            "parashot": parasha_obj
         }
     )
 
