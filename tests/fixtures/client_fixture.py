@@ -1,4 +1,4 @@
-from typing import Generator, Iterator
+from typing import Generator, Iterator, Dict
 
 import pytest
 from fastapi.testclient import TestClient
@@ -6,25 +6,29 @@ from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
-from app.routers import (
-    agenda, event, friendview, google_connect, profile
-)
+from app.routers import agenda, event, friendview, google_connect, profile
 from app.routers import notification
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
 from tests.conftest import get_test_db, test_engine
 
+LOGIN_DATA_TYPE = Dict[str, str]
+
 main.app.include_router(security_testing_routes.router)
+
+
+def login_client(client: TestClient, data: LOGIN_DATA_TYPE) -> None:
+    client.post(client.app.url_path_for("login"), data=data)
 
 
 def get_test_placeholder_user() -> User:
     return User(
-        username='fake_user',
-        email='fake@mail.fake',
-        password='123456fake',
-        full_name='FakeName',
+        username="fake_user",
+        email="fake@mail.fake",
+        password="123456fake",
+        full_name="FakeName",
         language_id=1,
-        telegram_id='666666',
+        telegram_id="666666",
     )
 
 
@@ -74,7 +78,8 @@ def profile_test_client() -> Iterator[TestClient]:
     Base.metadata.create_all(bind=test_engine)
     main.app.dependency_overrides[profile.get_db] = get_test_db
     main.app.dependency_overrides[
-        profile.get_placeholder_user] = get_test_placeholder_user
+        profile.get_placeholder_user
+    ] = get_test_placeholder_user
 
     with TestClient(main.app) as client:
         yield client

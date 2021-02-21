@@ -10,8 +10,7 @@ from starlette.status import HTTP_200_OK
 from app.database.models import Event, User, UserEvent
 from app.dependencies import get_db
 from app.internal.user.availability import disable, enable
-from app.internal.utils import get_current_user, save
-
+from app.internal.utils import get_current_user
 
 router = APIRouter(
     prefix="/user",
@@ -23,7 +22,7 @@ router = APIRouter(
 class UserModel(BaseModel):
     username: str
     password: str
-    email: str = Field(regex='^\\S+@\\S+\\.\\S+$')
+    email: str = Field(regex="^\\S+@\\S+\\.\\S+$")
     language: str
     language_id: int
 
@@ -38,30 +37,6 @@ async def get_user(id: int, session=Depends(get_db)):
     return session.query(User).filter_by(id=id).first()
 
 
-@router.post("/")
-def manually_create_user(user: UserModel, session=Depends(get_db)):
-    create_user(**user.dict(), session=session)
-    return f'User {user.username} successfully created'
-
-
-def create_user(
-        username: str,
-        password: str,
-        email: str,
-        language_id: int,
-        session: Session
-) -> User:
-    """Creates and saves a new user."""
-    user = User(
-        username=username,
-        password=password,
-        email=email,
-        language_id=language_id
-    )
-    save(session, user)
-    return user
-
-
 def get_users(session: Session, **param):
     """Returns all users filtered by param."""
     try:
@@ -73,12 +48,10 @@ def get_users(session: Session, **param):
 
 
 def does_user_exist(
-        session: Session,
-        *, user_id=None,
-        username=None, email=None
+    session: Session, *, user_id=None, username=None, email=None
 ):
     """Returns True if user exists, False otherwise.
-     function can receive one of the there parameters"""
+    function can receive one of the there parameters"""
     if user_id:
         return len(get_users(session=session, id=user_id)) == 1
     if username:
@@ -91,14 +64,15 @@ def does_user_exist(
 def get_all_user_events(session: Session, user_id: int) -> List[Event]:
     """Returns all events that the user participants in."""
     return (
-        session.query(Event).join(UserEvent)
-        .filter(UserEvent.user_id == user_id).all()
+        session.query(Event)
+        .join(UserEvent)
+        .filter(UserEvent.user_id == user_id)
+        .all()
     )
 
 
 @router.post("/disable")
-def disable_logged_user(
-        request: Request, session: Session = Depends(get_db)):
+def disable_logged_user(request: Request, session: Session = Depends(get_db)):
     """route that sends request to disable the user.
     after successful disable it will be directed to main page.
     if the disable fails user will stay at settings page
@@ -111,8 +85,7 @@ def disable_logged_user(
 
 
 @router.post("/enable")
-def enable_logged_user(
-        request: Request, session: Session = Depends(get_db)):
+def enable_logged_user(request: Request, session: Session = Depends(get_db)):
     """router that sends a request to enable the user.
     if enable successful it will be directed to main page.
     if it fails user will stay at settings page

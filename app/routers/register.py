@@ -11,13 +11,35 @@ from app.internal.security.ouath2 import get_hashed_password
 from app.database import schemas
 from app.database import models
 from app.dependencies import get_db, templates
-
+from app.internal.utils import save
 
 router = APIRouter(
     prefix="",
     tags=["register"],
     responses={404: {"description": "Not found"}},
 )
+
+
+def _create_user(
+    username: str,
+    full_name: str,
+    password: str,
+    email: str,
+    language_id: int,
+    description: str,
+    session: Session,
+) -> models.User:
+    """Creates and saves a new user."""
+    user = models.User(
+        username=username,
+        password=password,
+        email=email,
+        full_name=full_name,
+        description=description,
+        language_id=language_id,
+    )
+    save(session, user)
+    return user
 
 
 async def create_user(db: Session, user: schemas.UserCreate) -> models.User:
@@ -32,12 +54,10 @@ async def create_user(db: Session, user: schemas.UserCreate) -> models.User:
         "email": user.email,
         "password": hashed_password,
         "description": user.description,
+        "language_id": 1,
+        # TODO: Chose language id
     }
-    db_user = models.User(**user_details)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    return _create_user(**user_details, session=db)
 
 
 async def check_unique_fields(

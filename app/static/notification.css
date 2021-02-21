@@ -1,7 +1,31 @@
 /* general */
 #main {
-    width: 70%;
+    width: 90%;
     margin: 0 25% 0 5%;
+}
+
+#notifications-box {
+    margin-top: 1rem;
+
+}
+
+.notification {
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.notification:hover {
+    background-color: lightgray;
+    border-radius: 0.2rem;
+}
+
+.action, .description {
+    display: inline-block;
+}
+
+.action {
+    width: 4rem;
 }
 
 
@@ -15,7 +39,7 @@
     outline: 0;
 }
 
-.btn-read, .btn-accept {
+.btn-accept {
     color: green;
 }
 
@@ -23,12 +47,8 @@
     color: red;
 }
 
-.btn-read:focus, .btn-accept:focus {
-    color: black;
-}
-
-.btn-decline:focus {
-    color: black;
+#mark-all-ass-read {
+    margin: 1rem;
 }
 
 

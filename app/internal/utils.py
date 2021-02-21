@@ -1,6 +1,8 @@
 from typing import Any, List, Optional
 
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 from app.database.models import Base, User
 
@@ -69,10 +71,31 @@ def get_placeholder_user() -> User:
         A User object.
     """
     return User(
-        username='new_user',
-        email='my@email.po',
-        password='1a2s3d4f5g6',
-        full_name='My Name',
+        username="new_user",
+        email="my@email.po",
+        password="1a2s3d4f5g6",
+        full_name="My Name",
         language_id=1,
-        telegram_id='',
+        telegram_id="",
     )
+
+
+def safe_redirect_response(
+    url: str,
+    default: str = "/",
+    status_code: int = HTTP_302_FOUND,
+):
+    """Returns a safe redirect response.
+
+    Args:
+        url: the url to redirect to.
+        default: where to redirect if url isn't safe.
+        status_code: the response status code.
+
+    Returns:
+        The Notifications HTML page.
+    """
+    if not url.startswith("/"):
+        url = default
+
+    return RedirectResponse(url=url, status_code=status_code)

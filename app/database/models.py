@@ -229,7 +229,7 @@ class Invitation(Base):
     def decline(self, session: Session) -> None:
         """declines the invitation."""
         self.status = InvitationStatusEnum.DECLINED
-        session.flush()
+        session.merge(self)
         session.commit()
 
     def accept(self, session: Session) -> None:
@@ -239,15 +239,15 @@ class Invitation(Base):
 
         association = UserEvent(
             user_id=self.recipient.id,
-            event_id=self.event.id
+            event_id=self.event.id,
         )
         self.status = InvitationStatusEnum.ACCEPTED
-        session.flush()
+        session.merge(self)
         session.add(association)
         session.commit()
 
     def __repr__(self):
-        return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
+        return f"<Invitation ({self.event.owner} to {self.recipient})>"
 
 
 class Message(Base):
@@ -268,11 +268,11 @@ class Message(Base):
 
     def mark_as_read(self, session):
         self.status = MessageStatusEnum.READ
-        session.flush()
+        session.merge(self)
         session.commit()
 
     def __repr__(self):
-        return f'<Message {self.id}>'
+        return f"<Message {self.id}>"
 
 
 class OAuthCredentials(Base):
