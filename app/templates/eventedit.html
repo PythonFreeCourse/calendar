@@ -1,0 +1,30 @@
+<link href="{{ url_for('static', path='event/eventedit.css') }}" rel="stylesheet">
+    <form name="eventeditform" method="POST">
+        <!-- Temporary nav layout based on bootstrap -->
+        <ul class="nav nav-tabs" id="event_edit_nav" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="eventdetails-tab" data-toggle="tab" href="#eventdetails" role="tab" aria-controls="eventdetails" aria-selected="true">
+                    Event Details
+                    </a>
+                </li>
+                <!-- Copy commented section to add another navigation item -->
+                <!-- <li class="nav-item">
+                    <a class="nav-link" id="(CHANGE_ME)-tab" data-toggle="tab" href="#(CHANGE_ME)" role="tab" aria-controls="(CHANGE_ME)" aria-selected="true">
+                        (CHANGE_ME)
+                    </a>
+                </li> -->
+            </ul>
+            <div class="tab-content" id="event_edit_tabs">
+                <div class="tab-pane fade show active" id="eventdetails" role="tabpanel" aria-labelledby="eventdetails-tab">
+                    {% include "partials/calendar/event/edit_event_details_tab.html" %}
+                </div>
+                <!--    Copy commented section to add another tab -->
+                <!-- <div class="tab-pane fade" id="(CHANGE_ME)" role="tabpanel" aria-labelledby="(CHANGE_ME)-tab">
+                    ADD INCLUDE HERE
+                </div> -->
+            </div>
+        <div class="form_row">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+    <script src="{{ url_for('static', path='/voice.js') }}"></script>

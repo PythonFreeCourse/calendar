@@ -19,7 +19,7 @@ function getCurrency(baseCurrency, dateToday) {
   function buildCurrencyList(data) {
     function getListItem() {
       const listItem = document.createElement("li");
-      listItem.className = "list-group-item title_size_small";
+      listItem.className = "list-group-item title-size-small";
       return listItem;
     }
 
