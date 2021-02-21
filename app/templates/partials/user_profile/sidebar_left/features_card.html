@@ -6,20 +6,21 @@
     </p>
 
     <ul class="list-group">
+
       {% if not user.telegram_id %}
       <li class="list-group-item list-group-item-action no-border">
-        <a class="text-decoration-none text-success" href="https://t.me/pylander_bot" target="_blank">
-          <strong>Try PyLander bot</strong>
+        <a class="text-decoration-none text-success" href="https://t.me/pylendar_bot" target="_blank">
+          <strong>Try PyLendar bot</strong>
         </a>
       </li>
       {% endif %}
-      <li class="list-group-item list-group-item-action no-border">
-        <a class="text-decoration-none text-secondary" href="#">Export my calendar</a>
-      </li>
+
+
       <li class="list-group-item list-group-item-action no-border">
         <a class="text-decoration-none text-secondary" href="{{ url_for('import_holidays') }}">Add
           holidays to calendar</a>
       </li>
+
       <li class="list-group-item list-group-item-action no-border">
         {% if google_error %}
         <a class="text-decoration-none text-secondary" href="{{ url_for('google_sync') }}">Sync with
@@ -28,6 +29,12 @@
         <a class="text-decoration-none text-secondary" href="{{ url_for('google_sync') }}">Sync with
           Google</a> {% endif %}
       </li>
+
+      <!-- Export Calendar -->
+      <li class="list-group-item list-group-item-action no-border">
+        {% include 'partials/user_profile/sidebar_left/features_card/export_calendar.html' %}
+      </li>
+
     </ul>
   </div>
 </div>
