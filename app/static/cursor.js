@@ -18,11 +18,9 @@ function get_cursor_choices() {
 function change_cursor() {
   let cursor_settings = JSON.parse(JSON.parse(this.response));
   let primary_cursor = cursor_settings["primary_cursor"];
-  let primary_cursor_val =
-    "url(" + CURSORS_PATH + primary_cursor + ")" + ", auto";
+  let primary_cursor_val = `url(${CURSORS_PATH}${primary_cursor}), auto`;
   let secondary_cursor = cursor_settings["secondary_cursor"];
-  let secondary_cursor_val =
-    "url(" + CURSORS_PATH + secondary_cursor + ")" + ", auto";
+  let secondary_cursor_val = `url(${CURSORS_PATH}${secondary_cursor}), auto`;
   if (primary_cursor != "default.cur") {
     primary_val = primary_cursor_val;
   } else {

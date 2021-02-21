@@ -96,7 +96,7 @@ p {
   border: none;
   background-color: whitesmoke;
 }
-  
+
 .error-message {
     line-height: 0;
     color: red;
@@ -124,4 +124,11 @@ p {
 
 h2.modal-title {
   font-size: 1.25rem;
+}
+
+#primary-cursor,
+#secondary-cursor {
+  width: 10em;
+  height: 2.5em;
+  margin-top: 0.5em;
 }
