@@ -1,7 +1,10 @@
 from datetime import datetime
-from pyluach import dates, hebrewcal
+from pyluach import dates
 
-from app.internal.hebrew_date_view import *
+from app.internal.hebrew_date_view import \
+    get_hebrew_date, \
+    from_greogian_to_hebrew_date, \
+    get_month_name_by_num
 
 
 DAY = datetime.strptime("2021-01-01", "%Y-%m-%d").date()
@@ -17,4 +20,3 @@ def test_from_greogian_to_hebrew_date_and_find_month_name():
     result = from_greogian_to_hebrew_date(DAY2)
     assert result == dates.HebrewDate(5781, 12, 9)
     assert get_month_name_by_num(result) == 'אדר'
-
