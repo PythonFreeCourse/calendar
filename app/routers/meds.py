@@ -1,5 +1,5 @@
 from datetime import date, datetime, time, timedelta
-from typing import Dict, List, Tuple
+from typing import Dict, Iterator, List, Optional, Tuple
 
 from fastapi import APIRouter
 from fastapi.param_functions import Depends
@@ -37,6 +37,24 @@ ERRORS = {
 }
 
 
+def adjust_day(datetime_obj: datetime, early: time, late: time,
+               eq: bool = False) -> datetime:
+    """Returns datetime_obj as same or following day as needed.
+
+    Args:
+        datetime_obj (datetime): Datetime object to adjust.
+        early (time): Earlir time object.
+        late (time): Later time object.
+        eq (bool): Apply time object comparison.
+
+    Returns:
+        datetime: Datetime_obj with adjusted date.
+    """
+    if late < early or eq and late == early:
+        datetime_obj += timedelta(days=1)
+    return datetime_obj
+
+
 def trans_form(form: Dict[str, str]) -> FORM_TUPLE:
     """Converts all form data to useable types and return as a Tuple.
 
@@ -67,8 +85,7 @@ def trans_form(form: Dict[str, str]) -> FORM_TUPLE:
     maximum = get_time_from_string(form['max'])
     first_time = first if first else early
     start = datetime.combine(start_date, first_time)
-    if late <= early:
-        end_date += timedelta(1)
+    end_date = adjust_day(end_date, early, late, eq=True)
     end = datetime.combine(end_date, late)
     note = form['note']
     return (
@@ -99,8 +116,8 @@ def get_interval_in_minutes(early: time, late: time) -> int:
         int: Interval between time objects in minutes.
     """
     if early == late:
-        0
-    extra = 1 if early > late else 0
+        return 0
+    extra = int(early > late)
     early_date = datetime.combine(datetime.min, early)
     late_date = datetime.combine(datetime.min + timedelta(extra), late)
     interval = late_date - early_date
@@ -124,13 +141,11 @@ def validate_amount(amount: int, minimum: time, early: time,
     """
     min_time = (amount - 1) * convert_time_to_minutes(minimum)
     interval = get_interval_in_minutes(early, late)
-    if min_time <= interval:
-        return True
-    return False
+    return min_time <= interval
 
 
 def validate_events(datetimes: List[datetime]) -> bool:
-    """Return True if total amount of reminders is less than amx amount, False
+    """Return True if total amount of reminders is less than max amount, False
     otherwise.
 
     Args:
@@ -140,7 +155,7 @@ def validate_events(datetimes: List[datetime]) -> bool:
         bool: True if total amount of reminders is less than amx amount, False
               otherwise.
     """
-    return len(datetimes) <= MAX_EVENT_QUANTITY
+    return len(list(datetimes)) <= MAX_EVENT_QUANTITY
 
 
 def validate_form(form: Dict[str, str]) -> List[str]:
@@ -177,7 +192,7 @@ def calc_reminder_interval_in_seconds(form: Dict[str, str]) -> int:
     Returns:
         int: Interval between reminders in seconds.
     """
-    (_, _, amount, early, late, minimum, maximum, _, _, _) = trans_form(form)
+    _, _, amount, early, late, minimum, maximum, _, _, _ = trans_form(form)
     if amount == 1:
         return 0
     reminder_interval = get_interval_in_minutes(early, late)
@@ -208,9 +223,9 @@ def get_reminder_times(form: Dict[str, str]) -> List[time]:
         times.append(reminder.time())
 
     wasted_time = get_interval_in_minutes(times[-1], late) / 2
-    times = [(datetime.combine(datetime.min, t)
+    times = [(datetime.combine(datetime.min, time_obj)
               + timedelta(minutes=wasted_time)).time()
-             for t in times]
+             for time_obj in times]
 
     return times
 
@@ -233,72 +248,116 @@ def validate_datetime(reminder: datetime, day: date, early: time,
     """
     early_datetime = datetime.combine(day, early)
     late_datetime = datetime.combine(day, late)
-    if late < early:
-        late_datetime += timedelta(1)
+    late_datetime = adjust_day(late_datetime, early, late)
     return early_datetime <= reminder <= late_datetime
 
 
+def validate_first_day_reminder(previous: datetime, reminder_time: time,
+                                minimum: time, maximum: time) -> bool:
+    """Returns True if interval between reminders is valid, false otherwise.
+
+    Args:
+        previous (datetime): Previous reminder.
+        reminder_time (time): New reminder time.
+        minimum (time) - Minimal interval between reminders.
+        maximum (time) - Maximal interval between reminders.
+
+    Returns:
+        bool: True if interval between reminders is valid, false otherwise.
+    """
+    interval = get_interval_in_minutes(previous.time(), reminder_time)
+    min_minutes = convert_time_to_minutes(minimum)
+    max_minutes = convert_time_to_minutes(maximum)
+    return max_minutes >= interval >= min_minutes
+
+
+def get_different_time_reminder(previous: datetime, minimum: time, early: time,
+                                late: time) -> Optional[datetime]:
+    """Returns datetime object for first day reminder with non-standard time.
+
+    Args:
+        previous (datetime): Previous reminder.
+        minimum (time) - Minimal interval between reminders.
+        early (time): Earliest reminder time.
+        late (late): Latest reminder time. Interpreted as following day if
+                     earlier than early.
+
+    Returns:
+        datetime | None: First day reminder with non-standard time, if valid.
+    """
+    reminder = previous + timedelta(minutes=convert_time_to_minutes(minimum))
+    if validate_datetime(reminder, previous.date(), early, late):
+        return reminder
+
+
 def get_first_day_reminders(form: Dict[str, str],
-                            times: List[time]) -> List[datetime]:
-    """Returns a list of datetime object for reminders on the first day.
+                            times: List[time]) -> Iterator[datetime]:
+    """Generates datetime objects for reminders on the first day.
 
     Args:
         form (dict(str, str)): Medication form containing all relevant data.
         times (list(time)): Time objects for reminders.
 
-    Returns:
-        list(datetime): Datetime objects for reminders on first day.
+    Yields:
+        datetime: First day reminder datetime object.
     """
     _, _, amount, early, late, minimum, maximum, _, start, _ = trans_form(form)
-    datetimes = []
-    datetimes.append(start)
-    for t in times:
-        if len(datetimes) < amount:
-            reminder = datetime.combine(start.date(), t)
-            if t < early:
-                reminder += timedelta(1)
+    yield start
+    datetime_obj = start
+    i = 1
+    for time_obj in times:
+        if i < amount:
+            reminder = datetime.combine(start.date(), time_obj)
+            reminder = adjust_day(reminder, early, time_obj)
             if reminder > start:
-                interval = get_interval_in_minutes(
-                    datetimes[-1].time(), t)
-                min_minutes = convert_time_to_minutes(minimum)
-                max_minutes = convert_time_to_minutes(maximum)
-                if max_minutes >= interval >= min_minutes:
-                    datetimes.append(reminder)
-                else:
-                    reminder = datetimes[-1] + timedelta(
-                        minutes=min_minutes)
-                    if validate_datetime(reminder,
-                                         datetimes[-1].date(),
-                                         early, late):
-                        datetimes.append(reminder)
-    return datetimes
+                if not validate_first_day_reminder(datetime_obj, time_obj,
+                                                   minimum, maximum):
+                    reminder = get_different_time_reminder(
+                        datetime_obj, minimum, early, late)
+                yield reminder
+                datetime_obj = reminder
+                i += 1
 
 
-def get_reminder_datetimes(form: Dict[str, str]) -> List[datetime]:
-    """Returns a list of datetime object for reminders.
+def reminder_generator(times: List[time], early: time, start: datetime,
+                       day: date, end: datetime) -> Iterator[datetime]:
+    """Generates datetime objects for reminders based on times and date.
+
+    Args:
+        times (list(time)): Reminder times.
+        early (time): Earliest reminder time.
+        start (datetime): First reminder date and time.
+        day (date): Reminders date.
+        end (datetime) - Last reminder date and time.
+
+    Yields:
+        datetime: Reminder datetime object.
+    """
+    for time_obj in times:
+        extra = int(time_obj < early)
+        day_date = start.date() + timedelta(day + extra)
+        reminder = datetime.combine(day_date, time_obj)
+        if reminder <= end:
+            yield reminder
+
+
+def get_reminder_datetimes(form: Dict[str, str]) -> Iterator[datetime]:
+    """Generates datetime object for reminders.
 
     Args:
         form (dict(str, str)): Medication form containing all relevant data.
 
-    Returns:
-        list(datetime): Datetime objects for reminders.
+    Yields:
+        datetime: Reminder datetime object.
     """
-    _, first, _, early, late, _, _, _, start, end = trans_form(form)
+    _, first, _, early, _, _, _, _, start, end = trans_form(form)
     times = get_reminder_times(form)
-    datetimes = []
     total_days = (end.date() - start.date()).days + 1
     for day in range(total_days):
         if day == 0 and first:
-            datetimes.extend(get_first_day_reminders(form, times))
+            yield from get_first_day_reminders(form, times)
         else:
-            for t in times:
-                extra = 1 if t < early else 0
-                day_date = start.date() + timedelta(day + extra)
-                reminder = datetime.combine(day_date, t)
-                if reminder <= end:
-                    datetimes.append(reminder)
-
-    return datetimes
+            yield from reminder_generator(times, early, start, day, end)
 
 
 def create_events(session: Session, user: User, form: Dict[str, str]) -> None:
@@ -340,7 +399,7 @@ async def meds(request: Request,
         'name': '',
         'start': date.today(),
         'first': None,
-        'end': date.today() + timedelta(7),
+        'end': date.today() + timedelta(days=7),
         'amount': 1,
         'early': time(8),
         'late': time(22),

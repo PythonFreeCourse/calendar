@@ -32,6 +32,15 @@ def create_test_form(**kwargs: Dict[str, str]) -> Dict[str, str]:
     return form
 
 
+ADJUST = [
+    (datetime(2015, 10, 21), time(8), time(22), False, datetime(2015, 10, 21)),
+    (datetime(2015, 10, 21), time(8), time(22), True, datetime(2015, 10, 21)),
+    (datetime(2015, 10, 21), time(8), time(8), False, datetime(2015, 10, 21)),
+    (datetime(2015, 10, 21), time(8), time(8), True, datetime(2015, 10, 22)),
+    (datetime(2015, 10, 21), time(8), time(2), False, datetime(2015, 10, 22)),
+    (datetime(2015, 10, 21), time(8), time(2), True, datetime(2015, 10, 22)),
+]
+
 FORM_TRANS = [
     (FORM, (NAME, None, 3, time(8), time(22), time(4), time(6), QUOTE,
             datetime(2015, 10, 21, 8), datetime(2015, 10, 22, 22))),
@@ -101,6 +110,18 @@ DATETIMES_VALIDATE = [
     (datetime(1605, 11, 5, 23), date(1605, 11, 5), time(12), time(2), True),
 ]
 
+VALIDATE_FIRST = [
+    (datetime(2015, 10, 21, 10, 45), time(15), time(4), time(6), True),
+    (datetime(2015, 10, 21, 10, 45), time(12), time(4), time(6), False),
+    (datetime(2015, 10, 21, 10, 45), time(17), time(4), time(6), False),
+]
+
+DIFFERENT = [
+    (datetime(2015, 10, 21, 11, 45), time(4), time(8), time(22),
+     datetime(2015, 10, 21, 15, 45)),
+    (datetime(2015, 10, 21, 20, 45), time(4), time(8), time(22), None)
+]
+
 FIRST = [
     (create_test_form(first='10:45'), [time(10), time(15), time(20)],
      [datetime(2015, 10, 21, 10, 45), datetime(2015, 10, 21, 15),
@@ -114,6 +135,19 @@ FIRST = [
      [time(14), time(19), time(0)],
      [datetime(2015, 10, 21, 16, 43), datetime(2015, 10, 21, 20, 43),
       datetime(2015, 10, 22, 0, 43)]),
+]
+
+REMINDERS = [
+    ([time(10), time(15), time(20)], time(8), datetime(2015, 10, 21, 8),
+     0, datetime(2015, 10, 22, 22),
+     [datetime(2015, 10, 21, 10), datetime(2015, 10, 21, 15),
+      datetime(2015, 10, 21, 20)]),
+    ([time(10), time(15), time(20)], time(8), datetime(2015, 10, 21, 8),
+     1, datetime(2015, 10, 22, 22),
+     [datetime(2015, 10, 22, 10), datetime(2015, 10, 22, 15),
+      datetime(2015, 10, 22, 20)]),
+    ([time(10), time(15), time(20)], time(8), datetime(2015, 10, 21, 8),
+     2, datetime(2015, 10, 22, 22), []),
 ]
 
 DATETIMES = [
@@ -135,6 +169,12 @@ PYLENDAR = [
     (FORM, True),
     (create_test_form(end='1985-10-26'), False),
 ]
+
+
+@pytest.mark.parametrize('datetime_obj, early, late, eq, new_obj', ADJUST)
+def test_adjust_day(datetime_obj: datetime, early: time, late: time, eq: bool,
+                    new_obj: datetime) -> None:
+    assert meds.adjust_day(datetime_obj, early, late, eq) == new_obj
 
 
 @pytest.mark.parametrize('form, form_tuple', FORM_TRANS)
@@ -191,16 +231,41 @@ def test_validate_datetime(t: datetime, day: date, early: time, late: time,
     assert meds.validate_datetime(t, day, early, late) == boolean
 
 
+@pytest.mark.parametrize('previous, reminder_time, minimum, maximum, boolean',
+                         VALIDATE_FIRST)
+def test_validate_first_day_reminder(previous: datetime, reminder_time: time,
+                                     minimum: time, maximum: time,
+                                     boolean: bool) -> None:
+    assert meds.validate_first_day_reminder(
+        previous, reminder_time, minimum, maximum) == boolean
+
+
+@pytest.mark.parametrize('previous, minimum, early, late, reminder', DIFFERENT)
+def test_get_different_time_reminder(
+    previous: datetime, minimum: time, early: time, late: time,
+        reminder: datetime) -> None:
+    new = meds.get_different_time_reminder(previous, minimum, early, late)
+    assert new == reminder
+
+
 @pytest.mark.parametrize('form, times, datetimes', FIRST)
 def test_get_first_day_reminders(form: Dict[str, str], times: List[time],
                                  datetimes: List[datetime]) -> None:
-    assert meds.get_first_day_reminders(form, times) == datetimes
+    assert list(meds.get_first_day_reminders(form, times)) == datetimes
+
+
+@pytest.mark.parametrize('times, early, start, day, end, reminders', REMINDERS)
+def test_reminder_generator(
+    times: List[time], early: time, start: datetime, day: date, end: datetime,
+        reminders: List[datetime]) -> None:
+    new = list(meds.reminder_generator(times, early, start, day, end))
+    assert new == reminders
 
 
 @pytest.mark.parametrize('form, datetimes', DATETIMES)
 def test_get_reminder_datetimes(form: Dict[str, str],
                                 datetimes: List[datetime]) -> None:
-    assert meds.get_reminder_datetimes(form) == datetimes
+    assert list(meds.get_reminder_datetimes(form)) == datetimes
 
 
 @pytest.mark.parametrize('form, boolean', CREATE)

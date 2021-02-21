@@ -71,13 +71,11 @@ def get_time_from_string(string: str) -> Optional[Union[date, time]]:
         datetime.time | datetime.date | None: Date or Time object if valid,
                                               None otherwise.
     """
-    try:
-        return datetime.strptime(string, '%Y-%m-%d').date()
-    except ValueError:
+    formats = {'%Y-%m-%d': 'date', '%H:%M': 'time', '%H:%M:%S': 'time'}
+    for time_format, method in formats.items():
         try:
-            return datetime.strptime(string, '%H:%M').time()
+            time_obj = getattr(datetime.strptime(string, time_format), method)
         except ValueError:
-            try:
-                return datetime.strptime(string, '%H:%M:%S').time()
-            except ValueError:
-                return None
+            pass
+        else:
+            return time_obj()

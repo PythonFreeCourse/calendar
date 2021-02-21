@@ -58,7 +58,7 @@ def get_night_times(date: datetime, wage: SalarySettings,
     """
     sub = timedelta(1 if prev_day else 0)
     return (datetime.combine(date - sub, wage.night_start),
-            datetime.combine(date + timedelta(1) - sub, wage.night_end))
+            datetime.combine(date + timedelta(days=1) - sub, wage.night_end))
 
 
 def is_night_shift(start: datetime, end: datetime,
@@ -120,7 +120,7 @@ def get_relevant_holiday_times(
         date = end.date()
     try:
         return (datetime.combine(date, time(0)),
-                datetime.combine(date + timedelta(1),
+                datetime.combine(date + timedelta(days=1),
                                  time(0)))
     except NameError:
         return datetime.min, datetime.min
@@ -358,11 +358,11 @@ def get_relevant_weeks(year: int,
     """
     month_start, month_end = get_month_times(year, month)
     week_start = month_start - timedelta(month_start.weekday() + 1)
-    week_end = week_start + timedelta(7)
+    week_end = week_start + timedelta(days=7)
     while week_end <= month_end:
         yield week_start, week_end
         week_start = week_end
-        week_end += timedelta(7)
+        week_end += timedelta(days=7)
 
 
 def get_monthly_overtime(

@@ -435,7 +435,7 @@ def test_delete_comment(event_test_client: TestClient, session: Session,
 
 class TestApp:
     client = TestClient(app)
-    date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+    date_test_data = [datetime.today() - timedelta(days=1), datetime.today()]
     event_test_data = {
         'title': "Test Title",
         "location": "Fake City",
