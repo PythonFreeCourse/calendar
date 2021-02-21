@@ -52,9 +52,9 @@ def agenda(
                                                              event_obj.end)
         json_event_data = jsonable_encoder(event_obj)
         json_event_data['duration'] = event_duration
-        json_event_data['start'] = event_obj.start.time().strftime(
-            "%H:%M")
-        events[event_obj.start.date().strftime("%d/%m/%Y")].append(
+        json_event_data['start'] = event_obj.start.time().strftime("%H:%M")
+        event_key = event_obj.start.date().strftime("%d/%m/%Y")
+        events[event_key].append(json_event_data)
             json_event_data)
 
     return templates.TemplateResponse("agenda.html", {
