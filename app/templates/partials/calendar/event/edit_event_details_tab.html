@@ -59,14 +59,6 @@
 </div>
 
 <div class="form_row">
-  <label for="event_type">All-day:</label>
-  <select id="event_type" name="event_type" required>
-    <option value="on">Yes</option>
-    <option value="off" selected>No</option>
-  </select>
-</div>
-
-<div class="form_row">
   <div class="form_row_start">
     <label for="color">Color:</label>
     <select id="color" name="color">
@@ -77,6 +69,12 @@
   </div>
 
   <div class="form_row_end">
+    <label for="event_type">All-day:</label>
+    <select id="event_type" name="event_type" required>
+        <option value="on">Yes</option>
+        <option value="off" selected>No</option>
+    </select>
+
     <label for="availability">Availability:</label>
     <select id="availability" name="availability">
          <option value="True">Free</option>
