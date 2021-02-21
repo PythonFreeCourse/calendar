@@ -21,6 +21,7 @@ pytest_plugins = [
     'smtpdfix',
     'tests.quotes_fixture',
     'tests.zodiac_fixture',
+    'tests.jokes_fixture',
     'tests.comment_fixture',
 ]
 
