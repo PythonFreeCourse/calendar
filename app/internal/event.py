@@ -23,17 +23,16 @@ def raise_if_zoom_link_invalid(vc_link):
 def get_invited_emails(invited_from_form: str) -> List[str]:
     invited_emails = []
     if not invited_from_form:
-        invited_emails.append("")
-    else:
-        for invited_email in invited_from_form.split(","):
-            invited_email = invited_email.strip()
-            try:
-                validate_email(invited_email, check_deliverability=False)
-            except EmailSyntaxError:
-                logging.exception(
-                    f"{invited_email} is not a valid email address",
-                )
-                continue
+        return [""]
+    for invited_email in invited_from_form.split(","):
+        invited_email = invited_email.strip()
+        try:
+            validate_email(invited_email, check_deliverability=False)
+        except EmailSyntaxError:
+            logging.exception(
+                f"{invited_email} is not a valid email address",
+            )
+        else:
             invited_emails.append(invited_email)
 
     return invited_emails
