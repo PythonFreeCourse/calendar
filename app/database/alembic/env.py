@@ -1,13 +1,11 @@
-from app.database.models import Base
-# from app.database.models import *  # This helps alembic autogeneration
-
 from logging.config import fileConfig
-
-from sqlalchemy import create_engine
+import os
 
 from alembic import context
-import os
+from sqlalchemy import create_engine
+
 from app import config as app_config
+from app.database.models import Base
 
 
 SQLALCHEMY_DATABASE_URL = os.getenv(
