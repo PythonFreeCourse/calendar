@@ -1,4 +1,3 @@
-from os import remove
 from fastapi import APIRouter, Request, Depends
 
 from app.dependencies import get_db, SessionLocal, templates
