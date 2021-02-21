@@ -1,0 +1,20 @@
+<div class="modal" id="update-description-modal" tabindex="-1" data-bs-backdrop="static"
+     aria-labelledby="update-description-modal-label" aria-hidden="true">
+  <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+    <div class="modal-content">
+      <div class="modal-header profile-modal-header">
+        <h2 class="modal-title">{{ gettext("Update description") }}</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="update_user_description" method="post">
+          <input type="text" class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+                 name="description" placeholder="About me" value="{{ user.description }}">
+          <div class="d-flex flex-row-reverse mt-4">
+            <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
