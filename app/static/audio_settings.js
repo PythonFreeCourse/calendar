@@ -44,7 +44,7 @@ function add_set_checked_listener(element_id) {
  * One of: Music On/off, Sound Effects On/Off.
  */
 function perform_func_on_click(element_id, func) {
-  let elem = document.getElementById(element_id);
+  const elem = document.getElementById(element_id);
   if (elem) {
     elem.addEventListener("click", func);
   }
@@ -56,9 +56,9 @@ function perform_func_on_click(element_id, func) {
  * @param {string} element_id - the id attribute of the html element. One of: Music On/off, Sound Effects On/Off.
  */
 function set_checked(element_id) {
-  is_music = element_id.includes("music");
-  is_off = element_id.includes("off");
-  to_toggle = is_music ? "music" : "sfx";
+  const is_music = element_id.includes("music");
+  const is_off = element_id.includes("off");
+  const to_toggle = is_music ? "music" : "sfx";
   set_disabled_or_enabled(to_toggle, is_music, is_off);
 }
 
@@ -96,24 +96,25 @@ function set_disabled_or_enabled(name, is_class, to_set) {
  * @param {string} audio_id_off - the id corresponding to the Off option of the element, for Music as well as sfx.
  */
 function set_default_for_audio_type(audio_id_on, audio_id_off) {
-  let is_on = document.getElementById(audio_id_on).checked;
-  let is_off = document.getElementById(audio_id_off).checked;
+  const is_on = document.getElementById(audio_id_on).checked;
+  const is_off = document.getElementById(audio_id_off).checked;
   if (!is_on && !is_off) {
     document.getElementById(audio_id_off).checked = true;
   }
 }
 
 function prepare_audio() {
-  var audio_settings = JSON.parse(this.response);
-  music = document.getElementById("my-audio");
-  sfx = document.getElementById("sfx");
-  var audio_settings = JSON.parse(audio_settings);
-  var music_on = audio_settings["music_on"];
+  let audio_settings = JSON.parse(this.response);
+  const music = document.getElementById("my-audio");
+  const sfx = document.getElementById("sfx");
+  audio_settings = JSON.parse(audio_settings);
+  const music_on = audio_settings["music_on"];
 
   if (music.muted && (music_on || music_on == null)) {
-    var choices = audio_settings["playlist"];
-    music.src =
-      "/static/tracks/" + choices[Math.floor(Math.random() * choices.length)];
+    const choices = audio_settings["playlist"];
+    music.src = `/static/tracks/${
+      choices[Math.floor(Math.random() * choices.length)]
+    }`;
     music.volume = audio_settings["music_vol"];
     music.muted = false;
   }
@@ -139,7 +140,7 @@ function prepare_audio() {
  * @summary This function loads user choices and starts audio.
  */
 function start_audio() {
-  var request = new XMLHttpRequest();
+  const request = new XMLHttpRequest();
   request.open("GET", "/audio/start", true);
 
   request.onload = prepare_audio;
@@ -150,7 +151,7 @@ function start_audio() {
  * @summary This function plays a sound effect.
  */
 function play_sfx() {
-  sfx = document.getElementById("sfx");
+  const sfx = document.getElementById("sfx");
   sfx.play();
 }
 
@@ -158,8 +159,8 @@ function play_sfx() {
  * @summary This function stops the audio.
  */
 function stop_audio() {
-  music = document.getElementById("my-audio");
-  sfx = document.getElementById("sfx");
+  const music = document.getElementById("my-audio");
+  const sfx = document.getElementById("sfx");
 
   if (!music.paused) {
     music.pause();
