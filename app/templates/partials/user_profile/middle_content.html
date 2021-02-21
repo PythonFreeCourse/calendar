@@ -1,0 +1,13 @@
+<div class="col-5">
+  <div class="container card mb-2 pb-0" id="daily_horoscope">
+  </div>
+  <!-- Upcoming events -->
+  <div class="mb-3">
+    {% for event in events %}
+      <!-- Event card -->
+      {% include 'partials/user_profile/middle_content/event_card.html' %}
+
+      {% include 'partials/user_profile/middle_content/update_event_modal.html' %}
+    {% endfor %}
+  </div>
+</div>
