@@ -1,0 +1,35 @@
+body {
+	margin-left: 6.25em;
+	margin-right: 6.25em;
+}
+
+div.gallery {
+	margin: 1.875em;
+	border: 0.0625em solid #ccc;
+	float: left;
+	width: 21.875em;
+	height: 31.25em;
+}
+
+div.gallery:hover {
+	border: 0.0625em solid #777;
+}
+
+div.gallery img {
+	width: 100%;
+	height: 23.75em;
+}
+
+div.credit-details {
+	padding: 1em;
+	text-align: center;
+}
+
+div.a.contact {
+	padding: 1em;
+	text-align: center;
+}
+
+p {
+	color: rgb(13, 110, 253);
+}
