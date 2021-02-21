@@ -10,9 +10,9 @@ from sqlalchemy.sql.elements import Null
 from sqlalchemy.orm.session import Session
 from starlette import status
 
-
+from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import get_db
+from app.dependencies import EVENT_IMAGES_PATH, get_db
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
@@ -552,7 +552,7 @@ def test_event_with_image(event_test_client, client, session):
         in response.headers["location"]
     )
     assert is_event_image is True
-    rel_path = fr"app/media/{event_id}.png"
+    rel_path = fr"{EVENT_IMAGES_PATH}/{event_id}{PICTURE_EXTENSION}"
     fileDir = os.path.dirname(os.path.realpath("__file__"))
     filename = os.path.join(fileDir, rel_path)
     filename = os.path.abspath(os.path.realpath(filename))
