@@ -7,7 +7,7 @@ from starlette.templating import Jinja2Templates
 
 
 class Settings(BaseSettings):
-    app_name: str = "PyLander"
+    app_name: str = "PyLendar"
     bot_api: str = "BOT_API"
     webhook_url: str = "WEBHOOK_URL"
 
