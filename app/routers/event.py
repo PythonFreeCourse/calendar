@@ -161,15 +161,6 @@ async def create_new_event(
     )
 
 
-def raise_for_nonexisting_event(event_id: int) -> None:
-    error_message = f"Event ID does not exist. ID: {event_id}"
-    logger.exception(error_message)
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail=error_message,
-    )
-
-
 def get_waze_link(event: Event) -> str:
     """Get a waze navigation link to the event location.
 
@@ -178,13 +169,22 @@ def get_waze_link(event: Event) -> str:
         Otherwise, waze will look for the address that appears in the location.
         If there is no address, an empty string will be returned."""
 
+    if not event.location:
+        return ""
     # if event.latitude and event.longitude:
     #     coordinates = f"{event.latitude},{event.longitude}"
     #     return f"https://waze.com/ul?ll={coordinates}&navigate=yes"
-    if event.location:
-        url_location = urllib.parse.quote(event.location)
-        return f"https://waze.com/ul?q={url_location}&navigate=yes"
-    return ""
+    url_location = urllib.parse.quote(event.location)
+    return f"https://waze.com/ul?q={url_location}&navigate=yes"
+
+
+def raise_for_nonexisting_event(event_id: int) -> None:
+    error_message = f"Event ID does not exist. ID: {event_id}"
+    logger.exception(error_message)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=error_message,
+    )
 
 
 @router.get("/{event_id}", include_in_schema=False)
@@ -207,8 +207,8 @@ async def eventview(
         "eventview.html",
         {
             "request": request,
-            "event": event_considering_privacy,
             "waze_link": waze_link,
+            "event": event_considering_privacy,
             "comments": comments,
             "start_format": start_format,
             "end_format": end_format,
