@@ -1,4 +1,4 @@
-let items_num = 1;
+var items_num = 1;
 
 document.addEventListener('click', function(e) {
     if (e.target && e.target.id.includes('btnRemoveItem')){
@@ -15,20 +15,19 @@ document.addEventListener('click', function(e) {
 
 
 function addItem() {
-    let remove_button = 7;
-    let remove_label = 1;
+    const remove_button = 7;
+    const remove_label = 1;
     let item = document.getElementById("shared_list_item").cloneNode(true);
-    item.style.display = "flex";
+    item.className = "shared_list_item_on"
     item.childNodes[remove_button].id += String(items_num);
-    item.childNodes[remove_button].childNodes[remove_label].id +=
-    item.id = item.id + String(items_num);
-        items_num++;
-        for (i = 0; i < item.children.length; i++ ) {
+    item.childNodes[remove_button].childNodes[remove_label].id += String(items_num);
+    items_num++;
+    for (i = 0; i < item.children.length; i++ ) {
         if (item.children[i].tagName == 'INPUT') {
             item.children[i].setAttribute('required', 'required');
         }
-        }
-        document.getElementById("Items").appendChild(item);
+    }
+    document.getElementById("Items").appendChild(item);
 }
 
 function removeItem(item_id) {

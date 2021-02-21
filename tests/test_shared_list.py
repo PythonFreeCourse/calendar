@@ -1,49 +1,56 @@
 from collections import namedtuple
 
 import pytest
-from app.routers.event import (_check_item_is_valid, _create_shared_list,
-                               extract_shared_list_from_data)
+from app.routers.event import (
+    _check_item_is_valid,
+    _create_shared_list,
+    extract_shared_list_from_data,
+)
 from starlette.datastructures import MultiDict
 
 TEST_SHARED_LISTS = [
-    {'title': 'Choco list',
-     'items': [{'name': 'Chocolate',
-                'amount': 2,
-                'participant': 'Elior',
-                'notes': 'Maltesers are awesome!'}]},
-    {'items': [{'name': 'Notebooks',
-                'amount': 2.5,
-                'participant': 'Efrat'}]}
+    {
+        "title": "Choco list",
+        "items": [
+            {
+                "name": "Chocolate",
+                "amount": 2,
+                "participant": "Elior",
+                "notes": "Maltesers are awesome!",
+            },
+        ],
+    },
+    {"items": [{"name": "Notebooks", "amount": 2.5, "participant": "Efrat"}]},
 ]
 
 VALID_DATA = MultiDict(
-    title='test title',
-    start_date='2021-01-28',
-    start_time='12:59',
-    end_date='2021-01-28',
-    end_time='15:01',
-    location_type='vc_url',
-    location='https://us02web.zoom.us/j/875384596',
-    description='content',
-    color='red',
-    availability='True',
-    privacy='public',
-    invited='a@a.com,b@b.com'
+    title="test title",
+    start_date="2021-01-28",
+    start_time="12:59",
+    end_date="2021-01-28",
+    end_time="15:01",
+    location_type="vc_url",
+    location="https://us02web.zoom.us/j/875384596",
+    description="content",
+    color="red",
+    availability="True",
+    privacy="public",
+    invited="a@a.com,b@b.com",
 )
 
 WRONG_DATA = MultiDict(
-    title='test title',
-    start_date='2021-01-28',
-    start_time='12:59',
-    end_date='2021-01-28',
-    end_time='15:01',
-    location_type='vc_url',
-    location='https://us02web.zoom.us/j/875384596',
-    description='content',
-    color='red',
-    availability='True',
-    privacy='public',
-    invited='a@a.com,b@b.com'
+    title="test title",
+    start_date="2021-01-28",
+    start_time="12:59",
+    end_date="2021-01-28",
+    end_time="15:01",
+    location_type="vc_url",
+    location="https://us02web.zoom.us/j/875384596",
+    description="content",
+    color="red",
+    availability="True",
+    privacy="public",
+    invited="a@a.com,b@b.com",
 )
 
 
@@ -52,9 +59,11 @@ def test_create_shared(test_list, session):
     """Check the shared list build function and
     communication with db is working."""
     shared_list = _create_shared_list(test_list, session)
-    assert (shared_list.title == test_list.get('title')
-           or shared_list.title == 'Shared List')
-    assert shared_list.items[0].name == test_list['items'][0]['name']
+    assert (
+        shared_list.title == test_list.get("title")
+        or shared_list.title == "Shared List"
+    )
+    assert shared_list.items[0].name == test_list["items"][0]["name"]
 
 
 def test_create_shared_list(session):
@@ -64,9 +73,9 @@ def test_create_shared_list(session):
 
 def test_extract_shared_list_from_data_correct(session):
     """Check the shared list extraction function is working."""
-    VALID_DATA.setlist('item_name', ['Vanilla', 'Strawberries', 'Coffee'])
-    VALID_DATA.setlist('item_amount', ['3', '2', '1'])
-    VALID_DATA.setlist('item_participant', ['Elior', 'Efrat', 'Yam'])
+    VALID_DATA.setlist("item_name", ["Vanilla", "Strawberries", "Coffee"])
+    VALID_DATA.setlist("item_amount", ["3", "2", "1"])
+    VALID_DATA.setlist("item_participant", ["Elior", "Efrat", "Yam"])
     assert len(extract_shared_list_from_data(VALID_DATA, session).items) == 3
 
 
@@ -74,21 +83,19 @@ def test_extract_shared_list_from_data_false_info(session):
     """Test extraction of wrong data.
     Check the system capability of ignoring
     false/missing information."""
-    assert not len(extract_shared_list_from_data(WRONG_DATA,
-                                                 session).items) == 3
+    assert (
+        not len(extract_shared_list_from_data(WRONG_DATA, session).items) == 3
+    )
 
 
 def test_extract_shared_list_from_data_error_handling(session):
     """Test error handling during extraction."""
-    WRONG_DATA.setlist('item_name', ['Vanilla', 'Strawberries', 'Coffee'])
-    assert extract_shared_list_from_data(WRONG_DATA, session) is not None
+    WRONG_DATA.setlist("item_name", ["Vanilla", "Strawberries", "Coffee"])
+    assert extract_shared_list_from_data(WRONG_DATA, session)
 
 
 def test_check_item_is_valid():
     """Check if a wrong Item object is valid."""
     Item = namedtuple("Item", ["name", "amount", "participant"])
-    item = Item(
-        name='Bagel',
-        amount='word',
-        participant='John')
-    assert _check_item_is_valid(item) is False
+    item = Item(name="Bagel", amount="word", participant="John")
+    assert not _check_item_is_valid(item)
