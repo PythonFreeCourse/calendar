@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Request, Depends
-from typing import List
 
 from app.dependencies import get_db, SessionLocal, templates
 from app.database.models import UserFeature, Feature
@@ -7,10 +6,8 @@ from app.internal.utils import get_current_user
 from app.internal.features import (
     create_user_feature_association,
     is_association_exists_in_db,
-    get_user_disabled_features,
-    get_user_enabled_features,
     get_user_uninstalled_features,
-    get_user_installed_features
+    get_user_enabled_features
 )
 
 router = APIRouter(
@@ -23,9 +20,9 @@ router = APIRouter(
 @router.get('/')
 async def index(
     request: Request, session: SessionLocal = Depends(get_db)
-) -> List:
+) -> templates:
     features = {
-        "installed": get_user_installed_features(session=session),
+        "installed": get_user_enabled_features(session=session),
         "uninstalled": get_user_uninstalled_features(session=session)
     }
     print(features)
@@ -86,63 +83,3 @@ async def delete_user_feature_association(
     session.commit()
 
     return True
-
-
-@router.post('/on')
-async def enable_feature(request: Request,
-                         session: SessionLocal = Depends(get_db)) -> bool:
-    form = await request.form()
-
-    is_exists = is_association_exists_in_db(form=form, session=session)
-
-    if not is_exists:
-        return False
-
-    db_association = session.query(UserFeature).filter_by(
-        feature_id=form['feature_id'],
-        user_id=form['user_id']
-    ).first()
-    db_association.is_enable = True
-    session.commit()
-    return True
-
-
-@router.post('/off')
-async def disable_feature(request: Request,
-                          session: SessionLocal = Depends(get_db)) -> bool:
-    form = await request.form()
-    is_exist = is_association_exists_in_db(form=form, session=session)
-
-    if not is_exist:
-        return False
-
-    db_association = session.query(UserFeature).filter_by(
-        feature_id=form['feature_id'],
-        user_id=form['user_id']
-    ).first()
-
-    db_association.is_enable = False
-    session.commit()
-
-    return True
-
-
-@router.get('/active')
-def show_user_enabled_features(
-    session: SessionLocal = Depends(get_db)
-) -> List:
-    return get_user_enabled_features(session=session)
-
-
-@router.get('/deactive')
-def show_user_disabled_features(
-    session: SessionLocal = Depends(get_db)
-) -> List:
-    return get_user_disabled_features(session=session)
-
-
-@router.get('/unlinked')
-def get_user_unlinked_features(
-    session: SessionLocal = Depends(get_db)
-) -> List:
-    return get_user_uninstalled_features(session=session)

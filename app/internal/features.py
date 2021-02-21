@@ -23,9 +23,9 @@ def feature_access_filter(call_next):
         route = '/' + str(request.url).replace(str(request.base_url), '')
 
         # getting access status.
-        is_enabled = is_access_allowd(route=route)
+        access = is_access_allowd(route=route)
 
-        if is_enabled:
+        if access:
             # in case the feature is enabled or access is allowed.
             return await call_next(*args, **kwargs)
 
@@ -100,14 +100,7 @@ def is_feature_enabled(
     feature: Feature, session: SessionLocal = Depends(get_db)
 ) -> bool:
     enabled_features = get_user_enabled_features(session=session)
-    return any(ef['feature'].id == feature.id for ef in enabled_features)
-
-
-def is_feature_disabled(
-    feature: Feature, session: SessionLocal = Depends(get_db)
-) -> bool:
-    disable_features = get_user_disabled_features(session=session)
-    return any(ef['feature'].id == feature.id for ef in disable_features)
+    return any(ef.id == feature.id for ef in enabled_features)
 
 
 def is_access_allowd(route: str) -> bool:
@@ -169,25 +162,9 @@ def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> List:
         if pref.is_enable:
             feature = session.query(Feature).filter_by(
                 id=pref.feature_id).first()
-            enabled.append({'feature': feature, 'is_enabled': pref.is_enable})
+            enabled.append(feature)
 
     return enabled
-
-
-def get_user_disabled_features(
-    session: SessionLocal = Depends(get_db)
-) -> List:
-    user = get_current_user(session=session)
-    disabled = []
-    user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
-
-    for pref in user_prefs:
-        if not pref.is_enable:
-            feature = session.query(Feature).filter_by(
-                id=pref.feature_id).first()
-            disabled.append({'feature': feature, 'is_enabled': pref.is_enable})
-
-    return disabled
 
 
 def get_user_uninstalled_features(session: SessionLocal):
@@ -195,15 +172,11 @@ def get_user_uninstalled_features(session: SessionLocal):
     all_features = session.query(Feature).all()
 
     for feat in all_features:
-        in_disabled = is_feature_disabled(
-            feature=feat, session=session
-        )
-
         in_enabled = is_feature_enabled(
             feature=feat, session=session
         )
 
-        if not in_enabled and not in_disabled:
+        if not in_enabled:
             uninstalled.append(feat)
 
     return uninstalled
@@ -214,15 +187,12 @@ def get_user_installed_features(session: SessionLocal):
     all_features = session.query(Feature).all()
 
     for feat in all_features:
-        in_disabled = is_feature_disabled(
-            feature=feat, session=session
-        )
 
         in_enabled = is_feature_enabled(
             feature=feat, session=session
         )
 
-        if in_enabled or in_disabled:
+        if in_enabled:
             installed.append(feat)
 
     return installed

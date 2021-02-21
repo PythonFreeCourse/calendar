@@ -109,13 +109,7 @@ def test_create_association(session, user):
 
 
 def test_get_user_enabled_features(session, feature, association_on):
-    assert internal.get_user_enabled_features(session)[0].get(
-        'is_enabled') is True
-
-
-def test_get_user_disabled_features(session, feature, association_off):
-    assert internal.get_user_disabled_features(session)[0].get(
-        'is_enabled') is False
+    assert internal.get_user_enabled_features(session)[0] is not None
 
 
 def test_is_association_exist_in_db(session, form_mock, association_off):
@@ -144,11 +138,6 @@ def test_update_feature(session, feature, update_dict):
 def test_is_feature_exist_in_enabled(session, feature, association_on):
     feat = session.query(Feature).filter_by(name=feature.name).first()
     assert internal.is_feature_enabled(feat, session)
-
-
-def test_is_feature_exist_in_disabled(session, feature, association_off):
-    feat = session.query(Feature).filter_by(name=feature.name).first()
-    assert internal.is_feature_disabled(feat, session)
 
 
 def test_is_feature_enabled(mocker, session, association_on):
@@ -190,79 +179,3 @@ def test_delete_user_feature_association(
     resp = features_test_client.post(url, data=form_mock)
     assert resp.ok
     assert resp.content == b'true'
-
-
-def test_enable_feature(features_test_client, form_mock, association_off):
-    url = route.router.url_path_for('enable_feature')
-
-    resp = features_test_client.post(url, data=form_mock)
-    assert resp.ok
-    assert resp.content == b'true'
-
-
-def test_disable_feature(features_test_client, form_mock, association_off):
-    url = route.router.url_path_for('disable_feature')
-
-    resp = features_test_client.post(url, data=form_mock)
-    assert resp.ok
-    assert resp.content == b'true'
-
-
-def test_show_user_enabled_features(mocker, features_test_client):
-
-    mocker.patch(
-        'app.routers.features.get_user_enabled_features',
-        return_value=True
-    )
-
-    url = route.router.url_path_for('show_user_enabled_features')
-
-    resp = features_test_client.get(url)
-    assert resp.ok
-    assert resp.content == b'true'
-
-
-def test_show_user_disabled_features(mocker, features_test_client):
-
-    mocker.patch(
-        'app.routers.features.get_user_disabled_features',
-        return_value=True
-    )
-
-    url = route.router.url_path_for('show_user_disabled_features')
-
-    resp = features_test_client.get(url)
-    assert resp.ok
-    assert resp.content == b'true'
-
-
-def test_get_user_unlinked_features(mocker, features_test_client, session):
-    unlinked = Feature(
-        name='unlinked',
-        route='/unlinked',
-        description='unlinked',
-        creator='unlinked',
-        icon='unlinked'
-    )
-
-    session.add(unlinked)
-    session.commit()
-
-    mocker.patch(
-        'app.routers.features.is_feature_disabled',
-        return_value=False
-    )
-    mocker.patch(
-        'app.routers.features.is_feature_enabled',
-        return_value=False
-    )
-
-    url = route.router.url_path_for('get_user_unlinked_features')
-
-    resp = features_test_client.get(url)
-    assert resp.ok
-    json_resp = resp.json()
-    print(json_resp)
-    session.query(Feature).delete()
-    session.commit()
-    assert len(json_resp) == 1
