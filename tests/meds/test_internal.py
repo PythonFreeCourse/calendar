@@ -135,6 +135,19 @@ DIFFERENT = [
     (datetime(2015, 10, 21, 20, 45), time(4), time(8), time(22), None)
 ]
 
+CREATE_FIRST = [
+    (create_test_form(first='10:45'), time(15), datetime(2015, 10, 21, 10, 45),
+     datetime(2015, 10, 21, 15)),
+    (create_test_form(first='10:45'), time(14), datetime(2015, 10, 21, 10, 45),
+     datetime(2015, 10, 21, 14, 45)),
+    (create_test_form(first='20:30', late='02:00'), time(1),
+     datetime(2015, 10, 21, 20, 30), datetime(2015, 10, 22, 1)),
+    (create_test_form(first='21:30', late='02:00'), time(1),
+     datetime(2015, 10, 21, 21, 30), datetime(2015, 10, 22, 1, 30)),
+    (create_test_form(first='16:30', late='02:00'), time(10),
+     datetime(2015, 10, 21, 16, 30), None),
+]
+
 FIRST = [
     (create_test_form(first='10:45'), [time(10), time(15), time(20)],
      [datetime(2015, 10, 21, 10, 45), datetime(2015, 10, 21, 15),
@@ -256,6 +269,14 @@ def test_get_different_time_reminder(
     previous: datetime, minimum: time, early: time, late: time,
         reminder: datetime) -> None:
     new = meds.get_different_time_reminder(previous, minimum, early, late)
+    assert new == reminder
+
+
+@pytest.mark.parametrize('form, time_obj, previous, reminder', CREATE_FIRST)
+def test_create_first_day_reminder(form: meds.Form, time_obj: time,
+                                   previous: datetime,
+                                   reminder: datetime) -> None:
+    new = meds.create_first_day_reminder(form, time_obj, previous)
     assert new == reminder
 
 

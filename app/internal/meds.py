@@ -21,24 +21,6 @@ ERRORS = {
 }
 
 
-def adjust_day(datetime_obj: datetime, early: time, late: time,
-               eq: bool = False) -> datetime:
-    """Returns datetime_obj as same or following day as needed.
-
-    Args:
-        datetime_obj (datetime): Datetime object to adjust.
-        early (time): Earlir time object.
-        late (time): Later time object.
-        eq (bool): Apply time object comparison.
-
-    Returns:
-        datetime: Datetime_obj with adjusted date.
-    """
-    if late < early or eq and late == early:
-        datetime_obj += timedelta(days=1)
-    return datetime_obj
-
-
 class Form(BaseModel):
     """Represents a translated form object.
 
@@ -63,6 +45,24 @@ class Form(BaseModel):
     start: datetime
     end: datetime
     note: Optional[str]
+
+
+def adjust_day(datetime_obj: datetime, early: time, late: time,
+               eq: bool = False) -> datetime:
+    """Returns datetime_obj as same or following day as needed.
+
+    Args:
+        datetime_obj (datetime): Datetime object to adjust.
+        early (time): Earlir time object.
+        late (time): Later time object.
+        eq (bool): Apply time object comparison.
+
+    Returns:
+        datetime: Datetime_obj with adjusted date.
+    """
+    if late < early or eq and late == early:
+        datetime_obj += timedelta(days=1)
+    return datetime_obj
 
 
 def trans_form(web_form: Dict[str, str]) -> Tuple[Form, Dict[str, Any]]:
@@ -291,14 +291,23 @@ def get_different_time_reminder(previous: datetime, min: time, early: time,
         return reminder
 
 
-def create_first_day_reminder(form: Form, time_obj: time,
-                              datetime_obj: datetime) -> datetime:
-    reminder = datetime.combine(form.start.date(), time_obj)
-    reminder = adjust_day(reminder, form.early, time_obj)
+def create_first_day_reminder(form: Form, reminder_time: time,
+                              previous: datetime) -> Optional[datetime]:
+    """Returns datetime object for reminder on first day.
+
+    form (Form): Form object containing all relevant data.
+    reminder_time (time): Time object for new reminder.
+    previous (datetime): Previous reminder.
+
+    Returns:
+        datetime | None: First day reminder.
+    """
+    reminder = datetime.combine(form.start.date(), reminder_time)
+    reminder = adjust_day(reminder, form.early, reminder_time)
     if reminder > form.start:
-        if not validate_first_day_reminder(datetime_obj, time_obj, form.min,
+        if not validate_first_day_reminder(previous, reminder_time, form.min,
                                            form.max):
-            reminder = get_different_time_reminder(datetime_obj, form.min,
+            reminder = get_different_time_reminder(previous, form.min,
                                                    form.early, form.late)
         return reminder
 
