@@ -165,7 +165,7 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
+    user = session.query(User).filter_by(username="new_user").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -177,8 +177,7 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
-    parasha_obj = weekly_parasha.get_parasha_object(session, day)
-    print(parasha_obj)
+    parasha_obj = weekly_parasha.get_parasha_object(session, day.date())
     events_n_attrs = get_events_and_attributes(
         day=day,
         session=session,

@@ -386,35 +386,12 @@ class Zodiac(Base):
 
 
 class Parasha(Base):
-    """
-    Each year the Json file will need to be re-updated
-    according to this API in this way:
-
-    def relevent_details(parasha):
-        parashot_dict = {
-        'name': parasha['title'],
-        'hebrew': parasha['hebrew'],
-        'link': parasha['link'],
-        'date': parasha['date']}
-        return parashot_dict
-
-    def get_all_parashot():
-        request = requests.get(
-        'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&
-        min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&
-        c=on&geo=geoname&geonameid=293397&m=50&s=on&d=on&D=on')
-        items = request.json()['items']
-        [relevent_details(p) for parasha in items
-        if 'Parashat' in parasha['title]]
-    """
-
     __tablename__ = "parashot"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     hebrew_name = Column(String, nullable=False)
     link = Column(String, nullable=False)
-    date = Column(DateTime, nullable=False)
 
 
 class Joke(Base):
