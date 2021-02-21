@@ -6,8 +6,17 @@ from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
-from app.routers import agenda, event, friendview, google_connect, profile
-from app.routers import notification
+
+from app.routers import (
+    agenda,
+    categories,
+    event,
+    friendview,
+    google_connect,
+    notification,
+    profile,
+    weight,
+)
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
 from tests.conftest import get_test_db, test_engine
@@ -64,6 +73,11 @@ def friendview_test_client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(scope="session")
+def weight_test_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(weight.get_db)
+
+
+@pytest.fixture(scope="session")
 def event_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(event.get_db)
 
@@ -74,7 +88,12 @@ def home_test_client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(scope="session")
-def profile_test_client() -> Iterator[TestClient]:
+def categories_test_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(categories.get_db)
+
+
+@pytest.fixture(scope="session")
+def profile_test_client() -> Generator[Session, None, None]:
     Base.metadata.create_all(bind=test_engine)
     main.app.dependency_overrides[profile.get_db] = get_test_db
     main.app.dependency_overrides[

@@ -6,9 +6,13 @@ from tests.fixtures.client_fixture import login_client
 class TestNotificationRoutes:
     NO_NOTIFICATIONS = b"You don't have any new notifications."
     NEW_NOTIFICATIONS_URL = router.url_path_for("view_notifications")
-    LOGIN_DATA = {"username": "test_username", "password": "test_password"}
+    LOGIN_DATA = {"username": "registered_user", "password": "registered_user"}
 
-    def test_view_no_notifications(self, user, notification_test_client):
+    def test_view_no_notifications(
+        self,
+        registered_user,
+        notification_test_client,
+    ):
         login_client(notification_test_client, self.LOGIN_DATA)
         url = router.url_path_for("view_notifications")
         resp = notification_test_client.get(url)
@@ -17,7 +21,7 @@ class TestNotificationRoutes:
 
     def test_accept_invitations(
         self,
-        user,
+        registered_user,
         invitation,
         notification_test_client,
     ):
@@ -29,7 +33,7 @@ class TestNotificationRoutes:
 
     def test_decline_invitations(
         self,
-        user,
+        registered_user,
         invitation,
         notification_test_client,
         session,
@@ -42,7 +46,7 @@ class TestNotificationRoutes:
 
     def test_mark_message_as_read(
         self,
-        user,
+        registered_user,
         message,
         notification_test_client,
         session,
@@ -55,7 +59,7 @@ class TestNotificationRoutes:
 
     def test_mark_all_as_read(
         self,
-        user,
+        registered_user,
         message,
         sec_message,
         notification_test_client,
