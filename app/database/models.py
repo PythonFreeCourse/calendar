@@ -33,15 +33,15 @@ Base: DeclarativeMeta = declarative_base()
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
     full_name = Column(String)
-    description = Column(String, default='Happy new user!')
-    avatar = Column(String, default='profile.png')
+    description = Column(String, default="Happy new user!")
+    avatar = Column(String, default="profile.png")
     telegram_id = Column(String, unique=True)
     is_active = Column(Boolean, default=False)
     disabled = Column(Boolean, default=False, nullable=False)
@@ -65,7 +65,7 @@ class User(Base):
         cascade="all, delete",
         back_populates="user",
     )
-    comments = relationship('Comment', back_populates='user')
+    comments = relationship("Comment", back_populates="user")
 
     oauth_credentials = relationship(
         "OAuthCredentials",
@@ -84,7 +84,7 @@ class User(Base):
 
 
 class Event(Base):
-    __tablename__ = 'events'
+    __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
@@ -101,16 +101,16 @@ class Event(Base):
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
-    owner_id = Column(Integer, ForeignKey('users.id'))
-    category_id = Column(Integer, ForeignKey('categories.id'))
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
 
-    owner = relationship('User', back_populates='owned_events')
+    owner = relationship("User", back_populates="owned_events")
     participants = relationship(
         "UserEvent",
         cascade="all, delete",
         back_populates="events",
     )
-    comments = relationship('Comment', back_populates='event')
+    comments = relationship("Comment", back_populates="event")
 
     # PostgreSQL
     if PSQL_ENVIRONMENT:
@@ -124,34 +124,34 @@ class Event(Base):
 
 
 class UserEvent(Base):
-    __tablename__ = 'user_event'
+    __tablename__ = "user_event"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column("user_id", Integer, ForeignKey("users.id"))
     event_id = Column("event_id", Integer, ForeignKey("events.id"))
 
-    events = relationship('Event', back_populates='participants')
-    participants = relationship('User', back_populates='events')
+    events = relationship("Event", back_populates="participants")
+    participants = relationship("User", back_populates="events")
 
     def __repr__(self):
         return f"<UserEvent ({self.participants}, {self.events})>"
 
 
 class Language(Base):
-    __tablename__ = 'languages'
+    __tablename__ = "languages"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False)
 
 
 class Category(Base):
-    __tablename__ = 'categories'
+    __tablename__ = "categories"
 
     __table_args__ = (UniqueConstraint("user_id", "name", "color"),)
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     color = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     @staticmethod
     def create(
@@ -167,7 +167,7 @@ class Category(Base):
             db_session.commit()
             db_session.refresh(category)
         except (SQLAlchemyError, IntegrityError) as e:
-            logger.error(f'Failed to create category: {e}')
+            logger.error(f"Failed to create category: {e}")
             raise e
         else:
             return category
@@ -202,16 +202,16 @@ if PSQL_ENVIRONMENT:
 
 
 class Invitation(Base):
-    __tablename__ = 'invitations'
+    __tablename__ = "invitations"
 
     id = Column(Integer, primary_key=True, index=True)
-    status = Column(String, nullable=False, default='unread')
-    recipient_id = Column(Integer, ForeignKey('users.id'))
-    event_id = Column(Integer, ForeignKey('events.id'))
+    status = Column(String, nullable=False, default="unread")
+    recipient_id = Column(Integer, ForeignKey("users.id"))
+    event_id = Column(Integer, ForeignKey("events.id"))
     creation = Column(DateTime, default=datetime.now)
 
-    recipient = relationship('User')
-    event = relationship('Event')
+    recipient = relationship("User")
+    event = relationship("Event")
 
     def __repr__(self):
         return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
@@ -236,7 +236,7 @@ class SalarySettings(Base):
     # Code revision required after categories feature is added
     # Code revision required after holiday times feature is added
     # Code revision required after Shabbat times feature is added
-    __tablename__ = 'salary_settings'
+    __tablename__ = "salary_settings"
 
     user_id = Column(
         Integer,
@@ -322,7 +322,7 @@ class SalarySettings(Base):
         default=SalaryConfig.STANDARD_TRANSPORT,
     )
 
-    user = relationship('User', back_populates='salary_settings')
+    user = relationship("User", back_populates="salary_settings")
 
     # category = relationship("Category", back_populates="salary_settings")
     # holiday_category =relationship("HolidayCategory",
@@ -333,7 +333,7 @@ class SalarySettings(Base):
 
 
 class WikipediaEvents(Base):
-    __tablename__ = 'wikipedia_events'
+    __tablename__ = "wikipedia_events"
 
     id = Column(Integer, primary_key=True, index=True)
     date_ = Column(String, nullable=False)
@@ -343,7 +343,7 @@ class WikipediaEvents(Base):
 
 
 class Quote(Base):
-    __tablename__ = 'quotes'
+    __tablename__ = "quotes"
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
@@ -351,23 +351,23 @@ class Quote(Base):
 
 
 class Comment(Base):
-    __tablename__ = 'comments'
+    __tablename__ = "comments"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-    event_id = Column(Integer, ForeignKey('events.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    event_id = Column(Integer, ForeignKey("events.id"), nullable=False)
     content = Column(String, nullable=False)
     time = Column(DateTime, nullable=False)
 
-    user = relationship('User', back_populates='comments')
-    event = relationship('Event', back_populates='comments')
+    user = relationship("User", back_populates="comments")
+    event = relationship("Event", back_populates="comments")
 
     def __repr__(self):
         return f"<Comment {self.id}>"
 
 
 class Zodiac(Base):
-    __tablename__ = 'zodiac-signs'
+    __tablename__ = "zodiac-signs"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
