@@ -7,11 +7,11 @@
     </div>
     <div>
       <div class="btn-group mg-top" role="group" aria-label="Toggle View Mode" id="toggle-view-mode">
-        <input type="radio" class="btn-check btn-sm" name="btnradio" id="day-view-button" autocomplete="off" onclick="changeview('day')">
+        <input type="radio" class="btn-check btn-sm" name="btnradio" id="day-view-button" autocomplete="off" onclick="change_view('day', '{{ day.dayview_format() }}', 'calendarview')">
         <label class="btn btn-outline-primary" for="day-view-button">DAY</label>
-        <input type="radio" class="btn-check btn-sm" name="btnradio" id="week-view-button" autocomplete="off" onclick="changeview('week')">
+        <input type="radio" class="btn-check btn-sm" name="btnradio" id="week-view-button" autocomplete="off" onclick="change_view('week', '{{ day.weekview_format() }}', 'calendarview')">
         <label class="btn btn-outline-primary" for="week-view-button">WEEK</label>
-        <input type="radio" class="btn-check btn-sm" name="btnradio" id="month-view-button" autocomplete="on" checked onclick="changeview('month')">
+        <input type="radio" class="btn-check btn-sm" name="btnradio" id="month-view-button" autocomplete="on" checked onclick="refreshview()">
         <label class="btn btn-outline-primary" for="month-view-button">MONTH</label>
       </div>
     </div>

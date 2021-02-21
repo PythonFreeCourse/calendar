@@ -372,3 +372,33 @@ main {
 .button:hover {
   font-weight: 700;
 }
+
+/*toggle views*/
+
+.btn-outline-primary {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.btn-group>.btn-check:checked+.btn {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.btn-group>.btn-check:focus+.btn {
+  box-shadow: var(--primary) !important;
+}
+
+.calendar-view {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.calendar-view::-webkit-scrollbar {
+  display: none;
+}

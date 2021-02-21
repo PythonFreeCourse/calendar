@@ -1,11 +1,3 @@
-:root {
-    --primary:#30465D;
-    --primary-variant:#FFDE4D;
-    --secondary:#EF5454;
-    --borders:#E7E7E7;
-    --borders-variant:#F7F7F7;
-}
-
 .day-weekview {
     border-left: 1px solid var(--borders);
     width: 100%;

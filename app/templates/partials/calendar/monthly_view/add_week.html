@@ -1,7 +1,7 @@
 {% for week in weeks_block %}
   <div class="week">
     {% for day in week.days %}
-      <div class="{{ day.css['day_container'] }}" id="{{ day.set_id() }}">
+      <div class="{{ day.css['day_container'] }}" id="{{ day.set_id() }}"  onclick="change_view('day', '{{ day.dayview_format() }}', 'day-view')">
         <div class="month-day-header">
           <div class="{{ day.css['date'] }}">{{ day }}</div>
           <div><a href="#" class="add-small">+</a></div>
