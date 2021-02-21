@@ -16,7 +16,7 @@
 }
 
 .notification:hover {
-    background-color: lightgray;
+    background-color: var(--surface-variant);
     border-radius: 0.2rem;
 }
 
