@@ -6,8 +6,8 @@ from loguru import logger
 from sqlalchemy.orm import Session
 
 
-from app.database.models import Base, HebrewView, Joke, Quote, Zodiac
-from app.internal import daily_quotes, hebrew_date_view, jokes, zodiac
+from app.database.models import Base, Joke, Quote, Zodiac
+from app.internal import daily_quotes, jokes, zodiac
 
 
 def load_to_database(session: Session) -> None:
@@ -17,11 +17,6 @@ def load_to_database(session: Session) -> None:
     not be accessed from a network call for each request as it is costly.
     The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'.
-    The parashot and hebrew_view JSON files content is copied
-    from the free API:
-    'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
-    mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
-    &geonameid=293397&m=50&s=on&d=on&D=on'.
 
     Args:
         session: The database connection.
@@ -38,13 +33,6 @@ def load_to_database(session: Session) -> None:
         'app/resources/quotes.json',
         Quote,
         daily_quotes.get_quote,
-    )
-
-    _insert_into_database(
-        session,
-        'app/resources/hebrew_view.json',
-        HebrewView,
-        hebrew_date_view.create_hebrew_dates_object,
     )
 
     _insert_into_database(

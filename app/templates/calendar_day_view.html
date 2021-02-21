@@ -19,11 +19,11 @@
     {% else %}
     <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
     {% endif %}
-  </div>
+    </div>
     {% if hebrewView %}
-      <div class="hebrew-dates">
-        {{ gettext("%(hebrewDate)s", hebrewDate=hebrewView.hebrew_date) }}
-      </div>
+    <div class="hebrew-dates">
+        {{hebrewView}}
+    </div>
     {% endif %}
   <div class="all_day_events">
     {% for event in all_day_events %}

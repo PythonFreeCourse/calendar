@@ -15,11 +15,6 @@
         {% for event in day.events %}
           <div class="{{ day.css['event'] }}"><b>{{ event[0] }}</b> {{ event[1] }}</div>
         {% endfor %}
-        {% for hebrew in hebrewView %}
-            {% if hebrew.date.date() == day.date %}
-                <p>{{hebrew.hebrew_date}}</p>
-            {% endif %}
-        {% endfor %}
       </div>
     {% endfor %}
   </div>
