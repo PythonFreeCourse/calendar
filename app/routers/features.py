@@ -10,7 +10,8 @@ from app.internal.features import (
     is_feature_disabled,
     is_feature_enabled,
     get_user_disabled_features,
-    get_user_enabled_features
+    get_user_enabled_features,
+    create_dict_for_users_features_token
 )
 
 router = APIRouter(
@@ -24,7 +25,8 @@ router = APIRouter(
 async def index(
     request: Request, session: SessionLocal = Depends(get_db)
 ) -> List:
-    features = session.query(Feature).all()
+    # features = session.query(Feature).all()
+    features = await create_dict_for_users_features_token(user_id=1, session=session)
     return features
 
 
