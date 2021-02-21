@@ -1,3 +1,4 @@
+from os import remove
 from fastapi import APIRouter, Request, Depends
 
 from app.dependencies import get_db, SessionLocal, templates
@@ -7,7 +8,8 @@ from app.internal.features import (
     create_user_feature_association,
     is_association_exists_in_db,
     get_user_uninstalled_features,
-    get_user_enabled_features
+    get_user_enabled_features,
+    remove_follower
 )
 
 router = APIRouter(
@@ -75,6 +77,8 @@ async def delete_user_feature_association(
 
     if not is_exist:
         return False
+
+    remove_follower(feature_id=feature_id, session=session)
 
     session.query(UserFeature).filter_by(
         feature_id=feature_id,

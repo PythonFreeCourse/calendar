@@ -145,6 +145,7 @@ def create_user_feature_association(
     db: SessionLocal, feature_id: int, user_id: int, is_enable: bool
 ) -> UserFeature:
     """Creates an association."""
+    add_follower(feature_id=feature_id, session=db)
     return create_model(
         db, UserFeature,
         user_id=user_id,
@@ -167,7 +168,7 @@ def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> List:
     return enabled
 
 
-def get_user_uninstalled_features(session: SessionLocal):
+def get_user_uninstalled_features(session: SessionLocal) -> List:
     uninstalled = []
     all_features = session.query(Feature).all()
 
@@ -182,17 +183,15 @@ def get_user_uninstalled_features(session: SessionLocal):
     return uninstalled
 
 
-def get_user_installed_features(session: SessionLocal):
-    installed = []
-    all_features = session.query(Feature).all()
+def remove_follower(feature_id: int, session: SessionLocal) -> None:
+    feat = session.query(Feature).filter_by(id=feature_id).first()
+    feat.followers -= 1
+    if feat.followers < 0:
+        feat.followers = 0
+    session.commit()
 
-    for feat in all_features:
 
-        in_enabled = is_feature_enabled(
-            feature=feat, session=session
-        )
-
-        if in_enabled:
-            installed.append(feat)
-
-    return installed
+def add_follower(feature_id: int, session: SessionLocal) -> None:
+    feat = session.query(Feature).filter_by(id=feature_id).first()
+    feat.followers += 1
+    session.commit()

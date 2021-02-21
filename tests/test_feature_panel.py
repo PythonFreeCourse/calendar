@@ -24,7 +24,8 @@ def feature(session):
         route='/test',
         description='testing',
         creator='test',
-        icon='test'
+        icon='test',
+        followers=0
     )
 
     session.add(test)
@@ -102,7 +103,7 @@ def test_create_features_at_startup(mocker, session, mock_features):
     assert internal.create_features_at_startup(session)
 
 
-def test_create_association(session, user):
+def test_create_association(mocker, session, user, feature):
     assert internal.create_user_feature_association(
         db=session, feature_id=1, user_id=user.id, is_enable=False
     ) is not None
@@ -118,11 +119,8 @@ def test_is_association_exist_in_db(session, form_mock, association_off):
 
 def test_delete_feature(session, feature):
     feat = session.query(Feature).filter_by(name=feature.name).first()
-
     internal.delete_feature(feature=feat, session=session)
-
     feat = session.query(Feature).filter_by(name=feature.name).first()
-
     assert feat is None
 
 
@@ -157,6 +155,19 @@ def test_create_feature(session):
     assert feat.name == 'test1'
 
 
+def test_remove_follower(session, feature):
+    feature.followers = 1
+    session.commit()
+
+    internal.remove_follower(feature_id=feature.id, session=session)
+    assert feature.followers == 0
+
+
+def test_add_follower(session, feature):
+    internal.add_follower(feature_id=feature.id, session=session)
+    assert feature.followers == 1
+
+
 def test_index(mocker, features_test_client, mock_features):
     url = route.router.url_path_for('index')
 
@@ -172,7 +183,7 @@ def test_add_feature_to_user(features_test_client, feature, form_mock):
 
 
 def test_delete_user_feature_association(
-    features_test_client, form_mock, association_on
+    features_test_client, form_mock, association_on, feature
 ):
     url = route.router.url_path_for('delete_user_feature_association')
 
