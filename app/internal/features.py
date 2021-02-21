@@ -1,15 +1,47 @@
 from fastapi import Depends
+from functools import wraps
+from starlette.responses import RedirectResponse
 from typing import List
 
 from app.database.models import UserFeature, Feature
 from app.dependencies import get_db, SessionLocal
-from app.features.index import features, icons
+from app.internal.features_index import features, icons
 from app.internal.utils import create_model, get_current_user
+
+
+def feature_access_filter(call_next):
+
+    @wraps(call_next)
+    async def wrapper(*args, **kwargs):
+        request = kwargs['request']
+
+        if request.headers['user-agent'] == 'testclient':
+            # in case it's a unit test.
+            return await call_next(*args, **kwargs)
+
+        # getting the url route path for matching with the database.
+        route = '/' + str(request.url).replace(str(request.base_url), '')
+
+        # getting access status.
+        is_enabled = is_access_allowd(route=route)
+
+        if is_enabled:
+            # in case the feature is enabled or access is allowed.
+            return await call_next(*args, **kwargs)
+
+        elif 'referer' not in request.headers:
+            # in case request come straight from address bar in browser.
+            return RedirectResponse(url='/')
+
+        # in case the feature is disabled or access isn't allowed.
+        return RedirectResponse(url=request.headers['referer'])
+
+    return wrapper
 
 
 def create_features_at_startup(session: SessionLocal) -> bool:
     for feat in features:
-        if not is_feature_exists_in_db(feature=feat, session=session):
+        if not is_feature_exists(feature=feat, session=session):
             icon = icons.get(feat['name'])
             create_feature(**feat, icon=icon, db=session)
 
@@ -19,7 +51,7 @@ def create_features_at_startup(session: SessionLocal) -> bool:
 def is_association_exists_in_db(form: dict, session: SessionLocal) -> bool:
     db_association = session.query(UserFeature).filter_by(
         feature_id=form['feature_id'],
-        user_id=form['user_id']
+        user_id=get_current_user(session=session).id
     ).first()
 
     return db_association is not None
@@ -33,7 +65,7 @@ def delete_feature(
     session.commit()
 
 
-def is_feature_exists_in_db(feature: dict, session: SessionLocal) -> bool:
+def is_feature_exists(feature: dict, session: SessionLocal) -> bool:
     db_feature = session.query(Feature).filter(
         (Feature.name == feature['name']) |
         (Feature.route == feature['route'])).first()
@@ -64,21 +96,21 @@ def update_feature(feature: Feature, new_feature_obj: dict,
     return feature
 
 
-def is_feature_exists_in_enabled(
+def is_feature_enabled(
     feature: Feature, session: SessionLocal = Depends(get_db)
 ) -> bool:
     enabled_features = get_user_enabled_features(session=session)
     return any(ef['feature'].id == feature.id for ef in enabled_features)
 
 
-def is_feature_exists_in_disabled(
+def is_feature_disabled(
     feature: Feature, session: SessionLocal = Depends(get_db)
 ) -> bool:
     disable_features = get_user_disabled_features(session=session)
     return any(ef['feature'].id == feature.id for ef in disable_features)
 
 
-def is_feature_enabled(route: str) -> bool:
+def is_access_allowd(route: str) -> bool:
     session = SessionLocal()
     user = get_current_user(session=session)
     feature = session.query(Feature).filter_by(route=route).first()
@@ -102,7 +134,6 @@ def create_feature(name: str, route: str,
                    icon: str = None,
                    db: SessionLocal = Depends()) -> Feature:
     """Creates a feature."""
-
     db = SessionLocal()
     if icon is None:
         icon = "extension-puzzle"
@@ -117,7 +148,7 @@ def create_feature(name: str, route: str,
     )
 
 
-def create_association(
+def create_user_feature_association(
     db: SessionLocal, feature_id: int, user_id: int, is_enable: bool
 ) -> UserFeature:
     """Creates an association."""
@@ -131,29 +162,67 @@ def create_association(
 
 def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> List:
     user = get_current_user(session=session)
-    data = []
+    enabled = []
     user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
 
     for pref in user_prefs:
         if pref.is_enable:
             feature = session.query(Feature).filter_by(
                 id=pref.feature_id).first()
-            data.append({'feature': feature, 'is_enabled': pref.is_enable})
+            enabled.append({'feature': feature, 'is_enabled': pref.is_enable})
 
-    return data
+    return enabled
 
 
 def get_user_disabled_features(
     session: SessionLocal = Depends(get_db)
 ) -> List:
     user = get_current_user(session=session)
-    data = []
+    disabled = []
     user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
 
     for pref in user_prefs:
         if not pref.is_enable:
             feature = session.query(Feature).filter_by(
                 id=pref.feature_id).first()
-            data.append({'feature': feature, 'is_enabled': pref.is_enable})
+            disabled.append({'feature': feature, 'is_enabled': pref.is_enable})
 
-    return data
+    return disabled
+
+
+def get_user_uninstalled_features(session: SessionLocal):
+    uninstalled = []
+    all_features = session.query(Feature).all()
+
+    for feat in all_features:
+        in_disabled = is_feature_disabled(
+            feature=feat, session=session
+        )
+
+        in_enabled = is_feature_enabled(
+            feature=feat, session=session
+        )
+
+        if not in_enabled and not in_disabled:
+            uninstalled.append(feat)
+
+    return uninstalled
+
+
+def get_user_installed_features(session: SessionLocal):
+    installed = []
+    all_features = session.query(Feature).all()
+
+    for feat in all_features:
+        in_disabled = is_feature_disabled(
+            feature=feat, session=session
+        )
+
+        in_enabled = is_feature_enabled(
+            feature=feat, session=session
+        )
+
+        if in_enabled or in_disabled:
+            installed.append(feat)
+
+    return installed

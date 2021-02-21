@@ -1,15 +1,16 @@
 from fastapi import APIRouter, Request, Depends
 from typing import List
 
-from app.dependencies import get_db, SessionLocal
+from app.dependencies import get_db, SessionLocal, templates
 from app.database.models import UserFeature, Feature
+from app.internal.utils import get_current_user
 from app.internal.features import (
-    create_association,
+    create_user_feature_association,
     is_association_exists_in_db,
-    is_feature_exists_in_disabled,
-    is_feature_exists_in_enabled,
     get_user_disabled_features,
-    get_user_enabled_features
+    get_user_enabled_features,
+    get_user_uninstalled_features,
+    get_user_installed_features
 )
 
 router = APIRouter(
@@ -23,8 +24,18 @@ router = APIRouter(
 async def index(
     request: Request, session: SessionLocal = Depends(get_db)
 ) -> List:
-    features = session.query(Feature).all()
-    return features
+    features = {
+        "installed": get_user_installed_features(session=session),
+        "uninstalled": get_user_uninstalled_features(session=session)
+    }
+    print(features)
+    return templates.TemplateResponse(
+        "features.html",
+        {
+            "request": request,
+            "features": features
+        }
+    )
 
 
 @router.post('/add')
@@ -33,7 +44,7 @@ async def add_feature_to_user(
 ) -> UserFeature:
     form = await request.form()
 
-    user_id = form['user_id']  # OPTION - get active user id instead.
+    user = get_current_user(session=session)
     feat = session.query(Feature).filter_by(id=form['feature_id']).first()
 
     is_exist = is_association_exists_in_db(form=form, session=session)
@@ -43,10 +54,10 @@ async def add_feature_to_user(
         # and or the association is exist
         return False
 
-    association = create_association(
+    association = create_user_feature_association(
         db=session,
         feature_id=feat.id,
-        user_id=user_id,
+        user_id=user.id,
         is_enable=True
     )
 
@@ -60,7 +71,7 @@ async def delete_user_feature_association(
 ) -> bool:
     form = await request.form()
 
-    user_id = form['user_id']  # OPTION - get active user id instead.
+    user = get_current_user(session=session)
     feature_id = form['feature_id']
 
     is_exist = is_association_exists_in_db(form=form, session=session)
@@ -70,7 +81,7 @@ async def delete_user_feature_association(
 
     session.query(UserFeature).filter_by(
         feature_id=feature_id,
-        user_id=user_id
+        user_id=user.id
     ).delete()
     session.commit()
 
@@ -134,19 +145,4 @@ def show_user_disabled_features(
 def get_user_unlinked_features(
     session: SessionLocal = Depends(get_db)
 ) -> List:
-    data = []
-    all_features = session.query(Feature).all()
-
-    for feat in all_features:
-        in_disabled = is_feature_exists_in_disabled(
-            feature=feat, session=session
-        )
-
-        in_enabled = is_feature_exists_in_enabled(
-            feature=feat, session=session
-        )
-
-        if not in_enabled and not in_disabled:
-            data.append(feat)
-
-    return data
+    return get_user_uninstalled_features(session=session)

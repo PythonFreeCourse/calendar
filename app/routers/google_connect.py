@@ -6,7 +6,7 @@ from app.internal.utils import get_current_user
 from app.dependencies import get_db
 from app.internal.google_connect import get_credentials, fetch_save_events
 from app.routers.profile import router as profile
-from app.features.utils import feature_access_filter
+from app.internal.features import feature_access_filter
 
 router = APIRouter(
     prefix="/google",
