@@ -7,7 +7,7 @@ from sqlalchemy.orm.session import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 
-from app.database.models import Event, User
+from app.database.models import Event
 from app.dependencies import get_db, templates
 from app.internal.utils import (create_model, get_current_user,
                                 get_time_from_string)
@@ -306,7 +306,7 @@ def get_first_day_reminders(form: Dict[str, str],
     datetime_obj = start
     i = 1
     for time_obj in times:
-        if i < amount:
+        if i <= amount:
             reminder = datetime.combine(start.date(), time_obj)
             reminder = adjust_day(reminder, early, time_obj)
             if reminder > start:
@@ -360,12 +360,13 @@ def get_reminder_datetimes(form: Dict[str, str]) -> Iterator[datetime]:
             yield from reminder_generator(times, early, start, day, end)
 
 
-def create_events(session: Session, user: User, form: Dict[str, str]) -> None:
+def create_events(session: Session, user_id: int,
+                  form: Dict[str, str]) -> None:
     """Creates reminder events in the DB based on form data.
 
     Args:
         session (Session): DB session.
-        user (User): User instance to create events for.
+        user_id (int): ID of user to create events for.
         form (dict(str, str)): Medication form containing all relevant data.
     """
     events = []
@@ -380,7 +381,7 @@ def create_events(session: Session, user: User, form: Dict[str, str]) -> None:
             'start': event_time,
             'end': event_time + timedelta(minutes=5),
             'content': note,
-            'owner_id': user.id,
+            'owner_id': user_id,
         }
         events.append(create_model(session, Event, **data))
 
@@ -392,7 +393,6 @@ async def meds(request: Request,
     """Renders medication reminders creation form page. Creates reminders in DB
     and redirects to home page upon submition if valid."""
     form = await request.form()
-    user = get_current_user(session)
     errors = []
 
     data = {
@@ -409,9 +409,10 @@ async def meds(request: Request,
     }
 
     if form:
+        user = get_current_user(session)
         errors = validate_form(form)
         if not errors:
-            create_events(session, user, form)
+            create_events(session, user.id, form)
             return RedirectResponse(app.url_path_for('home'), status_code=303)
         data = form
 

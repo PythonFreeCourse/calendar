@@ -272,7 +272,7 @@ def test_get_reminder_datetimes(form: Dict[str, str],
 def test_create_events(session: Session, user: User, form: Dict[str, str],
                        boolean: bool) -> None:
     assert session.query(Event).first() is None
-    meds.create_events(session, user, form)
+    meds.create_events(session, user.id, form)
     event = session.query(Event).first()
     assert event
     title = '-' in event.title
