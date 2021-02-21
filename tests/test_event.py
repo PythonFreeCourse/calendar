@@ -543,7 +543,7 @@ def test_event_with_image(event_test_client, client, session):
     )
     event_created = session.query(Event).order_by(Event.id.desc()).first()
     event_id = event_created.id
-    is_event_image = f"{event_id}.png" == event_created.image
+    is_event_image = f"{event_id}{PICTURE_EXTENSION}" == event_created.image
     assert response.ok
     assert (
         client.app.url_path_for("eventview", event_id=event_id).strip(
@@ -552,11 +552,8 @@ def test_event_with_image(event_test_client, client, session):
         in response.headers["location"]
     )
     assert is_event_image is True
-    rel_path = fr"{EVENT_IMAGES_PATH}/{event_id}{PICTURE_EXTENSION}"
-    fileDir = os.path.dirname(os.path.realpath("__file__"))
-    filename = os.path.join(fileDir, rel_path)
-    filename = os.path.abspath(os.path.realpath(filename))
-    os.remove(filename)
+    event_image_path = fr"{EVENT_IMAGES_PATH}/{event_id}{PICTURE_EXTENSION}"
+    os.remove(event_image_path)
     os.remove("pil_red.png")
     session.delete(event_created)
     session.commit()
