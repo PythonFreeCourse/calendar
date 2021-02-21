@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-import os
 import json
+import os
 import pytest
 
 from PIL import Image

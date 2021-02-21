@@ -1,4 +1,3 @@
-from app.config import PICTURE_EXTENSION
 from datetime import datetime as dt
 import json
 import io
@@ -6,7 +5,7 @@ from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 from PIL import Image
 
-from fastapi import APIRouter, Depends, HTTPException, File, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -16,6 +15,7 @@ from starlette import status
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
+from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, MEDIA_PATH, templates
 from app.internal.event import (
