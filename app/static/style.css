@@ -38,6 +38,10 @@ p#p-quote {
   justify-content: center;
 }
 
+#author {
+  font-size: small;
+}
+
 #inner:hover {
   cursor: pointer;
   padding: 50px;
