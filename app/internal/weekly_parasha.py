@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, Optional, List
+from typing import Dict, Optional
 
 from app.database.models import Parasha
 from sqlalchemy.orm import Session
