@@ -1,6 +1,5 @@
 from fastapi import Depends
 from functools import wraps
-from sqlalchemy.sql.functions import session_user
 from starlette.responses import RedirectResponse
 from typing import List, Dict
 
@@ -99,7 +98,6 @@ def update_feature(feature: Feature, new_feature_obj: dict,
     feature.description = new_feature_obj['description']
     feature.creator = new_feature_obj['creator']
     session.commit()
-
     return feature
 
 
@@ -107,14 +105,7 @@ def is_feature_enabled(
     feature: Feature, session: SessionLocal = Depends(get_db)
 ) -> bool:
     enabled_features = get_user_enabled_features(session=session)
-    return any(ef['feature'].id == feature.id for ef in enabled_features)
-
-
-def is_feature_disabled(
-    feature: Feature, session: SessionLocal = Depends(get_db)
-) -> bool:
-    disable_features = get_user_disabled_features(session=session)
-    return any(ef['feature'].id == feature.id for ef in disable_features)
+    return any(ef.id == feature.id for ef in enabled_features)
 
 
 def is_access_allowd(route: str) -> bool:
@@ -136,7 +127,8 @@ def is_access_allowd(route: str) -> bool:
 
 
 def create_feature(name: str, route: str,
-                   description: str, creator: str = None,
+                   description: str,
+                   creator: str = None,
                    db: SessionLocal = Depends()) -> Feature:
     """Creates a feature."""
     db = SessionLocal()
@@ -145,7 +137,7 @@ def create_feature(name: str, route: str,
         name=name,
         route=route,
         creator=creator,
-        description=description
+        description=description,
     )
 
 
@@ -170,22 +162,21 @@ def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> List:
         if pref.is_enable:
             feature = session.query(Feature).filter_by(
                 id=pref.feature_id).first()
-            enabled.append({'feature': feature, 'is_enabled': pref.is_enable})
+            enabled.append(feature)
 
     return enabled
 
 
-def get_user_disabled_features(
-    session: SessionLocal = Depends(get_db)
-) -> List:
-    user = get_current_user(session=session)
-    disabled = []
-    user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
+def get_user_uninstalled_features(session: SessionLocal) -> List:
+    uninstalled = []
+    all_features = session.query(Feature).all()
 
-    for pref in user_prefs:
-        if not pref.is_enable:
-            feature = session.query(Feature).filter_by(
-                id=pref.feature_id).first()
-            disabled.append({'feature': feature, 'is_enabled': pref.is_enable})
+    for feat in all_features:
+        in_enabled = is_feature_enabled(
+            feature=feat, session=session
+        )
 
-    return disabled
+        if not in_enabled:
+            uninstalled.append(feat)
+
+    return uninstalled
