@@ -23,26 +23,20 @@
         </div>
     {% endif %}
 
-    <!-- set all the weekly task values -->
     {% if weekly_task %}
-        <!-- Set is_important -->
         {% if weekly_task.is_important %}
             {% set is_important = "checked" %}
         {% endif %}
 
-        <!-- Set title -->
         {% set title = weekly_task.title or "" %}
 
-        <!-- Set content -->
         {% set content = weekly_task.content or "" %}
     {% endif %}
-    <!-- end set -->
 
 
     <!-- Weekly Tasks inputs -->
-    <form class="container mt-5" action="{{ url_for('weekly_task_make_change') }}" method="post">
+    <form class="container mt-5" action="{{ url_for('weekly_task_execute') }}" method="post">
         
-        <!-- title input text -->
         <div class="mb-3">
             <label for="title" class="form-label">Title:</label>
             <input type="text" class="form-control" value="{{ title }}" id="title" name="title" aria-describedby="emailHelp">
@@ -63,19 +57,16 @@
             </ul>
         </div>
 
-        <!-- time input time -->
         <div class="mb-3">
             <label for="the_time" class="form-label">Time Of The Day:</label>
             <input type="time" class="form-control" value="{{ weekly_task.the_time }}" id="the_time" name="the_time">
         </div>
 
-        <!-- content input text -->
         <div class="input-group">
             <span class="input-group-text">Description:</span>
             <textarea class="form-control" aria-label="content" id="content" name="content">{{ content }}</textarea>
         </div>
 
-        <!-- is_important input checkbox -->
         <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="is_important" name="is_important" {{is_important}}>
             <label class="form-check-label" for="is_important">Important</label>
@@ -83,7 +74,6 @@
 
         <button type="submit" class="btn btn-primary">Submit</button>
         
-        <!-- hidden values -->
         <!-- weekly task id for editing the weekly task -->
         <input type="hidden" name="weekly_task_id" value="{{ weekly_task_id }}">
         <!-- mode == "add" or mode == "edit" -->

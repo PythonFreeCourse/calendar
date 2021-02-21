@@ -1,9 +1,7 @@
 from datetime import date, datetime, time
 from typing import Iterator
-from fastapi import Depends
 
 from app.database.models import User, Task, WeeklyTask
-from app.dependencies import get_db
 from sqlalchemy.orm.session import Session
 
 
@@ -53,9 +51,8 @@ def weekly_task_from_input(
 
 
 def create_weekly_task(
-    user: User,
-    weekly_task: WeeklyTask,
-    session: Session = Depends(get_db)
+    user: User, weekly_task: WeeklyTask,
+    session: Session
 ) -> bool:
     """This function is being used to add a Weekly Task to the user.
 
@@ -83,7 +80,7 @@ def create_weekly_task(
 def change_weekly_task(
     user: User,
     weekly_task: WeeklyTask,
-    session: Session = Depends(get_db)
+    session: Session
 ) -> bool:
     """This function is being used to edit a Weekly Task the user have.
 
@@ -123,7 +120,7 @@ def change_weekly_task(
 
 def create_task(
     task: Task, user: User,
-    session: Session = Depends(get_db)
+    session: Session
 ) -> bool:
     """Make a task, used by the generate_tasks function"""
     user_tasks_query = session.query(Task).filter_by(owner_id=user.id)
@@ -148,7 +145,7 @@ def get_datetime(day: str, the_time: str) -> datetime:
 
 
 def generate_tasks(
-    user: User, session: Session = Depends(get_db)
+    user: User, session: Session
 ) -> Iterator[bool]:
     """Generates tasks for the week
     based on all the weekly tasks the user have"""
@@ -170,7 +167,7 @@ def generate_tasks(
 
 def remove_weekly_task(
     weekly_task_id: int,
-    session: Session = Depends(get_db)
+    session: Session
 ) -> bool:
     """Removes a weekly task from the db based on the weekly task id"""
     weekly_task_query = session.query(WeeklyTask)

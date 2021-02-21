@@ -5,7 +5,7 @@ from typing import List, Tuple
 from fastapi import APIRouter, Depends, Request, Form
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
+from starlette.status import HTTP_302_FOUND, HTTP_303_SEE_OTHER
 
 from app.database.models import User, WeeklyTask
 from app.dependencies import get_db, templates
@@ -18,6 +18,7 @@ router = APIRouter(
     prefix="/weekly-tasks",
     tags=["weekly-tasks"],
     responses={404: {"description": "Not found"}},
+    dependencies=[Depends(get_db)]
 )
 
 
@@ -81,8 +82,8 @@ def get_days_string(
     return days
 
 
-@router.get("/")
-def weekly_tasks_manager(
+@router.get('/')
+async def weekly_tasks_manager(
         request: Request,
         session=Depends(get_db),
         demo_user=Depends(get_placeholder_user)):
@@ -103,8 +104,8 @@ def weekly_tasks_manager(
     })
 
 
-@router.get("/add")
-def weekly_task_add(request: Request):
+@router.get('/add')
+def add_weekly_task(request: Request):
 
     checked_days = get_checked_days()
     return templates.TemplateResponse("add_edit_weekly_task.html", {
@@ -115,19 +116,19 @@ def weekly_task_add(request: Request):
     })
 
 
-@router.post("/delete")
-def weekly_task_remove(
-        session=Depends(get_db),
-        remove_id: int = Form(...)):
+@router.delete('/')
+def delete_weekly_task(
+        remove_id: int,
+        session=Depends(get_db)):
 
     remove_weekly_task(remove_id, session)
     session.close()
     url = router.url_path_for("weekly_tasks_manager")
-    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+    return RedirectResponse(url=url, status_code=HTTP_303_SEE_OTHER)
 
 
-@router.post("/edit")
-def weekly_task_edit(
+@router.post('/edit')
+def edit_weekly_task(
         request: Request,
         session=Depends(get_db),
         edit_id: int = Form(...)):
@@ -142,8 +143,8 @@ def weekly_task_edit(
     })
 
 
-@router.post("/make-change")
-def weekly_task_make_change(
+@router.post('/execute')
+def weekly_task_execute(
         request: Request,
         session=Depends(get_db),
         demo_user=Depends(get_placeholder_user),
@@ -167,31 +168,35 @@ def weekly_task_make_change(
     )
 
     weekly_task = weekly_task_from_input(
-        user,
-        title, days,
+        user, title, days,
         content, the_time,
         is_important,
         weekly_task_id=weekly_task_id
     )
 
-    made_change = False
-    massage = None
+    fail_massage = None
+    executed = False
     if mode == "add":
-        massage = "could not add The Weekly Task"
-        made_change = create_weekly_task(
+        fail_massage = "could not add The Weekly Task"
+        # creating the weekly task
+        created = create_weekly_task(
             user, weekly_task, session
         )
-    else:  # mode == "edit"
-        massage = "These changes could not be made to the Weekly Task"
-        made_change = change_weekly_task(
-            user, weekly_task, session
-        )
+        executed = created
 
-    if not made_change:
+    else:  # mode == "edit"
+        fail_massage = "These changes could not be made to the Weekly Task"
+        # editing the weekly task
+        edited = change_weekly_task(
+            user, weekly_task, session
+        )
+        executed = edited
+
+    if not executed:
         checked_days = get_checked_days(days)
         return templates.TemplateResponse("add_edit_weekly_task.html", {
             "request": request,
-            "massage": massage,
+            "massage": fail_massage,
             "weekly_task": weekly_task,
             "mode": mode,
             "checked_days": checked_days
