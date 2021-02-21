@@ -177,7 +177,7 @@ main {
 
   font-size: var(--text_xs);
   padding: 0 var(--space_s);
-  border: 0.095rem solid var(--surface);
+  border: 0.075rem solid var(--surface);
 
   overflow-y: auto;
   -ms-overflow-style: none; /* IE and Edge */
@@ -333,6 +333,23 @@ main {
   font-size: var(--text_s);
 }
 
+.m-title {
+  font-weight: 600;
+  font-size: var(--text_m);
+}
+
+.s-title {
+  font-size: var(--text_s);
+}
+
+/* Paragraph */
+
+.s-paragraph {
+  font-size: var(--text_s);
+  line-height: 1.25rem;
+  margin: var(--space_s) 0;
+}
+
 /* Text Colors */
 .text-yellow {color: var(--secondary);}
 
@@ -341,6 +358,8 @@ main {
 .text-lightgray {color: var(--background);}
 
 .text-darkblue {color: var(--primary);}
+
+.text-red {color: var(--negative)}
 
 /* Borders */
 .border-dash-darkblue {border: 0.125rem dashed  var(--primary);}
@@ -364,11 +383,27 @@ main {
 
 .button {
   border-radius: 0.15rem;
+  font-weight: 500;
   font-size: var(--text_s);
-  font-weight: 800;
   padding: 0.15rem 0.25rem;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .button:hover {
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.add-button,
+.remove-button {
+  color: var(--background);
+  height: 2rem;
+}
+
+.add-button {
+  background-color: var(--positive);
+}
+
+.remove-button {
+  background-color: var(--negative);
 }

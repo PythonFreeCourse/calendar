@@ -1,25 +1,26 @@
 {% extends "./partials/base.html" %}
 {% block head %}
-  {{super()}}
+{{super()}}
 
-  <!-- CSS -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid_style.css') }}">
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid_style.css') }}">
 
 {% endblock head %}
 {% block page_name %}Month View{% endblock page_name %}
 {% block body %}
-  <div class="pyldr-container">
-    {% include 'partials/calendar/navigation.html' %}
-    <div id="feature-settings">
-      {% include 'partials/calendar/feature_settings/example.html' %}
-    </div>
-    <div class="content">
-      {% block content %}
-      {% endblock content %}
-    </div>
+<div class="pyldr-container">
+  {% include 'partials/calendar/navigation.html' %}
+  <div class="background-lightgray" id="feature-settings">
+    {% include 'partials/calendar/feature_settings/example.html' %}
   </div>
+  <div class="content">
+    {% block content %}
+    {% endblock content %}
+  </div>
+</div>
 
-  <!-- Scripts -->
-  <script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
-  <script src="{{ url_for('static', path='/js/grid_navigation.js') }}"></script>
+<!-- Scripts -->
+<script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
+<script src="{{ url_for('static', path='/js/grid_navigation.js') }}"></script>
+<script src="{{ url_for('static', path='/js/features.js') }}"></script>
 {% endblock body %}
