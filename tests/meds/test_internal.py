@@ -3,15 +3,14 @@ from typing import Dict, List
 
 import pytest
 from sqlalchemy.orm.session import Session
-from starlette.testclient import TestClient
 
 from app.database.models import Event, User
-from app.routers import meds
+from app.internal import meds
 
 NAME = 'Pasta'
 QUOTE = 'I don\'t like sand. It\'s coarse and rough and irritating and it \
     gets everywhere.'
-FORM = {
+WEB_FORM = {
     'name': NAME,
     'start': '2015-10-21',
     'first': '',
@@ -23,13 +22,18 @@ FORM = {
     'max': '06:00',
     'note': QUOTE,
 }
+FORM = meds.trans_form(WEB_FORM)[0]
 
 
-def create_test_form(**kwargs: Dict[str, str]) -> Dict[str, str]:
-    form = FORM.copy()
+def create_test_form(form_dict: bool = False,
+                     **kwargs: Dict[str, str]) -> meds.Form:
+    form = WEB_FORM.copy()
     for k, v in kwargs.items():
         form[k] = v
-    return form
+    if form_dict:
+        return form
+    translated_form, _ = meds.trans_form(form)
+    return translated_form
 
 
 ADJUST = [
@@ -42,12 +46,21 @@ ADJUST = [
 ]
 
 FORM_TRANS = [
-    (FORM, (NAME, None, 3, time(8), time(22), time(4), time(6), QUOTE,
-            datetime(2015, 10, 21, 8), datetime(2015, 10, 22, 22))),
-    (create_test_form(first='13:30'), (NAME, time(13, 30), 3, time(8),
-                                       time(22), time(4), time(6), QUOTE,
-                                       datetime(2015, 10, 21, 13, 30),
-                                       datetime(2015, 10, 22, 22))),
+    (WEB_FORM, meds.Form(
+        name=NAME, first=None, amount=3, early=time(8), late=time(22),
+        min=time(4), max=time(6), start=datetime(2015, 10, 21, 8),
+        end=datetime(2015, 10, 22, 22), note=QUOTE),
+     {'name': NAME, 'first': None, 'amount': 3, 'early': time(8),
+      'late': time(22), 'min': time(4), 'max': time(6),
+      'start': date(2015, 10, 21), 'end': date(2015, 10, 22),
+      'note': QUOTE}),
+    (create_test_form(form_dict=True, first='13:30'), meds.Form(
+        name=NAME, first=time(13, 30), amount=3, early=time(8), late=time(22),
+        min=time(4), max=time(6), start=datetime(2015, 10, 21, 13, 30),
+        end=datetime(2015, 10, 22, 22), note=QUOTE),
+     {'name': NAME, 'first': time(13, 30), 'amount': 3, 'early': time(8),
+      'late': time(22), 'min': time(4), 'max': time(6),
+      'start': date(2015, 10, 21), 'end': date(2015, 10, 22), 'note': QUOTE}),
 ]
 
 TIMES = [
@@ -76,7 +89,7 @@ EVENTS = [
 FORM_VALIDATE = [
     (FORM, [False, False, False, False]),
     (create_test_form(
-        end=FORM['start'], max=FORM['min'], amount='1', late='10:00'
+        end=WEB_FORM['start'], max=WEB_FORM['min'], amount='1', late='10:00'
     ), [False, False, False, False]),
     (create_test_form(end='1985-10-26'), [True, False, False, False]),
     (create_test_form(max='03:00'), [False, True, False, False]),
@@ -165,11 +178,6 @@ CREATE = [
     (FORM, True),
 ]
 
-PYLENDAR = [
-    (FORM, True),
-    (create_test_form(end='1985-10-26'), False),
-]
-
 
 @pytest.mark.parametrize('datetime_obj, early, late, eq, new_obj', ADJUST)
 def test_adjust_day(datetime_obj: datetime, early: time, late: time, eq: bool,
@@ -177,9 +185,12 @@ def test_adjust_day(datetime_obj: datetime, early: time, late: time, eq: bool,
     assert meds.adjust_day(datetime_obj, early, late, eq) == new_obj
 
 
-@pytest.mark.parametrize('form, form_tuple', FORM_TRANS)
-def test_trans_form(form: Dict[str, str], form_tuple: meds.FORM_TUPLE) -> None:
-    assert meds.trans_form(form) == form_tuple
+@pytest.mark.parametrize('form, form_obj ,form_dict', FORM_TRANS)
+def test_trans_form(form: Dict[str, str], form_obj: meds.Form,
+                    form_dict: Dict[str, str]) -> None:
+    translated_form_obj, translated_form_dict = meds.trans_form(form)
+    assert translated_form_obj == form_obj
+    assert translated_form_dict == form_dict
 
 
 @pytest.mark.parametrize('time_obj, minutes', TIMES)
@@ -200,13 +211,13 @@ def test_validate_amount(amount: int, minimum: time, early: time, late: time,
 
 
 @pytest.mark.parametrize('form, boolean', EVENTS)
-def test_validate_events(form: Dict[str, str], boolean: bool) -> None:
+def test_validate_events(form: meds.Form, boolean: bool) -> None:
     datetimes = meds.get_reminder_datetimes(form)
     assert meds.validate_events(datetimes) is boolean
 
 
 @pytest.mark.parametrize('form, booleans', FORM_VALIDATE)
-def test_validate_form(form: Dict[str, str], booleans: List[bool]) -> None:
+def test_validate_form(form: meds.Form, booleans: List[bool]) -> None:
     errors = meds.validate_form(form)
     for i, error in enumerate(meds.ERRORS.values()):
         message = error in errors
@@ -215,13 +226,13 @@ def test_validate_form(form: Dict[str, str], booleans: List[bool]) -> None:
 
 
 @pytest.mark.parametrize('form, interval', CALC_INTERVAL)
-def test_calc_reminder_interval_in_seconds(form: Dict[str, str],
+def test_calc_reminder_interval_in_seconds(form: meds.Form,
                                            interval: int) -> None:
     assert meds.calc_reminder_interval_in_seconds(form) == interval
 
 
 @pytest.mark.parametrize('form, times', REMINDER_TIMES)
-def test_get_reminder_times(form: Dict[str, str], times: List[time]) -> None:
+def test_get_reminder_times(form: meds.Form, times: List[time]) -> None:
     assert meds.get_reminder_times(form) == times
 
 
@@ -249,7 +260,7 @@ def test_get_different_time_reminder(
 
 
 @pytest.mark.parametrize('form, times, datetimes', FIRST)
-def test_get_first_day_reminders(form: Dict[str, str], times: List[time],
+def test_get_first_day_reminders(form: meds.Form, times: List[time],
                                  datetimes: List[datetime]) -> None:
     assert list(meds.get_first_day_reminders(form, times)) == datetimes
 
@@ -263,13 +274,13 @@ def test_reminder_generator(
 
 
 @pytest.mark.parametrize('form, datetimes', DATETIMES)
-def test_get_reminder_datetimes(form: Dict[str, str],
+def test_get_reminder_datetimes(form: meds.Form,
                                 datetimes: List[datetime]) -> None:
     assert list(meds.get_reminder_datetimes(form)) == datetimes
 
 
 @pytest.mark.parametrize('form, boolean', CREATE)
-def test_create_events(session: Session, user: User, form: Dict[str, str],
+def test_create_events(session: Session, user: User, form: meds.Form,
                        boolean: bool) -> None:
     assert session.query(Event).first() is None
     meds.create_events(session, user.id, form)
@@ -277,27 +288,3 @@ def test_create_events(session: Session, user: User, form: Dict[str, str],
     assert event
     title = '-' in event.title
     assert title is boolean
-
-
-def test_meds_page_returns_ok(meds_test_client: TestClient) -> None:
-    path = meds.router.url_path_for('meds')
-    response = meds_test_client.get(path)
-    assert response.ok
-
-
-@pytest.mark.parametrize('form, pylendar', PYLENDAR)
-def test_meds_send_form_success(meds_test_client: TestClient, session: Session,
-                                form: Dict[str, str], pylendar: bool) -> None:
-    assert session.query(Event).first() is None
-    path = meds.router.url_path_for('meds')
-    response = meds_test_client.post(path, data=form, allow_redirects=True)
-    assert response.ok
-    message = 'PyLendar' in response.text
-    assert message is pylendar
-    message = 'alert' in response.text
-    assert message is not pylendar
-    event = session.query(Event).first()
-    if pylendar:
-        assert event
-    else:
-        assert event is None
