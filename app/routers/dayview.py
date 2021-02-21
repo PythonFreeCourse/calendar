@@ -26,7 +26,7 @@ class DivAttributes:
     CLASS_SIZES = ("title-size-tiny", "title-size-xsmall", "title-size-small")
     LENGTH_SIZE_STEP = (30, 45, 90)
 
-    def _minutes_position(self, minutes: int) -> Union[int, None]:
+    def _minutes_position(self, minutes: int) -> dict:
         min_minutes = self.MIN_MINUTES
         max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
@@ -172,7 +172,7 @@ def get_all_day_events(
     day_end = day + timedelta(hours=24)
     for event in events:
         if is_all_day_event_in_day(event=event, day=day, day_end=day_end):
-            yield CurrentTimeAttributes(event)
+            yield event
 
 
 @router.get("/day/{date}", include_in_schema=False)
@@ -183,7 +183,8 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
+    # user = session.query(User).filter_by(username="test_username").first()
+    user = session.query(User).filter_by(username="tamar").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -217,6 +218,6 @@ async def dayview(
             "day": day.day,
             "zodiac": zodiac_obj,
             "view": view,
-            "current_time": current_time_with_attrs
+            "current_time": current_time_with_attrs,
         },
     )
