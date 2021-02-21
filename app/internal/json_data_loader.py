@@ -6,7 +6,7 @@ from loguru import logger
 from sqlalchemy.orm import Session
 
 from app.database.models import Base, Joke, Quote, Parasha, Zodiac
-from app.internal import daily_quotes, jokes, zodiac, weekly_parasha
+from app.internal import daily_quotes, jokes, weekly_parasha, zodiac
 
 
 def load_to_database(session: Session) -> None:

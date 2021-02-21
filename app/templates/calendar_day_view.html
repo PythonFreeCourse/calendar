@@ -21,9 +21,8 @@
     {% endif %}
     {% if parasha %}
       <div class="parashot">
-        פרשת השבוע:
-        {{parasha.hebrew_name}}<br>
-        {{parasha.name}}<br>
+        {{ gettext(" פרשת השבוע: %(hebrew)s", hebrew=parasha.hebrew_name) }}
+        <br>{{ gettext("%(name)s", name=parasha.name) }}
         <a href={{parasha.link}} target="_blank">{{ gettext(" פירוט בלינק נפרד על %(parashah)s", parashah=parasha.hebrew_name) }}</a>
       </div>
     {% endif %}

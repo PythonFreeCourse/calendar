@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Dict, Optional
-from pyluach import dates, hebrewcal, parshios
-
+from pyluach import dates, parshios
 
 from app.database.models import Parasha
 from sqlalchemy.orm import Session
@@ -18,22 +17,6 @@ def create_parasha_object(parashot_fields: Dict[str, Optional[str]])\
     )
 
 
-def get_parasha_object(session: Session, date: datetime) -> Parasha:
-    """Returns the parasha object for the specific day.
-
-    Args:
-        session: The database connection.
-        date: The requested date.
-
-    Returns:
-        A HebrewView object.
-    """
-
-    for parasha in session.query(Parasha).all():
-        if parasha.date == date:
-            return parasha
-
-
 def get_parasha_only_to_saturday(date: datetime) -> Optional[str]:
     """Returns the parasha name if the date is Saturday.
 
@@ -47,7 +30,11 @@ def get_parasha_only_to_saturday(date: datetime) -> Optional[str]:
 
     date_split = str(date).split('-')
     new_date_format = [int(x) for x in date_split]
-    gregorian_date = dates.GregorianDate(new_date_format[0], new_date_format[1], new_date_format[2])
+    gregorian_date = dates.GregorianDate(
+        new_date_format[0],
+        new_date_format[1],
+        new_date_format[2]
+    )
     if gregorian_date == gregorian_date.shabbos():
         return parshios.getparsha_string(gregorian_date)
 
