@@ -123,9 +123,9 @@ function prepare_audio() {
     music.play();
   }
 
-  sfx_on = audio_settings["sfx_on"];
+  const sfx_on = audio_settings["sfx_on"];
   if (sfx.muted && (sfx_on || sfx_on == null)) {
-    sfx_choice = audio_settings["sfx_choice"];
+    const sfx_choice = audio_settings["sfx_choice"];
     sfx.src = "/static/tracks/" + sfx_choice;
     sfx.volume = audio_settings["sfx_vol"];
     sfx.muted = false;
