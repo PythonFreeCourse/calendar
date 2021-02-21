@@ -1,92 +1,92 @@
-function appendElement(elements, targetID) {
-    const target = document.getElementById(targetID);
-    for (let i = 0; i < elements.length; ++i) {
-        target.append(elements[i]);
-    }
-}
-
-function deleteElements(targetID) {
-    const target = document.getElementById(targetID).children;
-    const length = target.length;
-    for (let i = 0; i < length; ++i) {
-        target[0].remove();
-    }
-}
-
-function display(elements, targetID, empty) {
-    if (!empty) {
-        deleteElements(targetID);
-    }
-    appendElement(elements, targetID);
+function displayResult(rows, elements) {
+    const rowsArray = Array.from(rows);
+    const elementsArray = Array.from(elements);
+    rowsArray.map(row => {
+        if (elementsArray.includes(row)) {
+            return row.classList.remove("invisible");
+        } else {
+            return row.classList.add("invisible");
+        }
+    });
 }
 
 function searchFeature(searchValue, elements) {
-    const result = elements.filter(
-        element => {
-            return element.getElementsByClassName("row-feature-name")[0].innerHTML.toLowerCase().includes(searchValue)
-        }
-    );
+    const elementsArray = Array.from(elements);
+    const result = elementsArray.filter(element => {
+        return element.getElementsByClassName("row-feature-name")[0].innerHTML.toLowerCase().includes(searchValue);
+    });
     return result;
 }
 
-function getAvailable(elements) {
-    let availables = [];
-    for (let i = 0; i < elements.length; ++i) {
-        const element = elements[i];
-        if (element.dataset.state === "available") {
-            availables.push(element);
-        }
-    }
-    return availables;
-}
-
-function setSearchBox(targetID) {
-    const rows = document.getElementsByClassName("feature-row");
+function setSearchBox() {
     const searchBox = document.getElementsByClassName("search-input");
     searchBox[0].addEventListener(
         'input', function (evt) {
-            console.log(rows);
+            const rows = document.getElementsByClassName("feature-row");
             const value = evt.target.value.trim().toLowerCase();
             if (!value) {
-                display(rows, targetID, true);
+                Array.from(rows).map(element => element.classList.remove("invisible"));
             } else {
                 const result = searchFeature(value, rows);
-                display(result, targetID, false);
+                displayResult(rows, result);
             }
         });
 }
 
-function moveColumn(rows) {
-    const row = this.parentElement;
-    const category = row.parentElement;
+function move(button, element) {
+    const category = element.parentElement;
     if (category.id === "available-features") {
-        this.innerHTML = "REMOVE";
-        this.classList.remove("background-green");
-        this.classList.add("background-red");
-        row.dataset.state = "installed";
-        document.getElementById("installed-features").appendChild(row);
+        button.innerHTML = "REMOVE";
+        button.classList = "button remove-button";
+        element.dataset.state = "installed";
+        document.getElementById("installed-features").appendChild(element);
     } else {
-        this.innerHTML = "ADD";
-        this.classList.remove("background-red");
-        this.classList.add("background-green");
-        row.dataset.state = "available";
-        document.getElementById("available-features").appendChild(row);
+        button.innerHTML = "ADD";
+        button.classList = "button add-button";
+        element.dataset.state = "available";
+        document.getElementById("available-features").appendChild(element);
     }
 }
 
-function setRemoveAdd(className) {
-    const rows = document.getElementsByClassName(className);
+function setPath(action, url) {
+    if (action === "ADD") {
+        return new URL('/features/add', url);
+    }
+    return new URL('/features/delete', url);
+}
+
+function update() {
+    const action = this.innerText;
+    const parent = this.parentElement;
+    const featureId = this.parentElement.id;
+    const url = window.location.origin;
+    let path = setPath(action, url);
+    const formData = new FormData();
+    formData.append('feature_id', featureId);
+    fetch(path,
+        {
+            body: formData,
+            method: "post"
+        }
+    ).then(response => {
+        response.json();
+        move(this, parent);
+    });
+}
+
+function setFeatures() {
+    const rows = document.getElementsByClassName("feature-row");
     for (let i = 0; i < rows.length; ++i) {
         const row = rows[i];
-        const button = row.getElementsByClassName("feature-button")[0];
-        button.addEventListener('click', moveColumn);
+        const button = row.getElementsByClassName("button")[0];
+        button.addEventListener('click', update);
     }
 }
 
 document.addEventListener(
     'DOMContentLoaded', function () {
-        setSearchBox("available-features");
-        setRemoveAdd("feature-row");
+        setSearchBox();
+        setFeatures();
     }
 )
 

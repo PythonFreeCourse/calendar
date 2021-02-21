@@ -4,6 +4,7 @@
 
 <!-- CSS -->
 <link href="{{ url_for('static', path='/grid_style.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', path='/features.css') }}" rel="stylesheet" type="text/css">
 
 {% endblock head %}
 {% block page_name %}Features Panel{% endblock page_name %}
@@ -40,42 +41,44 @@
                 <div class="m-title underline-yellow"> Available Features </div>
                 <div class="m-title underline-yellow"> Your Features </div>
                 <div id="available-features">
-                    {% for i in range(3) %}
-                    <div class="feature-row" data-state="available">
+                    {% for feature in features['uninstalled'] %}
+                    <div class="feature-row" data-state="available" id="{{feature.id}}">
                         <div>
-                            <ion-icon class="feature-icon" name="airplane"></ion-icon>
+                            <ion-icon class="feature-icon" name="{{feature.icon}}"></ion-icon>
                         </div>
                         <div>
-                            <span class="row-feature-name">Name{{i}}</span>
+                            <span class="row-feature-name">{{feature.name.upper()}}</span>
                             <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
+                            <span class="information">{{feature.information}}</span>
                         </div>
-                        <div><b>Creator:</b> Username</div>
+                        <div><b>Creator:</b> {{feature.creator.title()}}</div>
                         <div>
                             <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
-                            <span><b>Followers:</b> 0K</span>
+                            <span><b>Followers:</b>{{feature.followers}}</span>
                         </div>
-                        <div class="button feature-button background-green text-lightgray" id="feature{{i}}">
+                        <!-- <div class="button feature-button background-green text-lightgray"> -->
+                        <div class="button add-button">
                             ADD
                         </div>
                     </div>
                     {% endfor %}
                 </div>
                 <div id="installed-features">
-                    {% for i in range(3) %}
-                    <div class="feature-row" data-state="installed">
+                    {% for feature in features['installed'] %}
+                    <div class="feature-row" data-state="installed" id="{{feature.id}}">
                         <div>
-                            <ion-icon class="feature-icon" name="airplane"></ion-icon>
+                            <ion-icon class="feature-icon" name="{{feature.icon}}"></ion-icon>
                         </div>
                         <div>
-                            <b>Name{{i * 4}}</b>
+                            <span class="row-feature-name">{{feature.name.upper()}}</span>
                             <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
                         </div>
-                        <div><b>Creator:</b> Username</div>
+                        <div><b>Creator:</b> {{feature.creator.title()}}</div>
                         <div>
                             <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
-                            <span><b>Followers:</b> 0K</span>
+                            <span><b>Followers:</b> {{feature.followers}}</span>
                         </div>
-                        <div class="button feature-button background-red text-lightgray" id="remove">
+                        <div class="button remove-button" id="remove">
                             REMOVE
                         </div>
                     </div>

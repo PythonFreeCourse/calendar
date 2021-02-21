@@ -394,8 +394,16 @@ main {
   font-weight: 800;
 }
 
-.button:hover {
-  font-weight: 700;
+.add-button,
+.remove-button {
+  color: var(--background);
+  height: 2rem;
 }
 
+.add-button {
+  background-color: var(--positive);
+}
 
+.remove-button {
+  background-color: var(--negative);
+}
