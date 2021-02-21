@@ -6,8 +6,7 @@ from app.database.models import Parasha
 from sqlalchemy.orm import Session
 
 
-def create_parasha_object(parashot_fields: Dict[str, Optional[str]])\
-        -> Parasha:
+def create_parasha_object(parashot_fields: Dict[str, str]) -> Parasha:
     """This function create a parasha object from given fields dictionary.
     It is used for adding the data from the json into the db"""
     return Parasha(
