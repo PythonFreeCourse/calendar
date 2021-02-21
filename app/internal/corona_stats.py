@@ -1,5 +1,6 @@
 
 import json
+import random
 from datetime import date, datetime
 from typing import Any, Dict
 
@@ -19,6 +20,21 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 CORONA_API_URL = (
     'https://datadashboardapi.health.gov.il/api/queries/vaccinated'
 )
+user_agent_list = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5)'
+    ' AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0)'
+    ' Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) '
+    'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) '
+    'Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+    'AppleWebKit/537.36 (KHTML, like Gecko)'
+    ' Chrome/83.0.4103.97 Safari/537.36',
+]
+
+headers = {'User-Agent': random.choice(user_agent_list)}
 
 
 def create_stats_object(data: JSON) -> CoronaStats:
@@ -85,7 +101,7 @@ def insert_to_db_if_needed(data: JSON, db: Session = Depends(get_db)):
 
 def get_vacinated_data() -> JSON:
     # the api updates during the day, so we want to stay updated.
-    res = requests.get(CORONA_API_URL)
+    res = requests.get(CORONA_API_URL, headers=headers)
     return json.loads(res.text)[-1]
 
 
@@ -102,8 +118,11 @@ def get_corona_stats(db: Session = Depends(get_db)) -> Dict[str, Any]:
         data = serialize_stats(db_data)
 
     except NoResultFound:
-        data = get_vacinated_data()
-        insert_to_db_if_needed(data, db)
+        try:
+            data = get_vacinated_data()
+            insert_to_db_if_needed(data, db)
+        except json.decoder.JSONDecodeError:
+            data = {'error': 'No data'}
 
     except (SQLAlchemyError, AttributeError) as e:
         logger.error(f'corona stats failed with error: {e}')
