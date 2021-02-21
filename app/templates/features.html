@@ -19,9 +19,9 @@
         <header>
             <div>
                 <div class="title">FEATURES PANEL</div>
-                <p class="s-paragraph">This panel allows you to view optional addons. <br>
-                    Add, remove or customize features to your liking by clicking on the features icon in the navigation
-                    bar.
+                <p class="s-paragraph">This panel allows you to view optional addons.<br>Add, remove or customize
+                    features
+                    to your liking by clicking on the features icon in the navigation bar.
                 </p>
                 <div class="search-box">
                     <ion-icon name="search" alt="Search icon"></ion-icon>
@@ -46,20 +46,20 @@
                         <div>
                             <ion-icon class="feature-icon" name="{{feature.icon}}"></ion-icon>
                         </div>
-                        <div>
+                        <div class="info-icon">
                             <span class="row-feature-name">{{feature.name.upper()}}</span>
                             <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
-                            <p class="information">{{feature.information}}</p>
                         </div>
                         <div><b>Creator:</b> {{feature.creator.title()}}</div>
                         <div>
                             <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
-                            <span><b>Followers:</b>{{feature.followers}}</span>
+                            <span><b>Followers:</b></span>
+                            <span class="followers">{{feature.followers}}</span>
                         </div>
-                        <!-- <div class="button feature-button background-green text-lightgray"> -->
                         <div class="button add-button">
                             ADD
                         </div>
+                        <div class="information">{{feature.information}}</div>
                     </div>
                     {% endfor %}
                 </div>
@@ -69,19 +69,20 @@
                         <div>
                             <ion-icon class="feature-icon" name="{{feature.icon}}"></ion-icon>
                         </div>
-                        <div>
+                        <div class="info-icon">
                             <span class="row-feature-name">{{feature.name.upper()}}</span>
                             <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
-                            <p class="information">{{feature.information}}</p>
                         </div>
                         <div><b>Creator:</b> {{feature.creator.title()}}</div>
                         <div>
                             <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
-                            <span><b>Followers:</b> {{feature.followers}}</span>
+                            <span><b>Followers:</b></span>
+                            <span class="followers">{{feature.followers}}</span>
                         </div>
                         <div class="button remove-button" id="remove">
                             REMOVE
                         </div>
+                        <div class="information">{{feature.information}}</div>
                     </div>
                     {% endfor %}
                 </div>

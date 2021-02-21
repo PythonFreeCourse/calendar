@@ -33,6 +33,16 @@ function setSearchBox() {
         });
 }
 
+function updateFollowers(element, add = true) {
+    const followers = element.getElementsByClassName("followers")[0];
+    const followersNum = parseInt(followers.innerText);
+    if (add) {
+        followers.innerText = followersNum + 1;
+    } else if (followersNum > 0) {
+        followers.innerText = followersNum - 1;
+    }
+}
+
 function move(button, element) {
     const category = element.parentElement;
     if (category.id === "available-features") {
@@ -40,11 +50,13 @@ function move(button, element) {
         button.classList = "button remove-button";
         element.dataset.state = "installed";
         document.getElementById("installed-features").appendChild(element);
+        updateFollowers(element);
     } else {
         button.innerHTML = "ADD";
         button.classList = "button add-button";
         element.dataset.state = "available";
         document.getElementById("available-features").appendChild(element);
+        updateFollowers(element, false);
     }
 }
 
@@ -83,10 +95,26 @@ function setFeatures() {
     }
 }
 
+function setInformation() {
+    let allInfo = document.getElementsByClassName("info-icon");
+    Array.from(allInfo).map(element => {
+        const parent = element.parentElement;
+        const infoBox = parent.getElementsByClassName("information")[0];
+        element.addEventListener("click", function () {
+            if (infoBox.style.display === "block") {
+                infoBox.style.display = "none";
+            } else {
+                infoBox.style.display = "block";
+            }
+        })
+    });
+}
+
 document.addEventListener(
     'DOMContentLoaded', function () {
         setSearchBox();
         setFeatures();
+        setInformation();
     }
 )
 

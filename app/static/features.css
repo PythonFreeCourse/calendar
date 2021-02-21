@@ -72,8 +72,6 @@
 
 .information {
   display: none;
-}
-
-.feature-icon:hover + .information{
-  display: block;
+  grid-column: 2/6;
+  width: 30rem;
 }
