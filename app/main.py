@@ -44,6 +44,7 @@ from app.routers import (  # noqa: E402
     currency, dayview, email, event, export, four_o_four, friendview,
     google_connect, invitation, joke, login, logout, profile,
     register, search, telegram, user, weekview, weight, whatsapp,
+    game_release_dates_service,
 )
 
 json_data_loader.load_to_database(next(get_db()))

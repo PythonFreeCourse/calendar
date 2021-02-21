@@ -1,0 +1,50 @@
+{% for game in games %}
+<label for={{game['slug']}} class="game">{{game['name']}}</strong> 
+<input type="checkbox" name={{game['slug']}} class="form-check-input">
+<!-- <input type="checkbox" name={{game['slug']}} class="form-check-input"> -->
+<div>-Platforms</div>
+{% for platform in game['platforms']%}
+<div>{{platform}}</div>
+{% endfor %}
+<div>-Release date</div>
+{{game['release_date']}}
+<div>&nbsp;</div>
+{% endfor %}
+<script>
+// document.addEventListener('DOMContentLoaded', () => {
+//   save_btn_el = document.getElementById("save_changes");
+//   save_btn_el.addEventListener("click", function (e) {
+// //   const chosen_button = document.getElementsByClassName('event-btn');
+//   for (let i = 0; i < chosen_button.length; i++) {
+//       chosen_button[i].addEventListener("click", function(e) {
+//     //   let clickedElem = e.target.id
+//           fetch('/event/edit')
+//           .then(function(response) {
+//               return response.text();
+//           })
+//           .then(function(body) {
+//               document.querySelector('#event_block').innerHTML = body;
+//               scrollTo(document.getElementById("event_block"));
+//           });
+//       });
+//   }
+// });
+
+
+//     save_btn_el.addEventListener("click", function (e) {
+//     let formData = new FormData();
+//     formData.append("from_date", document.getElementById("from_date").value);
+//     formData.append("to_date", document.getElementById("to_date").value);
+//     let clickedElem = e.target.id;
+//     fetch("/game-releases/add", {
+//       method: "post",
+//       body: formData,
+//     })
+//       .then(function (response) {
+//         return response.text();
+//       })
+//       .then(function (body) {
+//         document.querySelector("#content_div").innerHTML = body;
+//       });
+//   });
+</script>

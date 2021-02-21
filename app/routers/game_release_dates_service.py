@@ -17,6 +17,7 @@ from app.database import models
 from app.database.models import Event, User, UserEvent, UserSettings
 from app.dependencies import get_db, templates
 from app.internal.utils import get_current_user, create_model
+from app.routers.event import create_event
 
 
 router = APIRouter(
@@ -37,17 +38,33 @@ def is_user_signed_up_for_game_releases(
     return False
 
 
+@router.post("/add-games-to-calendar")
+async def add_games_to_calendar(
+        request: Request, session=Depends(get_db)):
+    current_user = get_current_user(session)
+    data = await request.form()
+
+    print(data)
+    for game in data:
+        print(game)
+        game_data = requests.get(
+        f"https://api.rawg.io/api/games/{game[0]}").json()
+
+        create_event(session, title=game['name'], start=game['release_date'], end=game['release_date'], owner_id=current_user.id)
+        print(game_data)
+
+
 @router.post("/get_releases_by_dates")
 async def fetch_released_games(
         request: Request, session=Depends(get_db)):
     current_user = get_current_user(session)
     data = await request.form()
-    
+
     from_date = data['from_date']
     to_date = data['to_date']
 
     template = templates.get_template(
-        'partials/calendar/feature_settings/game_release_modal.html'
+        'partials/calendar/feature_settings/games_list.html'
     )
     games = get_games_data(from_date, to_date)
     content = template.render(games=games)
@@ -84,6 +101,9 @@ def get_games_data(start_date, end_date):
     for result in current_day_games:
         current = {}
         current["name"] = result["name"]
+        current["slug"] = result["slug"]
+        # current["id"] = result["id"]
+        # print(current["id"])
         current["platforms"] = []
         for platform in result["platforms"]:
             current["platforms"].append(platform["platform"]["name"])
