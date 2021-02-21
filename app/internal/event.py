@@ -4,56 +4,61 @@ import logging
 import re
 from typing import List, Set
 
+from app.database.models import Country, Event
+from app.resources.countries import countries
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
+import pytz
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
-from app.database.models import Country, Event
-from app.resources.countries import countries
-import pytz
 
-ZOOM_REGEX = re.compile(r'https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+')
-HOUR_MINUTE_FORMAT = '%H:%M'
+ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
+HOUR_MINUTE_FORMAT = "%H:%M"
 
 
 def raise_if_zoom_link_invalid(vc_link):
     if ZOOM_REGEX.search(vc_link) is None:
-        raise HTTPException(status_code=HTTP_400_BAD_REQUEST,
-                            detail="VC type with no valid zoom link")
+        raise HTTPException(
+            status_code=HTTP_400_BAD_REQUEST,
+            detail="VC type with no valid zoom link",
+        )
 
 
 def get_invited_emails(invited_from_form: str) -> List[str]:
     invited_emails = []
-    for invited_email in invited_from_form.split(','):
+    for invited_email in invited_from_form.split(","):
         invited_email = invited_email.strip()
         try:
             validate_email(invited_email, check_deliverability=False)
         except EmailSyntaxError:
-            logging.exception(f'{invited_email} is not a valid email address')
+            logging.exception(f"{invited_email} is not a valid email address")
             continue
         invited_emails.append(invited_email)
 
     return invited_emails
 
 
-def get_uninvited_regular_emails(session: Session,
-                                 owner_id: int,
-                                 title: str,
-                                 invited_emails: List[str]) -> Set[str]:
+def get_uninvited_regular_emails(
+    session: Session,
+    owner_id: int,
+    title: str,
+    invited_emails: List[str],
+) -> Set[str]:
     invitees_query = session.query(Event).with_entities(Event.invitees)
-    similar_events_invitees = invitees_query.filter(Event.owner_id == owner_id,
-                                                    Event.title == title).all()
+    similar_events_invitees = invitees_query.filter(
+        Event.owner_id == owner_id,
+        Event.title == title,
+    ).all()
     regular_invitees = set()
     for record in similar_events_invitees:
         if record:
-            regular_invitees.update(record[0].split(','))
+            regular_invitees.update(record[0].split(","))
 
     return regular_invitees - set(invited_emails)
 
 
-def check_diffs(checked_event: Event,
-                all_events: List[Event]):
+def check_diffs(checked_event: Event, all_events: List[Event]):
     """Returns the repeated events and the week difference"""
     diffs = []
     for event in all_events:
@@ -70,24 +75,32 @@ def check_diffs(checked_event: Event,
 
 
 def find_pattern(session, event):
-    all_events_with_same_name = session.query(Event).filter(
-        Event.owner_id == event.owner_id, Event.title == event.title).all()
+    all_events_with_same_name = (
+        session.query(Event)
+        .filter(Event.owner_id == event.owner_id, Event.title == event.title)
+        .all()
+    )
 
     return check_diffs(event, all_events_with_same_name)
 
 
-def get_messages(session: Session,
-                 event: Event,
-                 uninvited_contacts: Set[str]) -> List[str]:
+def get_messages(
+    session: Session,
+    event: Event,
+    uninvited_contacts: Set[str],
+) -> List[str]:
     messages = []
     if uninvited_contacts:
-        messages.append(f'Forgot to invite '
-                        f'{", ".join(uninvited_contacts)} maybe?')
+        messages.append(
+            f"Forgot to invite " f'{", ".join(uninvited_contacts)} maybe?',
+        )
 
     pattern = find_pattern(session, event)
     for weeks_diff in pattern:
-        messages.append(f'Same event happened {weeks_diff} weeks before too. '
-                        f'Want to create another one {weeks_diff} after too?')
+        messages.append(
+            f"Same event happened {weeks_diff} weeks before too. "
+            f"Want to create another one {weeks_diff} after too?",
+        )
     return messages
 
 
@@ -105,11 +118,11 @@ def add_countries_to_db(session: Session) -> None:
         timezone: Asia/Jerusalem
     """
     for country in countries:
-        partial_name = country['name']
-        for capital in country['timezones']:
-            capital_name = capital.split('/')[-1]
+        partial_name = country["name"]
+        for capital in country["timezones"]:
+            capital_name = capital.split("/")[-1]
             if partial_name != capital_name:
-                name = partial_name + ', ' + capital_name
+                name = partial_name + ", " + capital_name
             else:
                 name = capital_name
             existing = session.query(Country).filter_by(name=name).first()
@@ -120,30 +133,39 @@ def add_countries_to_db(session: Session) -> None:
     session.close()
 
 
-def find_local_time_by_country(user_timezone: str, country: str,
-                               meeting_time: datetime,
-                               session: Session) -> str:
+def find_local_time_by_country(
+    user_timezone: str,
+    country: str,
+    meeting_time: datetime,
+    session: Session,
+) -> str:
     """
     Converts the local meeting time to the chosen country meeting time.
     """
-    country_timezone = session.query(
-                                Country.timezone).filter_by(
-                                name=country).first()[0]
-    users_meeting_time_with_utc = pytz.timezone(
-                                    user_timezone).localize(
-                                    meeting_time)
+    country_timezone = (
+        session.query(Country.timezone).filter_by(name=country).first()[0]
+    )
+
+    users_meeting_time_with_utc = pytz.timezone(user_timezone).localize(
+        meeting_time,
+    )
+
     country_utc = pytz.timezone(country_timezone)
+
     meeting_time_for_country = users_meeting_time_with_utc.astimezone(
-                            country_utc).strftime(
-                                        HOUR_MINUTE_FORMAT)
+        country_utc,
+    ).strftime(HOUR_MINUTE_FORMAT)
+
     return meeting_time_for_country
 
 
-def get_meeting_local_duration(start_time: datetime,
-                               end_time: datetime,
-                               user_timezone: str,
-                               country: str,
-                               session: Session) -> str:
+def get_meeting_local_duration(
+    start_time: datetime,
+    end_time: datetime,
+    user_timezone: str,
+    country: str,
+    session: Session,
+) -> str:
     """
     Returns the total duration of the converted meeting time.
     """
@@ -151,15 +173,15 @@ def get_meeting_local_duration(start_time: datetime,
         user_timezone=user_timezone,
         country=country,
         meeting_time=start_time,
-        session=session
-        )
+        session=session,
+    )
     meeting_end_time = find_local_time_by_country(
         user_timezone=user_timezone,
         country=country,
         meeting_time=end_time,
-        session=session
-        )
-    total_time = meeting_start_time + ' - ' + meeting_end_time
+        session=session,
+    )
+    total_time = meeting_start_time + " - " + meeting_end_time
     return total_time
 
 

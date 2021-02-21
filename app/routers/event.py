@@ -8,6 +8,7 @@ from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.sql.elements import Null
 from starlette import status
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
@@ -24,8 +25,11 @@ from app.internal.event import (
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
+from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
+from app.routers.categories import get_user_categories
 from geoip import geolite2
+
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
@@ -46,6 +50,7 @@ ERROR_MSG = """
     Your ip address is not associated with any geographical location.
     This function cannot operate.
     """
+
 
 router = APIRouter(
     prefix="/event",
@@ -84,27 +89,55 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
     return {"success": True}
 
 
+def get_categories_list(db_session: Session = Depends(get_db)):
+    user_id = 1  # until issue#29 will get current user_id from session
+    categories_list = get_user_categories(db_session, user_id)
+    return categories_list
+
+
 @router.get("/edit", include_in_schema=False)
 @router.get("/edit")
-async def eventedit(request: Request) -> Response:
-    return templates.TemplateResponse("eventedit.html", {"request": request})
+async def eventedit(
+    request: Request,
+    db_session: Session = Depends(get_db),
+) -> Response:
+    categories_list = get_categories_list(db_session)
+    return templates.TemplateResponse(
+        "eventedit.html",
+        {
+            "request": request,
+            "categories_list": categories_list,
+            "privacy": PrivacyKinds,
+        },
+    )
 
 
 @router.get("/edit/view_countries", include_in_schema=False)
-async def choose_country(request: Request,
-                         session=Depends(get_db)) -> Response:
+async def choose_country(
+    request: Request,
+    session=Depends(get_db),
+) -> Response:
     """
     Displays the list of all countries name from "Country" table.
     """
     countries_names = get_all_countries_names(session=session)
-    return templates.TemplateResponse("eventedit.html",
-                                      {"request": request,
-                                       "countries_names": countries_names})
+    categories_list = get_categories_list(session)
+    return templates.TemplateResponse(
+        "eventedit.html",
+        {
+            "request": request,
+            "countries_names": countries_names,
+            "categories_list": categories_list,
+            "privacy": PrivacyKinds,
+        },
+    )
 
 
 @router.post("/edit/view_countries", include_in_schema=False)
-async def check_country_time(request: Request,
-                             session=Depends(get_db)) -> Response:
+async def check_country_time(
+    request: Request,
+    session=Depends(get_db),
+) -> Response:
     """
     Displays datalist of all countries name from "Country" table.
     By clicking "Check time" the converted meeting time is displayed.
@@ -113,35 +146,48 @@ async def check_country_time(request: Request,
     """
     # TODO: define ip as request.client.host
     # ip = request.client.host
-    random_israeli_ip_for_now = '82.166.236.10'
+    categories_list = get_categories_list(session)
+    random_israeli_ip_for_now = "82.166.236.10"
     ip = random_israeli_ip_for_now
     match = geolite2.lookup(ip)
-    if match is not None:
-        data = await request.form()
-        country = data['countries']
-        start_time = dt.strptime(
-            data['start_date'] + ' ' + data['start_time'],
-            TIME_FORMAT)
-        end_time = dt.strptime(
-            data['end_date'] + ' ' + data['end_time'],
-            TIME_FORMAT)
-        user_timezone = match.timezone
-        meeting_time_for_invitee = get_meeting_local_duration(
-                                    start_time=start_time,
-                                    end_time=end_time,
-                                    user_timezone=user_timezone,
-                                    country=country,
-                                    session=session)
-        return templates.TemplateResponse("eventedit.html",
-                                          {"request": request,
-                                           "chosen_country": country,
-                                           "chosen_country_meeting_time": (
-                                               meeting_time_for_invitee
-                                               )})
-    else:
-        return templates.TemplateResponse("eventedit.html",
-                                          {"request": request,
-                                           "msg": ERROR_MSG})
+    if match is None:
+        return templates.TemplateResponse(
+            "eventedit.html",
+            {
+                "request": request,
+                "msg": ERROR_MSG,
+                "categories_list": categories_list,
+                "privacy": PrivacyKinds,
+            },
+        )
+    data = await request.form()
+    country = data["countries"]
+    start_time = dt.strptime(
+        data["start_date"] + " " + data["start_time"],
+        TIME_FORMAT,
+    )
+    end_time = dt.strptime(
+        data["end_date"] + " " + data["end_time"],
+        TIME_FORMAT,
+    )
+    user_timezone = match.timezone
+    meeting_time_for_invitee = get_meeting_local_duration(
+        start_time,
+        end_time,
+        user_timezone,
+        country,
+        session,
+    )
+    return templates.TemplateResponse(
+        "eventedit.html",
+        {
+            "request": request,
+            "chosen_country": country,
+            "chosen_country_meeting_time": (meeting_time_for_invitee),
+            "categories_list": categories_list,
+            "privacy": PrivacyKinds,
+        },
+    )
 
 
 @router.post("/edit", include_in_schema=False)
@@ -164,8 +210,11 @@ async def create_new_event(
 
     vc_link = data["vc_link"]
     category_id = data.get("category_id")
+    privacy = data["privacy"]
+    privacy_kinds = [kind.name for kind in PrivacyKinds]
+    if privacy not in privacy_kinds:
+        privacy = PrivacyKinds.Public.name
     is_google_event = data.get("is_google_event", "True") == "True"
-
     invited_emails = get_invited_emails(data["invited"])
     uninvited_contacts = get_uninvited_regular_emails(
         session,
@@ -182,8 +231,8 @@ async def create_new_event(
         title=title,
         start=start,
         end=end,
-        owner_id=owner_id,
         all_day=all_day,
+        owner_id=owner_id,
         content=content,
         location=location,
         vc_link=vc_link,
@@ -191,13 +240,23 @@ async def create_new_event(
         category_id=category_id,
         availability=availability,
         is_google_event=is_google_event,
+        privacy=privacy,
     )
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
         router.url_path_for("eventview", event_id=event.id)
-        + f'messages={"---".join(messages)}',
+        + f'?messages={"---".join(messages)}',
         status_code=status.HTTP_302_FOUND,
+    )
+
+
+def raise_for_nonexisting_event(event_id: int) -> None:
+    error_message = f"Event ID does not exist. ID: {event_id}"
+    logger.exception(error_message)
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=error_message,
     )
 
 
@@ -212,18 +271,61 @@ async def eventview(
     if event.all_day:
         start_format = "%A, %d/%m/%Y"
         end_format = ""
+    event_considering_privacy = event_to_show(event, db)
+    if not event_considering_privacy:
+        raise_for_nonexisting_event(event.id)
     messages = request.query_params.get("messages", "").split("---")
     return templates.TemplateResponse(
         "eventview.html",
         {
             "request": request,
-            "event": event,
+            "event": event_considering_privacy,
             "comments": comments,
             "start_format": start_format,
             "end_format": end_format,
             "messages": messages,
         },
     )
+
+
+def check_event_owner(
+    event: Event,
+    session: Depends(get_db),
+    user: Optional[User] = None,
+) -> bool:
+    # TODO use current_user after user system merge
+    if not user:
+        user = get_current_user(session)
+    is_owner = event.owner_id == user.id
+    return is_owner
+
+
+def event_to_show(
+    event: Event,
+    session: Depends(get_db),
+    user: Optional[User] = None,
+) -> Optional[Event]:
+    """Check the given event's privacy and return
+    event/fixed private event/ nothing (hidden) accordingly"""
+    is_owner = check_event_owner(event, session, user)
+    if event.privacy == PrivacyKinds.Private.name and not is_owner:
+        event_dict = event.__dict__.copy()
+        if event_dict.get("_sa_instance_state", None):
+            event_dict.pop("_sa_instance_state")
+        event_dict.pop("id")
+        private_event = Event(**event_dict)
+        private_event.title = PrivacyKinds.Private.name
+        private_event.content = PrivacyKinds.Private.name
+        private_event.location = PrivacyKinds.Private.name
+        private_event.color = Null
+        private_event.invitees = PrivacyKinds.Private.name
+        private_event.category_id = Null
+        private_event.emotion = Null
+        return private_event
+    elif event.privacy == PrivacyKinds.Hidden.name and not is_owner:
+        return
+    elif event.privacy == PrivacyKinds.Public.name or is_owner:
+        return event
 
 
 @router.post("/{event_id}/owner")
@@ -273,12 +375,7 @@ def by_id(db: Session, event_id: int) -> Event:
     try:
         event = db.query(Event).filter_by(id=event_id).one()
     except NoResultFound:
-        error_message = f"Event ID does not exist. ID: {event_id}"
-        logger.exception(error_message)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=error_message,
-        )
+        raise_for_nonexisting_event(event_id)
     except MultipleResultsFound:
         error_message = (
             f"Multiple results found when getting event. Expected only one. "
@@ -390,6 +487,7 @@ def create_event(
     category_id: Optional[int] = None,
     availability: bool = True,
     is_google_event: bool = False,
+    privacy: str = PrivacyKinds.Public.name,
 ):
     """Creates an event and an association."""
 
@@ -401,6 +499,7 @@ def create_event(
         title=title,
         start=start,
         end=end,
+        privacy=privacy,
         content=content,
         owner_id=owner_id,
         location=location,

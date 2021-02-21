@@ -4,6 +4,7 @@ from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
 import json
 import pytest
+from sqlalchemy.sql.elements import Null
 from sqlalchemy.orm.session import Session
 from starlette import status
 
@@ -11,12 +12,11 @@ from starlette import status
 from app.database.models import Comment, Event
 from app.dependencies import get_db
 from app.internal.event import add_countries_to_db
+from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
-
-
 from app.routers import event as evt
-
+from app.routers.event import event_to_show
 
 CORRECT_EVENT_FORM_DATA = {
     "title": "test title",
@@ -29,7 +29,7 @@ CORRECT_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "True",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
 }
@@ -45,7 +45,7 @@ CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "event_type": "on",
     "is_google_event": "False",
 }
@@ -61,7 +61,7 @@ WRONG_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "True",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
     "is_google_event": "False",
@@ -78,7 +78,7 @@ BAD_EMAILS_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com,ccc",
     "event_type": "on",
     "is_google_event": "False",
@@ -95,7 +95,7 @@ WEEK_LATER_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "event_type": "on",
     "invited": "a@a.com,b@b.com",
     "is_google_event": "False",
@@ -112,18 +112,18 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
     "is_google_event": "False",
 }
 
 CONVERT_TIME_FORM_DATA = {
-    'countries': "France, Paris",
-    'start_date': '2021-02-02',
-    'start_time': '14:00',
-    'end_date': '2021-02-02',
-    'end_time': '15:00'
+    "countries": "France, Paris",
+    "start_date": "2021-02-02",
+    "start_time": "14:00",
+    "end_date": "2021-02-02",
+    "end_time": "15:00",
 }
 
 CORRECT_ADD_EVENT_DATA = {
@@ -177,8 +177,10 @@ def test_eventedit_with_countries_list(event_test_client, session):
 
 def test_eventedit_with_time_convertion(client, session):
     add_countries_to_db(session)
-    response = client.post(client.app.url_path_for('check_country_time'),
-                           data=CONVERT_TIME_FORM_DATA)
+    response = client.post(
+        client.app.url_path_for("check_country_time"),
+        data=CONVERT_TIME_FORM_DATA,
+    )
     assert response.ok
     assert response.status_code == status.HTTP_200_OK
 
@@ -549,6 +551,38 @@ def test_change_owner(client, event_test_client, user, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_can_show_event_public(event, session, user):
+    assert event_to_show(event, session) == event
+    assert event_to_show(event, session, user) == event
+
+
+def test_can_show_event_hidden(event, session, user):
+    event.privacy = PrivacyKinds.Hidden.name
+    assert event_to_show(event, session, user) is None
+    assert event_to_show(event, session) == event
+
+
+def test_can_show_event_private(event, session, user):
+    event.privacy = PrivacyKinds.Private.name
+    private_event = event_to_show(event, session, user)
+    private_attributes = [
+        private_event.title,
+        private_event.location,
+        private_event.content,
+        private_event.invitees,
+    ]
+    null_attributes = [
+        private_event.color,
+        private_event.emotion,
+        private_event.category_id,
+    ]
+    is_private_attributes = [
+        attr == event.privacy for attr in private_attributes
+    ]
+    is_null_attributes = [attr is Null for attr in null_attributes]
+    assert all(is_private_attributes) and all(is_null_attributes)
 
 
 def test_get_tamplate_to_share_event(event, session):
