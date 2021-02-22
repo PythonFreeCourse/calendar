@@ -8,6 +8,7 @@
 │       ├── database.py
 │       ├── models.py
 │       ├── schemas.py
+|   ├── event_images
 │   ├── internal
 │       ├── __init__.py
 │       ├── admin.py
