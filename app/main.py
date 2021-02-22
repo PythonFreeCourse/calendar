@@ -144,7 +144,7 @@ async def home(
 ):
     """Home page for the website."""
     quote_of_day = daily_quotes.get_quote_of_day(db)
-    if daily_quotes.is_quote_favorite(db, user.user_id, quote_of_day.id):
+    if daily_quotes.is_quote_favorite(db, user.user_id, quote_of_day):
         quote_of_day.is_favorite = True
     return templates.TemplateResponse(
         "index.html",

@@ -103,7 +103,7 @@ def profile_test_client() -> Generator[Session, None, None]:
 
 @pytest.fixture(scope="session")
 def quotes_test_client() -> Iterator[TestClient]:
-    yield from create_test_client(profile.get_db)
+    yield from create_test_client(main.get_db)
 
 
 @pytest.fixture(scope="session")
