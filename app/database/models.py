@@ -217,6 +217,36 @@ class Invitation(Base):
         return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
 
 
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    music_on = Column(Boolean, default=False, nullable=False)
+    music_vol = Column(Integer, default=None)
+    sfx_on = Column(Boolean, default=False, nullable=False)
+    sfx_vol = Column(Integer, default=None)
+    primary_cursor = Column(String, default="default", nullable=False)
+    secondary_cursor = Column(String, default="default", nullable=False)
+    video_game_releases = Column(Boolean, default=False)
+
+
+class AudioTracks(Base):
+    __tablename__ = "audio_tracks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False, unique=True)
+    is_music = Column(Boolean, nullable=False)
+
+
+class UserAudioTracks(Base):
+    __tablename__ = "user_audio_tracks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    track_id = Column(Integer, ForeignKey("audio_tracks.id"))
+
+
 class OAuthCredentials(Base):
     __tablename__ = "oauth_credentials"
 
