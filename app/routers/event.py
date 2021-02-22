@@ -141,7 +141,7 @@ async def create_new_event(
     else:
         location_details = await get_location_coordinates(location)
         if not isinstance(location_details, str):
-            location = location_details.location
+            location = location_details.name
             latitude = location_details.latitude
             longitude = location_details.longitude
 
