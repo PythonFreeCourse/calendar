@@ -8,9 +8,15 @@ from sqlalchemy.orm import Session
 
 from app import config
 from app.database import engine, models
-from app.database.models import User, UserQuotes
+from app.dependencies import (
+    get_db,
+    logger,
+    MEDIA_PATH,
+    SOUNDS_PATH,
+    STATIC_PATH,
+    templates,
+)
 from app.internal.daily_quotes import get_quote_id
-from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
@@ -34,6 +40,7 @@ create_tables(engine, config.PSQL_ENVIRONMENT)
 app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
 app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
@@ -44,6 +51,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     about_us,
     agenda,
+    audio,
     calendar,
     categories,
     celebrity,
@@ -92,6 +100,7 @@ async def swagger_ui_redirect():
 routers_to_include = [
     about_us.router,
     agenda.router,
+    audio.router,
     calendar.router,
     categories.router,
     celebrity.router,
@@ -131,7 +140,7 @@ FULL_HEART_PATH = "media/full_heart.png"
 async def home(
     request: Request,
     db: Session = Depends(get_db),
-    user: User = Depends(current_user),
+    user: models.User = Depends(current_user),
 ):
     """Home page for the website."""
     quote_of_day = daily_quotes.get_quote_of_day(db)
@@ -150,36 +159,36 @@ async def home(
 
 @app.post("/")
 async def save_quote(
-    user: User = Depends(current_user),
+    user: models.User = Depends(current_user),
     quote: str = Form(...),
     db: Session = Depends(get_db),
 ):
     """Saves a quote in the database."""
     quote_id = get_quote_id(db, quote)
     record = (
-        db.query(UserQuotes)
+        db.query(models.UserQuotes)
         .filter(
-            UserQuotes.user_id == user.user_id,
-            UserQuotes.quote_id == quote_id,
+            models.UserQuotes.user_id == user.user_id,
+            models.UserQuotes.quote_id == quote_id,
         )
         .first()
     )
     if not record:
-        db.add(UserQuotes(user_id=user.user_id, quote_id=quote_id))
+        db.add(models.UserQuotes(user_id=user.user_id, quote_id=quote_id))
         db.commit()
 
 
 @app.delete("/")
 async def delete_quote(
-    user: User = Depends(current_user),
+    user: models.User = Depends(current_user),
     quote: str = Form(...),
     db: Session = Depends(get_db),
 ):
     """Deletes a quote from the database."""
     quote_id = get_quote_id(db, quote)
-    db.query(UserQuotes).filter(
-        UserQuotes.user_id == user.user_id,
-        UserQuotes.quote_id == quote_id,
+    db.query(models.UserQuotes).filter(
+        models.UserQuotes.user_id == user.user_id,
+        models.UserQuotes.quote_id == quote_id,
     ).delete()
     db.commit()
 
@@ -188,7 +197,7 @@ async def delete_quote(
 async def favorite_quotes(
     request: Request,
     db: Session = Depends(get_db),
-    user: User = Depends(current_user),
+    user: models.User = Depends(current_user),
 ):
     """html page for displaying the users' favorite quotes."""
     quotes = daily_quotes.get_quotes(db, user.user_id)

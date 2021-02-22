@@ -34,8 +34,8 @@ def test_get_quote_of_day_get_second_quote(session, quote1, quote2):
     assert daily_quotes.get_quote_of_day(session, DATE2).text == quote2.text
 
 
-def test_save_quote(session, settings_test_client, quote1):
-    test_login_successfull(session, settings_test_client)
+def test_save_quote(session, quotes_test_client, quote1):
+    test_login_successfull(session, quotes_test_client)
     data = {
         "quote": quote1.text,
         "author": quote1.author,
@@ -43,30 +43,30 @@ def test_save_quote(session, settings_test_client, quote1):
         "user": current_user,
     }
     quotes = daily_quotes.get_quotes(session, 1)
-    response = settings_test_client.post(url=HOME_URL, data=data)
+    response = quotes_test_client.post(url=HOME_URL, data=data)
     assert response.ok
     assert len(daily_quotes.get_quotes(session, 1)) == len(quotes) + 1
 
 
-def test_delete_quote(session, settings_test_client, quote1):
-    test_save_quote(session, settings_test_client, quote1)
+def test_delete_quote(session, quotes_test_client, quote1):
+    test_save_quote(session, quotes_test_client, quote1)
     data = {
         "quote": quote1.text,
         "to_save": False,
     }
-    response = settings_test_client.delete(url=HOME_URL, data=data)
+    response = quotes_test_client.delete(url=HOME_URL, data=data)
     assert response.ok
     assert len(daily_quotes.get_quotes(session, 1)) == 0
 
 
-def test_get_favorite_quotes(session, settings_test_client, quote1):
-    test_save_quote(session, settings_test_client, quote1)
-    response = settings_test_client.get(url=FAVORITE_QUOTES_URL)
+def test_get_favorite_quotes(session, quotes_test_client, quote1):
+    test_save_quote(session, quotes_test_client, quote1)
+    response = quotes_test_client.get(url=FAVORITE_QUOTES_URL)
     assert response.ok
     assert b"Favorite Quotes" in response.content
 
 
-def test_home(session, settings_test_client, quote1):
-    response = settings_test_client.get(url=HOME_URL)
+def test_home(session, quotes_test_client, quote1):
+    response = quotes_test_client.get(url=HOME_URL)
     assert response.ok
     assert b"Search" in response.content
