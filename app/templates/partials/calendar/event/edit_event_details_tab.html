@@ -54,29 +54,6 @@
 </div>
 
 <div class="form_row">
-    <a href="/event/edit/view_countries"><img src={{ url_for('static', path='images/worldwide.png') }} alt="Globe-icon-to-choose-country" title="Choose Country"></a>
-    {% if names %}
-      <form class="countries_form" action="" method="get">
-        <label for="countries">Choose country to see local time:</label>
-        <input list="countries_list" name="countries" id="countries">
-        <datalist id="countries_list">
-          {% for name in names %}
-            <option value="{{ name[0] }}">
-          {% endfor %}
-        </datalist>
-        <input type="submit" value="Check time">
-      </form>
-    {% endif %}
-    {% if country and time %}
-      <p>The meeting time at {{ country }} is: {{ time }}</p>
-    {% endif %}
-    {% if msg %}
-      <p>{{ msg }}</p>
-    {% endif %}
-  </div>
-  <div class="icon_credits">( Icons made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com )</a></div>
-
-<div class="form_row">
   <div class="form_row_start">
     <label for="color">Color:</label>
     <select id="color" name="color">
@@ -126,3 +103,26 @@
 
   </div>
 </div>
+
+<div class="form_row">
+  <a href="/event/edit/view_countries"><img src={{ url_for('static', path='images/worldwide.png') }} alt="Globe-icon-to-choose-country" title="Choose Country"></a>
+  {% if names %}
+    <form class="countries_form" action="" method="get">
+      <label for="countries">Choose country to see local time:</label>
+      <input list="countries_list" name="countries" id="countries">
+      <datalist id="countries_list">
+        {% for name in names %}
+          <option value="{{ name[0] }}">
+        {% endfor %}
+      </datalist>
+      <input type="submit" value="Check time">
+    </form>
+  {% endif %}
+  {% if country and time %}
+    <p>The meeting time at {{ country }} is: {{ time }}</p>
+  {% endif %}
+  {% if msg %}
+    <p>{{ msg }}</p>
+  {% endif %}
+</div>
+<div class="icon_credits">( Icons made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com )</a></div>

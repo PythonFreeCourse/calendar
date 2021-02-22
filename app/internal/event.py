@@ -119,15 +119,15 @@ def add_countries_to_db(session: Session) -> None:
     """
     for country in countries:
         partial_name = country["name"]
-        for capital in country["timezones"]:
-            capital_name = capital.split("/")[-1]
-            if partial_name != capital_name:
-                name = partial_name + ", " + capital_name
+        for capital_city in country["timezones"]:
+            capital_city_name = capital_city.split("/")[-1]
+            if partial_name != capital_city_name:
+                name = partial_name + ", " + capital_city_name
             else:
-                name = capital_name
+                name = capital_city_name
             existing = session.query(Country).filter_by(name=name).first()
             if not existing:
-                new_country = Country(name=name, timezone=str(capital))
+                new_country = Country(name=name, timezone=str(capital_city))
                 session.add(new_country)
     session.commit()
     session.close()
