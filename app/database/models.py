@@ -352,9 +352,9 @@ class CoronaStats(Base):
     vaccinated = Column(Integer, nullable=False)
     vaccinated_cum = Column(Integer, nullable=False)
     vaccinated_population_perc = Column(Integer, nullable=False)
-    vaccinated_seconde_dose = Column(Integer, nullable=False)
-    vaccinated_seconde_dose_cum = Column(Integer, nullable=False)
-    vaccinated_seconde_dose_population_perc = Column(Float, nullable=False)
+    vaccinated_second_dose = Column(Integer, nullable=False)
+    vaccinated_second_dose_cum = Column(Integer, nullable=False)
+    vaccinated_second_dose_perc = Column(Float, nullable=False)
 
 
 class Quote(Base):

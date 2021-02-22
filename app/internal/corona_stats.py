@@ -36,39 +36,71 @@ user_agent_list = [
 headers = {"User-Agent": random.choice(user_agent_list)}
 
 
-def create_stats_object(data: JSON) -> CoronaStats:
+def create_stats_object(corona_stats_data: JSON) -> CoronaStats:
+    """ JSON -> DB Object """
     return CoronaStats(
-        date_=datetime.strptime(data.get("Day_Date"), DATETIME_FORMAT),
-        vaccinated=data.get("vaccinated"),
-        vaccinated_cum=data.get("vaccinated_cum"),
-        vaccinated_population_perc=data.get("vaccinated_population_perc"),
-        vaccinated_seconde_dose=data.get("vaccinated_seconde_dose"),
-        vaccinated_seconde_dose_cum=data.get("vaccinated_seconde_dose_cum"),
-        vaccinated_seconde_dose_population_perc=data.get(
+        date_=datetime.strptime(
+            corona_stats_data.get("Day_Date"),
+            DATETIME_FORMAT,
+        ),
+        vaccinated=corona_stats_data.get("vaccinated"),
+        vaccinated_cum=corona_stats_data.get("vaccinated_cum"),
+        vaccinated_population_perc=corona_stats_data.get(
+            "vaccinated_population_perc",
+        ),
+        vaccinated_second_dose=corona_stats_data.get(
+            "vaccinated_seconde_dose",
+        ),
+        vaccinated_second_dose_cum=corona_stats_data.get(
+            "vaccinated_seconde_dose_cum",
+        ),
+        vaccinated_second_dose_perc=corona_stats_data.get(
             "vaccinated_seconde_dose_population_perc",
         ),
     )
 
 
 def serialize_stats(stats_object: CoronaStats) -> Dict:
+    """ DB Object -> Dict """
     return {
-        "vaccinated_seconde_dose_population_perc": (
-            stats_object.vaccinated_seconde_dose_population_perc
+        "vaccinated_second_dose_perc": (
+            stats_object.vaccinated_second_dose_perc
         ),
-        "vaccinated_seconde_dose_cum": (
-            stats_object.vaccinated_seconde_dose_cum
+        "vaccinated_second_dose_cum": (
+            stats_object.vaccinated_second_dose_cum
         ),
     }
 
 
-def save_corona_stats(data: JSON, db: Session = Depends(get_db)) -> None:
-    db.add(create_stats_object(data))
+def serialize_dict_stats(stats_dict: Dict) -> Dict:
+    """ api Dit -> pylender Dict """
+    return {
+        "vaccinated_second_dose_perc": (
+            stats_dict.get("vaccinated_seconde_dose_population_perc")
+        ),
+        "vaccinated_second_dose_cum": (
+            stats_dict.get("vaccinated_seconde_dose_cum")
+        ),
+    }
+
+
+def save_corona_stats(
+    corona_stats_data: JSON,
+    db: Session = Depends(get_db),
+) -> None:
+    db.add(create_stats_object(corona_stats_data))
     db.commit()
 
 
-def insert_to_db_if_needed(data: JSON, db: Session = Depends(get_db)):
+def insert_to_db_if_needed(
+    corona_stats_data: JSON,
+    db: Session = Depends(get_db),
+):
     """ gets the latest data inserted to gov database """
-    latest_date = datetime.strptime(data.get("Day_Date"), DATETIME_FORMAT)
+    latest_date = datetime.strptime(
+        corona_stats_data.get("Day_Date"),
+        DATETIME_FORMAT,
+    )
     latest_saved = None
     try:
         latest_saved = (
@@ -76,14 +108,14 @@ def insert_to_db_if_needed(data: JSON, db: Session = Depends(get_db)):
         )
     except NoResultFound:
         # on first system load, the table is empty
-        save_corona_stats(data, db)
-        return data
+        save_corona_stats(corona_stats_data, db)
+        return corona_stats_data
 
     if latest_saved is not None:
         # on more recent data arrival, we update the database
         if latest_saved.date_ < latest_date:
-            save_corona_stats(data, db)
-            return data
+            save_corona_stats(corona_stats_data, db)
+            return corona_stats_data
         else:
             return serialize_stats(latest_saved)
 
@@ -114,8 +146,9 @@ async def get_corona_stats(db: Session = Depends(get_db)) -> Dict[str, Any]:
 
     except NoResultFound:
         try:
-            corona_stats_data = await get_vacinated_data()
-            insert_to_db_if_needed(corona_stats_data, db)
+            response_data = await get_vacinated_data()
+            insert_to_db_if_needed(response_data, db)
+            corona_stats_data = serialize_dict_stats(response_data)
         except json.decoder.JSONDecodeError:
             corona_stats_data = {"error": "No data"}
 
