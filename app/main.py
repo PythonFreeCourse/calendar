@@ -8,7 +8,14 @@ from sqlalchemy.orm import Session
 
 from app import config
 from app.database import engine, models
-from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
+from app.dependencies import (
+    get_db,
+    logger,
+    MEDIA_PATH,
+    SOUNDS_PATH,
+    STATIC_PATH,
+    templates,
+)
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
@@ -32,6 +39,7 @@ create_tables(engine, config.PSQL_ENVIRONMENT)
 app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
 app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
@@ -42,6 +50,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     about_us,
     agenda,
+    audio,
     calendar,
     categories,
     celebrity,
@@ -91,6 +100,7 @@ async def swagger_ui_redirect():
 routers_to_include = [
     about_us.router,
     agenda.router,
+    audio.router,
     calendar.router,
     categories.router,
     celebrity.router,
