@@ -1,6 +1,5 @@
 import logging
 import re
-from collections import namedtuple
 from typing import List, NamedTuple, Set, Union
 
 from email_validator import EmailSyntaxError, validate_email
@@ -16,14 +15,13 @@ from app.database.models import Event
 
 
 ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
-LOCATION_TIMEOUT = 20
 
 
 class Location(NamedTuple):
     # Location type hint class.
     latitude: str
     longitude: str
-    location: str
+    name: str
 
 
 def raise_if_zoom_link_invalid(vc_link):
@@ -119,11 +117,9 @@ def get_messages(
 
 async def get_location_coordinates(
     address: str,
-    timeout: float = LOCATION_TIMEOUT,
 ) -> Union[Location, str]:
     """Return location coordinates and accurate
     address of the specified location."""
-    Location = namedtuple("Location", "latitude, longitude, location")
     try:
         async with Nominatim(
             user_agent="Pylendar",
@@ -135,9 +131,9 @@ async def get_location_coordinates(
     else:
         if geolocation is not None:
             location = Location(
-                geolocation.latitude,
-                geolocation.longitude,
-                geolocation.raw["display_name"],
+                latitude=geolocation.latitude,
+                longitude=geolocation.longitude,
+                name=geolocation.raw["display_name"],
             )
             return location
     return address

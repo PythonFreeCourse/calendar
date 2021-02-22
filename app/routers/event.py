@@ -4,6 +4,16 @@ from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 import urllib
 
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import BaseModel
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
+from sqlalchemy.sql.elements import Null
+from starlette import status
+from starlette.responses import RedirectResponse, Response
+from starlette.templating import _TemplateResponse
+
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal import comment as cmt
@@ -18,15 +28,6 @@ from app.internal.event import (
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
-from fastapi import APIRouter, Depends, HTTPException, Request
-from pydantic import BaseModel
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
-from sqlalchemy.sql.elements import Null
-from starlette import status
-from starlette.responses import RedirectResponse, Response
-from starlette.templating import _TemplateResponse
 
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
@@ -139,7 +140,7 @@ async def create_new_event(
         raise_if_zoom_link_invalid(vc_link)
     else:
         location_details = await get_location_coordinates(location)
-        if type(location_details) is not str:
+        if not isinstance(location_details, str):
             location = location_details.location
             latitude = location_details.latitude
             longitude = location_details.longitude
