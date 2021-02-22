@@ -106,6 +106,7 @@ def quotes_test_client() -> Iterator[TestClient]:
     yield from create_test_client(profile.get_db)
 
 
+@pytest.fixture(scope="session")
 def audio_test_client() -> Iterator[TestClient]:
     yield from create_test_client(audio.get_db)
 
