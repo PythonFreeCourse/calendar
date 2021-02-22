@@ -7,7 +7,6 @@ from app.internal.security.ouath2 import (
 from app.internal.security.schema import CurrentUser
 
 
-
 async def get_user_for_global_var(db: Session, jwt: str) -> CurrentUser:
     jwt_payload = await get_jwt_token(db, jwt)
     username = jwt_payload.get("sub")
