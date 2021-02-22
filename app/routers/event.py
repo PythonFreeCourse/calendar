@@ -4,6 +4,8 @@ import io
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
 from PIL import Image
+import urllib
+
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request
 from pydantic import BaseModel
@@ -170,6 +172,7 @@ async def create_new_event(
     )
 
 
+
 def process_image(
     img: bytes,
     event_id: int,
@@ -195,6 +198,23 @@ def process_image(
     return file_name
 
 
+def get_waze_link(event: Event) -> str:
+    """Get a waze navigation link to the event location.
+
+    Returns:
+        If there are coordinates, waze will navigate to the exact location.
+        Otherwise, waze will look for the address that appears in the location.
+        If there is no address, an empty string will be returned."""
+
+    if not event.location:
+        return ""
+    # if event.latitude and event.longitude:
+    #     coordinates = f"{event.latitude},{event.longitude}"
+    #     return f"https://waze.com/ul?ll={coordinates}&navigate=yes"
+    url_location = urllib.parse.quote(event.location)
+    return f"https://waze.com/ul?q={url_location}&navigate=yes"
+
+
 def raise_for_nonexisting_event(event_id: int) -> None:
     error_message = f"Event ID does not exist. ID: {event_id}"
     logger.exception(error_message)
@@ -215,6 +235,7 @@ async def eventview(
     if event.all_day:
         start_format = "%A, %d/%m/%Y"
         end_format = ""
+    waze_link = get_waze_link(event)
     event_considering_privacy = event_to_show(event, db)
     if not event_considering_privacy:
         raise_for_nonexisting_event(event.id)
@@ -223,6 +244,7 @@ async def eventview(
         "eventview.html",
         {
             "request": request,
+            "waze_link": waze_link,
             "event": event_considering_privacy,
             "comments": comments,
             "start_format": start_format,
@@ -634,11 +656,13 @@ async def view_comments(
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
+    waze_link = get_waze_link(event)
     return templates.TemplateResponse(
         "eventview.html",
         {
             "request": request,
             "event": event,
+            "waze_link": waze_link,
             "comments": comments,
             "comment": True,
             "start_format": START_FORMAT,

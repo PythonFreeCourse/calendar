@@ -166,6 +166,19 @@ def test_eventview_with_id(event_test_client, session, event):
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"Event Details" in response.content
+    assert b"View Event" in response.content
+    assert b"Some random location" in response.content
+    waze_link = b"https://waze.com/ul?q=Some%20random%20location"
+    assert waze_link in response.content
+    assert b'VC link' not in response.content
+
+
+def test_eventview_without_location(event_test_client, session, event):
+    event_id = event.id
+    event.location = None
+    session.commit()
+    response = event_test_client.get(f"/event/{event_id}")
+    assert b"https://waze.com/ul" not in response.content
 
 
 def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
