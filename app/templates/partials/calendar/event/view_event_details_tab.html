@@ -33,6 +33,7 @@
   <span class="icon">ICON</span>
   <address>VC link<a href="{{ event.vc_link }}">VC URL</a></address>
 </div>
+{% endif %}
 
 {% if event.latitude is not none and event.longitude is not none %}
   <div class="google_maps_object">
