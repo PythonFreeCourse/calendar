@@ -3,8 +3,8 @@ import random
 from datetime import date, datetime
 from typing import Any, Dict
 
-from fastapi import Depends
 import httpx
+from fastapi import Depends
 from loguru import logger
 from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
