@@ -8,7 +8,9 @@ from app.internal.notification import (
     get_unread_notifications,
     get_all_messages,
     get_message_by_id,
-    get_history_notifications,
+    get_archived_notifications,
+    raise_wrong_id_error,
+    is_owner,
 )
 from app.internal.security.dependancies import current_user, is_logged_in
 from app.internal.security.schema import CurrentUser
@@ -40,7 +42,6 @@ async def view_notifications(
     Returns:
         The Notifications HTML page.
     """
-    # create_message(db, "test message", user.user_id)
     return templates.TemplateResponse(
         "notifications.html",
         {
@@ -74,7 +75,7 @@ async def view_archive(
         "archive.html",
         {
             "request": request,
-            "notifications": get_history_notifications(
+            "notifications": get_archived_notifications(
                 session=db,
                 user_id=user.user_id,
             ),
@@ -104,9 +105,11 @@ async def accept_invitations(
         A redirect to where the user called the route from.
     """
     invitation = get_invitation_by_id(invite_id, session=db)
-    invitation.accept(db)
+    if invitation and is_owner(user, invitation):
+        invitation.accept(db)
+        return safe_redirect_response(next_url)
 
-    return safe_redirect_response(next_url)
+    raise_wrong_id_error()
 
 
 @router.post("/invitation/decline")
@@ -128,9 +131,11 @@ async def decline_invitations(
         A redirect to where the user called the route from.
     """
     invitation = get_invitation_by_id(invite_id, session=db)
-    invitation.decline(db)
+    if invitation and is_owner(user, invitation):
+        invitation.decline(db)
+        return safe_redirect_response(next_url)
 
-    return safe_redirect_response(next_url)
+    raise_wrong_id_error()
 
 
 @router.post("/message/read")
@@ -152,10 +157,11 @@ async def mark_message_as_read(
         A redirect to where the user called the route from.
     """
     message = await get_message_by_id(message_id, session=db)
-    if message:
+    if message and is_owner(user, message):
         message.mark_as_read(db)
+        return safe_redirect_response(next_url)
 
-    return safe_redirect_response(next_url)
+    raise_wrong_id_error()
 
 
 @router.post("/message/read/all")

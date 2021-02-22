@@ -1,3 +1,5 @@
+from starlette.status import HTTP_406_NOT_ACCEPTABLE
+
 from app.database.models import InvitationStatusEnum, MessageStatusEnum
 from app.internal.notification import get_all_invitations, get_invitation_by_id
 from app.routers.notification import router
@@ -119,6 +121,21 @@ class TestNotificationRoutes:
         resp = notification_test_client.get(archive_url)
         assert resp.ok
         assert self.NO_NOTIFICATION_IN_ARCHIVE not in resp.content
+
+    def test_wrong_id(
+        self,
+        user,
+        notification_test_client,
+        session,
+    ):
+        login_client(notification_test_client, self.LOGIN_DATA)
+        data = {
+            "message_id": 1,
+            "next_url": "/",
+        }
+        url = router.url_path_for("mark_message_as_read")
+        resp = notification_test_client.post(url, data=data)
+        assert resp.status_code == HTTP_406_NOT_ACCEPTABLE
 
 
 class TestNotification:

@@ -1,8 +1,10 @@
 from operator import attrgetter
 from typing import List, Union
 
+from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_406_NOT_ACCEPTABLE
 
 from app.database.models import (
     Invitation,
@@ -11,6 +13,12 @@ from app.database.models import (
     MessageStatusEnum,
 )
 from app.internal.utils import create_model
+
+
+WRONG_NOTIFICATION_ID = (
+    "The notification id you have entered is wrong\n."
+    "If you did not enter the notification id manually, report this exception."
+)
 
 NOTIFICATION_TYPE = Union[Invitation, Message]
 
@@ -39,11 +47,43 @@ def _is_unread(notification: NOTIFICATION_TYPE) -> bool:
     return notification.status in UNREAD_STATUS
 
 
-def _is_history(notification: NOTIFICATION_TYPE) -> bool:
+def _is_archived(notification: NOTIFICATION_TYPE) -> bool:
     """Returns True if notification should be
-    in history page, False otherwise.
+    in archived page, False otherwise.
     """
     return notification.status in ARCHIVED
+
+
+def is_owner(user, notification: NOTIFICATION_TYPE) -> bool:
+    """Checks if user is owner of the notification.
+
+    Args:
+        notification: a NOTIFICATION_TYPE object.
+        user: user schema object.
+
+    Returns:
+        True or raises HTTPException.
+    """
+    if notification.recipient_id == user.user_id:
+        return True
+
+    msg = "The notification you are trying to access is not yours."
+    raise HTTPException(
+        status_code=HTTP_401_UNAUTHORIZED,
+        detail=msg,
+    )
+
+
+def raise_wrong_id_error() -> None:
+    """Raises HTTPException.
+
+    Returns:
+        None
+    """
+    raise HTTPException(
+        status_code=HTTP_406_NOT_ACCEPTABLE,
+        detail=WRONG_NOTIFICATION_ID,
+    )
 
 
 def get_unread_notifications(
@@ -54,12 +94,12 @@ def get_unread_notifications(
     return list(filter(_is_unread, get_all_notifications(session, user_id)))
 
 
-def get_history_notifications(
+def get_archived_notifications(
     session: Session,
     user_id: int,
 ) -> List[NOTIFICATION_TYPE]:
-    """Returns all history notifications."""
-    return list(filter(_is_history, get_all_notifications(session, user_id)))
+    """Returns all archived notifications."""
+    return list(filter(_is_archived, get_all_notifications(session, user_id)))
 
 
 def get_all_notifications(
