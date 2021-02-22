@@ -60,6 +60,19 @@ def get_quotes(session: Session, user_id: int) -> List[Quote]:
     return quotes
 
 
+def is_quote_favorite(
+    session: Session,
+    user_id: int,
+    quote_of_day_id: int,
+) -> bool:
+    """Checks if the daily quote is in favorites list."""
+    user_quotes = session.query(UserQuotes).filter_by(user_id=user_id).all()
+    for user_quote in user_quotes:
+        if user_quote.quote_id == quote_of_day_id:
+            return True
+    return False
+
+
 def get_quote_id(session: Session, quote: Quote) -> Optional[Quote]:
     """Retrieve quote id given the text of the quote."""
     quote = session.query(Quote).filter_by(text=quote).first()

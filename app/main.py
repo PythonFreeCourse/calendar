@@ -134,16 +134,14 @@ async def home(
     user: User = Depends(current_user),
 ):
     """Home page for the website."""
-    quote = daily_quotes.get_quote_of_day(db)
-    user_quotes = daily_quotes.get_quotes(db, user.user_id)
-    for user_quote in user_quotes:
-        if user_quote.id == quote.id:
-            quote.is_favorite = True
+    quote_of_day = daily_quotes.get_quote_of_day(db)
+    if daily_quotes.is_quote_favorite(db, user.user_id, quote_of_day.id):
+        quote_of_day.is_favorite = True
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "quote": quote,
+            "quote": quote_of_day,
             "empty_heart": EMPTY_HEART_PATH,
             "full_heart": FULL_HEART_PATH,
         },

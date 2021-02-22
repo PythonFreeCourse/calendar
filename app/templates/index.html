@@ -22,9 +22,9 @@
                         <span >&nbsp;
                     {% endif %}
                     {% if quote.is_favorite %}
-                    <img src="{{full_heart}}" class="heart">
+                    <img src="{{full_heart}}" data-heart="on" class="heart">
                     {% else %}
-                    <img src="{{empty_heart}}" class="heart">
+                    <img src="{{empty_heart}}" data-heart="off" class="heart">
                     {% endif %}
                     </span>
                     </p>
