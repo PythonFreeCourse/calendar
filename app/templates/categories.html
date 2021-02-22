@@ -8,18 +8,18 @@
 
 {% block content %}
 <div class="container mt-4">
-<h1>It's time to make some decisions</h1>
-<h1>
-  Here you can create your unique categories and choose your favorite color
-</h1>
+  <h1 class="main-text-color">It's time to make some decisions</h1>
+  <h1 class="main-text-color">
+    Here you can create your unique categories and choose your favorite color
+  </h1>
 
-<form action="/categories" method="POST" required>
-  <label for="category_name">Name your category:</label>
-  <p><input type="text" id ="name" name="name"></p>
-  <label for="category_color">Choose your favorite color:</label>
-  <p><input type="color"  class="custom" id ="color", name="color"></p>
-  <p><button type="submit" class="btn btn-success" value="submit">Submit</button></p>
-</form>
+  <form action="/categories" method="POST" required>
+    <label class="main-text-color" for="category_name">Name your category:</label>
+    <p><input type="text" id ="name" name="name"></p>
+    <label class="main-text-color" for="category_color">Choose your favorite color:</label>
+    <p><input type="color"  class="custom" id ="color", name="color"></p>
+    <p><button type="submit" class="btn btn-success" value="submit">Submit</button></p>
+  </form>
 </div>
 {% if message %}
   <div class="container mt-4">

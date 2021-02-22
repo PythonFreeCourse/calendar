@@ -1,17 +1,17 @@
 :root[color-mode="regular"] {
-    --backgroundcol: #f7f7f7;
-    --textcolor: #222831;
-    --navcolor: rgba(0,0,0,.55);
-    --navhovercolor: rgba(0,0,0,.7);
-    --cardcolor: #fff;
+  --backgroundcol: #F7F7F7;
+  --textcolor: #222831;
+  --navcolor: rgba(0, 0, 0, 0.55);
+  --navhovercolor: rgba(0, 0, 0, 0.7);
+  --cardcolor: #FFF;
 }
 
 :root[color-mode="dark"] {
-    --backgroundcol: #000000;
-    --textcolor: #EEEEEE;
-    --navcolor: #e9ecef;
-    --navhovercolor: rgb(255 255 255);
-    --cardcolor: #230a88;
+  --backgroundcol: #000000;
+  --textcolor: #EEEEEE;
+  --navcolor: #E9ECEF;
+  --navhovercolor: rgb(255 255 255);
+  --cardcolor: #230A88;
 }
 
 .profile-image {
@@ -105,7 +105,7 @@ p {
 }
 
 .card {
-  background-color: var(--cardcolor)
+  background-color: var(--cardcolor);
 }
 
 .card-body {
@@ -117,26 +117,26 @@ p {
   border: none;
   background-color: whitesmoke;
 }
-  
+
 .error-message {
-    line-height: 0;
-    color: red;
-    padding-left: 12.5rem;
+  line-height: 0;
+  color: red;
+  padding-left: 12.5rem;
 }
 
 .subtitle {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 .error-message {
-    line-height: 0;
-    color: red;
-    padding-left: 12.5rem;
-    margin-bottom: 1em;
+  line-height: 0;
+  color: red;
+  padding-left: 12.5rem;
+  margin-bottom: 1em;
 }
 
 .input-upload-file {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 .relative.overflow-hidden {
@@ -145,27 +145,27 @@ p {
 }
 
 .navbar-light .navbar-nav .nav-link {
-    color: var(--navcolor);
+  color: var(--navcolor);
 }
 
 .navbar-light .navbar-nav .nav-link:hover {
-    color: var(--navhovercolor);
+  color: var(--navhovercolor);
 }
 
 .main-text-color {
-    color: var(--textcolor);
+  color: var(--textcolor);
 }
 
 .cal-img {
-    text-align: center;
+  text-align: center;
 }
 
 #darkmode {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .upload-file {
-    margin: auto 1em auto 0em;
+  margin: auto 1em auto 0em;
 }
 
 h2.modal-title {

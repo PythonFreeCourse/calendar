@@ -1,20 +1,20 @@
 :root[color-mode="regular"] {
-    --backgroundcol:#f7f7f7;
-    --textcolor:#222831;
-    --start-of-month:#e9ecef;
-    --primary-variant:#FFDE4D;
-    --secondary:#EF5454;
-    --borders:#E7E7E7;
-    --borders-variant:#F7F7F7;
+  --backgroundcol: #F7F7F7;
+  --textcolor: #222831;
+  --start-of-month: #E9ECEf;
+  --primary-variant: #FFDE4D;
+  --secondary: #EF5454;
+  --borders: #E7E7E7;
+  --borders-variant: #F7F7F7;
 }
 
 :root[color-mode="dark"] {
-    --backgroundcol:#000000;
-    --textcolor:#EEEEEE;
-    --start-of-month:#8c28bf;
-    --secondary:#EF5454;
-    --borders:#E7E7E7;
-    --borders-variant:#F7F7F7;
+  --backgroundcol: #000000;
+  --textcolor: #EEEEEE;
+  --start-of-month: #8C28BF;
+  --secondary: #EF5454;
+  --borders: #E7E7E7;
+  --borders-variant: #F7F7F7;
 }
 
 * {
@@ -43,7 +43,7 @@ nav {
   position: sticky;
   display: flex;
   flex-direction: column;
-  top:var(--space_s);
+  top: var(--space_s);
 }
 
 .fixed-features,
@@ -104,10 +104,12 @@ nav {
 }
 
 .settings-open {
-    width: 20rem;
+  width: 20rem;
 }
 
-img {fill: var(--background);}
+img {
+  fill: var(--background);
+}
 
 header {
   z-index: 5;
@@ -214,9 +216,13 @@ main {
   font-weight: 400;
 }
 
-.day:hover {border: 0.1rem solid var(--primary);}
+.day:hover {
+  border: 0.1rem solid var(--primary);
+}
 
-.day:hover .day-number{color: var(--negative);}
+.day:hover .day-number {
+  color: var(--negative);
+}
 
 .day:hover .add-small {
   display: block;
@@ -310,7 +316,7 @@ main {
   height: 1.5rem;
 }
 
-.month-event div{
+.month-event div {
   height: 1.5rem;
   width: 100%;
   transition: all 0.3s ease;
@@ -356,35 +362,59 @@ main {
 }
 
 /* Text Colors */
-.text-yellow {color: var(--secondary);}
+.text-yellow {
+  color: var(--secondary);
+}
 
-.text-gray {color: var(--on-surface);}
+.text-gray {
+  color: var(--on-surface);
+}
 
-.text-lightgray {color: var(--background);}
+.text-lightgray {
+  color: var(--background);
+}
 
-.text-darkblue {color: var(--primary);}
+.text-darkblue {
+  color: var(--primary);
+}
 
 /* Borders */
-.border-dash-darkblue {border: 0.125rem dashed  var(--primary);}
+.border-dash-darkblue {
+  border: 0.125rem dashed var(--primary);
+}
 
-.border-darkblue {border: 0.125rem solid  var(--primary);}
+.border-darkblue {
+  border: 0.125rem solid var(--primary);
+}
 
-.underline-yellow {border-bottom: 0.25rem solid  var(--secondary);}
+.underline-yellow {
+  border-bottom: 0.25rem solid var(--secondary);
+}
 
 /* Background Color */
-.background-darkblue {background-color: var(--primary-variant);}
+.background-darkblue {
+  background-color: var(--primary-variant);
+}
 
-.background-red {background-color: var(--negative);}
+.background-red {
+  background-color: var(--negative);
+}
 
-.background-yellow {background-color: var(--secondary);}
+.background-yellow {
+  background-color: var(--secondary);
+}
 
-.background-green {background-color: var(--positive);}
+.background-green {
+  background-color: var(--positive);
+}
 
 .background-lightgray {
   background-color: var(--start-of-month);
 }
 
-.background-green {background-color: var(--bold_tertiary);}
+.background-green {
+  background-color: var(--bold_tertiary);
+}
 
 /* Buttons */
 
@@ -400,5 +430,5 @@ main {
 }
 
 #darkmode {
-    cursor: pointer;
+  cursor: pointer;
 }
