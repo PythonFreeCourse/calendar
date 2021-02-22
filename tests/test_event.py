@@ -552,7 +552,7 @@ def test_event_with_image(event_test_client, client, session):
         in response.headers["location"]
     )
     assert is_event_image is True
-    event_image_path = fr"{EVENT_IMAGES_PATH}/{event_id}{PICTURE_EXTENSION}"
+    event_image_path = os.path.join(EVENT_IMAGES_PATH, event_created.image)
     os.remove(event_image_path)
     os.remove("pil_red.png")
     session.delete(event_created)
