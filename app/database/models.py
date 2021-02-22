@@ -92,8 +92,8 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String, nullable=True)
+    vc_link = Column(String, nullable=True)
     is_google_event = Column(Boolean, default=False)
-    vc_link = Column(String)
     color = Column(String, nullable=True)
     all_day = Column(Boolean, default=False)
     invitees = Column(String)
@@ -110,9 +110,11 @@ class Event(Base):
         cascade="all, delete",
         back_populates="events",
     )
-    shared_list = relationship("SharedList",
-                               uselist=False,
-                               back_populates="event")
+    shared_list = relationship(
+        "SharedList",
+        uselist=False,
+        back_populates="event",
+    )
     comments = relationship("Comment", back_populates="event")
 
     # PostgreSQL
@@ -218,6 +220,36 @@ class Invitation(Base):
 
     def __repr__(self):
         return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    music_on = Column(Boolean, default=False, nullable=False)
+    music_vol = Column(Integer, default=None)
+    sfx_on = Column(Boolean, default=False, nullable=False)
+    sfx_vol = Column(Integer, default=None)
+    primary_cursor = Column(String, default="default", nullable=False)
+    secondary_cursor = Column(String, default="default", nullable=False)
+    video_game_releases = Column(Boolean, default=False)
+
+
+class AudioTracks(Base):
+    __tablename__ = "audio_tracks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False, unique=True)
+    is_music = Column(Boolean, nullable=False)
+
+
+class UserAudioTracks(Base):
+    __tablename__ = "user_audio_tracks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    track_id = Column(Integer, ForeignKey("audio_tracks.id"))
 
 
 class OAuthCredentials(Base):
@@ -396,16 +428,16 @@ class SharedListItem(Base):
     amount = Column(Float, nullable=False)
     participant = Column(String, nullable=True)
     notes = Column(String, nullable=True)
-    shared_list_id = Column(Integer, ForeignKey('shared_list.id'))
+    shared_list_id = Column(Integer, ForeignKey("shared_list.id"))
 
     shared_list = relationship("SharedList", back_populates="items")
 
     def __repr__(self):
         return (
-            f'<Item {self.id}: {self.name} '
-            f'Amount: {self.amount} '
-            f'Participant: {self.participant} '
-            f'Notes: {self.notes})>'
+            f"<Item {self.id}: {self.name} "
+            f"Amount: {self.amount} "
+            f"Participant: {self.participant} "
+            f"Notes: {self.notes})>"
         )
 
 
@@ -420,10 +452,7 @@ class SharedList(Base):
     event = relationship("Event", back_populates="shared_list")
 
     def __repr__(self):
-        return (
-            f'<Shared list {self.id}: '
-            f'Items: {self.items}>'
-        )
+        return f"<Shared list {self.id}: " f"Items: {self.items}>"
 
 
 class Joke(Base):
@@ -434,6 +463,7 @@ class Joke(Base):
 
 
 # insert language data
+
 
 def insert_data(target, session: Session, **kw):
     """insert language data

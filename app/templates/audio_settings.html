@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+    <h1>Audio Settings</h1>
+    <form action="{{ url_for('get_choices') }}" method="post" id="form1">
+        <div class="form-outline audio-section">
+            <label>Music:</label>
+            <input type="radio" id="music-on" name="music_on" value="True" class="form-check-input">
+            <label for="music-on" class="form-check-label">On</label>
+            <input type="radio" id="music-off" name="music_on" value="False" checked class="form-check-input">
+            <label for="music-off" class="form-check-label">Off</label>
+        </div>
+        <label for="music">Select music tracks:</label> {% for song in songs %}
+        <div class="form-outline audio-section">
+            <input type="checkbox" class="music form-check-input" name="music_choices" value="{{song.name}}.mp3" disabled>
+            <label for="music" class="form-check-label">{{song.name}}</label> {% endfor %}
+        </div>
+        <label>Volume</label>
+        <input id="rangeInput-music" class="audio-section" type="range" min="0" max="100" name="music_vol" disabled>
+        <div class="form-outline audio-section">
+            <label>Sound Effects:</label>
+            <input type="radio" id="sound-effects-on" name="sfx_on" value="True" class="form-check-input">
+            <label for="sound-effects-on" class="form-check-label">On</label>
+            <input type="radio" id="sound-effects-off" name="sfx_on" value="False" checked class="form-check-input">
+            <label for="sound-effects-off" class="form-check-label">Off</label>
+        </div>
+        <label for="sound-effect">Select sound effect:</label>
+        <select name="sfx_choice" id="sfx" disabled class="form-control audio-section">
+        {% for sfx in sound_effects %}
+        <option value="{{sfx.name}}.wav">{{sfx.name}}</option>
+        {% endfor %}
+        </select>
+        <label>Volume</label>
+        <input id="rangeInput-sfx" class="audio-section" type="range" min="0" max="100" name="sfx_vol" disabled>
+        <button id="activate" type="submit" form="form1" class="btn btn-primary audio-section">
+        Activate
+        </button>
+    </form>
+</div>
+
+{% endblock %}

@@ -7,8 +7,15 @@ from sqlalchemy.orm import Session
 from app import main
 from app.database.models import Base, User
 from app.routers import (
-    agenda, categories, event, friendview, google_connect,
-    invitation, profile, weight,
+    agenda,
+    audio,
+    categories,
+    event,
+    friendview,
+    google_connect,
+    invitation,
+    profile,
+    weight,
 )
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
@@ -19,12 +26,12 @@ main.app.include_router(security_testing_routes.router)
 
 def get_test_placeholder_user() -> User:
     return User(
-        username='fake_user',
-        email='fake@mail.fake',
-        password='123456fake',
-        full_name='FakeName',
+        username="fake_user",
+        email="fake@mail.fake",
+        password="123456fake",
+        full_name="FakeName",
         language_id=1,
-        telegram_id='666666',
+        telegram_id="666666",
     )
 
 
@@ -84,13 +91,19 @@ def profile_test_client() -> Generator[Session, None, None]:
     Base.metadata.create_all(bind=test_engine)
     main.app.dependency_overrides[profile.get_db] = get_test_db
     main.app.dependency_overrides[
-        profile.get_placeholder_user] = get_test_placeholder_user
+        profile.get_placeholder_user
+    ] = get_test_placeholder_user
 
     with TestClient(main.app) as client:
         yield client
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def audio_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(audio.get_db)
 
 
 @pytest.fixture(scope="session")
