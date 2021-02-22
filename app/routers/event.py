@@ -172,7 +172,6 @@ async def create_new_event(
     )
 
 
-
 def process_image(
     img: bytes,
     event_id: int,
