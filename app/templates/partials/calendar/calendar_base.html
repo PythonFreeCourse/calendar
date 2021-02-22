@@ -1,22 +1,15 @@
 {% extends "./partials/base.html" %}
 {% block head %}
-  {{super()}}
-
-  <!-- CSS -->
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid_style.css') }}">
-
+{{super()}}
+<!-- CSS -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid_style.css') }}">
 {% endblock head %}
 {% block page_name %}Month View{% endblock page_name %}
 {% block body %}
-  <div class="pyldr-container">
-    {% include 'partials/calendar/navigation.html' %}
-    <div id="feature-settings">
-      {% include 'partials/calendar/feature_settings/example.html' %}
-    </div>
-    <div class="content">
-      {% block content %}
-      {% endblock content %}
-    </div>
+<div class="pyldr-container">
+  {% include 'partials/calendar/navigation.html' %}
+  <div id="feature-settings" class="background-lightgray">
+    {% include 'partials/calendar/feature_settings/example.html' %}
   </div>
 
   {% include 'partials/calendar/feature_settings/game_release_modal.html' %}
