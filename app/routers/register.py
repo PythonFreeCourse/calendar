@@ -20,24 +20,9 @@ router = APIRouter(
 )
 
 
-def _create_user(
-    username: str,
-    full_name: str,
-    password: str,
-    email: str,
-    language_id: int,
-    description: str,
-    session: Session,
-) -> models.User:
+def _create_user(session, **kw) -> models.User:
     """Creates and saves a new user."""
-    user = models.User(
-        username=username,
-        password=password,
-        email=email,
-        full_name=full_name,
-        description=description,
-        language_id=language_id,
-    )
+    user = models.User(**kw)
     save(session, user)
     return user
 
@@ -54,8 +39,8 @@ async def create_user(db: Session, user: schemas.UserCreate) -> models.User:
         "email": user.email,
         "password": hashed_password,
         "description": user.description,
-        "language_id": 1,
-        # TODO: Chose language id
+        "language_id": user.language_id,
+        "target_weight": user.target_weight,
     }
     return _create_user(**user_details, session=db)
 

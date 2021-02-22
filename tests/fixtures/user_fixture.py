@@ -11,30 +11,15 @@ from app.routers.register import create_user
 
 @pytest.fixture
 async def user(session: Session) -> Generator[User, None, None]:
-    mock_user = create_model(
-        session,
-        User,
+    schema = UserCreate(
         username="test_username",
         password="test_password",
+        confirm_password="test_password",
         email="test.email@gmail.com",
         full_name="test_full_name",
         description="test_description",
         language_id=1,
         target_weight=60,
-    )
-    yield mock_user
-    delete_instance(session, mock_user)
-
-
-@pytest.fixture
-async def registered_user(session: Session) -> Generator[User, None, None]:
-    schema = UserCreate(
-        username="registered_user",
-        password="registered_user",
-        confirm_password="registered_user",
-        email="registered_user@gmail.com",
-        full_name="registered user",
-        description="registered user",
     )
     mock_user = await create_user(session, schema)
     yield mock_user

@@ -86,6 +86,7 @@ async def accept_invitations(
     invite_id: int = Form(...),
     next: str = Form(...),
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ):
     """Creates a new connection between the User and the Event in the database.
 
@@ -96,6 +97,7 @@ async def accept_invitations(
         invite_id: the id of the invitation.
         next: url to redirect to.
         db: Optional; The database connection.
+        user: user schema object.
 
     Returns:
         A redirect to where the user called the route from.
@@ -111,6 +113,7 @@ async def decline_invitations(
     invite_id: int = Form(...),
     next: str = Form(...),
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ):
     """Declines an invitations.
 
@@ -118,6 +121,7 @@ async def decline_invitations(
         invite_id: the id of the invitation.
         db: Optional; The database connection.
         next: url to redirect to.
+        user: user schema object.
 
     Returns:
         A redirect to where the user called the route from.
@@ -133,6 +137,7 @@ async def mark_message_as_read(
     message_id: int = Form(...),
     next: str = Form(...),
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ):
     """Marks a message as read.
 
@@ -140,6 +145,7 @@ async def mark_message_as_read(
         message_id: the id of the message.
         db: Optional; The database connection.
         next: url to redirect to.
+        user: user schema object.
 
     Returns:
         A redirect to where the user called the route from.
@@ -154,8 +160,8 @@ async def mark_message_as_read(
 @router.post("/message/read/all")
 async def mark_all_as_read(
     next: str = Form(...),
-    user: CurrentUser = Depends(current_user),
     db: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ):
     """Marks all messages as read.
 
