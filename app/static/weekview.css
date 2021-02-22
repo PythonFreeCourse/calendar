@@ -1,5 +1,5 @@
 .day-weekview {
-    border-left: 1px solid var(--borders);
+    border: 1px solid var(--borders);
     width: 100%;
 }
 
@@ -7,7 +7,13 @@
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 2.3em 1fr;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
+#week-view::-webkit-scrollbar {
+    display: none;
+  }
 
 
 #week-schedule {

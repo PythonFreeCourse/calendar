@@ -6,7 +6,7 @@
       <div class="sec-title">Location 0<sup>o</sup>c 00:00</div>
     </div>
     <div>
-      <div class="btn-group mg-top" role="group" aria-label="Toggle View Mode" id="toggle-view-mode">
+      <div class="btn-group mt-4  btn-group-sm" role="group" aria-label="Toggle View Mode" id="toggle-view-mode">
         <input type="radio" class="btn-check btn-sm" name="btnradio" id="day-view-button" autocomplete="off" onclick="change_view('day', '{{ day.dayview_format() }}', 'calendarview')">
         <label class="btn btn-outline-primary" for="day-view-button">DAY</label>
         <input type="radio" class="btn-check btn-sm" name="btnradio" id="week-view-button" autocomplete="off" onclick="change_view('week', '{{ day.weekview_format() }}', 'calendarview')">

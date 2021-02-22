@@ -71,5 +71,6 @@ async def weekview(
         {
             "request": request,
             "week": week,
+            "view": "week",
         },
     )

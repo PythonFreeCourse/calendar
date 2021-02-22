@@ -1,10 +1,15 @@
 {% extends "partials/calendar/calendar_base.html" %}
 {% block body %}
-<div id="day-view{{day}}-{{month}}" class="day-view-class">
+{% if view != 'week' %}
+   {% set scrollclass = "day-view-scrollbar" %}
+{% else %}
+   {% set idmodify = day %}
+{% endif %}
+<div id="day-view{{ idmodify }}" class="day-view-class {{ scrollclass }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/dayview.css') }}">
   <div id="top-tab" class="d-flex justify-content-around align-items-center sticky-top">
     {% if view == 'day' %}
-    <a href="/closethedayview" title="close day view"><img class="pb-1"
+    <a href="#" title="close day view" onclick="close_the_view()"><img class="pb-1"
                                                            src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
                                                            width="15em" height="15em"></a>
     <span id="month-num" class="month-title fw-bold text-white">{{month}}</span>
