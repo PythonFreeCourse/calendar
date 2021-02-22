@@ -1,26 +1,18 @@
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from app.routers.event import sort_by_date
-from app.routers.user import get_all_user_events
 from sqlalchemy.orm import Session
-from app.database.models import Event
+from app.database.models import Event, UserEvent
 
 
-def get_next_user_event(session: Session, user_id: int) -> Optional[Event]:
-    events = get_only_future_events(
-        sort_by_date(get_all_user_events(session, user_id))
-    )
-    if events:
-        return events[0]
-
-
-def get_only_future_events(events: List[Event]) -> List[Event]:
-    future_events = []
-    for event in events:
-        if event.start >= datetime.now():
-            future_events.append(event)
-    return future_events
+def get_next_user_event(session: Session, user_id: int) -> List[Event]:
+    next_user_event = (
+        session.query(Event).join(UserEvent)
+        .filter(UserEvent.user_id == user_id)
+        .filter(Event.start >= datetime.now())
+        .order_by(Event.start)
+        )
+    return next_user_event[0]
 
 
 def get_next_user_event_start_time(

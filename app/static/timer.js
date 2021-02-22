@@ -4,16 +4,16 @@ function countdownTimer() {
     .then(response => response.json())
     .then(data => {
 
-    let countDownDate = new Date(data.timer).getTime();
+    const countDownDate = new Date(data.timer).getTime();
 
     // Update the countdown every 1 second
     const timerInterval = setInterval(function() {
       const now = new Date().getTime();
       const distance = countDownDate - now;
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
       // Output the result to base.html in an element with id="eventtimer"
       document.getElementById("eventtimer").innerText = "Upcoming event in: " + days + "d " + hours + "h "
       + minutes + "m " + seconds + "s ";
