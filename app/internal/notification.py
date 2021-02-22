@@ -14,12 +14,12 @@ from app.internal.utils import create_model
 
 NOTIFICATION_TYPE = Union[Invitation, Message]
 
-UNREAD = [
+UNREAD_STATUS = [
     InvitationStatusEnum.UNREAD,
     MessageStatusEnum.UNREAD,
 ]
 
-HISTORY = [
+ARCHIVED = [
     InvitationStatusEnum.DECLINED,
     MessageStatusEnum.READ,
 ]
@@ -36,14 +36,14 @@ async def get_message_by_id(
 
 def _is_unread(notification: NOTIFICATION_TYPE) -> bool:
     """Returns True if notification is unread, False otherwise."""
-    return notification.status in UNREAD
+    return notification.status in UNREAD_STATUS
 
 
 def _is_history(notification: NOTIFICATION_TYPE) -> bool:
     """Returns True if notification should be
     in history page, False otherwise.
     """
-    return notification.status in HISTORY
+    return notification.status in ARCHIVED
 
 
 def get_unread_notifications(
@@ -71,7 +71,6 @@ def get_all_notifications(
         session,
         recipient_id=user_id,
     )
-
     messages: List[Message] = get_all_messages(session, user_id)
 
     notifications = invitations + messages

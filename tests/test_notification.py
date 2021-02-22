@@ -6,6 +6,7 @@ from tests.fixtures.client_fixture import login_client
 
 class TestNotificationRoutes:
     NO_NOTIFICATIONS = b"You don't have any new notifications."
+    NO_NOTIFICATION_IN_ARCHIVE = b"You don't have any archived notifications."
     NEW_NOTIFICATIONS_URL = router.url_path_for("view_notifications")
     LOGIN_DATA = {"username": "test_username", "password": "test_password"}
 
@@ -15,8 +16,7 @@ class TestNotificationRoutes:
         notification_test_client,
     ):
         login_client(notification_test_client, self.LOGIN_DATA)
-        url = router.url_path_for("view_notifications")
-        resp = notification_test_client.get(url)
+        resp = notification_test_client.get(self.NEW_NOTIFICATIONS_URL)
         assert resp.ok
         assert self.NO_NOTIFICATIONS in resp.content
 
@@ -28,7 +28,10 @@ class TestNotificationRoutes:
     ):
         login_client(notification_test_client, self.LOGIN_DATA)
         assert invitation.status == InvitationStatusEnum.UNREAD
-        data = {"invite_id": invitation.id, "next": self.NEW_NOTIFICATIONS_URL}
+        data = {
+            "invite_id": invitation.id,
+            "next_url": self.NEW_NOTIFICATIONS_URL,
+        }
         url = router.url_path_for("accept_invitations")
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
@@ -43,7 +46,10 @@ class TestNotificationRoutes:
     ):
         login_client(notification_test_client, self.LOGIN_DATA)
         assert invitation.status == InvitationStatusEnum.UNREAD
-        data = {"invite_id": invitation.id, "next": self.NEW_NOTIFICATIONS_URL}
+        data = {
+            "invite_id": invitation.id,
+            "next_url": self.NEW_NOTIFICATIONS_URL,
+        }
         url = router.url_path_for("decline_invitations")
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
@@ -59,7 +65,10 @@ class TestNotificationRoutes:
     ):
         login_client(notification_test_client, self.LOGIN_DATA)
         assert message.status == MessageStatusEnum.UNREAD
-        data = {"message_id": message.id, "next": self.NEW_NOTIFICATIONS_URL}
+        data = {
+            "message_id": message.id,
+            "next_url": self.NEW_NOTIFICATIONS_URL,
+        }
         url = router.url_path_for("mark_message_as_read")
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
@@ -78,13 +87,38 @@ class TestNotificationRoutes:
         url = router.url_path_for("mark_all_as_read")
         assert message.status == MessageStatusEnum.UNREAD
         assert sec_message.status == MessageStatusEnum.UNREAD
-        data = {"next": self.NEW_NOTIFICATIONS_URL}
+        data = {"next_url": self.NEW_NOTIFICATIONS_URL}
         resp = notification_test_client.post(url, data=data)
         assert resp.ok
         session.refresh(message)
         session.refresh(sec_message)
         assert message.status == MessageStatusEnum.READ
         assert sec_message.status == MessageStatusEnum.READ
+
+    def test_archive(
+        self,
+        user,
+        message,
+        notification_test_client,
+        session,
+    ):
+        login_client(notification_test_client, self.LOGIN_DATA)
+        archive_url = router.url_path_for("view_archive")
+        resp = notification_test_client.get(archive_url)
+        assert resp.ok
+        assert self.NO_NOTIFICATION_IN_ARCHIVE in resp.content
+
+        # read message
+        data = {
+            "message_id": message.id,
+            "next_url": self.NEW_NOTIFICATIONS_URL,
+        }
+        url = router.url_path_for("mark_message_as_read")
+        notification_test_client.post(url, data=data)
+
+        resp = notification_test_client.get(archive_url)
+        assert resp.ok
+        assert self.NO_NOTIFICATION_IN_ARCHIVE not in resp.content
 
 
 class TestNotification:

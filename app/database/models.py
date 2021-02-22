@@ -217,7 +217,7 @@ class Invitation(Base):
     __tablename__ = "invitations"
 
     id = Column(Integer, primary_key=True, index=True)
-    creation = Column(DateTime, default=datetime.now)
+    creation = Column(DateTime, default=datetime.now, nullable=False)
     status = Column(
         Enum(InvitationStatusEnum),
         default=InvitationStatusEnum.UNREAD,
@@ -259,7 +259,7 @@ class Message(Base):
     id = Column(Integer, primary_key=True, index=True)
     body = Column(String, nullable=False)
     link = Column(String)
-    creation = Column(DateTime, default=datetime.now)
+    creation = Column(DateTime, default=datetime.now, nullable=False)
     status = Column(
         Enum(MessageStatusEnum),
         default=MessageStatusEnum.UNREAD,

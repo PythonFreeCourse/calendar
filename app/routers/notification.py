@@ -10,7 +10,7 @@ from app.internal.notification import (
     get_message_by_id,
     get_history_notifications,
 )
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependancies import current_user, is_logged_in
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import safe_redirect_response
 
@@ -19,7 +19,7 @@ router = APIRouter(
     tags=["notification"],
     dependencies=[
         Depends(get_db),
-        Depends(current_user),
+        Depends(is_logged_in),
     ],
 )
 
@@ -30,7 +30,7 @@ async def view_notifications(
     user: CurrentUser = Depends(current_user),
     db: Session = Depends(get_db),
 ):
-    """Returns the Notifications page route.
+    """Returns the Notifications page.
 
     Args:
         request: The HTTP request.
@@ -40,8 +40,9 @@ async def view_notifications(
     Returns:
         The Notifications HTML page.
     """
+    # create_message(db, "test message", user.user_id)
     return templates.TemplateResponse(
-        "new_notification.html",
+        "notifications.html",
         {
             "request": request,
             "new_messages": bool(get_all_messages),
@@ -53,13 +54,13 @@ async def view_notifications(
     )
 
 
-@router.get("/history", include_in_schema=False)
-async def view_old_notifications(
+@router.get("/archive", include_in_schema=False)
+async def view_archive(
     request: Request,
     user: CurrentUser = Depends(current_user),
     db: Session = Depends(get_db),
 ):
-    """Returns the Historical Notifications page route.
+    """Returns the Archived Notifications page.
 
     Args:
         request: The HTTP request.
@@ -67,10 +68,10 @@ async def view_old_notifications(
         user: user schema object.
 
     Returns:
-        The Historical Notifications HTML page.
+        The Archived Notifications HTML page.
     """
     return templates.TemplateResponse(
-        "old_notification.html",
+        "archive.html",
         {
             "request": request,
             "notifications": get_history_notifications(
@@ -84,7 +85,7 @@ async def view_old_notifications(
 @router.post("/invitation/accept")
 async def accept_invitations(
     invite_id: int = Form(...),
-    next: str = Form(...),
+    next_url: str = Form(...),
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(current_user),
 ):
@@ -95,7 +96,7 @@ async def accept_invitations(
 
     Args:
         invite_id: the id of the invitation.
-        next: url to redirect to.
+        next_url: url to redirect to.
         db: Optional; The database connection.
         user: user schema object.
 
@@ -105,13 +106,13 @@ async def accept_invitations(
     invitation = get_invitation_by_id(invite_id, session=db)
     invitation.accept(db)
 
-    return safe_redirect_response(next)
+    return safe_redirect_response(next_url)
 
 
 @router.post("/invitation/decline")
 async def decline_invitations(
     invite_id: int = Form(...),
-    next: str = Form(...),
+    next_url: str = Form(...),
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(current_user),
 ):
@@ -120,7 +121,7 @@ async def decline_invitations(
     Args:
         invite_id: the id of the invitation.
         db: Optional; The database connection.
-        next: url to redirect to.
+        next_url: url to redirect to.
         user: user schema object.
 
     Returns:
@@ -129,13 +130,13 @@ async def decline_invitations(
     invitation = get_invitation_by_id(invite_id, session=db)
     invitation.decline(db)
 
-    return safe_redirect_response(next)
+    return safe_redirect_response(next_url)
 
 
 @router.post("/message/read")
 async def mark_message_as_read(
     message_id: int = Form(...),
-    next: str = Form(...),
+    next_url: str = Form(...),
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(current_user),
 ):
@@ -144,7 +145,7 @@ async def mark_message_as_read(
     Args:
         message_id: the id of the message.
         db: Optional; The database connection.
-        next: url to redirect to.
+        next_url: url to redirect to.
         user: user schema object.
 
     Returns:
@@ -154,19 +155,19 @@ async def mark_message_as_read(
     if message:
         message.mark_as_read(db)
 
-    return safe_redirect_response(next)
+    return safe_redirect_response(next_url)
 
 
 @router.post("/message/read/all")
 async def mark_all_as_read(
-    next: str = Form(...),
+    next_url: str = Form(...),
     db: Session = Depends(get_db),
     user: CurrentUser = Depends(current_user),
 ):
     """Marks all messages as read.
 
     Args:
-        next: url to redirect to.
+        next_url: url to redirect to.
         user: user schema object.
         db: Optional; The database connection.
 
@@ -177,4 +178,4 @@ async def mark_all_as_read(
         if message.status == MessageStatusEnum.UNREAD:
             message.mark_as_read(db)
 
-    return safe_redirect_response(next)
+    return safe_redirect_response(next_url)

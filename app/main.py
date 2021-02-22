@@ -112,7 +112,6 @@ routers_to_include = [
     salary.router,
     search.router,
     telegram.router,
-    weekview.router,
     user.router,
     weekview.router,
     weight.router,
