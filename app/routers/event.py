@@ -76,7 +76,7 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
         db=session,
         title=event.title,
         start=event.start,
-        end=event.start,
+        end=event.end,
         content=event.content,
         owner_id=event.owner_id,
         location=event.location,
@@ -137,7 +137,7 @@ async def create_new_event(
         invited_emails,
     )
 
-    if vc_link is not None:
+    if vc_link:
         raise_if_zoom_link_invalid(vc_link)
 
     event = create_event(
