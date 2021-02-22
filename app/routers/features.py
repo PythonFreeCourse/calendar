@@ -13,7 +13,7 @@ from app.internal.features import (
 
 router = APIRouter(
     prefix="/features",
-    tags=["event"],
+    tags=["features"],
     responses={404: {"description": "Not found"}},
 )
 

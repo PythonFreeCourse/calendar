@@ -92,7 +92,6 @@ def update_feature(feature: Feature, new_feature_obj: dict,
 
     feature.icon = icon
     session.commit()
-
     return feature
 
 
