@@ -15,7 +15,7 @@ from app.routers.event import create_event
 MENSTRUAL_PERIOD_CATEGORY_ID = 111
 
 
-def get_avg_period_gap(db: Session, user_id):
+def get_avg_period_gap(db: Session, user_id: int):
     period_days = get_all_period_days(db, user_id)
     gaps_list = []
 
@@ -64,7 +64,12 @@ def generate_predicted_period_dates(
     return period_event
 
 
-def add_3_month_predictions(db, period_length, period_start_date, user_id):
+def add_3_month_predictions(
+    db: Session,
+    period_length: str,
+    period_start_date: datetime,
+    user_id: int,
+):
     avg_gap = get_avg_period_gap(db, user_id)
     avg_gap_delta = datetime.timedelta(avg_gap)
     generated_3_months = []
