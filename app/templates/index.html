@@ -19,17 +19,22 @@
                     {% if not quote.author%}
                     <p><i>"{{ quote.text }}"</i></p>
                     {% else %}
-                    <p><i>"{{ quote.text }}"</i> <span style="font-size: small;">&nbsp; \ {{quote.author}}</span>
+                    <p><i>"{{ quote.text }}"</i> <span
+                            style="font-size: small;">&nbsp; \ {{quote.author}}</span>
                     </p>
                     {% endif %}
                     {% endif %}
                 </div>
             </div>
+            <div class="d-flex justify-content-center audio-section">
+                <a id="on">Start Audio</a>
+                <a id="off">Stop Audio</a>
+            </div>
             <div class="d-flex justify-content-center">
                 <div class="d-flex justify-content-center">
                     <a href="{{ url_for('calendar') }}"
-                        class="btn btn-lg btn-primary shadow-lg bg-body p-3 mb-5 bg-gradient2 landing-page-button"
-                        type="button">
+                       class="btn btn-lg btn-primary shadow-lg bg-body p-3 mb-5 bg-gradient2 landing-page-button"
+                       type="button">
                         <span>Get Started</span>
                     </a>
                 </div>
@@ -37,7 +42,8 @@
         </div>
     </main>
     <div class="cal-img">
-        <img src="{{ url_for('static', path='/images/calendar.png') }}" alt="calendar image">
+        <img src="{{ url_for('static', path='/images/calendar.png') }}"
+             alt="calendar image">
     </div>
 </div>
 

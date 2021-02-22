@@ -118,6 +118,34 @@ p {
   background-color: whitesmoke;
 }
 
+#on,
+#off {
+  background: rgb(197, 204, 197);
+  border: 0.2em solid black;
+  border-radius: 0.5em;
+  padding: 1em;
+  margin: 1.5em;
+  color: rgb(20, 20, 20);
+  font-size: 1em;
+  transition-duration: 0.1s;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: whitesmoke;
+}
+
+#activate {
+  margin-bottom: 1em;
+}
+
+#rangeInput-sfx,
+#rangeInput-music {
+  display: block;
+}
+
+.audio-section {
+  margin-bottom: 1em;
+}
+
 .error-message {
   line-height: 0;
   color: red;
@@ -170,4 +198,10 @@ p {
 
 h2.modal-title {
   font-size: 1.25rem;
+}
+
+#sfx {
+  width: 5rem;
+  height: 2.5rem;
+  margin-top: 1rem;
 }
