@@ -1,4 +1,14 @@
-<link href="{{ url_for('static', path='event/eventview.css') }}" rel="stylesheet">
+{% extends 'base.html' %}
+
+{% block head %}
+    {{ super() }}
+    {% block title %}
+    View Event
+    {% endblock %}
+    <link href="{{ url_for('static', path='event/eventview.css') }}" rel="stylesheet">
+{% endblock head %}
+
+{% block content %}
   <div class = "event_view_wrapper container col col-12">
     <!-- Temporary nav layout based on bootstrap -->
     <ul class="nav nav-tabs" id="event_view_nav" role="tablist">
@@ -33,3 +43,4 @@
       </div> -->
     </div>
   </div>
+  {% endblock content %}

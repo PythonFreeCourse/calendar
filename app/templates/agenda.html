@@ -45,6 +45,15 @@
         <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=30#dates">{{ gettext("Next 30 days") }}</a>
       </div>
     </div>
+    <div class="mx-3">
+        <button class="btn btn-light btn-outline-primary btn-sm graph" type="button" name="{{events_for_graph}}">{{ gettext("Week graph") }}</button>
+    </div>
+  </div>
+
+  <div class="col-sm-4 col-4 card-body">
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <div class="container" id="graph">
+    </div>
   </div>
 
   <div class="pt-4 px-5">
