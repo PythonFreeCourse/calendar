@@ -2,14 +2,19 @@ import json
 from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
+import urllib
 
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
-from app.internal.event import (get_invited_emails, get_location_coordinates,
-                                get_messages, get_uninvited_regular_emails,
-                                raise_if_zoom_link_invalid)
+from app.internal.event import (
+    get_invited_emails,
+    get_location_coordinates,
+    get_messages,
+    get_uninvited_regular_emails,
+    raise_if_zoom_link_invalid,
+)
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
@@ -69,7 +74,7 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
         db=session,
         title=event.title,
         start=event.start,
-        end=event.start,
+        end=event.end,
         content=event.content,
         owner_id=event.owner_id,
         location=event.location,
@@ -114,7 +119,7 @@ async def create_new_event(
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
 
-    vc_link = data["vc_link"]
+    vc_link = data.get("vc_link")
     category_id = data.get("category_id")
     privacy = data["privacy"]
     privacy_kinds = [kind.name for kind in PrivacyKinds]
@@ -130,7 +135,7 @@ async def create_new_event(
     )
     latitude, longitude = None, None
 
-    if vc_link is not None:
+    if vc_link:
         raise_if_zoom_link_invalid(vc_link)
     else:
         location_details = await get_location_coordinates(location)
@@ -166,6 +171,23 @@ async def create_new_event(
     )
 
 
+def get_waze_link(event: Event) -> str:
+    """Get a waze navigation link to the event location.
+
+    Returns:
+        If there are coordinates, waze will navigate to the exact location.
+        Otherwise, waze will look for the address that appears in the location.
+        If there is no address, an empty string will be returned."""
+
+    if not event.location:
+        return ""
+    # if event.latitude and event.longitude:
+    #     coordinates = f"{event.latitude},{event.longitude}"
+    #     return f"https://waze.com/ul?ll={coordinates}&navigate=yes"
+    url_location = urllib.parse.quote(event.location)
+    return f"https://waze.com/ul?q={url_location}&navigate=yes"
+
+
 def raise_for_nonexisting_event(event_id: int) -> None:
     error_message = f"Event ID does not exist. ID: {event_id}"
     logger.exception(error_message)
@@ -186,6 +208,7 @@ async def eventview(
     if event.all_day:
         start_format = "%A, %d/%m/%Y"
         end_format = ""
+    waze_link = get_waze_link(event)
     event_considering_privacy = event_to_show(event, db)
     if not event_considering_privacy:
         raise_for_nonexisting_event(event.id)
@@ -194,6 +217,7 @@ async def eventview(
         "eventview.html",
         {
             "request": request,
+            "waze_link": waze_link,
             "event": event_considering_privacy,
             "comments": comments,
             "start_format": start_format,
@@ -607,11 +631,13 @@ async def view_comments(
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
+    waze_link = get_waze_link(event)
     return templates.TemplateResponse(
         "eventview.html",
         {
             "request": request,
             "event": event,
+            "waze_link": waze_link,
             "comments": comments,
             "comment": True,
             "start_format": START_FORMAT,
