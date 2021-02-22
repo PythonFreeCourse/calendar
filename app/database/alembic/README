@@ -1,0 +1,14 @@
+Generic single-database configuration.
+
+# following command will run all migration script and bring it to latest version
+alembic upgrade head
+
+# If we like to incrementally upgrade and check for some errors
+alembic upgrade +1
+
+# To undo last migration
+alembic downgrade -1
+
+# To get more information
+alembic current
+alembic history - verbose
