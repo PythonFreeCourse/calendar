@@ -26,6 +26,7 @@ from sqlalchemy.sql.schema import CheckConstraint
 
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
+from app.internal.privacy import PrivacyKinds
 import app.routers.salary.config as SalaryConfig
 
 Base: DeclarativeMeta = declarative_base()
@@ -47,6 +48,7 @@ class User(Base):
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    target_weight = Column(Float, nullable=True)
 
     owned_events = relationship(
         "Event",
@@ -90,11 +92,12 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String, nullable=True)
+    vc_link = Column(String, nullable=True)
     is_google_event = Column(Boolean, default=False)
-    vc_link = Column(String)
     color = Column(String, nullable=True)
     all_day = Column(Boolean, default=False)
     invitees = Column(String)
+    privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
@@ -212,6 +215,36 @@ class Invitation(Base):
 
     def __repr__(self):
         return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    music_on = Column(Boolean, default=False, nullable=False)
+    music_vol = Column(Integer, default=None)
+    sfx_on = Column(Boolean, default=False, nullable=False)
+    sfx_vol = Column(Integer, default=None)
+    primary_cursor = Column(String, default="default", nullable=False)
+    secondary_cursor = Column(String, default="default", nullable=False)
+    video_game_releases = Column(Boolean, default=False)
+
+
+class AudioTracks(Base):
+    __tablename__ = "audio_tracks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False, unique=True)
+    is_music = Column(Boolean, nullable=False)
+
+
+class UserAudioTracks(Base):
+    __tablename__ = "user_audio_tracks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    track_id = Column(Integer, ForeignKey("audio_tracks.id"))
 
 
 class OAuthCredentials(Base):

@@ -1,9 +1,9 @@
 <div class="form_row">
-  <input id="say" type="text" name="title" placeholder="Event Title" required>
-  <input type="button" id="speak" name="speak" value="Speak it!">
-</div
->
+   <input id="say" type="text" name="title" placeholder="Event Title" required>
+   <input type="button" id="speak" name="speak" value="Speak it!">
+</div>
 <div class="form_row">
+    <!-- Voices gets its own row for being so wide! -->
   <div class="field" id="voices">
     <label for="voice">Voice</label>
     <select id="voice" name="voice"></select>
@@ -40,25 +40,22 @@
 </div>
 
 <div class="form_row">
-  <label for="location_type">Location Type:</label>
-  <select id="location_type" name="location_type" required>
-    <option value="" disabled selected>Type</option>
-    <option value="vc_url">VC URL</option>
-    <option value="address">Address</option>
-  </select>
-  <input type="text" name="location" placeholder="VC URL/Location">
+   <label for="location">Location </label>
+   <input type="text" id="location" name="location" placeholder="Location">
+</div>
+
+<div class="form_row">
+   <label for="vc_link">VC link: </label>
+   <input type="text" id="vc_link" name="vc_link" placeholder="VC URL">
+</div>
+
+<div class="form_row">
+   <label for="invited">Invited emails: </label>
+   <input type="text" id="invited" name="invited" placeholder="Invited emails, separated by commas">
 </div>
 
 <div class="form_row textarea">
   <textarea id="say" name="description" placeholder="Description"></textarea>
-</div>
-
-<div class="form_row">
-  <label for="event_type">All-day:</label>
-  <select id="event_type" name="event_type" required>
-    <option value="on">Yes</option>
-    <option value="off" selected>No</option>
-  </select>
 </div>
 
 <div class="form_row">
@@ -72,16 +69,35 @@
   </div>
 
   <div class="form_row_end">
+    <label for="event_type">All-day:</label>
+    <select id="event_type" name="event_type" required>
+        <option value="on">Yes</option>
+        <option value="off" selected>No</option>
+    </select>
+
     <label for="availability">Availability:</label>
     <select id="availability" name="availability">
-      <option value="free">Free</option>
-      <option value="busy" selected>Busy</option>
+         <option value="True">Free</option>
+         <option value="False" selected>Busy</option>
     </select>
 
     <label for="privacy">Privacy:</label>
     <select id="privacy" name="privacy">
-      <option value="private">Private</option>
-      <option value="public" selected>Public</option>
+      <option value="{{ privacy.Private.name }}">{{ privacy.Private.name }}</option>
+      <option value="{{ privacy.Public.name }}" selected>{{ privacy.Public.name }}</option>
+      <option value="{{ privacy.Hidden.name }}">{{ privacy.Hidden.name }}</option>
+    </select>
+
+    <label for="user_categories">Category</label>
+    <select id="categories" name="the_categories">
+        {% if categories_list[0] is defined %}
+            <option style="color:#{{categories_list[0]['color'] |safe }}" value="{{categories_list[0]['name'] |safe }}" selected>{{categories_list[0]['name'] |safe }}</option>
+        {% endif %}
+        {% if categories_list[1] is defined %}
+            {% for category in categories_list[1:] %}
+                <option style="color:#{{category['color'] |safe }}" value="{{category['name'] |safe }}" selected>{{category['name'] |safe }}</option>
+            {% endfor %}
+        {% endif %}
     </select>
 
     <label for="is_google_event">Google event:</label>
@@ -92,4 +108,3 @@
 
   </div>
 </div>
-
