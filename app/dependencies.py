@@ -14,7 +14,7 @@ MEDIA_PATH = os.path.join(APP_PATH, config.MEDIA_DIRECTORY)
 EVENT_IMAGES_PATH = os.path.join(APP_PATH, config.EVENT_IMAGE_DIRECTORY)
 STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
-
+SOUNDS_PATH = os.path.join(STATIC_PATH, "tracks")
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 templates.env.add_extension("jinja2.ext.i18n")
 

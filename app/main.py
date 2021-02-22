@@ -13,6 +13,7 @@ from app.dependencies import (
     get_db,
     logger,
     MEDIA_PATH,
+    SOUNDS_PATH,
     STATIC_PATH,
     templates,
 )
@@ -44,6 +45,7 @@ app.mount(
     StaticFiles(directory=EVENT_IMAGES_PATH),
     name="event_images",
 )
+app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
 app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
@@ -54,6 +56,7 @@ set_ui_language()
 from app.routers import (  # noqa: E402
     about_us,
     agenda,
+    audio,
     calendar,
     categories,
     celebrity,
@@ -102,6 +105,7 @@ async def swagger_ui_redirect():
 routers_to_include = [
     about_us.router,
     agenda.router,
+    audio.router,
     calendar.router,
     categories.router,
     celebrity.router,
