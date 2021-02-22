@@ -3,8 +3,8 @@ import random
 from datetime import date, datetime
 from typing import Any, Dict
 
-import requests
 from fastapi import Depends
+import httpx
 from loguru import logger
 from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
@@ -88,10 +88,13 @@ def insert_to_db_if_needed(data: JSON, db: Session = Depends(get_db)):
             return serialize_stats(latest_saved)
 
 
-def get_vacinated_data() -> JSON:
+async def get_vacinated_data() -> JSON:
     # the api updates during the day, so we want to stay updated.
-    res = requests.get(CORONA_API_URL, headers=headers)
-    return json.loads(res.text)[-1]
+    # res = requests.get(CORONA_API_URL, headers=headers)
+    # return json.loads(res.text)[-1]
+    async with httpx.AsyncClient() as client:
+        res = await client.get(CORONA_API_URL, headers=headers)
+        return json.loads(res.text)[-1]
 
 
 def get_vacinated_data_from_db(db: Session = Depends(get_db)) -> CoronaStats:
@@ -104,19 +107,19 @@ def get_vacinated_data_from_db(db: Session = Depends(get_db)) -> CoronaStats:
     )
 
 
-def get_corona_stats(db: Session = Depends(get_db)) -> Dict[str, Any]:
+async def get_corona_stats(db: Session = Depends(get_db)) -> Dict[str, Any]:
     try:
         db_data = get_vacinated_data_from_db(db)
-        data = serialize_stats(db_data)
+        corona_stats_data = serialize_stats(db_data)
 
     except NoResultFound:
         try:
-            data = get_vacinated_data()
-            insert_to_db_if_needed(data, db)
+            corona_stats_data = await get_vacinated_data()
+            insert_to_db_if_needed(corona_stats_data, db)
         except json.decoder.JSONDecodeError:
-            data = {"error": "No data"}
+            corona_stats_data = {"error": "No data"}
 
     except (SQLAlchemyError, AttributeError) as e:
         logger.exception(f"corona stats failed with error: {e}")
-        data = {"error": "No data"}
-    return data
+        corona_stats_data = {"error": "No data"}
+    return corona_stats_data

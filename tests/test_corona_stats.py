@@ -1,55 +1,53 @@
 import json
-from unittest.mock import patch
 
+import pytest
 from sqlalchemy.orm.exc import NoResultFound
 
 from app.database.models import CoronaStats
 from app.internal import corona_stats
 
-
-FAKE_DATA = [{
-    'Day_Date': "2020-12-19T00:00:00.000Z",
-    'vaccinated': 41,
-    'vaccinated_cum': 58,
-    'vaccinated_population_perc': 0,
-    'vaccinated_seconde_dose': 0,
-    'vaccinated_seconde_dose_cum': 0,
-    'vaccinated_seconde_dose_population_perc': 0
-},
+FAKE_DATA = [
     {
-    'Day_Date': "2020-12-20T00:00:00.000Z",
-    'vaccinated': 7352,
-    'vaccinated_cum': 7410,
-    'vaccinated_population_perc': 0.08,
-    'vaccinated_seconde_dose': 0,
-    'vaccinated_seconde_dose_cum': 0,
-    'vaccinated_seconde_dose_population_perc': 0
-},
+        "Day_Date": "2020-12-19T00:00:00.000Z",
+        "vaccinated": 41,
+        "vaccinated_cum": 58,
+        "vaccinated_population_perc": 0,
+        "vaccinated_seconde_dose": 0,
+        "vaccinated_seconde_dose_cum": 0,
+        "vaccinated_seconde_dose_population_perc": 0,
+    },
     {
-    'Day_Date': "2020-12-21T00:00:00.000Z",
-    'vaccinated': 24863,
-    'vaccinated_cum': 32273,
-    'vaccinated_population_perc': 0.35,
-    'vaccinated_seconde_dose': 0,
-    'vaccinated_seconde_dose_cum': 0,
-    'vaccinated_seconde_dose_population_perc': 0
-},
+        "Day_Date": "2020-12-20T00:00:00.000Z",
+        "vaccinated": 7352,
+        "vaccinated_cum": 7410,
+        "vaccinated_population_perc": 0.08,
+        "vaccinated_seconde_dose": 0,
+        "vaccinated_seconde_dose_cum": 0,
+        "vaccinated_seconde_dose_population_perc": 0,
+    },
     {
-    'Day_Date': "2020-12-22T00:00:00.000Z",
-    'vaccinated': 44610,
-    'vaccinated_cum': 76883,
-    'vaccinated_population_perc': 0.83,
-    'vaccinated_seconde_dose': 0,
-    'vaccinated_seconde_dose_cum': 0,
-    'vaccinated_seconde_dose_population_perc': 0
-}]
+        "Day_Date": "2020-12-21T00:00:00.000Z",
+        "vaccinated": 24863,
+        "vaccinated_cum": 32273,
+        "vaccinated_population_perc": 0.35,
+        "vaccinated_seconde_dose": 0,
+        "vaccinated_seconde_dose_cum": 0,
+        "vaccinated_seconde_dose_population_perc": 0,
+    },
+    {
+        "Day_Date": "2020-12-22T00:00:00.000Z",
+        "vaccinated": 44610,
+        "vaccinated_cum": 76883,
+        "vaccinated_population_perc": 0.83,
+        "vaccinated_seconde_dose": 0,
+        "vaccinated_seconde_dose_cum": 0,
+        "vaccinated_seconde_dose_population_perc": 0,
+    },
+]
 
 
 def is_empty(session):
-    res = (session.query(CoronaStats).
-           filter().
-           count()
-           )
+    res = session.query(CoronaStats).filter().count()
     return res == 0
 
 
@@ -62,12 +60,13 @@ def test_get_vacinated_data_from_db(session):
     assert False
 
 
-@patch('requests.get')
-def test_get_vacinated_data(mock_get):
+@pytest.mark.asyncio
+async def test_get_vacinated_data(httpx_mock):
     test_data = json.dumps(FAKE_DATA)
-    mock_get.return_value.ok = True
-    mock_get.return_value.text = test_data
-    data = corona_stats.get_vacinated_data()
+    # httpx_mock.return_value.ok = True
+    # httpx_mock.return_value.text = test_data
+    httpx_mock.add_response(method="GET", json=test_data)
+    data = await corona_stats.get_vacinated_data()
     assert data
 
 
@@ -79,14 +78,10 @@ def test_save_corona_stats(session):
     assert is_empty(session) is False
 
 
-@patch('requests.get')
-def test_get_corona_stats(mock_get, session):
-    test_data = json.dumps(FAKE_DATA)
-    mock_get.return_value.ok = True
-    mock_get.return_value.text = test_data
-    assert is_empty(session)
-
-    data = corona_stats.get_corona_stats(session)
+@pytest.mark.asyncio
+async def test_get_corona_stats(httpx_mock, session):
+    httpx_mock.add_response(method="GET", json=FAKE_DATA)
+    data = await corona_stats.get_corona_stats(session)
     assert data
     assert not is_empty(session)
 
@@ -95,7 +90,7 @@ def test_serialize_stats():
     stats_object = CoronaStats(
         vaccinated_seconde_dose_population_perc=100,
         vaccinated_seconde_dose_cum=200,
-        vaccinated=0
+        vaccinated=0,
     )
 
     serialized = corona_stats.serialize_stats(stats_object)
