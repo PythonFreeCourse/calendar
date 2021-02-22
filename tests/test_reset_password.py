@@ -40,7 +40,8 @@ RESET_PASSWORD_DETAILS = {
 
 
 def test_forgot_password_route_ok(security_test_client):
-    response = security_test_client.get("/forgot-password")
+    response = security_test_client.get(
+        security_test_client.app.url_path_for('forgot_password_form'))
     assert response.ok
 
 
@@ -50,7 +51,9 @@ def test_forgot_password_bad_details(
         session, security_test_client, username, email):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     data = {'username': username, 'email': email}
-    res = security_test_client.post("/forgot-password", data=data)
+    res = security_test_client.post(
+        security_test_client.app.url_path_for('forgot_password'),
+        data=data)
     assert b'Please check your credentials' in res.content
 
 
@@ -63,22 +66,26 @@ def test_email_send(session, security_test_client, smtpd):
     mail.config.MAIL_TLS = False
     with mail.record_messages() as outbox:
         response = security_test_client.post(
-            "/forgot-password", data=FORGOT_PASSWORD_DETAILS)
+            security_test_client.app.url_path_for('forgot_password'),
+            data=FORGOT_PASSWORD_DETAILS)
         assert len(outbox) == 1
         assert b'Email for reseting password was sent' in response.content
         assert 'reset password' in outbox[0]['subject']
 
 
 def test_reset_password_GET_without_token(session, security_test_client):
-    res = security_test_client.get("/reset-password")
+    res = security_test_client.get(
+            security_test_client.app.url_path_for('reset_password_form'))
     assert b'Verification token is missing' in res.content
 
 
 def test_reset_password_GET_with_token(session, security_test_client):
     user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
     token = create_jwt_token(user, jwt_min_exp=15)
-    link = f"/reset-password?token={token}"
-    res = security_test_client.get(link)
+    params = f"?email_verification_token={token}"
+    res = security_test_client.get(
+            security_test_client.app.url_path_for(
+                'reset_password_form') + f'{params}')
     assert b'Please choose a new password' in res.content
 
 
@@ -89,12 +96,14 @@ def test_reset_password_bad_details(
     security_test_client.post('/register', data=REGISTER_DETAIL)
     user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
     token = create_jwt_token(user, jwt_min_exp=15)
-    link = f"/reset-password?token={token}"
     data = {
         'username': username, 'password': password,
         'confirm_password': confirm_password
     }
-    res = security_test_client.post(link, data=data)
+    params = f"?email_verification_token={token}"
+    res = security_test_client.post(
+            security_test_client.app.url_path_for(
+                'reset_password') + f'{params}', data=data)
     assert b'Please check your credentials' in res.content
 
 
@@ -102,8 +111,10 @@ def test_reset_password_successfully(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
     token = create_jwt_token(user, jwt_min_exp=15)
-    link = f"/reset-password?token={token}"
-    res = security_test_client.post(link, data=RESET_PASSWORD_DETAILS)
+    params = f"?email_verification_token={token}"
+    res = security_test_client.post(
+            security_test_client.app.url_path_for(
+                'reset_password') + f'{params}', data=RESET_PASSWORD_DETAILS)
     assert res.status_code == HTTP_302_FOUND
 
 
@@ -111,6 +122,8 @@ def test_reset_password_expired_token(session, security_test_client):
     security_test_client.post('/register', data=REGISTER_DETAIL)
     user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
     token = create_jwt_token(user, jwt_min_exp=-1)
-    link = f"/reset-password?token={token}"
-    res = security_test_client.post(link, data=RESET_PASSWORD_DETAILS)
+    params = f"?email_verification_token={token}"
+    res = security_test_client.post(
+            security_test_client.app.url_path_for(
+                'reset_password') + f'{params}', data=RESET_PASSWORD_DETAILS)
     assert res.ok

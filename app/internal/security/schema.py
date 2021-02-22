@@ -32,7 +32,7 @@ class ForgotPassword(BaseModel):
     username: str
     email: str
     user_id: Optional[str] = None
-    token: Optional[str] = None
+    email_verification_token: Optional[str] = None
     is_manager: Optional[bool] = False
 
     class Config:

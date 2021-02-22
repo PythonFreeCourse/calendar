@@ -9,7 +9,7 @@ from sqlalchemy.orm.session import Session
 
 from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
                         CALENDAR_RESET_PASSWORD_PAGE, CALENDAR_SITE_NAME,
-                        email_conf
+                        DOMAIN, email_conf
                         )
 from app.database.models import Event, User
 from app.dependencies import templates
@@ -195,10 +195,11 @@ async def send_reset_password_mail(
             you apply tasks in the background.
     returns True
     """
+    params = f"?email_verification_token={user.email_verification_token}"
     template = templates.get_template("reset_password_mail.html")
     html = template.render(
          recipient=user.username,
-         link=f"{CALENDAR_RESET_PASSWORD_PAGE}?token={user.token}",
+         link=f"{DOMAIN}{CALENDAR_RESET_PASSWORD_PAGE}{params}",
          email=user.email)
     background_tasks.add_task(send_internal,
                               subject="Calendar reset password",

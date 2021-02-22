@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
 
 # GENERAL
-DOMAIN = 'Our-Domain'
+DOMAIN = 'https://calendar.pythonic.guru/'
 
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
@@ -63,7 +63,7 @@ email_conf = ConnectionConfig(
 JWT_KEY = "JWT_KEY_PLACEHOLDER"
 JWT_ALGORITHM = "HS256"
 JWT_MIN_EXP = 60 * 24 * 7
-CALENDAR_RESET_PASSWORD_PAGE = "calendar.pythonic.guru/reset-password"
+CALENDAR_RESET_PASSWORD_PAGE = "/reset-password"
 
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 

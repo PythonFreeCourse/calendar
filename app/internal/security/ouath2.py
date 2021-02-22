@@ -21,8 +21,10 @@ oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
 
 
 async def update_password(
-        db: Session, db_user: User, user_password: str) -> None:
+        db: Session, username: str, user_password: str) -> None:
     """Updating User password in database"""
+    db_user = await User.get_by_username(
+        db=db, username=username)
     hashed_password = get_hashed_password(user_password)
     db_user.password = hashed_password
     db.commit()
@@ -39,7 +41,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-async def authenticate_user_by_email(
+async def is_email_compatible_to_username(
         db: Session, user: schema.ForgotPassword,
         email: bool = False) -> Union[schema.ForgotPassword, bool]:
     """
