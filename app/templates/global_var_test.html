@@ -17,35 +17,23 @@
             <li>
                 <a href="#"> Profile </a>
             </li>
+            <li>
+                <a href="#"> Sign Out </a>
+            </li>
+            <li>
+                <a href="#"> Agenda </a>
+            </li>
+            <li>
+                <a href="#"> Invitations </a>
+            </li>
             {% endif %}
 
             {% if not user %}
             <li>
                 <a href="#"> Sign In </a>
             </li>
-            {% endif %}
-
-            {% if user %}
-            <li>
-              <a href="#"> Sign Out </a>
-            </li>
-            {% endif %}
-
-            {% if not user %}
             <li>
                 <a href="#"> Sign Up </a>
-            </li>
-            {% endif %}
-
-            {% if user %}
-            <li>
-                <a href="#"> Agenda </a>
-            </li>
-            {% endif %}
-
-            {% if user %}
-            <li>
-                <a href="#"> Invitations </a>
             </li>
             {% endif %}
 
@@ -56,7 +44,10 @@
         </ul>
     </div>
 
-    <h2>username: {{ user.username }}</h2>
+    {% if user %}
+        <h2>username: {{ user.username }}</h2>
+        <h2>user_id: {{ user.user_id }}</h2>
+    {% endif %}
 
 </body>
 </html>

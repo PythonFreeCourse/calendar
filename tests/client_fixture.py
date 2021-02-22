@@ -6,15 +6,15 @@ from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
-from app.demos import global_variable
 from app.routers import (
     agenda, categories, event, friendview, google_connect,
     invitation, profile, weight,
 )
 from app.routers.salary import routes as salary
-from tests import security_testing_routes
+from tests import security_testing_routes, global_var_testing_routes
 from tests.conftest import get_test_db, test_engine
 
+main.app.include_router(global_var_testing_routes.router)
 main.app.include_router(security_testing_routes.router)
 
 
@@ -47,7 +47,7 @@ def create_test_client(get_db_function) -> Generator[Session, None, None]:
 
 @pytest.fixture(scope="session")
 def global_var_test_client() -> Iterator[TestClient]:
-    yield from create_test_client(global_variable.get_db)
+    yield from create_test_client(global_var_testing_routes.get_db)
 
 
 @pytest.fixture(scope="session")

@@ -45,7 +45,6 @@ from app.routers import (  # noqa: E402
     google_connect, invitation, joke, login, logout, profile,
     register, search, telegram, user, weekview, weight, whatsapp,
 )
-from app.demos import global_variable  # noqa: E402
 
 json_data_loader.load_to_database(next(get_db()))
 
@@ -80,7 +79,6 @@ routers_to_include = [
     export.router,
     four_o_four.router,
     friendview.router,
-    global_variable.router,
     google_connect.router,
     invitation.router,
     joke.router,
