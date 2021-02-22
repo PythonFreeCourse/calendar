@@ -1,0 +1,30 @@
+<div class="form_row">
+    <button id="open_countries_modal"><img src={{ url_for('static', path='images/worldwide.png') }} alt="Globe-icon-to-choose-country" title="Check meeting time at other country"></button>
+    <div class="countries_modal_container" id="countries_modal_container">
+      <div class="countries_modal">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, maiores quisquam recusandae eius perspiciatis, illum et ut asperiores quo ad sed, sunt nemo quasi veritatis amet laborum voluptas dolor accusamus?</p>
+        {% if names %}
+          <label for="countries">Choose country to see local time:</label>
+          <input list="countries_list" name="countries" id="countries">
+          <datalist id="countries_list">
+            {% for name in names %}
+              <option value="{{ name[0] }}">
+            {% endfor %}
+          </datalist>
+          <input type="submit" value="Check time">
+        {% endif %}
+        <button id="close_countries_modal">
+          Close
+        </button>
+        <div class="icon_credits">( Icons made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com )</a></div>
+      </div>
+    </div>
+    {% if country and time %}
+      <p>The meeting time at {{ country }} is: {{ time }}</p>
+    {% endif %}
+    {% if msg %}
+      <p>{{ msg }}</p>
+    {% endif %}
+</div>
+
+<!-- <script src="{{ url_for('static', path='event/check_country_time.js') }}"></script> -->

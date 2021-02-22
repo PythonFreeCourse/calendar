@@ -16,7 +16,7 @@ from starlette.templating import _TemplateResponse
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
-    get_invited_emails,
+    # get_invited_emails,
     get_messages,
     get_meeting_local_duration,
     get_uninvited_regular_emails,
@@ -208,14 +208,17 @@ async def create_new_event(
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
 
-    vc_link = data["vc_link"]
+    # vc_link = data["vc_link"]
+    vc_link = "https://us04web.zoom.us/j/77247561137?pwd="
+    # a1Y1ZGdrTFBsNWhkQUVBYnRqZVZXZz09"
     category_id = data.get("category_id")
     privacy = data["privacy"]
     privacy_kinds = [kind.name for kind in PrivacyKinds]
     if privacy not in privacy_kinds:
         privacy = PrivacyKinds.Public.name
     is_google_event = data.get("is_google_event", "True") == "True"
-    invited_emails = get_invited_emails(data["invited"])
+    # invited_emails = get_invited_emails(data["invited"])
+    invited_emails = ""
     uninvited_contacts = get_uninvited_regular_emails(
         session,
         owner_id,

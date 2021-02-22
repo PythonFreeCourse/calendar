@@ -65,3 +65,44 @@ textarea,
 input[type="submit"] {
   width: 100%;
 }
+
+/* .form_row .countries-modal-container .countries-modal {
+  background-color: aqua;
+} */
+
+.countries_modal_container {
+  background-color: rgba(95, 93, 93, 0.733);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.countries_modal {
+  width: 600px;
+  max-width: 100%;
+  background-color: whitesmoke;
+  padding: 30px 50px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.countries_modal.show {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* .countries_modal_container.show {
+  pointer-events: auto;
+  opacity: 1;
+} */

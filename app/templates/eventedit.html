@@ -21,6 +21,7 @@
                     {% set time = chosen_country_meeting_time %}
                     {% set msg = msg %}
                     {% include "partials/calendar/event/edit_event_details_tab.html" %}
+                    {% include "partials/calendar/event/check_country_time.html" %}
                 </div>
                 <!--    Copy commented section to add another tab -->
                 <!-- <div class="tab-pane fade" id="(CHANGE_ME)" role="tabpanel" aria-labelledby="(CHANGE_ME)-tab">
@@ -31,4 +32,5 @@
             <input type="submit" value="Submit">
         </div>
     </form>
+    <script src="{{ url_for('static', path='event/check_country_time.js') }}"></script>
     <script src="{{ url_for('static', path='/voice.js') }}"></script>
