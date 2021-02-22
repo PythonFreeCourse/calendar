@@ -16,22 +16,14 @@
             <img src="{{ url_for('static', path='/images/notes/notes.jfif') }}" class="img-fluid" alt="nice-pic">
         </div>
         <div class="col-lg-7 px-5 pt-3">
-            <h1 class="font font-bold">Update a note...</h1>
-            <form action="/notes/edit/{{ data.id }}" method="POST">
+            <h1 class="font font-bold">Delete a note...</h1>
+            <form action="/notes/delete/{{ data.id }}" method="POST">
+                <label>Are you sure?</label>
                 <div class="form-row">
                     <div class="col-lg-7">
-                        <input class="form-control my-3 p-3" type="text" value={{ data.title }} name="title" id="title">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-lg-7">
-                        <input class="form-control my-3 p-3" type="text" value={{ data.description }} name="description"
-                            id="description">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-lg-7">
-                        <button type="submit" id="change_note" class="btn1 mt-2 mb-4">Submit Changes</button>
+                        <button type="submit" id="change_note" class="btn btn-danger mt-2 mb-4">Delete</button>
+                        <!-- <button type="button" class="btn btn-primary mt-2 mb-4">Cancel</button> -->
+                        <a class="btn btn-primary mt-2 mb-4" href="/notes/" role="button">Cancel</a>
                     </div>
                 </div>
             </form>
