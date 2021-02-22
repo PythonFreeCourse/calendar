@@ -1,7 +1,7 @@
 from fastapi import Depends
 from functools import wraps
 from starlette.responses import RedirectResponse
-from typing import List, Dict
+from typing import List
 
 from app.database.models import UserFeature, Feature
 from app.dependencies import get_db, SessionLocal
@@ -37,19 +37,6 @@ def feature_access_filter(call_next):
         return RedirectResponse(url=request.headers['referer'])
 
     return wrapper
-
-
-async def create_dict_for_users_features_token(
-    user_id: int, session: SessionLocal = Depends(get_db)
-) -> Dict:
-    features_dict = {}
-    all_features = session.query(UserFeature).filter_by(user_id=user_id).all()
-
-    for feat in all_features:
-        features_dict.update(
-            {f'{feat.user_id}{feat.feature_id}': feat.__dict__})
-
-    return features_dict
 
 
 def create_features_at_startup(session: SessionLocal) -> bool:
