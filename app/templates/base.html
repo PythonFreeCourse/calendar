@@ -47,6 +47,9 @@
                             <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
                         </li>
                         <li class="nav-item">
+                          <a class="nav-link" href="{{ url_for( 'audio_settings') }}">Audio Settings</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('search') }}">Search</a>
                         </li>
                         <li class="nav-item">
@@ -87,8 +90,12 @@
     <!-- This bootstrap version is needed here because of the toggler bug in the beta version-->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', path='/horoscope.js') }}"></script>
+    <script src="{{ url_for('static', path='/graph.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for( 'static', path='/audio_settings.js' ) }}"></script>
     <script src="{{ url_for('static', path='/joke.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <audio id="my-audio" muted="true"></audio>
+    <audio id="sfx" muted="true"></audio>
 
 </body>
 </html>

@@ -9,6 +9,7 @@ from app.database.models import Base, User
 
 from app.routers import (
     agenda,
+    audio,
     categories,
     event,
     friendview,
@@ -105,6 +106,11 @@ def profile_test_client() -> Generator[Session, None, None]:
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def audio_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(audio.get_db)
 
 
 @pytest.fixture(scope="session")
