@@ -28,7 +28,7 @@
                         </a>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            
+
                                 <li>
                                     <form action="{{ url_for('edit_weekly_task') }}" method="post">
                                         <button class="dropdown-item" name="edit_id" type="submit" value="{{ weekly_task.id }}">
@@ -37,12 +37,12 @@
                                     </form>
                                 </li>
                                 <li>
-                                    <button id="removeButton" class="dropdown-item" data-id="{{ weekly_task.id }}" data-url="{{ url_for('delete_weekly_task') }}" onclick="deleteTask()">
+                                    <button id="removeButton" class="dropdown-item" data-url="{{ url_for('delete_weekly_task') }}" onclick="deleteTask('{{ weekly_task.id }}')">
                                         remove
                                     </button>
                                 </li>
                             </form>
-                        </ul>                            
+                        </ul>
                     </div>
                 </span>
                 <!-- End Task settings -->
@@ -58,8 +58,11 @@
 
             <!-- Task title and content -->
             <div class="card-body pb-1">
-                <p class="card-text">
-                    <span class="fw-bold">{{ weekly_task.title }}</span> <br> {{ content }}
+                <p class="card-title">
+                    <span class="fw-bold">{{ weekly_task.title }}</span>
+                </p>
+                <p class="card-title">
+                    {{ content }}
                 </p>
                 <hr class="mb-0">
                 <small class="text-muted">important: {{ weekly_task.is_important }}</small>
@@ -78,14 +81,18 @@
 </div>
 <!-- End add weekly task  -->
 
-<script >
-    function deleteTask() {
-        var id = document.getElementById('removeButton').getAttribute("data-id");
+<!-- Send delete method script -->
+<script>
+    function deleteTask(id) {
         var url = document.getElementById('removeButton').getAttribute("data-url");
         const signData = url + "?remove_id=" + id;
         const xhr = new XMLHttpRequest();
         xhr.open("DELETE", signData, false);
+        xhr.onload = function () {
+            document.location.reload();
+        };
         xhr.send();
       }
 </script>
+<!-- End script -->
 {% endblock %}
