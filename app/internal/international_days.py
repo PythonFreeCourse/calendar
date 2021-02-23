@@ -6,8 +6,17 @@ from sqlalchemy.sql.expression import func
 from app.database.models import InternationalDays
 
 
-def create_international_day_object(
+def get_international_day(
         international_day: Dict[str, Union[str, int]]) -> InternationalDays:
+
+    """Returns a Joke object from the dictionary data.
+
+        Args:
+            joke_: A dictionary joke related information.
+
+        Returns:
+            A new Joke object.
+    """
     return InternationalDays(
         day=international_day["day"],
         month=international_day["month"],
