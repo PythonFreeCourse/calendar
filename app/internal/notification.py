@@ -86,12 +86,21 @@ def raise_wrong_id_error() -> None:
     )
 
 
+def filter_notifications(
+    session: Session,
+    user_id: int,
+    func: Union[_is_unread, _is_archived],
+) -> List[NOTIFICATION_TYPE]:
+    """Filters notifications by "func"."""
+    return list(filter(func, get_all_notifications(session, user_id)))
+
+
 def get_unread_notifications(
     session: Session,
     user_id: int,
 ) -> List[NOTIFICATION_TYPE]:
     """Returns all unread notifications."""
-    return list(filter(_is_unread, get_all_notifications(session, user_id)))
+    return filter_notifications(session, user_id, _is_unread)
 
 
 def get_archived_notifications(
@@ -99,7 +108,7 @@ def get_archived_notifications(
     user_id: int,
 ) -> List[NOTIFICATION_TYPE]:
     """Returns all archived notifications."""
-    return list(filter(_is_archived, get_all_notifications(session, user_id)))
+    return filter_notifications(session, user_id, _is_archived)
 
 
 def get_all_notifications(
