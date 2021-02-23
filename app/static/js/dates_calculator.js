@@ -1,6 +1,6 @@
-window.onload = function () {
-  document.getElementById("CalcBtn").addEventListener("click", hiddenDifference);
-}
+window.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById("CalcBtn").addEventListener("click", hiddenDifference);
+});
 
 function hiddenDifference() {
     if (document.getElementById("endDate").value == '') {
