@@ -24,7 +24,8 @@ function addItem() {
 
 function removeItem(shared_list_item, list_items) {
     shared_list_item.remove()
-    for (i = 3; i < list_items.childNodes.length; i++) {
-        list_items.childNodes[i].id = "shared-list-item" + String(i - 2);
-    }
+	for (const [index, child] of list_items.childNodes.entries())
+	{
+		child.id = "shared-list-item" + String(index)
+	}
 }
