@@ -79,7 +79,7 @@ function loadDaysIfNeeded(dateId, link) {
     } else {
         const lastDay = stringToDate(allId[allId.length - 1]);
         deltaDays = parseInt((targetDay - lastDay) / (1000 * 60 * 60 * 24), 10);
-        callLoadWeek(calcDaysToLoad(deltaDays));
+        callLoadWeek(calcDaysToLoad(deltaDays), true);
     }
     jump(link);
 }
