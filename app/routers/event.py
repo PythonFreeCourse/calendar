@@ -44,7 +44,6 @@ UPDATE_EVENTS_FIELDS = {
     "category_id": (int, type(None)),
 }
 
-
 router = APIRouter(
     prefix="/event",
     tags=["event"],
@@ -464,6 +463,7 @@ def get_attendees_email(session: Session, event: Event):
 def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
     """Returns a list of all the email address of the event invited users,
     by event id."""
+
     return [
         email[0]
         for email in db.query(User.email)
@@ -477,11 +477,14 @@ def get_participants_emails_by_event(db: Session, event_id: int) -> List[str]:
 
 def _delete_event(db: Session, event: Event):
     try:
+        # TODO: Check if user activate the restore deleted events feature
+
         # Delete event
-        db.delete(event)
+        # db.delete(event)
+        event.deleted_date = dt.now()
 
         # Delete user_event
-        db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
+        # db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
 
         db.commit()
 

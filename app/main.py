@@ -16,8 +16,10 @@ from app.dependencies import (
     STATIC_PATH,
     templates,
 )
+
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
+from app.internal.restore_events import delete_events_after_optionals_num_days
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
 from app.utils.extending_openapi import custom_openapi
@@ -132,12 +134,17 @@ routers_to_include = [
 for router in routers_to_include:
     app.include_router(router)
 
+DAYS = 30
+
 
 # TODO: I add the quote day to the home page
 # until the relevant calendar view will be developed.
 @app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
+    # delete permanently events after 30 days
+
+    delete_events_after_optionals_num_days(DAYS, next(get_db()))
     quote = daily_quotes.get_quote_of_day(db)
     return templates.TemplateResponse(
         "index.html",
