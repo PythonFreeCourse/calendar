@@ -1,0 +1,32 @@
+
+
+body {
+	color: #333;
+	margin: auto;
+	font: 1.2em / 1.2 Arial, Helvetica, sans-serif;
+}
+
+h1 {
+	color: black;
+	font-size: 150%;
+	text-align: center;
+}
+
+form {
+	text-align: center;
+}
+
+input {
+	border-radius: 0.5em;
+	color: plum;
+	padding: 0.5em;
+}
+
+input[type="color"].custom {
+	padding: 0;
+	border: none;
+	height: 1.875em;
+	width: 9.375em;
+	vertical-align: middle;
+	border-radius: 0.5em;
+}

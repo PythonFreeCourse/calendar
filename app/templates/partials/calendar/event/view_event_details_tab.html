@@ -10,8 +10,10 @@
 <div class="event_info_row">
     <span class="icon">ICON</span>
     <time datetime="{{ event.start }}">{{ event.start.strftime(start_format )}}</time>
+    {% if end_format != "" %}
     -
-    <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
+    <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+    {% endif %}
     <div>{{ 'Busy' if event.availability == True else 'Free' }}</div>
 </div>
 
@@ -20,11 +22,18 @@
 <!--    <span>Repeats every INTERVAL</span>-->
 <!--</div>-->
 
+{% if event.location %}
+<div class="event_info_row">
+  <span class="icon"><a href="{{ waze_link }}" target="_blank"><img src="{{ url_for('static', path='images/icons/waze.svg') }}" alt="icon wase" width="30" height="30"></a></span>
+  <address>{{ event.location }}</address>
+</div>
+{% endif %}
+{% if event.vc_link %}
 <div class="event_info_row">
   <span class="icon">ICON</span>
-  <address>{{ event.location }}</address>
   <address>VC link<a href="{{ event.vc_link }}">VC URL</a></address>
 </div>
+{% endif %}
 {% if event.invitees %}
 <form method="POST" action="/event/{{event.id}}/owner">
     <div class="mb-3"></div>
