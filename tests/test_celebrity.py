@@ -4,7 +4,7 @@ import pytest
 
 from app.internal.celebrity import get_today_month_and_day
 
-CELEBRITY_PAGE = "/celebrity"
+CELEBRITY_ROUTE = "/celebrity"
 FAKE_TIME = datetime.date(2018, 9, 18)
 
 BAD_DATES = [
@@ -18,18 +18,19 @@ BAD_DATES = [
 GOOD_DATES = [
     datetime.date(2020, 9, 18),
     datetime.date(2019, 9, 18),
-    datetime.date(2016, 9, 18)
+    datetime.date(2016, 9, 18),
 ]
 
 
 @pytest.fixture
 def datetime_mock(monkeypatch):
-    class MyDateTime:
-        @classmethod
-        def today(cls):
+    class MockDateTime:
+
+        @staticmethod
+        def today():
             return FAKE_TIME
 
-    monkeypatch.setattr(datetime, 'date', MyDateTime)
+    monkeypatch.setattr(datetime, 'date', MockDateTime)
 
 
 @pytest.mark.parametrize('date', BAD_DATES)
@@ -43,6 +44,6 @@ def test_get_today_month_and_day_good(date, datetime_mock):
 
 
 def test_celebrity_page_exists(client):
-    resp = client.get(CELEBRITY_PAGE)
-    assert resp.ok
-    assert b'born today' in resp.content
+    response = client.get(CELEBRITY_ROUTE)
+    assert response.ok
+    assert b'born today' in response.content
