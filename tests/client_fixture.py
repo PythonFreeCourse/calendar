@@ -14,6 +14,7 @@ from app.routers import (
     friendview,
     google_connect,
     invitation,
+    meds,
     profile,
     weight,
 )
@@ -115,6 +116,11 @@ def security_test_client():
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
+
+
+@pytest.fixture(scope="session")
+def meds_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(meds.get_db)
 
 
 @pytest.fixture(scope="session")
