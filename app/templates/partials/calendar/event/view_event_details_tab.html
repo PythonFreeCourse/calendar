@@ -11,10 +11,11 @@
     <span class="icon">ICON</span>
     <time datetime="{{ event.start }}">{{ event.start.strftime(start_format )}}</time>
     {% if end_format != "" %}
-    -
-    <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+        <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
     {% endif %}
-    <div>{{ 'Busy' if event.availability == True else 'Free' }}</div>
+    <div>
+        {{ 'Free' if event.availability else 'Busy' }}
+    </div>
 </div>
 
 <!--<div class="event_info_row">-->
