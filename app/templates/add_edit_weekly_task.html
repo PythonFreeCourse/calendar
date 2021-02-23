@@ -7,7 +7,7 @@
         <!-- when on edit mode  -->
             <h1>Edit Weekly Tasks</h1>
             {% set weekly_task_id = weekly_task.id %}
-        
+
         {% else %}
         <!-- when on add mode  -->
             <h1>Add Weekly Tasks</h1>
@@ -35,8 +35,8 @@
 
 
     <!-- Weekly Tasks inputs -->
-    <form class="container mt-5" action="{{ url_for('weekly_task_execute') }}" method="post">
-        
+    <form class="container mt-5" action="{{ url_for('weekly_task_execute', mode=mode) }}" method="post">
+
         <div class="mb-3">
             <label for="title" class="form-label">Title:</label>
             <input type="text" class="form-control" value="{{ title }}" id="title" name="title" aria-describedby="emailHelp">
@@ -73,11 +73,10 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
-        
+
         <!-- weekly task id for editing the weekly task -->
         <input type="hidden" name="weekly_task_id" value="{{ weekly_task_id }}">
-        <!-- mode == "add" or mode == "edit" -->
-        <input type="hidden" name="mode" value="{{ mode }}">
+
 
     </form>
     <!-- End Weekly Tasks inputs -->

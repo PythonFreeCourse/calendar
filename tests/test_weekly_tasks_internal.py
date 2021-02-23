@@ -2,24 +2,20 @@ from datetime import datetime
 
 from app.database.models import Task
 from app.internal.weekly_tasks import (
-    check_inputs, generate_tasks, create_task, remove_weekly_task,
-    weekly_task_from_input, create_weekly_task, change_weekly_task
+    check_inputs,
+    generate_tasks,
+    create_task,
+    remove_weekly_task,
+    weekly_task_from_input,
+    create_weekly_task,
+    change_weekly_task,
 )
 
 
-def test_weekly_tasks_check_inputs(
-    weekly_task_time
-):
-    ok = check_inputs(
-        days="",
-        the_time=None,
-        title="the title")
+def test_weekly_tasks_check_inputs(weekly_task_time):
+    ok = check_inputs(days="", the_time=None, title="the title")
     assert not ok
-    ok = check_inputs(
-        days="Sun",
-        the_time=weekly_task_time,
-        title="the title"
-    )
+    ok = check_inputs(days="Sun", the_time=weekly_task_time, title="the title")
     assert ok
 
 
@@ -31,7 +27,7 @@ def test_weekly_tasks_create_task(user, session):
         is_done=False,
         is_important=True,
         date_time=date_time,
-        owner_id=user.id
+        user_id=user.id,
     )
     created = create_task(task, user, session)
     assert created
@@ -41,16 +37,10 @@ def test_weekly_tasks_create_task(user, session):
     assert created_task.date_time == date_time
 
 
-def test_create_weekly_task(
-    user, session, weekly_task
-):
+def test_create_weekly_task(user, session, weekly_task):
     # creating the weekly task
-    weekly_task.owner_id = user.id
-    created = create_weekly_task(
-        user,
-        weekly_task,
-        session
-    )
+    weekly_task.user_id = user.id
+    created = create_weekly_task(user, weekly_task, session)
     assert created
     # checks if weekly task been added to the db
     user_w_t = user.weekly_tasks[0]
@@ -59,20 +49,12 @@ def test_create_weekly_task(
     assert user_w_t.the_time == weekly_task.the_time
 
     # trying to add weekly task with the same title
-    created = create_weekly_task(
-        user,
-        weekly_task,
-        session
-    )
+    created = create_weekly_task(user, weekly_task, session)
     assert not created
 
     # adding without a title
     weekly_task.title = None
-    created = create_weekly_task(
-        user,
-        weekly_task,
-        session
-    )
+    created = create_weekly_task(user, weekly_task, session)
     assert not created
 
     # the user's weekly tasks should remain in quantity 1
@@ -81,25 +63,20 @@ def test_create_weekly_task(
 
 
 def test_change_weekly_task(
-    user, session, weekly_task,
-    weekly_task2, weekly_task3
+    user,
+    session,
+    weekly_task,
+    weekly_task2,
+    weekly_task3,
 ):
     # creating weekly task for edit testing
-    weekly_task.owner_id = user.id
-    created = create_weekly_task(
-        user,
-        weekly_task,
-        session
-    )
+    weekly_task.user_id = user.id
+    created = create_weekly_task(user, weekly_task, session)
     assert created
 
     # creating another weekly task for edit testing
-    weekly_task2.owner_id = user.id
-    created = create_weekly_task(
-        user,
-        weekly_task2,
-        session
-    )
+    weekly_task2.user_id = user.id
+    created = create_weekly_task(user, weekly_task2, session)
     assert created
     user_w_t = user.weekly_tasks
     assert len(user_w_t) == 2
@@ -113,9 +90,7 @@ def test_change_weekly_task(
     weekly_task.title = "new title"
     weekly_task.content = "new content"
 
-    changed = change_weekly_task(
-        user, weekly_task, session
-    )
+    changed = change_weekly_task(user, weekly_task, session)
     assert changed
     changed_user_w_t = user.weekly_tasks[0]
     assert changed_user_w_t.title == weekly_task.title
@@ -123,35 +98,32 @@ def test_change_weekly_task(
 
     # trying to edit weekly task for an existing title
     # weekly_task3.title == weekly_task2.title
-    weekly_task3.owner_id = user.id
+    weekly_task3.user_id = user.id
     weekly_task3.id = edit_id
-    changed = change_weekly_task(
-        user, weekly_task3, session
-    )
+    changed = change_weekly_task(user, weekly_task3, session)
     assert not changed
     edited_w_t = user.weekly_tasks[0]
     assert edited_w_t.title != weekly_task3.title
 
 
 def test_weekly_task_change_permission(
-    user, user2, session,
-    weekly_task, weekly_task2
+    user,
+    user2,
+    session,
+    weekly_task,
+    weekly_task2,
 ):
     # creating the weekly task
-    weekly_task.owner_id = user.id
-    created = create_weekly_task(
-        user, weekly_task, session
-    )
+    weekly_task.user_id = user.id
+    created = create_weekly_task(user, weekly_task, session)
     assert created
     user_w_task = user.weekly_tasks[0]
     assert user_w_task
 
     # another user trying to change the weekly task
     weekly_task2.id = user_w_task.id
-    weekly_task2.owner_id = user2.id
-    changed = change_weekly_task(
-        user2, weekly_task, session
-    )
+    weekly_task2.user_id = user2.id
+    changed = change_weekly_task(user2, weekly_task, session)
     assert not changed
     user_w_t = user.weekly_tasks[0]
     assert user_w_t.title != weekly_task2.title
@@ -164,11 +136,11 @@ def test_weekly_task_from_input(user, weekly_task, weekly_task_time):
     w_t = weekly_task_from_input(
         user,
         weekly_task.title,
-        weekly_task.days,
+        weekly_task.get_days(),
         weekly_task.content,
         weekly_task_time,
         weekly_task.is_important,
-        weekly_task_id=1
+        weekly_task_id=1,
     )
     assert w_t
     # all the weekly task data should be saved
@@ -185,7 +157,7 @@ def test_weekly_task_from_input(user, weekly_task, weekly_task_time):
         weekly_task.days,
         weekly_task.content,
         weekly_task_time,
-        weekly_task.is_important
+        weekly_task.is_important,
     )
     assert w_t
     # As much data as possible is saved, except for time and days
@@ -194,13 +166,9 @@ def test_weekly_task_from_input(user, weekly_task, weekly_task_time):
     assert w_t.the_time != weekly_task.the_time
 
 
-def test_remove_weekly_task(
-    user, session, weekly_task
-):
-    weekly_task.owner_id = user.id
-    created = create_weekly_task(
-        user, weekly_task, session
-    )
+def test_remove_weekly_task(user, session, weekly_task):
+    weekly_task.user_id = user.id
+    created = create_weekly_task(user, weekly_task, session)
     assert created
 
     # Checks if the weekly task exists in the db
@@ -218,13 +186,9 @@ def test_remove_weekly_task(
     assert not removed
 
 
-def test_weekly_tasks_generate_tasks(
-    user, session, weekly_task
-):
-    weekly_task.owner_id = user.id
-    created = create_weekly_task(
-        user, weekly_task, session
-    )
+def test_weekly_tasks_generate_tasks(user, session, weekly_task):
+    weekly_task.user_id = user.id
+    created = create_weekly_task(user, weekly_task, session)
     assert created
 
     # Activates the generator
@@ -246,7 +210,7 @@ def test_weekly_tasks_generate_tasks(
         time_string = task.date_time.strftime("%H:%M")
         assert weekly_task.the_time == time_string
         day = task.date_time.strftime("%a")
-        assert day in weekly_task.days
+        assert day in weekly_task.get_days()
 
     # another activation at the same day
     # shouldn't affect the db

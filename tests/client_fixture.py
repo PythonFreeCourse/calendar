@@ -24,6 +24,17 @@ from tests.conftest import get_test_db, test_engine
 
 main.app.include_router(security_testing_routes.router)
 
+REGISTER_DETAIL = {
+    "username": "correct_user",
+    "full_name": "full_name",
+    "password": "correct_password",
+    "confirm_password": "correct_password",
+    "email": "example@email.com",
+    "description": "",
+}
+
+LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
+
 
 def get_test_placeholder_user() -> User:
     return User(
@@ -46,6 +57,21 @@ def create_test_client(get_db_function) -> Generator[Session, None, None]:
     main.app.dependency_overrides[get_db_function] = get_test_db
 
     with TestClient(main.app) as client:
+        yield client
+
+    main.app.dependency_overrides = {}
+    Base.metadata.drop_all(bind=test_engine)
+
+
+def create_logged_test_client(
+    get_db_function,
+) -> Generator[Session, None, None]:
+    Base.metadata.create_all(bind=test_engine)
+    main.app.dependency_overrides[get_db_function] = get_test_db
+
+    with TestClient(main.app) as client:
+        client.post(client.app.url_path_for("register"), data=REGISTER_DETAIL)
+        client.post(client.app.url_path_for("login"), data=LOGIN_DATA)
         yield client
 
     main.app.dependency_overrides = {}
@@ -102,18 +128,9 @@ def profile_test_client() -> Generator[Session, None, None]:
     Base.metadata.drop_all(bind=test_engine)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def weekly_tasks_test_client():
-    Base.metadata.create_all(bind=test_engine)
-    main.app.dependency_overrides[weekly_tasks.get_db] = get_test_db
-    main.app.dependency_overrides[
-        weekly_tasks.get_placeholder_user] = get_test_placeholder_user
-
-    with TestClient(main.app) as client:
-        yield client
-
-    main.app.dependency_overrides = {}
-    Base.metadata.drop_all(bind=test_engine)
+    yield from create_logged_test_client(weekly_tasks.get_db)
 
 
 @pytest.fixture(scope="session")

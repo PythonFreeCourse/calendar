@@ -6,48 +6,52 @@ from app.database.models import WeeklyTask
 
 @pytest.fixture
 def weekly_task():
-    return WeeklyTask(
+    w_t = WeeklyTask(
         title="Test Task 1",
-        days="Mon, Sat, Sun",
         content="my content",
         is_important=True,
-        the_time="11:00"
+        the_time="11:00",
     )
+    w_t.set_days("Mon, Sat, Sun")
+    return w_t
 
 
 @pytest.fixture
 def weekly_task2():
-    return WeeklyTask(
+    w_t = WeeklyTask(
         title="Test Task 2",
-        days="Sat, Sun",
         content="my content2",
         is_important=False,
-        the_time="12:00"
+        the_time="12:00",
     )
+    w_t.set_days("Sat, Sun")
+    return w_t
 
 
 @pytest.fixture
 def weekly_task3():
-    return WeeklyTask(
+    w_t = WeeklyTask(
         title="Test Task 2",
         days="Sat",
         content="my content3",
         is_important=False,
-        the_time="12:00"
+        the_time="12:00",
     )
+    w_t.set_days("Sat")
+    return w_t
 
 
 @pytest.fixture
 def input_weekly_task():
     return {
-        'title': 'Test Task 1',
-        'sun': True,
-        'mon': True,
-        'sat': True,
-        'content': 'my content',
-        'is_important': True,
-        'the_time': '11:00'
-        }
+        "title": "Test Task 1",
+        "sun": True,
+        "mon": True,
+        "sat": True,
+        "content": "my content",
+        "is_important": True,
+        "the_time": "11:00",
+    }
 
 
 @pytest.fixture

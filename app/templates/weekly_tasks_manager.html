@@ -15,7 +15,7 @@
 
                 <!-- Task repeat days and time -->
                 <small>
-                    <i><span class="text-decoration-underline">Every:</span> {{ weekly_task.days }}</i>
+                    <i><span class="text-decoration-underline">Every:</span> {{ weekly_task.get_days() }}</i>
                     <i><span class="text-decoration-underline">at:</span> {{ weekly_task.the_time }} </i>
                 </small>
                 <!-- End Task repeat days and time -->
@@ -30,7 +30,7 @@
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
 
                                 <li>
-                                    <form action="{{ url_for('edit_weekly_task') }}" method="post">
+                                    <form action="{{ url_for('edit_weekly_task') }}" method="GET">
                                         <button class="dropdown-item" name="edit_id" type="submit" value="{{ weekly_task.id }}">
                                             edit
                                         </button>

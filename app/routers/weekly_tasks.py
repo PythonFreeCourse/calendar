@@ -1,49 +1,34 @@
 import calendar
 import datetime
 
-from typing import List, Tuple
-from fastapi import APIRouter, Depends, Request, Form
+from typing import List, Tuple, Optional
+from fastapi import APIRouter, Cookie, Depends, Request, Response, Form
 from sqlalchemy.orm.session import Session
-from starlette.responses import RedirectResponse
+from starlette.responses import RedirectResponse, HTMLResponse
 from starlette.status import HTTP_302_FOUND, HTTP_303_SEE_OTHER
 
-from app.database.models import User, WeeklyTask
+from app.database.models import WeeklyTask
 from app.dependencies import get_db, templates
+from app.internal.security.dependancies import (
+    current_user,
+    schema,
+    is_logged_in,
+    current_user_from_db,
+)
 from app.internal.weekly_tasks import (
-    remove_weekly_task, weekly_task_from_input,
-    create_weekly_task, change_weekly_task)
+    remove_weekly_task,
+    weekly_task_from_input,
+    create_weekly_task,
+    change_weekly_task,
+)
 
 
 router = APIRouter(
     prefix="/weekly-tasks",
     tags=["weekly-tasks"],
     responses={404: {"description": "Not found"}},
-    dependencies=[Depends(get_db)]
+    dependencies=[Depends(get_db)],
 )
-
-
-def get_placeholder_user() -> User:
-    user = User(
-        username='demo_user',
-        email='demo@email.po',
-        password='s3jsd183b13',
-        full_name='The Demo'
-    )
-    return user
-
-
-def get_user(
-    demo_user: User,
-    session: Session = Depends(get_db)
-) -> User:
-    demo_username = demo_user.username
-    user = session.query(User).filter_by(username=demo_username).first()
-    if not user:
-        session.add(demo_user)
-        session.commit()
-        user_query = session.query(User)
-        user = user_query.filter_by(username=demo_username).first()
-    return user
 
 
 def get_checked_days(days: str = "") -> List[Tuple[str, str, str]]:
@@ -61,10 +46,13 @@ def get_checked_days(days: str = "") -> List[Tuple[str, str, str]]:
 
 
 def get_days_string(
-    sun: bool, mon: bool,
-    tue: bool, wed: bool,
-    thu: bool, fri: bool,
-    sat: bool
+    sun: bool,
+    mon: bool,
+    tue: bool,
+    wed: bool,
+    thu: bool,
+    fri: bool,
+    sat: bool,
 ) -> str:
     """Produces a string of all the days that were checked,
     For use in the model weekly tasks."""
@@ -75,20 +63,18 @@ def get_days_string(
         "Thu": thu,
         "Fri": fri,
         "Sat": sat,
-        "Sun": sun
+        "Sun": sun,
     }
     days_list = [day for day, is_checked in days_dict.items() if is_checked]
     days = ", ".join(days_list)
     return days
 
 
-@router.get('/')
+@router.get("/")
 async def weekly_tasks_manager(
-        request: Request,
-        session=Depends(get_db),
-        demo_user=Depends(get_placeholder_user)):
-
-    user = get_user(demo_user, session)
+    request: Request,
+    user: schema.CurrentUser = Depends(current_user_from_db),
+):
 
     # TODO: Move the below function to a compatible location
     # Need to run regularly whenever there are tasks on the week
@@ -98,108 +84,173 @@ async def weekly_tasks_manager(
     # generate_tasks(user, session)  # imported from app.internal.weekly_tasks
     # session.close()
 
-    return templates.TemplateResponse("weekly_tasks_manager.html", {
-        "request": request,
-        "weekly_tasks": user.weekly_tasks
-    })
+    return templates.TemplateResponse(
+        "weekly_tasks_manager.html",
+        {"request": request, "weekly_tasks": user.weekly_tasks},
+    )
 
 
-@router.get('/add')
+@router.get("/add", dependencies=[Depends(is_logged_in)])
 def add_weekly_task(request: Request):
 
     checked_days = get_checked_days()
-    return templates.TemplateResponse("add_edit_weekly_task.html", {
-        "request": request,
-        "weekly_task": None,
-        "mode": "add",
-        "checked_days": checked_days
-    })
+    return templates.TemplateResponse(
+        "add_edit_weekly_task.html",
+        {
+            "request": request,
+            "weekly_task": None,
+            "mode": "add",
+            "checked_days": checked_days,
+        },
+    )
 
 
-@router.delete('/')
-def delete_weekly_task(
-        remove_id: int,
-        session=Depends(get_db)):
+@router.delete("/", dependencies=[Depends(is_logged_in)])
+def delete_weekly_task(remove_id: int, session: Session = Depends(get_db)):
 
     remove_weekly_task(remove_id, session)
-    session.close()
     url = router.url_path_for("weekly_tasks_manager")
     return RedirectResponse(url=url, status_code=HTTP_303_SEE_OTHER)
 
 
-@router.post('/edit')
-def edit_weekly_task(
-        request: Request,
-        session=Depends(get_db),
-        edit_id: int = Form(...)):
+@router.get("/edit", dependencies=[Depends(is_logged_in)])
+def edit_weekly_task(edit_id: int, request: Request, session=Depends(get_db)):
 
     weekly_task = session.query(WeeklyTask).filter_by(id=edit_id).first()
-    checked_days = get_checked_days(weekly_task.days)
-    return templates.TemplateResponse("add_edit_weekly_task.html", {
-        "request": request,
-        "weekly_task": weekly_task,
-        "mode": "edit",
-        "checked_days": checked_days
-    })
+    checked_days = get_checked_days(weekly_task.get_days())
+    return templates.TemplateResponse(
+        "add_edit_weekly_task.html",
+        {
+            "request": request,
+            "weekly_task": weekly_task,
+            "mode": "edit",
+            "checked_days": checked_days,
+        },
+    )
 
 
-@router.post('/execute')
+def set_cookies(
+    response: Response,
+    id: Optional[int],
+    title: Optional[str],
+    content: Optional[str],
+    days: str,
+    is_important: bool,
+) -> Response:
+    """Sets the weekly task cookies
+    for the failed/add and failed/edit routers"""
+    if not id:
+        id = 0
+    response.set_cookie(key="id", value=id)
+    response.set_cookie(key="title", value=title)
+    response.set_cookie(key="content", value=content)
+    response.set_cookie(key="days", value=days)
+    response.set_cookie(key="is_important", value=is_important)
+    return response
+
+
+@router.post("/execute/{mode}")
 def weekly_task_execute(
-        request: Request,
-        session=Depends(get_db),
-        demo_user=Depends(get_placeholder_user),
-        title: str = Form(None),
-        sun: bool = Form(False),
-        mon: bool = Form(False),
-        tue: bool = Form(False),
-        wed: bool = Form(False),
-        thu: bool = Form(False),
-        fri: bool = Form(False),
-        sat: bool = Form(False),
-        content: str = Form(None),
-        is_important: bool = Form(False),
-        the_time: datetime.time = Form(None),
-        weekly_task_id: int = Form(...),
-        mode: str = Form(...)):
+    request: Request,
+    mode: str,
+    session: Session = Depends(get_db),
+    user: schema.CurrentUser = Depends(current_user_from_db),
+    title: str = Form(None),
+    sun: bool = Form(False),
+    mon: bool = Form(False),
+    tue: bool = Form(False),
+    wed: bool = Form(False),
+    thu: bool = Form(False),
+    fri: bool = Form(False),
+    sat: bool = Form(False),
+    content: str = Form(None),
+    is_important: bool = Form(False),
+    the_time: datetime.time = Form(None),
+    weekly_task_id: int = Form(...),
+):
 
-    user = get_user(demo_user, session)
-    days = get_days_string(
-        sun, mon, tue, wed, thu, fri, sat
-    )
+    request.cookies.clear()
 
+    days = get_days_string(sun, mon, tue, wed, thu, fri, sat)
     weekly_task = weekly_task_from_input(
-        user, title, days,
-        content, the_time,
+        user,
+        title,
+        days,
+        content,
+        the_time,
         is_important,
-        weekly_task_id=weekly_task_id
+        weekly_task_id=weekly_task_id,
     )
 
-    fail_massage = None
-    executed = False
     if mode == "add":
-        fail_massage = "could not add The Weekly Task"
         # creating the weekly task
-        created = create_weekly_task(
-            user, weekly_task, session
-        )
+        created = create_weekly_task(user, weekly_task, session)
         executed = created
 
-    else:  # mode == "edit"
-        fail_massage = "These changes could not be made to the Weekly Task"
+    else:  # mode == "edit":
         # editing the weekly task
-        edited = change_weekly_task(
-            user, weekly_task, session
-        )
+        edited = change_weekly_task(user, weekly_task, session)
         executed = edited
 
     if not executed:
-        checked_days = get_checked_days(days)
-        return templates.TemplateResponse("add_edit_weekly_task.html", {
+        url = router.url_path_for("weekly_task_failed", mode=mode)
+        html_respone = RedirectResponse(
+            url=url,
+            status_code=HTTP_303_SEE_OTHER,
+        )
+        response = set_cookies(
+            html_respone,
+            weekly_task.id,
+            title,
+            content,
+            days,
+            weekly_task.is_important,
+        )
+        return response
+
+    url = router.url_path_for("weekly_tasks_manager")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.get("/failed/{mode}", response_class=HTMLResponse)
+def weekly_task_failed(
+    mode: str,
+    request: Request,
+    user: schema.CurrentUser = Depends(current_user),
+    id: int = Cookie(0),
+    title: str = Cookie(None),
+    content: str = Cookie(None),
+    days: str = Cookie(...),
+    is_important: bool = Cookie(False),
+):
+    the_time = None
+    if title == "None":
+        title = None
+    if content == "None":
+        content = None
+    weekly_task = weekly_task_from_input(
+        user,
+        title,
+        days,
+        content,
+        the_time,
+        is_important,
+        id,
+    )
+
+    if mode == "add":
+        fail_massage = "could not add The Weekly Task"
+    else:
+        fail_massage = "These changes could not be made to the Weekly Task"
+    checked_days = get_checked_days(days)
+
+    return templates.TemplateResponse(
+        "add_edit_weekly_task.html",
+        {
             "request": request,
             "massage": fail_massage,
             "weekly_task": weekly_task,
             "mode": mode,
-            "checked_days": checked_days
-        })
-    url = router.url_path_for("weekly_tasks_manager")
-    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+            "checked_days": checked_days,
+        },
+    )
