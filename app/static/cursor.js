@@ -1,11 +1,11 @@
-CURSORS_PATH = "/media/cursors/";
+const CURSORS_PATH = "/media/cursors/";
 window.addEventListener("load", get_cursor_choices);
 
 /**
  * @summary This function gets cursor choices from the db.
  */
 function get_cursor_choices() {
-  let request = new XMLHttpRequest();
+  const request = new XMLHttpRequest();
   request.open("GET", "/cursor/load_cursor", true);
   request.onload = change_cursor;
   request.send();
@@ -16,24 +16,16 @@ function get_cursor_choices() {
  * cursor according to users' choices.
  */
 function change_cursor() {
-  let cursor_settings = JSON.parse(JSON.parse(this.response));
-  let primary_cursor = cursor_settings["primary_cursor"];
-  let primary_cursor_val = `url(${CURSORS_PATH}${primary_cursor}), auto`;
-  let secondary_cursor = cursor_settings["secondary_cursor"];
-  let secondary_cursor_val = `url(${CURSORS_PATH}${secondary_cursor}), auto`;
-  if (primary_cursor != "default.cur") {
-    primary_val = primary_cursor_val;
-  } else {
-    primary_val = "";
-  }
-  document.body.style.cursor = primary_val;
-  let links = document.querySelectorAll("a, button, input, select, label");
-  if (secondary_cursor != "default.cur") {
-    secondary_val = secondary_cursor_val;
-  } else {
-    secondary_val = "";
-  }
+  const cursor_settings = JSON.parse(JSON.parse(this.response));
+  const primary_cursor_choice = cursor_settings["primary_cursor"];
+  const primary_cursor_path = `url(${CURSORS_PATH}${primary_cursor_choice}), auto`;
+  const secondary_cursor_choice = cursor_settings["secondary_cursor"];
+  const secondary_cursor_path = `url(${CURSORS_PATH}${secondary_cursor_choice}), auto`;
+  const primary_cursor = primary_cursor_choice !== "default.cur" ? primary_cursor_path : "";
+  const secondary_cursor = secondary_cursor_choice !== "default.cur" ? secondary_cursor_path : "";
+  document.body.style.cursor = primary_cursor;
+  const links = document.querySelectorAll("a, button, input, select, label");
   links.forEach((element) => {
-    element.style.cursor = secondary_val;
+    element.style.cursor = secondary_cursor;
   });
 }
