@@ -6,6 +6,23 @@
   text-align: center;
 }
 
+.agenda_filter_grid {
+  grid-area: header;
+}
+
+.agenda_grid {
+   display: grid;
+   grid-template-areas:
+      "header filter"
+      "sidebar sidebar";
+   grid-template-columns: 5fr 2fr;
+   grid-gap: 0 1.25em;
+}
+
+.category_filter {
+  grid-area: filter;
+}
+
 .event_line {
   width: 80%;
   margin-left: 2em;
@@ -16,6 +33,22 @@
   display: grid;
   grid-template-columns: 1em 1fr;
   grid-gap: 0.6em;
+}
+
+.event_line[data-value="hidden"],
+.wrapper[data-value="hidden"]
+{
+  display: none;
+}
+
+.event_line[data-value="visible"]
+{
+  display: grid;
+}
+
+.wrapper[data-value="visible"]
+{
+  display: block;
 }
 
 .duration {
