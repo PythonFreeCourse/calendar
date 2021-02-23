@@ -20,18 +20,20 @@
             <form action="/notes/edit/{{ data.id }}" method="POST">
                 <div class="form-row">
                     <div class="col-lg-7">
-                        <input class="form-control my-3 p-3" type="text" value={{ data.title }} name="title" id="title">
+                        <label>Title</label>
+                        <input class="form-control p-2" type="text" value={{ data.title }} name="title" id="title">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-lg-7">
-                        <input class="form-control my-3 p-3" type="text" value={{ data.description }} name="description"
+                        <label class="mt-2">Description</label>
+                        <input class="form-control p-2" type="text" value={{ data.description }} name="description"
                             id="description">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-lg-7">
-                        <button type="submit" id="change_note" class="btn1 mt-2 mb-4">Submit Changes</button>
+                        <button type="submit" id="change_note" class="btn1 mt-3 mb-3">Submit Changes</button>
                     </div>
                 </div>
             </form>
