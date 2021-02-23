@@ -571,7 +571,7 @@ def extract_shared_list_from_data(
     )
     shared_list = {"title": event_info.get("title"), "items": []}
     for name, amount, participant in items:
-        item = SharedItem(name=name, amount=amount, participant=participant)
+        item = SharedItem(name, amount, participant)
         if _check_item_is_valid(item):
             item_dict = item._asdict()
             item_dict["amount"] = float(item_dict["amount"])

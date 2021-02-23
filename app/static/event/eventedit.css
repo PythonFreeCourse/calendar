@@ -66,10 +66,10 @@ input[type="submit"] {
   width: 100%;
 }
 
-.shared_list_item_off {
+.shared-list-item-off {
   display: none;
 }
 
-.shared_list_item_on {
+.shared-list-item-on {
   display: flex;
 }

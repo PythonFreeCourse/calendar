@@ -53,16 +53,19 @@
   <div class="card card-body" id="SharedList">
     <input type="text" class="form-control" name="shared_list_title" placeholder="Title">
     <div id="Items">
-      <div class="form_row shared_list_item_off" id="shared_list_item">
+      <div class="form_row shared-list-item-off" id="shared-list-item">
+        <label for="item_name">Item name:</label>
         <input type="text" class="form-control" name="item_name" placeholder="Item name">
+        <label for="item_amount">Amount:</label>
         <input type="text" class="form-control" name="item_amount" placeholder="Amount">
+        <label for="item_participant">Participant:</label>
         <input type="text" class="form-control" name="item_participant" placeholder="Participant">
-        <button type="button" class="btn btn-labeled btn-danger" id="btnRemoveItem">
-          <i id="btnRemoveLabel" class="fa fa-minus-circle"></i>
+        <button type="button" class="btn btn-labeled btn-danger remove-btn" id="btn-remove-item">
+          <i id="btn-remove-label" class="fa fa-minus-circle"></i>
         </button>
       </div>
     </div>
-    <button class="btn btn-primary" id="btnAddItem" type="button">
+    <button class="btn btn-primary" id="btn-add-item" type="button">
       Add an item
     </button>
   </div>
