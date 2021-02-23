@@ -1,8 +1,13 @@
 {% extends "base.html" %}
-
+{% include "partials/calendar/event/text_editor_partial_head.html" %}
 
 {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <!-- Left side -->
+    {% include 'partials/user_profile/sidebar_left.html' %}
 
+<<<<<<< HEAD
     <div class="container mt-4">
         <div class="row">
             <!-- Left side -->
@@ -267,17 +272,15 @@
                         </p>
                     </div>
                 </div>
+=======
+    <!-- Center -->
+    {% include 'partials/user_profile/middle_content.html' %}
+>>>>>>> b91708d299bde83bbd10ff93496b23af9d35dd8f
 
-                <!-- Card -->
-                <div class="card card-profile mb-3" style="height: 18em;">
-                    <div class="card-body">
-                        <p class="card-title">
-                            Your Card
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Right side -->
+    {% include 'partials/user_profile/sidebar_right.html' %}
 
-{% endblock %}
+  </div>
+</div>
+{% include "partials/calendar/event/text_editor_partial_body.html" %}
+{% endblock content %}

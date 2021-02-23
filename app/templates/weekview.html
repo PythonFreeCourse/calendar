@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static', path='/weekview.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', path='/dayview.css') }}">
+        <link href="https://fonts.googleapis.com/css2?family=Assistant&family=Open+Sans&family=Roboto&family=Roboto+Condensed&display=swap" rel="stylesheet">
+        <title>weekview</title>
+    </head>
+    <body>
+        <div id="week-view">
+            <div id="week-schedule" class="d-flex justify-content-between">
+                {% for day, dayview, events_and_attr in week %}
+                <div class="day-weekview m-0 flex-fill border-start" style="width: 100%;">
+                        <div class="day-name sticky-top">{{ day.strftime('%A').upper()[:3] }}</div>
+                        {% set month = day.month %}
+                        {% set day = day.day %}
+                        {% set events = events_and_attr%}
+                        {% include dayview.template %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="hoursgrid" class=".d-flex flex-colnum times bg-primeary position">
+                {% for hour in range(24)%}
+                <div class='hourstep'>
+                    <div class="row bg-transparent hour-mark">
+                        {% set hour = hour|string() %}
+                        {{hour.zfill(2)}}:00
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    </body>
+</html>
