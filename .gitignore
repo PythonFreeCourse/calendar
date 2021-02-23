@@ -1,5 +1,6 @@
 dev.db
 test.db
+.idea
 config.py
 
 # Byte-compiled / optimized / DLL files
