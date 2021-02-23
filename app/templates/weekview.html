@@ -14,9 +14,9 @@
             <div id="week-schedule" class="d-flex justify-content-between">
                 {% for day, dayview, events_and_attr, current_time_and_attrs, all_day_events in week %}
                 <div class="day-weekview m-0 flex-fill border-start" style="width: 100%;">
-                    <div class="day-name sticky-top">{{ day.strftime('%A').upper()[:3] }}
+                    <div class="day-name sticky-top">{{ day.strftime('%a').upper()}}
                         {% for event in all_day_events %}
-                        <a href="/event/{{event.id}}" title="See full event" class="text-danger">{{ event.title }}</a>
+                        <a href={{ url_for('eventview', event_id=event.id) }} title="See full event" class="text-danger">{{ event.title }}</a>
                         {% endfor %}
                     </div>
                         {% set month = day.month %}

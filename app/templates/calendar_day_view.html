@@ -20,9 +20,9 @@
     <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
     {% endif %}
   </div>
-  <div id="all-day-events" class="d-flex justify-content-center text-truncate my-0 {{size}} text-light" style="word-spacing: 0.25em;">
+  <div id="all-day-events" class="d-flex justify-content-center text-truncate my-0 {{size}} text-light">
     {% for event in all_day_events %}
-        <a href="/event/{{event.id}}" title="See full event">{{ event.title }}&nbsp;&nbsp;&nbsp;</a>
+        <a href={{ url_for('eventview', event_id=event.id) }}  title="See full event">{{ event.title }}&nbsp;&nbsp;&nbsp;</a>
     {% endfor %}
   </div>
   <div class="schedule">

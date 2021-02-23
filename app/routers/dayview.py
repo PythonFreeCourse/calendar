@@ -26,13 +26,13 @@ class DivAttributes:
     CLASS_SIZES = ("title-size-tiny", "title-size-xsmall", "title-size-small")
     LENGTH_SIZE_STEP = (30, 45, 90)
 
-    def _minutes_position(self, minutes: int) -> dict:
+    def _minutes_position(self, minutes: int) -> dict[str, int]:
         min_minutes = self.MIN_MINUTES
         max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
             if min_minutes < minutes <= max_minutes:
                 minute_deviation = minutes - (i - 1) * self.MAX_MINUTES
-                return {'min_position': i, 'min_deviation': minute_deviation}
+                return {"min_position": i, "min_deviation": minute_deviation}
             min_minutes = max_minutes
             max_minutes += self.MAX_MINUTES
 
@@ -42,7 +42,7 @@ class DivAttributes:
         if grid_minutes_modifier is None:
             grid_minutes_modifier = 0
         else:
-            grid_minutes_modifier = grid_minutes_modifier['min_position']
+            grid_minutes_modifier = grid_minutes_modifier["min_position"]
         return grid_hour_position + grid_minutes_modifier + self.BASE_GRID_BAR
 
 
@@ -53,7 +53,7 @@ class CurrentTimeAttributes(DivAttributes):
         self.is_viewed = self._date_is_today()
         self.grid_position = self._get_position(current) - 1
         self.sub_grid_position = self._minutes_position(current.minute)
-        self.sub_grid_position = self.sub_grid_position['min_deviation']
+        self.sub_grid_position = self.sub_grid_position["min_deviation"]
 
     def _date_is_today(self) -> bool:
         today = datetime.now().date()

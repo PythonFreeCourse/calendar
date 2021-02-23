@@ -184,4 +184,5 @@ body {
 
 #all-day-events {
   background-color: var(--primary);
+  word-spacing: 0.25em;
 }
