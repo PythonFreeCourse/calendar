@@ -1,34 +1,58 @@
-{% extends "base.html" %}
+{% extends "partials/index/index_base.html" %}
 
 {% block head %}
   {{ super() }}
   <link href="{{ url_for('static', path='/agenda_style.css') }}" rel="stylesheet">
+  <script type="text/javascript" src="{{ url_for('static', path='js/categories_filter.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-  <form method="GET" action="/agenda#dates" class="mx-3 pt-3">
-    <div class="col-sm-3">
-      <label for="start_date">{{ gettext("From") }}</label>
-      <input class="form-control" type="date" id="start_date" name="start_date" value='{{ start_date }}'>
+  <div class="agenda_grid">
+    <div class="agenda_filter_grid">
+      <form method="GET" action="/agenda#dates" class="mx-3 pt-3">
+        <div class="col-sm-3">
+          <label for="start_date">{{ gettext("From") }}</label>
+          <input class="form-control" type="date" id="start_date" name="start_date" value='{{ start_date }}'>
+        </div>
+        <div class="col-sm-3">
+          <label for="end_date">{{ gettext("To") }}</label>
+          <input class="form-control" type="date" id="end_date" name="end_date" value='{{ end_date }}'><br>
+        </div>
+        <div>
+          <input class="btn btn-primary btn-sm" type="submit" value="{{ gettext('Get Agenda') }}">
+        </div>
+      </form>
     </div>
-    <div class="col-sm-3">
-      <label for="end_date">{{ gettext("To") }}</label>
-      <input class="form-control" type="date" id="end_date" name="end_date" value='{{ end_date }}'><br>
-    </div>
-    <div>
-      <input class="btn btn-primary btn-sm" type="submit" value="{{ gettext('Get Agenda') }}">
-    </div>
-  </form>
 
-  <div class="exact_date pt-3">
-    <div class="mx-3">
-      <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=0#dates">{{ gettext("Today") }}</a>
+    <div class="category_filter">
+      <label for="category" class="sr-only">Filter events by category</label>
+      <input type="text" id="category" name="category" class="form-control-sm"
+             placeholder="category ID" value="{{ category }}"
+             onfocus="this.value=''" required>
+      <button class="btn btn-outline-info btn-sm" id="category-button">
+        Filter by Categories
+      </button>
+    </div>
+
+    <div class="exact_date pt-3">
+      <div class="mx-3">
+        <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=0#dates">{{ gettext("Today") }}</a>
+      </div>
+      <div class="mx-3">
+        <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=7#dates">{{ gettext("Next 7 days") }}</a>
+      </div>
+      <div class="mx-3">
+        <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=30#dates">{{ gettext("Next 30 days") }}</a>
+      </div>
     </div>
     <div class="mx-3">
-      <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=7#dates">{{ gettext("Next 7 days") }}</a>
+        <button class="btn btn-light btn-outline-primary btn-sm graph" type="button" name="{{events_for_graph}}">{{ gettext("Week graph") }}</button>
     </div>
-    <div class="mx-3">
-      <a class="btn btn-light btn-outline-primary btn-sm" href="/agenda?days=30#dates">{{ gettext("Next 30 days") }}</a>
+  </div>
+
+  <div class="col-sm-4 col-4 card-body">
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <div class="container" id="graph">
     </div>
   </div>
 
@@ -44,19 +68,20 @@
     {% endif %}
   </div>
 
-  <div>
+  <div id="events">
     {% for events_date, events_list in events.items() %}
-
-    <div class="p-3">{{ events_date.strftime("%d/%m/%Y") }}</div>
-      {% for event in events_list %}
-      <div class="event_line" style="background-color: {{ event[0].color }}">
-          {% set availability = 'Busy' if event[0].availability == True else 'Free' %}
-          <div class="{{ availability | lower }}" title="{{ availability }}"></div>
-          <div><b>{{ event[0].start.time().strftime("%H:%M") }} - <a class="event-title" href="/event/{{ event[0].id }}">{{ event[0].title | safe }}</a></b><br>
-          <span class="duration">duration: {{ event[1] }}</span>
-          </div>
+      <div class="wrapper">
+        <div class="p-3">{{ events_date }}</div>
+        {% for event in events_list %}
+        <div class="event_line" style="background-color: {{ event.color }}" data-name="{{event.category_id}}">
+            {% set availability = 'Busy' if event.availability else 'Free' %}
+            <div class="{{ availability | lower }}" title="{{ availability }}"></div>
+            <div><b>{{ event.start }} - <a class="event-title" href="/event/{{ event.id }}">{{ event.title | safe }}</a></b><br>
+              <span class="duration">duration: {{ event.duration }}</span>
+            </div>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     {% endfor %}
   </div>
 

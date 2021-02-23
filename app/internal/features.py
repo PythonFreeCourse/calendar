@@ -1,40 +1,41 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 from functools import wraps
 from starlette.responses import RedirectResponse
 from typing import List
 
-from app.database.models import UserFeature, Feature
+from app.database.models import UserFeature, Feature, User
 from app.dependencies import get_db, SessionLocal
+from app.internal.security.dependencies import current_user_from_db
+from app.internal.security.ouath2 import get_authorization_cookie
 from app.internal.features_index import features, icons
-from app.internal.utils import create_model, get_current_user
+from app.internal.utils import create_model
 
 
 def feature_access_filter(call_next):
-
     @wraps(call_next)
     async def wrapper(*args, **kwargs):
-        request = kwargs['request']
+        request = kwargs["request"]
 
-        if request.headers['user-agent'] == 'testclient':
+        if request.headers["user-agent"] == "testclient":
             # in case it's a unit test.
             return await call_next(*args, **kwargs)
 
         # getting the url route path for matching with the database.
-        route = '/' + str(request.url).replace(str(request.base_url), '')
+        route = "/" + str(request.url).replace(str(request.base_url), "")
 
         # getting access status.
-        access = is_access_allowd(route=route)
+        access = await is_access_allowd(route=route, request=request)
 
         if access:
             # in case the feature is enabled or access is allowed.
             return await call_next(*args, **kwargs)
 
-        elif 'referer' not in request.headers:
+        elif "referer" not in request.headers:
             # in case request come straight from address bar in browser.
-            return RedirectResponse(url='/')
+            return RedirectResponse(url="/")
 
         # in case the feature is disabled or access isn't allowed.
-        return RedirectResponse(url=request.headers['referer'])
+        return RedirectResponse(url=request.headers["referer"])
 
     return wrapper
 
@@ -48,17 +49,23 @@ def create_features_at_startup(session: SessionLocal) -> bool:
     return True
 
 
-def is_association_exists_in_db(form: dict, session: SessionLocal) -> bool:
-    db_association = session.query(UserFeature).filter_by(
-        feature_id=form['feature_id'],
-        user_id=get_current_user(session=session).id
-    ).first()
+def is_association_exists_in_db(
+    form: dict,
+    session: SessionLocal,
+    user: User,
+) -> bool:
+    db_association = (
+        session.query(UserFeature)
+        .filter_by(feature_id=form["feature_id"], user_id=user.id)
+        .first()
+    )
 
     return db_association is not None
 
 
 def delete_feature(
-    feature: Feature, session: SessionLocal = Depends(get_db)
+    feature: Feature,
+    session: SessionLocal = Depends(get_db),
 ) -> None:
     session.query(UserFeature).filter_by(feature_id=feature.id).delete()
     session.query(Feature).filter_by(id=feature.id).delete()
@@ -66,45 +73,57 @@ def delete_feature(
 
 
 def is_feature_exists(feature: dict, session: SessionLocal) -> bool:
-    db_feature = session.query(Feature).filter(
-        (Feature.name == feature['name']) |
-        (Feature.route == feature['route'])).first()
+    db_feature = (
+        session.query(Feature)
+        .filter(
+            (Feature.name == feature["name"])
+            | (Feature.route == feature["route"]),
+        )
+        .first()
+    )
 
-    if db_feature is None:
-        return False
-
-    # Update if found
-    update_feature(
-        feature=db_feature, new_feature_obj=feature, session=session)
-    return True
+    return db_feature is not None
 
 
-def update_feature(feature: Feature, new_feature_obj: dict,
-                   session: SessionLocal = Depends(get_db)) -> Feature:
-    feature.name = new_feature_obj['name']
-    feature.route = new_feature_obj['route']
-    feature.description = new_feature_obj['description']
-    feature.creator = new_feature_obj['creator']
+def update_feature(
+    feature: Feature,
+    feature_dict: dict,
+    session: SessionLocal = Depends(get_db),
+) -> Feature:
+    feature.name = feature_dict["name"]
+    feature.route = feature_dict["route"]
+    feature.description = feature_dict["description"]
+    feature.creator = feature_dict["creator"]
 
     icon = icons.get(feature.name)
     if icon is None:
         icon = "extension-puzzle"
 
     feature.icon = icon
+
     session.commit()
     return feature
 
 
 def is_feature_enabled(
-    feature: Feature, session: SessionLocal = Depends(get_db)
+    user: User,
+    feature: Feature,
+    session: SessionLocal = Depends(get_db),
 ) -> bool:
-    enabled_features = get_user_enabled_features(session=session)
+    enabled_features = get_user_enabled_features(session=session, user=user)
     return any(ef.id == feature.id for ef in enabled_features)
 
 
-def is_access_allowd(route: str) -> bool:
+async def is_access_allowd(request: Request, route: str) -> bool:
+
     session = SessionLocal()
-    user = get_current_user(session=session)
+
+    # To get current user.
+    # Note: can't use dependency beacause its designed for routes only.
+    # Needed to it manualy.
+    jwt = await get_authorization_cookie(request=request)
+    user = await current_user_from_db(request=request, jwt=jwt, db=session)
+
     feature = session.query(Feature).filter_by(route=route).first()
 
     if feature is None:
@@ -112,26 +131,31 @@ def is_access_allowd(route: str) -> bool:
         # route that gived by to the request.
         return True
 
-    user_pref = session.query(UserFeature).filter_by(
-        feature_id=feature.id,
-        user_id=user.id
-    ).first()
+    user_pref = (
+        session.query(UserFeature)
+        .filter_by(feature_id=feature.id, user_id=user.id)
+        .first()
+    )
 
     return user_pref is not None and user_pref.is_enable
 
 
-def create_feature(name: str, route: str,
-                   description: str,
-                   creator: str = None,
-                   icon: str = None,
-                   db: SessionLocal = Depends()) -> Feature:
+def create_feature(
+    name: str,
+    route: str,
+    description: str,
+    creator: str = None,
+    icon: str = None,
+    db: SessionLocal = Depends(),
+) -> Feature:
     """Creates a feature."""
     db = SessionLocal()
     if icon is None:
         icon = "extension-puzzle"
 
     return create_model(
-        db, Feature,
+        db,
+        Feature,
         name=name,
         route=route,
         creator=creator,
@@ -141,39 +165,57 @@ def create_feature(name: str, route: str,
 
 
 def create_user_feature_association(
-    db: SessionLocal, feature_id: int, user_id: int, is_enable: bool
+    db: SessionLocal,
+    feature_id: int,
+    user_id: int,
+    is_enable: bool,
 ) -> UserFeature:
     """Creates an association."""
     add_follower(feature_id=feature_id, session=db)
     return create_model(
-        db, UserFeature,
+        db,
+        UserFeature,
         user_id=user_id,
         feature_id=feature_id,
-        is_enable=is_enable
+        is_enable=is_enable,
     )
 
 
-def get_user_enabled_features(session: SessionLocal = Depends(get_db)) -> List:
-    user = get_current_user(session=session)
+def get_user_enabled_features(
+    user_id: int,
+    session: SessionLocal = Depends(get_db),
+) -> List[Feature]:
     enabled = []
-    user_prefs = session.query(UserFeature).filter_by(user_id=user.id).all()
+    user_prefs = session.query(UserFeature).filter_by(user_id=user_id).all()
 
     for pref in user_prefs:
         if pref.is_enable:
-            feature = session.query(Feature).filter_by(
-                id=pref.feature_id).first()
+            feature = (
+                session.query(Feature).filter_by(id=pref.feature_id).first()
+            )
             enabled.append(feature)
 
     return enabled
 
 
-def get_user_uninstalled_features(session: SessionLocal) -> List:
+async def get_user_uninstalled_features(
+    request: Request,
+    session: SessionLocal = Depends(get_db),
+) -> List[Feature]:
     uninstalled = []
     all_features = session.query(Feature).all()
 
+    # To get current user.
+    # Note: can't use dependency beacause its designed for routes only.
+    # Needed to it manualy.
+    jwt = await get_authorization_cookie(request=request)
+    user = await current_user_from_db(request=request, jwt=jwt, db=session)
+
     for feat in all_features:
         in_enabled = is_feature_enabled(
-            feature=feat, session=session
+            feature=feat,
+            session=session,
+            user_id=user.id,
         )
 
         if not in_enabled:
