@@ -26,6 +26,11 @@
         <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
         {% endif %}
     </div>
+    {% if international_day %}
+    <div class="international-days">
+        The International days are: "{{ international_day.international_day }}"
+    </div>
+    {% endif %}
     <button type="button" class="open-button" data-bs-toggle="modal"
             data-bs-target="#example-modal">
         Create Task
