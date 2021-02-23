@@ -33,7 +33,7 @@ from app.internal.event import (
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.privacy import PrivacyKinds
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependencies import current_user
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
