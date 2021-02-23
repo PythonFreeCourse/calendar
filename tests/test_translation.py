@@ -1,21 +1,22 @@
+from fastapi import HTTPException
 from iso639 import languages
 import pytest
 from textblob import TextBlob
 
-from fastapi import HTTPException
-from starlette import status
+from app.internal.translation import (
+    _detect_text_language, _get_language_code, _get_user_language,
+    translate_text, translate_text_for_user
+)
 
-from app.internal.translation import (_detect_text_language,
-                                      _get_user_language, _lang_full_to_short,
-                                      translate_text, translate_text_for_user)
+TEXT = [
+    ("Привет мой друг", "english", "russian"),
+    ("Hola mi amigo", "english", "spanish"),
+    ("Bonjour, mon ami", "english", "french"),
+    ("Hallo, mein Freund", "english", "german"),
+]
 
 
-@pytest.mark.parametrize("text, target_lang, original_lang",
-                         [("Привет мой друг", "english", "russian"),
-                          ("Hola mi amigo", "english", "spanish"),
-                          ("Bonjour, mon ami", "english", "french"),
-                          ("Hallo, mein Freund", "english", "german"),
-                          ])
+@pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
 def test_translate_text_with_original_lang(text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert "Hello my friend" == answer
@@ -25,44 +26,26 @@ def test_translate_text_with_original_lang(text, target_lang, original_lang):
         name=target_lang.capitalize()).alpha2
 
 
-@pytest.mark.parametrize("text, target_lang",
-                         [("Привет мой друг", "english"),
-                          ("Bonjour, mon ami", "english"),
-                          ("Hallo, mein Freund", "english"),
-                          ])
-def test_translate_text_without_original_lang(text, target_lang):
+@pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
+def test_translate_text_without_original_lang(
+        text, target_lang, original_lang):
     answer = translate_text(text, target_lang)
     assert "Hello my friend" == answer
     assert TextBlob(answer).detect_language() == languages.get(
         name=target_lang.capitalize()).alpha2
 
 
-@pytest.mark.parametrize("text, target_lang, original_lang",
-                         [("Привет мой друг", "russian", "russian"),
-                          ("Hola mi amigo", "spanish", "spanish"),
-                          ("Bonjour, mon ami", "french", "french"),
-                          ("Hallo, mein Freund", "german", "german"),
-                          ("Ciao amico", "italian", "italian")
-                          ])
-def test_translate_text_with_same_original_target_lang_with_original_lang(
-        text,
-        target_lang,
-        original_lang):
-    answer = translate_text(text, target_lang, original_lang)
+@pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
+def test_translate_text_with_identical_original_and_target_lang(
+        text, target_lang, original_lang):
+    answer = translate_text(text, original_lang, original_lang)
     assert answer == text
 
 
-@pytest.mark.parametrize("text, target_lang",
-                         [("Привет мой друг", "russian"),
-                          ("Hola mi amigo", "spanish"),
-                          ("Bonjour, mon ami", "french"),
-                          ("Hallo, mein Freund", "german"),
-                          ("Ciao amico", "italian")
-                          ])
+@pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
 def test_translate_text_with_same_original_target_lang_without_original_lang(
-        text,
-        target_lang):
-    answer = translate_text(text, target_lang)
+        text, target_lang, original_lang):
+    answer = translate_text(text, original_lang)
     assert answer == text
 
 
@@ -76,8 +59,8 @@ def test_translate_text_without_text_without_original_lang():
     assert answer == ""
 
 
-def test_lang_short_to_full():
-    answer = _lang_full_to_short("english")
+def test_get_language_code():
+    answer = _get_language_code("english")
     assert answer == "en"
 
 
@@ -88,17 +71,15 @@ def test_get_user_language(user, session):
     assert answer.lower() == "english"
 
 
-@pytest.mark.parametrize("text", ["Привет мой друг",
-                                  "Bonjour, mon ami",
-                                  "Hello my friend"]
-                         )
-def test_translate_text_for_good_user(text, user, session):
+@pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
+def test_translate_text_for_valid_user(
+        text, target_lang, original_lang, session, user):
     user_id = user.id
     answer = translate_text_for_user(text, session, user_id)
     assert answer == "Hello my friend"
 
 
-def test_translate_text_for_bed_user(user, session):
+def test_translate_text_for_invalid_user(session, user):
     user_id = user.id
     answer = translate_text_for_user("Привет мой друг", session, user_id + 1)
     assert answer == "Привет мой друг"
@@ -115,9 +96,7 @@ def test_detect_text_language():
                           ("Hafdllnnc", "english", "german"),
                           ])
 def test_translate_text_with_text_impossible_to_translate(
-        text,
-        target_lang,
-        original_lang):
+        text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
 
@@ -140,22 +119,19 @@ def test_translate_text_with_symbols(text, target_lang, original_lang):
                           ("Ciao amico", "french", "german")
                           ])
 def test_translate_text_with_with_incorrect_lang(
-        text,
-        target_lang,
-        original_lang):
+        text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
 
 
-def test_get_user_language_for_bed_user(user, session):
+def test_get_user_language_for_invalid_user(session, user):
     user_id = user.id + 1
     answer = _get_user_language(user_id, session=session)
     assert not answer
 
 
-def test_get_user_language_for_bed_language(user, session):
-    user.language_id = 3
+def test_get_user_language_for_invalid_language(session, user):
+    user.language_id = 34
     session.commit()
     with pytest.raises(HTTPException):
-        answer = _get_user_language(user.id, session=session)
-        assert answer.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+        _get_user_language(user.id, session=session)

@@ -1,0 +1,13 @@
+<div class="card card-profile mt-2">
+    <div class="btn-group">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="drop-down-menu-button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+        daily horoscope
+      </button>
+      <div class="dropdown-menu dropdown-menu-right" id='signs'>
+        {% for sign in signs %}
+        <button class="dropdown-item sign" type="button" id="sign" name="{{ sign }}">{{ sign }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>

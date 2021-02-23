@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<link href="{{ url_for('static', path='/friendview.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Friends View </h1>
+</div>
+<form method="GET" action="/friendview/">
+    <div class="mb-3 friend-view">
+        <label for="my-friend">My friend</label>
+        <input class="friend-view" type="text" id="my-friend" name="my-friend" value={{ my_friend }}><br>
+        <input class="friend-view" type="submit" value="Get mutual events">
+    </div>
+</form>
+<div class="container mt-4">
+    {% if events | length == 0 %}
+      <h2>No mutual events found...</h2>
+    {% else %}
+      <h2>Mutual events with {{ my_friend }} </h2>
+        {% for event in events %}
+            <div class="event-line">
+                <div>{{ event.start.strftime("%d/%m/%Y %H:%M") }} - {{ event.end.strftime("%d/%m/%Y %H:%M") }} <a href="/event/{{ event.id }}">{{ event.title }} </a><br>Invitees:  {{event.invitees}}</div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
