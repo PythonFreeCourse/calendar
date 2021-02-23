@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from app.database.models import User
+from app.dependencies import SOUNDS_PATH, get_db, templates
 from app.internal.audio import (
     get_audio_settings,
     handle_vol,
@@ -15,7 +16,6 @@ from app.internal.audio import (
     DEFAULT_SFX,
     DEFAULT_SFX_VOL,
 )
-from app.dependencies import SOUNDS_PATH, get_db, templates
 from app.internal.security.dependencies import current_user
 from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm.session import Session

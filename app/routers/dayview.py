@@ -1,6 +1,6 @@
 from bisect import bisect_left
 from datetime import datetime, timedelta
-from typing import Iterator, Optional, Tuple, Union
+from typing import Dict, Iterator, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
@@ -26,7 +26,16 @@ class DivAttributes:
     CLASS_SIZES = ("title-size-tiny", "title-size-xsmall", "title-size-small")
     LENGTH_SIZE_STEP = (30, 45, 90)
 
-    def _minutes_position(self, minutes: int) -> dict[str, int]:
+    def _minutes_position(self, minutes: int) -> Dict[str, int]:
+        """
+        Provides info about the minutes value.
+        Returns a Dict that contains-
+        'minutes position': calculates the number of grid bar quarters
+        that the minutes value covers (from 1 to 4).
+        'min_deviation': calculates the 'spare' minutes left out
+        of a grid bar quarter.
+        (used to indicate the accurate current time)
+        """
         min_minutes = self.MIN_MINUTES
         max_minutes = self.MAX_MINUTES
         for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
@@ -56,7 +65,7 @@ class CurrentTimeAttributes(DivAttributes):
         self.sub_grid_position = self.sub_grid_position["min_deviation"]
 
     def _date_is_today(self) -> bool:
-        today = datetime.now().date()
+        today = datetime.today().date()
         return today == self.dayview_date
 
 
@@ -206,6 +215,9 @@ async def dayview(
         user_id=user.id,
     )
     current_time_with_attrs = CurrentTimeAttributes(date=day)
+    print(current_time_with_attrs.dayview_date)
+    print(datetime.today().date())
+    print(current_time_with_attrs.dayview_date == datetime.today)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
