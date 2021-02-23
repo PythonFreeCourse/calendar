@@ -52,19 +52,13 @@ def is_empty(session):
 
 
 def test_get_vacinated_data_from_db(session):
-    try:
+    with pytest.raises(NoResultFound):
         corona_stats.get_vacinated_data_from_db(session)
-    except NoResultFound:
-        assert True
-        return
-    assert False
 
 
 @pytest.mark.asyncio
 async def test_get_vacinated_data(httpx_mock):
     test_data = json.dumps(FAKE_DATA)
-    # httpx_mock.return_value.ok = True
-    # httpx_mock.return_value.text = test_data
     httpx_mock.add_response(method="GET", json=test_data)
     data = await corona_stats.get_vacinated_data()
     assert data
