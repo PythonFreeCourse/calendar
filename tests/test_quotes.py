@@ -1,7 +1,7 @@
 from datetime import date
 
 from app.internal import daily_quotes
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependencies import current_user
 from tests.test_login import test_login_successfull
 
 from app.main import app
@@ -37,7 +37,7 @@ def test_get_quote_of_day_get_second_quote(session, quote1, quote2):
 def test_save_quote(session, quotes_test_client, quote1):
     test_login_successfull(session, quotes_test_client)
     data = {
-        "quote": quote1.text,
+        "quote_id": quote1.id,
         "author": quote1.author,
         "to_save": True,
         "user": current_user,
@@ -51,7 +51,7 @@ def test_save_quote(session, quotes_test_client, quote1):
 def test_delete_quote(session, quotes_test_client, quote1):
     test_save_quote(session, quotes_test_client, quote1)
     data = {
-        "quote": quote1.text,
+        "quote_id": quote1.id,
         "to_save": False,
     }
     response = quotes_test_client.delete(url=HOME_URL, data=data)
