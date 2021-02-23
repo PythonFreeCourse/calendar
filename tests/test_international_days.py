@@ -64,16 +64,6 @@ ALL_DATES = [(7, 3), (16, 9), (19, 4), (20, 7), (21, 6), (8, 5), (10, 7),
              (27, 8), (30, 7)]
 
 
-
-def open_resource(path):
-    all_dates = []
-    with open(path, 'r') as json_reader:
-        days_json = json_reader.read()
-        for day in days_json:
-            all_dates.append((day["day"], day["month"]))
-    return all_dates
-
-
 @pytest.fixture
 def international_day(session):
     inter_day = create_model(
