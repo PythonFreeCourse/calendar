@@ -11,7 +11,8 @@ EN_TO_HEB_MONTH_NAMES = {
     'Teves': 'טבת',
     'Shvat': 'שבט',
     'Adar': 'אדר',
-    'Adar Rishon': 'אדר',
+    'Adar Rishon': "אדר(א')",
+    'Adar Sheni': "אדר(ב')",
     'Nissan': 'ניסן',
     'Iyar': 'אייר',
     'Sivan': 'סיוון',
@@ -32,6 +33,7 @@ def get_month_name_by_num(date: datetime) -> str:
 
     for month in hebrewcal.Year(date.year).itermonths():
         if date.month == month.month:
+            print(month.name)
             return EN_TO_HEB_MONTH_NAMES[month.name]
 
 
