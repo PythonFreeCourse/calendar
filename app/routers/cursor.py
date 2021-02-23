@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm.session import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependencies import current_user
 
 router = APIRouter(
     prefix="/cursor",

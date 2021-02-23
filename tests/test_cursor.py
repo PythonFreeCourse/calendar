@@ -1,5 +1,5 @@
 from app.routers.cursor import get_cursor_settings, router
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependencies import current_user
 from tests.test_login import test_login_successfull
 
 CURSOR_SETTINGS_URL = router.url_path_for("cursor_settings")
