@@ -1,5 +1,3 @@
-import uvicorn
-
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
@@ -67,6 +65,7 @@ from app.routers import (  # noqa: E402
     google_connect,
     invitation,
     joke,
+    keyboard_shortcuts,
     login,
     logout,
     profile,
@@ -77,7 +76,6 @@ from app.routers import (  # noqa: E402
     weekview,
     weight,
     whatsapp,
-    keyboard_shortcuts,
 )
 
 json_data_loader.load_to_database(next(get_db()))
@@ -117,6 +115,7 @@ routers_to_include = [
     google_connect.router,
     invitation.router,
     joke.router,
+    keyboard_shortcuts.router,
     login.router,
     logout.router,
     profile.router,
@@ -128,7 +127,6 @@ routers_to_include = [
     weekview.router,
     weight.router,
     whatsapp.router,
-    keyboard_shortcuts.router,
 ]
 
 for router in routers_to_include:
@@ -151,6 +149,3 @@ async def home(request: Request, db: Session = Depends(get_db)):
 
 
 custom_openapi(app)
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
