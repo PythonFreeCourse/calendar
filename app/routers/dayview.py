@@ -215,9 +215,6 @@ async def dayview(
         user_id=user.id,
     )
     current_time_with_attrs = CurrentTimeAttributes(date=day)
-    print(current_time_with_attrs.dayview_date)
-    print(datetime.today().date())
-    print(current_time_with_attrs.dayview_date == datetime.today)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
