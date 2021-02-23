@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import List, Set
+from typing import List, Set, Tuple
 
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
@@ -87,6 +87,7 @@ def get_messages(
     session: Session,
     event: Event,
     uninvited_contacts: Set[str],
+    out_of_office_users: List[Tuple[str, str]],
 ) -> List[str]:
     messages = []
     if uninvited_contacts:
@@ -100,4 +101,14 @@ def get_messages(
             f"Same event happened {weeks_diff} weeks before too. "
             f"Want to create another one {weeks_diff} after too?",
         )
+
+    if out_of_office_users:
+        username = 0
+        email = 1
+        messages.append("Out of office:")
+        for user in out_of_office_users:
+            messages.append(
+                f"Username: {user[username]}, " f"Email: {user[email]}",
+            )
+
     return messages

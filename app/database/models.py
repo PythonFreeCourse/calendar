@@ -380,6 +380,16 @@ class Quote(Base):
     author = Column(String)
 
 
+class OutOfOffice(Base):
+    __tablename__ = "out_of_office"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    start_date = Column(DateTime, nullable=False)
+    end_date = Column(DateTime, nullable=False)
+    status = Column(String, nullable=False)
+
+
 class Comment(Base):
     __tablename__ = "comments"
 

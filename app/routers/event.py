@@ -24,6 +24,7 @@ from app.internal.event import (
 )
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
+from app.internal.out_of_office import get_who_is_out_of_office
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
@@ -31,6 +32,7 @@ from app.routers.categories import get_user_categories
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,
@@ -43,7 +45,6 @@ UPDATE_EVENTS_FIELDS = {
     "vc_link": (str, type(None)),
     "category_id": (int, type(None)),
 }
-
 
 router = APIRouter(
     prefix="/event",
@@ -153,7 +154,17 @@ async def create_new_event(
         privacy=privacy,
     )
 
-    messages = get_messages(session, event, uninvited_contacts)
+    out_of_office_users = get_who_is_out_of_office(
+        session,
+        start,
+        invited_emails,
+    )
+    messages = get_messages(
+        session,
+        event,
+        uninvited_contacts,
+        out_of_office_users,
+    )
     return RedirectResponse(
         router.url_path_for("eventview", event_id=event.id)
         + f'?messages={"---".join(messages)}',
