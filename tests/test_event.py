@@ -11,6 +11,7 @@ from starlette import status
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
+from app.internal.event import get_all_countries_names
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
@@ -161,10 +162,14 @@ def test_create_event_api(event_test_client, session, event):
     assert response.ok
 
 
-def test_eventedit(event_test_client):
+def test_eventedit(event_test_client, session):
     response = event_test_client.get("/event/edit")
     assert response.ok
     assert b"Event Details" in response.content
+
+
+def test_get_all_countries(session):
+    assert get_all_countries_names(session)
 
 
 def test_eventview_with_id(event_test_client, session, event):

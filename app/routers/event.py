@@ -13,7 +13,14 @@ from starlette import status
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
-from app.database.models import Comment, Event, User, UserEvent, Country
+from app.database.models import (
+    Category,
+    Comment,
+    Country,
+    Event,
+    User,
+    UserEvent,
+)
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
     get_invited_emails,
@@ -25,6 +32,7 @@ from app.internal.event import (
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.privacy import PrivacyKinds
+from app.internal.security.dependancies import current_user
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
@@ -44,10 +52,6 @@ UPDATE_EVENTS_FIELDS = {
     "vc_link": (str, type(None)),
     "category_id": (int, type(None)),
 }
-ERROR_MSG = """
-    Your ip address is not associated with any geographical location.
-    This function cannot operate.
-    """
 
 
 router = APIRouter(
@@ -87,19 +91,21 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
     return {"success": True}
 
 
-def get_categories_list(db_session: Session = Depends(get_db)):
-    user_id = 1  # until issue#29 will get current user_id from session
-    categories_list = get_user_categories(db_session, user_id)
-    return categories_list
+def get_categories_list(
+    user: User,
+    db_session: Session = Depends(get_db),
+) -> List[Category]:
+    return get_user_categories(db_session, user.id)
 
 
 @router.get("/edit", include_in_schema=False)
 async def eventedit(
     request: Request,
     db_session: Session = Depends(get_db),
+    user: User = Depends(current_user),
 ) -> Response:
     countries_names = get_all_countries_names(db_session)
-    categories_list = get_categories_list(db_session)
+    categories_list = get_categories_list(user, db_session)
     return templates.TemplateResponse(
         "eventedit.html",
         {

@@ -66,7 +66,7 @@ input[type="submit"] {
   width: 100%;
 }
 
-.countries_modal_container {
+.countries-modal-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -78,7 +78,7 @@ input[type="submit"] {
   align-items: center;
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s, opacity 0,5s;
+  transition: visibility 0s, opacity 0, 5s;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
@@ -87,73 +87,78 @@ input[type="submit"] {
   opacity: 1;
 }
 
-.countries_modal {
+.countries-modal {
   position: relative;
   background-color: whitesmoke;
   width: fit-content;
-  height: fit content;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 30px 50px;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 2em 4em;
+  border-radius: 0.3em;
+  box-shadow: 0 0.2em 0.4em rgba(0, 0, 0, 0.2);
   text-align: center;
   transition: opacity 0.3s ease;
   z-index: 100;
 }
 
-.check_time {
-  padding: 10px 30px;
+.check-time {
+  padding: 0.7em 1em;
   background-color: rgba(73, 65, 65, 0.842);
   color: white;
   border: none;
-  border-radius: 3px;
+  border-radius: 0.3em;
   cursor: pointer;
 }
 
-.check_time:hover {
+.check-time:hover {
   background-color: rgba(112, 108, 108, 0.842);
+  border: none;
 }
 
-.close_countries_modal {
+.close-countries-modal {
   position: absolute;
   color: rgba(73, 65, 65, 0.842);
-  top: 10px;
-  right: 10px;
+  top: 1em;
+  right: 1em;
   font-weight: bold;
 }
 
-.close_countries_modal:hover {
+.close-countries-modal:hover {
   color: brown;
   cursor: pointer;
 }
 
-#countries_datalist {
-  margin: 5px 0;
-  padding: 10px 30px;
-  border: 0.5px solid rgba(73, 65, 65, 0.842);
-  border-radius: 3px;
+#countries-datalist {
+  margin: 1em 0;
+  padding: 0.7em 1em;
+  border: 0.1em solid rgba(73, 65, 65, 0.842);
+  border-radius: 0.3em;
 }
 
-#countries_datalist:hover {
+#countries-datalist:hover {
   background-color:aliceblue;
 }
 
-.empty_fields_error {
+.empty-fields-error {
   color: brown;
+}
+
+.empty-fields-error-disappear {
+  display: none;
 }
 
 .results {
   color: rgb(9, 65, 65);
-  margin-bottom: 5px;
+  margin-bottom: 1em;
   font-weight: bold;
 }
 
-.icon_credits,
-.icon_credits a:link,
-.icon_credits a:visited,
-.icon_credits a:hover,
-.icon_credits a:active {
+.icon-credits,
+.icon-credits a:link,
+.icon-credits a:visited,
+.icon-credits a:hover,
+.icon-credits a:active {
   color: rgb(202, 202, 202);
 }

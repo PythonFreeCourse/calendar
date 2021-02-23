@@ -3,13 +3,13 @@ import logging
 import re
 from typing import List, Set
 
-from app.database.models import Country, Event
-from app.resources.countries import countries
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
+from app.database.models import Country, Event
+from app.resources.countries import countries
 
 ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
 HOUR_MINUTE_FORMAT = "%H:%M"
@@ -128,16 +128,14 @@ def add_countries_to_db(session: Session) -> None:
                 new_country = Country(name=name, timezone=str(capital_city))
                 session.merge(new_country)
     session.commit()
-    session.close()
 
 
 @functools.lru_cache
-def get_all_countries_names(session: Session) -> List:
+def get_all_countries_names(session: Session) -> List[str]:
     """
     Returns a cached list of the countries names.
     """
     db_entity = session.query(Country).first()
     if not db_entity:
         add_countries_to_db(session=session)
-    countries_names = session.query(Country.name).all()
-    return countries_names
+    return session.query(Country.name).all()

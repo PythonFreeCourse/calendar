@@ -1,32 +1,26 @@
 <div class="form_row">
-    <button class="open_countries_modal"><img src={{ url_for('static', path='images/worldwide.png') }} alt="Globe-icon-to-choose-country" title="Check meeting time at other country"></button>
-    <div class="countries_modal_container">
-      <div class="countries_modal">
+    <button class="open-countries-modal"><img src={{ url_for('static', path='images/worldwide.png') }} alt="Globe-icon-to-choose-country" title="Check meeting time at other country"></button>
+    <div class="countries-modal-container">
+      <div class="countries-modal">
         <h2>Time Convertor</h2>
-        <div class="empty_fields_error"></div>
+        <div class="empty-fields-error"></div>
         <div class="results">
-          <div class="upper_result"></div>
-          <div class="bottom_result">
-            <span class="start_result"></span>
-            <span class="end_result"></span>
+          <div class="upper-result"></div>
+          <div class="bottom-result">
+            <span class="start-result"></span>
+            <span class="end-result"></span>
           </div>
         </div>
         <label for="countries">Choose country to check meeting time:</label>
-        <input list="countries_list" name="countries" id="countries_datalist">
-        <datalist id="countries_list">
+        <input list="countries-list" name="countries" id="countries-datalist">
+        <datalist id="countries-list">
           {% for name in names %}
             <option value="{{ name[0] }}">
           {% endfor %}
         </datalist>
-        <span class="close_countries_modal">X</span>
-        <button class="check_time">Check Time</button>
-        <h6 class="icon_credits">( Icon made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com )</a></h6>
+        <span class="close-countries-modal">X</span>
+        <button class="check-time">Check Time</button>
+        <h6 class="icon-credits">( Icon made by <a href="https://www.flaticon.com/authors/turkkub" title="turkkub">turkkub</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com )</a></h6>
       </div>
     </div>
-    {% if country and time %}
-      <p>The meeting time at {{ country }} is: {{ time }}</p>
-    {% endif %}
-    {% if msg %}
-      <p>{{ msg }}</p>
-    {% endif %}
 </div>
