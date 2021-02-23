@@ -19,7 +19,7 @@ from app.internal.showevent import get_upcoming_events
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 FIVE_EVENTS = 5
-"""We are presenting up to five upcoming events on the profile page"""
+# We are presenting up to five upcoming events on the profile page
 
 router = APIRouter(
     prefix="/profile",
