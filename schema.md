@@ -39,6 +39,19 @@
 ├── requirements.txt
 ├── schema.md
 └── tests
+    └── tests_ui
+        ├──cypress
+            ├──enums
+            ├──fixtures
+            ├──integration
+            ├──plugins
+            ├──screenshots
+            ├──support
+            └──videos
+        ├──node_modules
+        ├──cypress.json
+        ├──package-lock.json
+        └──package.json
     ├── __init__.py
     └── conftest.py
     └── test_profile.py
