@@ -9,7 +9,7 @@ from starlette.status import HTTP_302_FOUND, HTTP_303_SEE_OTHER
 
 from app.database.models import WeeklyTask
 from app.dependencies import get_db, templates
-from app.internal.security.dependancies import (
+from app.internal.security.dependencies import (
     current_user,
     schema,
     is_logged_in,
