@@ -1,5 +1,3 @@
-import uvicorn
-
 from fastapi import Depends, FastAPI, Request, status
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
@@ -149,6 +147,3 @@ async def home(request: Request, db: Session = Depends(get_db)):
 
 
 custom_openapi(app)
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
