@@ -62,8 +62,8 @@ def get_hebrew_date_in_words(date: datetime) -> str:
     """
 
     hebrew_date_object = from_greogian_to_hebrew_date(date)
-    return ' '.join(
+    return ' '.join((
         int_to_gematria(hebrew_date_object.day),
         get_month_name_by_num(hebrew_date_object),
-        int_to_gematria(hebrew_date_object.year % 1000),
-        )
+        int_to_gematria(hebrew_date_object.year % 1000)
+    ))
