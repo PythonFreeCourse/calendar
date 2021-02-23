@@ -47,7 +47,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 cp app/config.py.example app/config.py
 # Edit the variables' values.
-<<<<<<< HEAD
 uvicorn app.main:app --reload
 ```
 
@@ -71,12 +70,10 @@ Basic tests will spicified with lower testLevel than advanced tests.
         1. Run on terminal: ```npx cypress run --spec cypress/integration/path/to/file```
     - Run tests with change level env config to 10: ```npx cypress run --env level=10```
 ### Running tests
-=======
 # Rendering JWT_KEY:
 python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
 
 ### Running tox
->>>>>>> b91708d299bde83bbd10ff93496b23af9d35dd8f
 ```shell
 # Standard tests: 'coverage' and 'flake8'
 tox

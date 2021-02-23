@@ -157,12 +157,9 @@ app/.vscode/
 
 app/routers/stam
 
-<<<<<<< HEAD
 # Cypress
 tests/tests-ui/node_modules/
 
-=======
->>>>>>> b91708d299bde83bbd10ff93496b23af9d35dd8f
 # PyCharm
 .idea
 

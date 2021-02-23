@@ -40,7 +40,6 @@
 ├── schema.md
 └── tests
     ├── __init__.py
-<<<<<<< HEAD
     └── conftest.py
     └── test_profile.py
     └── test_app.py
@@ -57,7 +56,6 @@
         ├──cypress.json
         ├──package-lock.json
         └──package.json
-=======
     ├── conftest.py
     ├── test_agenda_internal.py
     ├── test_agenda_route.py
@@ -66,4 +64,3 @@
     ├── test_email.py
     ├── test_event.py
     └── test_profile.py
->>>>>>> b91708d299bde83bbd10ff93496b23af9d35dd8f
