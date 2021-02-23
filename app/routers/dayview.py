@@ -187,9 +187,7 @@ async def dayview(
         session=session,
         user_id=user.id,
     )
-    inter_day = international_days.get_international_day_per_day(
-        session, day
-    )
+    inter_day = international_days.get_international_day_per_day(session, day)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",

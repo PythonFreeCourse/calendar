@@ -426,9 +426,9 @@ class InternationalDays(Base):
     __tablename__ = "international_days"
 
     id = Column(Integer, primary_key=True, index=True)
-    day = Column(Integer)
-    month = Column(Integer)
-    international_day = Column(String)
+    day = Column(Integer, nullable=False)
+    month = Column(Integer, nullable=False)
+    international_day = Column(String, nullable=False)
 
 
 # insert language data
