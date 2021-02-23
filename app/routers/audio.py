@@ -21,7 +21,7 @@ from app.internal.audio import (
     DEFAULT_SFX,
     DEFAULT_SFX_VOL,
 )
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependencies import current_user
 
 router = APIRouter(
     prefix="/audio",
