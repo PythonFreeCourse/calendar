@@ -1,14 +1,14 @@
-from typing import Any, Dict, Optional
+from datetime import date, datetime, time
+from typing import Any, List, Optional, Union
+
 from sqlalchemy.orm import Session
 
 from app.database.models import Base, User
-from app.routers.profile import get_placeholder_user
 
 
 def save(session: Session, instance: Base) -> bool:
     """Commits an instance to the db.
     source: app.database.models.Base"""
-
     if issubclass(instance.__class__, Base):
         session.add(instance)
         session.commit()
@@ -16,11 +16,9 @@ def save(session: Session, instance: Base) -> bool:
     return False
 
 
-def create_model(session: Session, model_class: Base,
-                 **kw: Dict[str, Any]) -> Base:
+def create_model(session: Session, model_class: Base, **kwargs: Any) -> Base:
     """Creates and saves a db model."""
-
-    instance = model_class(**kw)
+    instance = model_class(**kwargs)
     save(session, instance)
     return instance
 
@@ -43,6 +41,11 @@ def get_current_user(session: Session) -> User:
     return user
 
 
+def get_available_users(session: Session) -> List[User]:
+    """this function return all available users."""
+    return session.query(User).filter(not User.disabled).all()
+
+
 def get_user(session: Session, user_id: int) -> Optional[User]:
     """Returns User instance for `user_id` if exists, None otherwise.
 
@@ -52,8 +55,44 @@ def get_user(session: Session, user_id: int) -> Optional[User]:
 
     Returns:
         (User | None): User instance for `user_id` if exists, None otherwise.
-
-    Raises:
-        None
     """
     return session.query(User).filter_by(id=user_id).first()
+
+
+def get_time_from_string(string: str) -> Optional[Union[date, time]]:
+    """Converts time string to a date or time object.
+
+    Args:
+        string (str): Time string.
+
+    Returns:
+        datetime.time | datetime.date | None: Date or Time object if valid,
+                                              None otherwise.
+    """
+    formats = {'%Y-%m-%d': 'date', '%H:%M': 'time', '%H:%M:%S': 'time'}
+    for time_format, method in formats.items():
+        try:
+            time_obj = getattr(datetime.strptime(string, time_format), method)
+        except ValueError:
+            pass
+        else:
+            return time_obj()
+
+
+def get_placeholder_user() -> User:
+    """Creates a mock user.
+
+    This is a temporarily function which should be removed when a
+    real system is created.
+
+    Returns:
+        A User object.
+    """
+    return User(
+        username='new_user',
+        email='my@email.po',
+        password='1a2s3d4f5g6',
+        full_name='My Name',
+        language_id=1,
+        telegram_id='',
+    )

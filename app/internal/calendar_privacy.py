@@ -1,14 +1,15 @@
 from app.dependencies import get_db
 from app.database.models import User
+from app.internal.privacy import PrivacyKinds
 # TODO switch to using this when the user system is merged
-# from app.internal.security.dependancies import (
+# from app.internal.security.dependencies import (
 #    current_user, CurrentUser)
 
 from fastapi import Depends
 
 
 # TODO add privacy as an attribute in current user
-# in app.internal.security.dependancies
+# in app.internal.security.dependencies
 # when user system is merged
 def can_show_calendar(
     requested_user_username: str,
@@ -23,10 +24,10 @@ def can_show_calendar(
     ).first()
     privacy = current_user.privacy
     is_current_user = current_user.username == requested_user.username
-    if privacy == 'Private' and is_current_user:
+    if privacy == PrivacyKinds.Private.name and is_current_user:
         return True
 
-    elif privacy == 'Public':
+    elif privacy == PrivacyKinds.Public.name:
         return True
 
     return False
