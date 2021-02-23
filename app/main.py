@@ -16,12 +16,12 @@ from app.dependencies import (
     STATIC_PATH,
     templates,
 )
-from app.internal.daily_quotes import get_quote_id
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
 from app.internal.security.dependancies import current_user
+import os
 
 
 def create_tables(engine, psql_environment):
@@ -131,8 +131,8 @@ routers_to_include = [
 for router in routers_to_include:
     app.include_router(router)
 
-EMPTY_HEART_PATH = "media/empty_heart.png"
-FULL_HEART_PATH = "media/full_heart.png"
+EMPTY_HEART_PATH = os.path.relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
+FULL_HEART_PATH = os.path.relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
 
 
 @app.get("/", include_in_schema=False)
@@ -160,11 +160,10 @@ async def home(
 @app.post("/")
 async def save_quote(
     user: models.User = Depends(current_user),
-    quote: str = Form(...),
+    quote_id: int = Form(...),
     db: Session = Depends(get_db),
 ):
     """Saves a quote in the database."""
-    quote_id = get_quote_id(db, quote)
     record = (
         db.query(models.UserQuotes)
         .filter(
@@ -181,11 +180,10 @@ async def save_quote(
 @app.delete("/")
 async def delete_quote(
     user: models.User = Depends(current_user),
-    quote: str = Form(...),
+    quote_id: int = Form(...),
     db: Session = Depends(get_db),
 ):
     """Deletes a quote from the database."""
-    quote_id = get_quote_id(db, quote)
     db.query(models.UserQuotes).filter(
         models.UserQuotes.user_id == user.user_id,
         models.UserQuotes.quote_id == quote_id,

@@ -1,15 +1,17 @@
-// Adding event listeners
-let hearts = Array.from(document.getElementsByClassName("heart"));
+const FULL_HEART = "../media/full_heart.png";
+const EMPTY_HEART = "../media/empty_heart.png";
+
+// Adding event listener
 window.addEventListener("load", function () {
-  hearts.forEach((heart) => {
-    if (heart) {
-      heart.addEventListener("click", onHeartClick);
+  let hearts = Array.from(document.getElementsByClassName("heart"));
+  hearts.forEach((heart_element) => {
+    if (heart_element) {
+      heart_element.addEventListener("click", function () {
+        onHeartClick(heart_element);
+      });
     }
   });
 });
-
-const FULL_HEART = "../media/full_heart.png";
-const EMPTY_HEART = "../media/empty_heart.png";
 
 /**
  * @summary This function is a handler for the event of heart-click.
@@ -20,18 +22,18 @@ const EMPTY_HEART = "../media/empty_heart.png";
  * Removes it and switch back to empty heart icon.
  * Uses the save_or_remove_quote function to handle db operations.
  */
-function onHeartClick() {
-  const quote = this.parentNode.previousElementSibling.innerText;
-  if (this.dataset.heart == "off") {
-    this.src = FULL_HEART;
-    this.dataset.heart = "on";
-    save_or_remove_quote(quote, true);
+function onHeartClick(heart_element) {
+  const quote_id = heart_element.dataset.qid;
+  if (heart_element.dataset.heart == "off") {
+    heart_element.src = FULL_HEART;
+    heart_element.dataset.heart = "on";
+    save_or_remove_quote(quote_id, true);
   } else {
-    this.src = EMPTY_HEART;
-    this.dataset.heart = "off";
-    save_or_remove_quote(quote, false);
-    if (this.classList.contains("favorites")) {
-      this.parentNode.parentNode.remove();
+    heart_element.src = EMPTY_HEART;
+    heart_element.dataset.heart = "off";
+    save_or_remove_quote(quote_id, false);
+    if (heart_element.classList.contains("favorites")) {
+      heart_element.parentNode.parentNode.remove();
     }
   }
 }
@@ -39,11 +41,11 @@ function onHeartClick() {
 /**
  * @summary Saves or removes a quote from favorites.
  */
-function save_or_remove_quote(quote, to_save) {
+function save_or_remove_quote(quote_id, to_save) {
   const method = to_save ? "post" : "delete";
-  quote = encodeURIComponent(quote);
   let xhr = new XMLHttpRequest();
+  quote_id = parseInt(quote_id);
   xhr.open(method, "/");
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr.send(`quote=${quote}`);
+  xhr.send(`quote_id=${quote_id}`);
 }

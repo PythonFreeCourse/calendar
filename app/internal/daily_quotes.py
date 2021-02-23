@@ -74,10 +74,3 @@ def is_quote_favorite(
         if user_quote.quote_id == quote_of_day.id:
             return True
     return False
-
-
-def get_quote_id(session: Session, quote: Quote) -> Optional[Quote]:
-    """Retrieve quote id given the text of the quote."""
-    quote = session.query(Quote).filter_by(text=quote).first()
-    if quote:
-        return quote.id
