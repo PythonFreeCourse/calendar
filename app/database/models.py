@@ -423,6 +423,15 @@ class Joke(Base):
     text = Column(String, nullable=False)
 
 
+class InternationalDays(Base):
+    __tablename__ = "international_days"
+
+    id = Column(Integer, primary_key=True, index=True)
+    day = Column(Integer, nullable=False)
+    month = Column(Integer, nullable=False)
+    international_day = Column(String, nullable=False)
+
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
