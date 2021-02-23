@@ -129,7 +129,6 @@ def test_reset_password_bad_details(
         security_test_client.app.url_path_for("reset_password") + f"{params}",
         data=data,
     )
-    print(res.content)
     assert b"Please check your credentials" in res.content
 
 
@@ -155,3 +154,51 @@ def test_reset_password_expired_token(session, security_test_client):
         data=RESET_PASSWORD_DETAILS,
     )
     assert res.ok
+
+
+LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
+
+
+def test_is_logged_in_with_reset_password_token(session, security_test_client):
+    security_test_client.post("/register", data=REGISTER_DETAIL)
+    user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
+    token = create_jwt_token(user, jwt_min_exp=15)
+    params = f"?existing_jwt={token}"
+    security_test_client.post(
+        security_test_client.app.url_path_for("login") + f"{params}",
+        data=LOGIN_DATA,
+    )
+    res = security_test_client.get(
+        security_test_client.app.url_path_for("is_logged_in"),
+    )
+    assert b"Your token is not valid" in res.content
+
+
+def test_is_manager_with_reset_password_token(session, security_test_client):
+    security_test_client.post("/register", data=REGISTER_DETAIL)
+    user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
+    token = create_jwt_token(user, jwt_min_exp=15)
+    params = f"?existing_jwt={token}"
+    security_test_client.post(
+        security_test_client.app.url_path_for("login") + f"{params}",
+        data=LOGIN_DATA,
+    )
+    res = security_test_client.get(
+        security_test_client.app.url_path_for("is_manager"),
+    )
+    assert b"have a permition to enter this page" in res.content
+
+
+def test_current_user_with_reset_password_token(session, security_test_client):
+    security_test_client.post("/register", data=REGISTER_DETAIL)
+    user = ForgotPassword(**FORGOT_PASSWORD_DETAILS)
+    token = create_jwt_token(user, jwt_min_exp=15)
+    params = f"?existing_jwt={token}"
+    security_test_client.post(
+        security_test_client.app.url_path_for("login") + f"{params}",
+        data=LOGIN_DATA,
+    )
+    res = security_test_client.get(
+        security_test_client.app.url_path_for("current_user"),
+    )
+    assert b"Your token is not valid" in res.content
