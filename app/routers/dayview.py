@@ -4,7 +4,7 @@ from typing import Iterator, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 
-from app.database.models import Event,Task, User
+from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
 from app.internal import international_days, zodiac
 from app.internal.todo_list import sort_by_time
