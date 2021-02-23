@@ -13,12 +13,11 @@ from starlette import status
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
-from app.database.models import Comment, Event, User, UserEvent
+from app.database.models import Comment, Event, User, UserEvent, Country
 from app.dependencies import get_db, logger, templates
 from app.internal.event import (
-    # get_invited_emails,
+    get_invited_emails,
     get_messages,
-    get_meeting_local_duration,
     get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
     get_all_countries_names,
@@ -28,7 +27,6 @@ from app.internal.emotion import get_emotion
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
-from geoip import geolite2
 
 
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
@@ -96,11 +94,11 @@ def get_categories_list(db_session: Session = Depends(get_db)):
 
 
 @router.get("/edit", include_in_schema=False)
-@router.get("/edit")
 async def eventedit(
     request: Request,
     db_session: Session = Depends(get_db),
 ) -> Response:
+    countries_names = get_all_countries_names(db_session)
     categories_list = get_categories_list(db_session)
     return templates.TemplateResponse(
         "eventedit.html",
@@ -108,84 +106,7 @@ async def eventedit(
             "request": request,
             "categories_list": categories_list,
             "privacy": PrivacyKinds,
-        },
-    )
-
-
-@router.get("/edit/view_countries", include_in_schema=False)
-async def choose_country(
-    request: Request,
-    session=Depends(get_db),
-) -> Response:
-    """
-    Displays the list of all countries name from "Country" table.
-    """
-    countries_names = get_all_countries_names(session=session)
-    categories_list = get_categories_list(session)
-    return templates.TemplateResponse(
-        "eventedit.html",
-        {
-            "request": request,
             "countries_names": countries_names,
-            "categories_list": categories_list,
-            "privacy": PrivacyKinds,
-        },
-    )
-
-
-@router.post("/edit/view_countries", include_in_schema=False)
-async def check_country_time(
-    request: Request,
-    session=Depends(get_db),
-) -> Response:
-    """
-    Displays datalist of all countries name from "Country" table.
-    By clicking "Check time" the converted meeting time is displayed.
-    If the user's ip is not recognized, an error message will appear.
-    ** temporarily using a random israeli ip address instead **
-    """
-    # TODO: define ip as request.client.host
-    # ip = request.client.host
-    categories_list = get_categories_list(session)
-    random_israeli_ip_for_now = "82.166.236.10"
-    ip = random_israeli_ip_for_now
-    match = geolite2.lookup(ip)
-    if match is None:
-        return templates.TemplateResponse(
-            "eventedit.html",
-            {
-                "request": request,
-                "msg": ERROR_MSG,
-                "categories_list": categories_list,
-                "privacy": PrivacyKinds,
-            },
-        )
-    data = await request.form()
-    country = data["countries"]
-    start_time = dt.strptime(
-        data["start_date"] + " " + data["start_time"],
-        TIME_FORMAT,
-    )
-    end_time = dt.strptime(
-        data["end_date"] + " " + data["end_time"],
-        TIME_FORMAT,
-    )
-    user_timezone = match.timezone
-    meeting_time_for_invitee = get_meeting_local_duration(
-        start_time,
-        end_time,
-        user_timezone,
-        country,
-        session,
-    )
-    return templates.TemplateResponse(
-        "eventedit.html",
-        {
-            "request": request,
-            "chosen_country": country,
-            "chosen_country_meeting_time": (meeting_time_for_invitee),
-            "categories_list": categories_list,
-            "privacy": PrivacyKinds,
         },
     )
 
@@ -208,17 +129,14 @@ async def create_new_event(
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
 
-    # vc_link = data["vc_link"]
-    vc_link = "https://us04web.zoom.us/j/77247561137?pwd="
-    # a1Y1ZGdrTFBsNWhkQUVBYnRqZVZXZz09"
+    vc_link = data["vc_link"]
     category_id = data.get("category_id")
     privacy = data["privacy"]
     privacy_kinds = [kind.name for kind in PrivacyKinds]
     if privacy not in privacy_kinds:
         privacy = PrivacyKinds.Public.name
     is_google_event = data.get("is_google_event", "True") == "True"
-    # invited_emails = get_invited_emails(data["invited"])
-    invited_emails = ""
+    invited_emails = get_invited_emails(data["invited"])
     uninvited_contacts = get_uninvited_regular_emails(
         session,
         owner_id,
@@ -725,3 +643,17 @@ async def delete_comment(
     cmt.delete_comment(db, comment_id)
     path = router.url_path_for("view_comments", event_id=str(event_id))
     return RedirectResponse(path, status_code=303)
+
+
+@router.get("/check_country_timezone/{country_name}", include_in_schema=False)
+async def check_timezone(
+    country_name,
+    request: Request,
+    db_session: Session = Depends(get_db),
+) -> Response:
+    country_timezone = (
+        db_session.query(Country.timezone)
+        .filter_by(name=country_name)
+        .first()[0]
+    )
+    return {"timezone": country_timezone}

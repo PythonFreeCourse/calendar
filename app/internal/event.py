@@ -1,4 +1,3 @@
-from datetime import datetime
 import functools
 import logging
 import re
@@ -8,7 +7,6 @@ from app.database.models import Country, Event
 from app.resources.countries import countries
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
-import pytz
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
@@ -131,58 +129,6 @@ def add_countries_to_db(session: Session) -> None:
                 session.add(new_country)
     session.commit()
     session.close()
-
-
-def find_local_time_by_country(
-    user_timezone: str,
-    country: str,
-    meeting_time: datetime,
-    session: Session,
-) -> str:
-    """
-    Converts the local meeting time to the chosen country meeting time.
-    """
-    country_timezone = (
-        session.query(Country.timezone).filter_by(name=country).first()[0]
-    )
-
-    users_meeting_time_with_utc = pytz.timezone(user_timezone).localize(
-        meeting_time,
-    )
-
-    country_utc = pytz.timezone(country_timezone)
-
-    meeting_time_for_country = users_meeting_time_with_utc.astimezone(
-        country_utc,
-    ).strftime(HOUR_MINUTE_FORMAT)
-
-    return meeting_time_for_country
-
-
-def get_meeting_local_duration(
-    start_time: datetime,
-    end_time: datetime,
-    user_timezone: str,
-    country: str,
-    session: Session,
-) -> str:
-    """
-    Returns the total duration of the converted meeting time.
-    """
-    meeting_start_time = find_local_time_by_country(
-        user_timezone=user_timezone,
-        country=country,
-        meeting_time=start_time,
-        session=session,
-    )
-    meeting_end_time = find_local_time_by_country(
-        user_timezone=user_timezone,
-        country=country,
-        meeting_time=end_time,
-        session=session,
-    )
-    total_time = meeting_start_time + " - " + meeting_end_time
-    return total_time
 
 
 @functools.lru_cache
