@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.database.models import Event, User
 from app.dependencies import get_db, templates
-from app.internal import zodiac
+from app.internal import international_days, zodiac
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -215,9 +215,7 @@ async def dayview(
         user_id=user.id,
     )
     current_time_with_attrs = CurrentTimeAttributes(date=day)
-    print(current_time_with_attrs.dayview_date)
-    print(datetime.today().date())
-    print(current_time_with_attrs.dayview_date == datetime.today)
+    inter_day = international_days.get_international_day_per_day(session, day)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
@@ -227,6 +225,7 @@ async def dayview(
             "all_day_events": all_day_events,
             "month": month,
             "day": day.day,
+            "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
             "current_time": current_time_with_attrs,
