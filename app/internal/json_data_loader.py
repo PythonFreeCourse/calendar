@@ -6,8 +6,12 @@ from loguru import logger
 from sqlalchemy.orm import Session
 
 
-from app.database.models import Base, InternationalDays, Joke, Quote, Parasha, Zodiac
-from app.internal import daily_quotes, international_days, jokes, weekly_parasha, zodiac
+from app.database.models import (
+    Base, InternationalDays, Joke, Quote, Parasha, Zodiac
+)
+from app.internal import (
+    daily_quotes, international_days, jokes, weekly_parasha, zodiac
+)
 
 
 def load_to_database(session: Session) -> None:
