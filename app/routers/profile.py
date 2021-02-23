@@ -222,14 +222,14 @@ async def out_of_office(
     user: schema.CurrentUser = Depends(current_user),
 ):
     activate_out_of_office = "1"
-    user = session.query(User).filter_by(id=user.user_id).first()
+    user_db = session.query(User).filter_by(id=user.user_id).first()
 
     # TODO: Check if the user exist
 
     out_of_office_data_from_req = await request.form()
 
     out_of_office_data_from_db = (
-        session.query(OutOfOffice).filter_by(id=user.user_id).first()
+        session.query(OutOfOffice).filter_by(id=user_db.id).first()
     )
 
     # insert new out of office
@@ -240,7 +240,7 @@ async def out_of_office(
         ):
             insert_new_out_of_office(
                 out_of_office_data_from_req,
-                user,
+                user_db,
                 session,
             )
 
