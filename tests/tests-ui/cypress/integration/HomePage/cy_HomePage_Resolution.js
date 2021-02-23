@@ -19,12 +19,6 @@ describe('HomePage tests', () => {
                 cy.visit(pages.HOME)
                 cy.contains('Calendar') 
             });
-    
-            //cy.url().should('include', '/signIn')
-
-            //cy.get('.signIn_input[name=email]')
-            //.type('fake@email.com')
-            //.should('have.value', 'fake@email.com')
         })
     }
 })

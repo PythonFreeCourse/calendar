@@ -39,10 +39,6 @@
 ├── requirements.txt
 ├── schema.md
 └── tests
-    ├── __init__.py
-    └── conftest.py
-    └── test_profile.py
-    └── test_app.py
     └── tests_ui
         ├──cypress
             ├──enums
@@ -56,6 +52,10 @@
         ├──cypress.json
         ├──package-lock.json
         └──package.json
+    ├── __init__.py
+    └── conftest.py
+    └── test_profile.py
+    └── test_app.py
     ├── conftest.py
     ├── test_agenda_internal.py
     ├── test_agenda_route.py
