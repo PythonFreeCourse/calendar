@@ -1,6 +1,6 @@
 from app.internal.calendar_privacy import can_show_calendar
 # TODO after user system is merged:
-# from app.internal.security.dependancies import CurrentUser
+# from app.internal.security.dependencies import CurrentUser
 from app.routers.user import create_user
 
 
