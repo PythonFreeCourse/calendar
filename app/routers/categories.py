@@ -1,15 +1,18 @@
 import re
-from typing import Any, Dict, List
+from typing import Dict, List
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.datastructures import ImmutableMultiDict
+from starlette.templating import _TemplateResponse
+
 
 from app.database.models import Category
 from app.dependencies import get_db
+from app.dependencies import templates
 
 HEX_COLOR_FORMAT = r"^(?:[0-9a-fA-F]{3}){1,2}$"
 
@@ -35,7 +38,7 @@ class CategoryModel(BaseModel):
 
 
 # TODO(issue#29): get current user_id from session
-@router.get("/")
+@router.get("/user", include_in_schema=False)
 def get_categories(request: Request,
                    db_session: Session = Depends(get_db)) -> List[Category]:
     if validate_request_params(request.query_params):
@@ -46,26 +49,39 @@ def get_categories(request: Request,
                                    f"unallowed params.")
 
 
+@router.get("/")
+def category_color_insert(request: Request) -> _TemplateResponse:
+    return templates.TemplateResponse("categories.html", {
+        "request": request
+    })
+
+
 # TODO(issue#29): get current user_id from session
 @router.post("/")
-async def set_category(category: CategoryModel,
-                       db_sess: Session = Depends(get_db)) -> Dict[str, Any]:
-    if not validate_color_format(category.color):
+async def set_category(request: Request,
+                       name: str = Form(None),
+                       color: str = Form(None),
+                       db_sess: Session = Depends(get_db)):
+
+    message = ""
+    user_id = 1    # until issue#29 will get current user_id from session
+    color = color.replace('#', '')
+    if not validate_color_format(color):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Color {category.color} if not from "
+                            detail=f"Color {color} if not from "
                                    f"expected format.")
     try:
-        cat = Category.create(db_sess,
-                              name=category.name,
-                              color=category.color,
-                              user_id=category.user_id)
+        Category.create(db_sess, name=name, color=color, user_id=user_id)
     except IntegrityError:
         db_sess.rollback()
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"category is already exists for "
-                                   f"user {category.user_id}.")
-    else:
-        return {"category": cat.to_dict()}
+        message = "Category already exists"
+        return templates.TemplateResponse("categories.html",
+                                          dictionary_req(request, message,
+                                                         name, color))
+    message = f"Congratulation! You have created a new category: {name}"
+    return templates.TemplateResponse("categories.html",
+                                      dictionary_req(request, message,
+                                                     name, color))
 
 
 def validate_request_params(query_params: ImmutableMultiDict) -> bool:
@@ -107,3 +123,13 @@ def get_user_categories(db_session: Session,
         return []
     else:
         return categories
+
+
+def dictionary_req(request, message, name, color) -> Dict:
+    dictionary_tamplates = {
+            "request": request,
+            "message": message,
+            "name": name,
+            "color": color,
+        }
+    return dictionary_tamplates

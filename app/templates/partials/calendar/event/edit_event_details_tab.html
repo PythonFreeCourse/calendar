@@ -1,0 +1,110 @@
+<div class="form_row">
+   <input id="say" type="text" name="title" placeholder="Event Title" required>
+   <input type="button" id="speak" name="speak" value="Speak it!">
+</div>
+<div class="form_row">
+    <!-- Voices gets its own row for being so wide! -->
+  <div class="field" id="voices">
+    <label for="voice">Voice</label>
+    <select id="voice" name="voice"></select>
+  </div>
+  <div class="field">
+    <label for="volume">Volume</label>
+    <input type="range" id="volume" name="volume" min="0" max="1" step="0.01" value="0.5">
+    <output for="volume"></output>
+  </div>
+  <div class="field">
+    <label for="pitch">Pitch</label>
+    <input type="range" id="pitch" name="pitch" min="0" max="2" step="0.01" value="1">
+    <output for="pitch"></output>
+  </div>
+  <div class="field">
+    <label for="rate">Rate</label>
+    <input type="range" id="rate" name="rate" min="0.1" max="10" step="0.1" value="1">
+    <output for="rate"></output>
+  </div>
+</div>
+
+<div class="form_row">
+  <label for="start_date">Start Date:</label>
+  <input id="start_date" type="date" name="start_date" placeholder="Start Date" required>
+  <label for="start_time">Start Time:</label>
+  <input id="start_time" type="time" name="start_time" placeholder="Start Time" required>
+</div>
+
+<div class="form_row">
+  <label for="end_date">End Date:</label>
+  <input id="end_date" type="date" name="end_date" placeholder="End Date" required>
+  <label for="end_time">End Time:</label>
+  <input id="end_time" type="time" name="end_time" placeholder="End Time" required>
+</div>
+
+<div class="form_row">
+   <label for="location">Location </label>
+   <input type="text" id="location" name="location" placeholder="Location">
+</div>
+
+<div class="form_row">
+   <label for="vc_link">VC link: </label>
+   <input type="text" id="vc_link" name="vc_link" placeholder="VC URL">
+</div>
+
+<div class="form_row">
+   <label for="invited">Invited emails: </label>
+   <input type="text" id="invited" name="invited" placeholder="Invited emails, separated by commas">
+</div>
+
+<div class="form_row textarea">
+  <textarea id="say" name="description" placeholder="Description"></textarea>
+</div>
+
+<div class="form_row">
+  <div class="form_row_start">
+    <label for="color">Color:</label>
+    <select id="color" name="color">
+      <option value="red">Red</option>
+      <option value="green">Green</option>
+      <option value="blue">Blue</option>
+    </select>
+  </div>
+
+  <div class="form_row_end">
+    <label for="event_type">All-day:</label>
+    <select id="event_type" name="event_type" required>
+        <option value="on">Yes</option>
+        <option value="off" selected>No</option>
+    </select>
+
+    <label for="availability">Availability:</label>
+    <select id="availability" name="availability">
+         <option value="True">Free</option>
+         <option value="False" selected>Busy</option>
+    </select>
+
+    <label for="privacy">Privacy:</label>
+    <select id="privacy" name="privacy">
+      <option value="{{ privacy.Private.name }}">{{ privacy.Private.name }}</option>
+      <option value="{{ privacy.Public.name }}" selected>{{ privacy.Public.name }}</option>
+      <option value="{{ privacy.Hidden.name }}">{{ privacy.Hidden.name }}</option>
+    </select>
+
+    <label for="user_categories">Category</label>
+    <select id="categories" name="the_categories">
+        {% if categories_list[0] is defined %}
+            <option style="color:#{{categories_list[0]['color'] |safe }}" value="{{categories_list[0]['name'] |safe }}" selected>{{categories_list[0]['name'] |safe }}</option>
+        {% endif %}
+        {% if categories_list[1] is defined %}
+            {% for category in categories_list[1:] %}
+                <option style="color:#{{category['color'] |safe }}" value="{{category['name'] |safe }}" selected>{{category['name'] |safe }}</option>
+            {% endfor %}
+        {% endif %}
+    </select>
+
+    <label for="is_google_event">Google event:</label>
+    <select id="is_google_event" name="is_google_event">
+      <option value="True">Yes</option>
+      <option value="False" selected>No</option>
+    </select>
+
+  </div>
+</div>

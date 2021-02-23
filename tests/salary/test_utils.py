@@ -1,4 +1,4 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
 from unittest import mock
 
@@ -168,11 +168,6 @@ SALARIES = [
         'deduction': 5036.0,
         'salary': 0.0,
     }),
-]
-
-TIMES = [
-    ('13:30', time(13, 30)),
-    ('15:42:00', time(15, 42))
 ]
 
 UPDATES = [
@@ -368,11 +363,6 @@ def test_get_settings(salary_session: Session,
                       wage: SalarySettings) -> None:
     assert utils.get_settings(salary_session, wage.user_id,
                               wage.category_id)
-
-
-@pytest.mark.parametrize('string, formatted_time', TIMES)
-def test_get_time_from_string(string: str, formatted_time: time) -> None:
-    assert utils.get_time_from_string(string) == formatted_time
 
 
 @pytest.mark.parametrize('form, boolean', UPDATES)

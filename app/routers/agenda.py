@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import date, timedelta
+import json
 from typing import Optional, Tuple
 
 from fastapi import APIRouter, Depends, Request
@@ -27,7 +28,7 @@ def calc_dates_range_for_agenda(
     return start, end
 
 
-@router.get("/agenda")
+@router.get("/agenda", include_in_schema=False)
 def agenda(
         request: Request,
         db: Session = Depends(get_db),
@@ -38,6 +39,7 @@ def agenda(
     """Route for the agenda page, using dates range or exact amount of days."""
 
     user_id = 1  # there is no user session yet, so I use user id- 1.
+
     start_date, end_date = calc_dates_range_for_agenda(
         start_date, end_date, days
     )
@@ -46,15 +48,19 @@ def agenda(
         db, user_id, start_date, end_date
     )
     events = defaultdict(list)
+
     for event_obj in events_objects:
         event_duration = agenda_events.get_time_delta_string(
             event_obj.start, event_obj.end
         )
         events[event_obj.start.date()].append((event_obj, event_duration))
-
+    events_for_graph = json.dumps(
+        agenda_events.make_dict_for_graph_data(db, user_id)
+    )
     return templates.TemplateResponse("agenda.html", {
         "request": request,
         "events": events,
         "start_date": start_date,
         "end_date": end_date,
+        "events_for_graph": events_for_graph,
     })

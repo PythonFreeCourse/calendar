@@ -9,10 +9,11 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app import config
 from app.database.models import User
-from app.dependencies import get_db, MEDIA_PATH, templates
+from app.dependencies import get_db, MEDIA_PATH, templates, GOOGLE_ERROR
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.import_holidays import (get_holidays_from_file,
                                           save_holidays_to_db)
+from app.internal.privacy import PrivacyKinds
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
@@ -58,7 +59,9 @@ async def profile(
         "user": user,
         "events": upcoming_events,
         "signs": signs,
+        "google_error": GOOGLE_ERROR,
         "on_this_day_data": on_this_day_data,
+        "privacy": PrivacyKinds
     })
 
 
@@ -138,6 +141,23 @@ async def update_telegram_id(
     return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
+@router.post("/privacy")
+async def update_calendar_privacy(
+        request: Request,
+        session=Depends(get_db)
+):
+    user = session.query(User).filter_by(id=1).first()
+    data = await request.form()
+    new_privacy = data['privacy']
+
+    # Update database
+    user.privacy = new_privacy
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
 @router.get("/holidays/import")
 def import_holidays(request: Request):
     return templates.TemplateResponse("import_holidays.html", {
@@ -165,7 +185,7 @@ def get_image_crop_area(width, height):
 
 
 @router.post("/holidays/update")
-async def update_holidays(
+async def update(
         file: UploadFile = File(...), session=Depends(get_db)):
     icsfile = await file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
