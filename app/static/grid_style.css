@@ -429,6 +429,11 @@ main {
   font-weight: 700;
 }
 
+.dates-calc {
+    background-color: #222831;
+    color: white;
+}
+
 #darkmode {
   cursor: pointer;
 }
