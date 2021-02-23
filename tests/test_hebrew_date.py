@@ -1,10 +1,12 @@
 from datetime import datetime
 from pyluach import dates
 
-from app.internal.hebrew_date_view import \
-    get_hebrew_date, \
-    from_greogian_to_hebrew_date, \
-    get_month_name_by_num
+from app.internal.hebrew_date_view import (
+    get_hebrew_date,
+    from_greogian_to_hebrew_date,
+    get_month_name_by_num,
+)
+
 
 
 DAY = datetime.strptime("2021-01-01", "%Y-%m-%d").date()
