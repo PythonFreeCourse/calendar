@@ -140,7 +140,7 @@ class TestBotClient:
         assert response.status_code == status.HTTP_200_OK
         assert b'Hello, Moshe!' in response.content
         assert b'To use PyLendar Bot you have to register' \
-               in response.content
+            in response.content
 
     @staticmethod
     @pytest.mark.asyncio

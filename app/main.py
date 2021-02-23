@@ -8,7 +8,14 @@ from sqlalchemy.orm import Session
 
 from app import config
 from app.database import engine, models
-from app.dependencies import get_db, logger, MEDIA_PATH, STATIC_PATH, templates
+from app.dependencies import (
+    get_db,
+    logger,
+    MEDIA_PATH,
+    SOUNDS_PATH,
+    STATIC_PATH,
+    templates,
+)
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
@@ -17,11 +24,11 @@ from app.utils.extending_openapi import custom_openapi
 
 
 def create_tables(engine, psql_environment):
-    if 'sqlite' in str(engine.url) and psql_environment:
+    if "sqlite" in str(engine.url) and psql_environment:
         raise models.PSQLEnvironmentError(
             "You're trying to use PSQL features on SQLite env.\n"
             "Please set app.config.PSQL_ENVIRONMENT to False "
-            "and run the app again."
+            "and run the app again.",
         )
     else:
         models.Base.metadata.create_all(bind=engine)
@@ -32,6 +39,7 @@ create_tables(engine, config.PSQL_ENVIRONMENT)
 app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
 app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
@@ -40,10 +48,35 @@ app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
 set_ui_language()
 
 from app.routers import (  # noqa: E402
-    about_us, agenda, calendar, categories, celebrity, credits,
-    currency, dayview, email, event, export, features, four_o_four, friendview,
-    google_connect, invitation, joke, login, logout, profile,
-    register, search, telegram, user, weekview, weight, whatsapp,
+    about_us,
+    agenda,
+    audio,
+    calendar,
+    categories,
+    celebrity,
+    credits,
+    currency,
+    dayview,
+    email,
+    event,
+    export,
+    features,
+    four_o_four,
+    friendview,
+    google_connect,
+    invitation,
+    joke,
+    login,
+    logout,
+    meds,
+    profile,
+    register,
+    search,
+    telegram,
+    user,
+    weekview,
+    weight,
+    whatsapp,
 )
 
 json_data_loader.load_to_database(next(get_db()))
@@ -68,6 +101,7 @@ async def swagger_ui_redirect():
 routers_to_include = [
     about_us.router,
     agenda.router,
+    audio.router,
     calendar.router,
     categories.router,
     celebrity.router,
@@ -86,6 +120,7 @@ routers_to_include = [
     joke.router,
     login.router,
     logout.router,
+    meds.router,
     profile.router,
     register.router,
     salary.router,
@@ -107,10 +142,13 @@ for router in routers_to_include:
 @logger.catch()
 async def home(request: Request, db: Session = Depends(get_db)):
     quote = daily_quotes.get_quote_of_day(db)
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "quote": quote,
-    })
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "quote": quote,
+        },
+    )
 
 
 custom_openapi(app)
