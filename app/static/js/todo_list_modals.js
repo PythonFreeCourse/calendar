@@ -1,15 +1,19 @@
 function openEditModal(taskId, taskTime, taskTitle, taskDescription, taskImportant){
-    $('#Modal').modal("toggle");
-    $('#editTaskId').val(taskId);
-    $('#customerTime2').val(taskTime);
-    $('#customerTitle2').val(taskTitle);
-    $('#customerDescrip2').val(taskDescription);
-    $('#isImportant2').prop('checked', taskImportant);
-    $('#editModal').modal("toggle");
+    document.getElementById('modal').addEventListener('show.bs.modal', function (event) {
+        document.getElementById('edit-task-id').value = taskId;
+        document.getElementById('customer-time2').value = taskTime;
+        document.getElementById('customer-title2').value = taskTitle;
+        document.getElementById('customer-descrip2').value = taskDescription;
+        document.getElementById('is-important2').checked = taskImportant
+        document.getElementById('edit-modal').addEventListener('show.bs.modal' ,function (event) {
+
+        }
+    }
+
 }
 
 function deleteModal() {
-    var taskId = $('#editTaskId').val();
-    $('#deleteTaskId').val(taskId);
-    $('#deleteTaskForm').submit();
+    var taskId = $('#edit-task-id').val();
+    $('#delete-task-id').val(taskId);
+    $('#delete-task-form').submit();
 }

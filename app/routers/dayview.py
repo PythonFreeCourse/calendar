@@ -8,6 +8,7 @@ from app.database.models import Event,Task, User
 from app.dependencies import get_db, templates
 from app.internal import zodiac
 from app.internal.todo_list import sort_by_time
+from app.internal.utils import get_current_user
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -166,7 +167,8 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
+    # user = session.query(User).filter_by(username="test_username").first()
+    user = get_current_user(session)
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -188,8 +190,10 @@ async def dayview(
         session=session,
         user_id=user.id,
     )
-    tasks = session.query(Task).filter(Task.owner_id == user.id) \
-        .filter(Task.date == day.date())
+    tasks = (session.query(Task)
+             .filter(Task.owner_id == user.id)
+             .filter(Task.date == day.date())
+             )
     tasks = sort_by_time(list(tasks))
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
@@ -200,6 +204,7 @@ async def dayview(
             "all_day_events": all_day_events,
             "month": month,
             "day": day.day,
+            "date_str": date,
             "zodiac": zodiac_obj,
             "view": view,
             "tasks": tasks,

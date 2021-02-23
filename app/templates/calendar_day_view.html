@@ -1,238 +1,272 @@
 {% extends "partials/calendar/calendar_base.html" %}
 {% block body %}
 <div id="day-view">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/dayview.css') }}">
-  <div id="top-tab" class="d-flex justify-content-around align-items-center sticky-top">
-    {% if view == 'day' %}
-    <a href="/closethedayview" title="close day view"><img class="pb-1"
-                                                           src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
-                                                           width="15em" height="15em"></a>
-    <span id="month-num" class="month-title fw-bold text-white">{{month}}</span>
-    <span id="day-num" class="day-title fw-bold text-white">{{day}}</span>
-    {% if zodiac %}
-    <div class="zodiac-sign">
-      <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Zodiac-sign: {{zodiac.name}}"
-         target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
-                              alt="zodiac sign" width="14em" height="13em"></a>
+    <link rel="stylesheet" type="text/css"
+          href="{{ url_for('static', path='/dayview.css') }}">
+    <div id="top-tab"
+         class="d-flex justify-content-around align-items-center sticky-top">
+        {% if view == 'day' %}
+        <a href="/closethedayview" title="close day view"><img class="pb-1"
+                                                               src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
+                                                               width="15em"
+                                                               height="15em"></a>
+        <span id="month-num"
+              class="month-title fw-bold text-white">{{month}}</span>
+        <span id="day-num" class="day-title fw-bold text-white">{{day}}</span>
+        {% if zodiac %}
+        <div class="zodiac-sign">
+            <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}"
+               title="Zodiac-sign: {{zodiac.name}}"
+               target="_blank"><img
+                    src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
+                    alt="zodiac sign" width="14em" height="13em"></a>
+        </div>
+        {% endif %}
+        {% else %}
+        <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
+        {% endif %}
     </div>
-    {% endif %}
-    {% else %}
-    <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
-    {% endif %}
-  </div>
-  <button type="button" class="open-button" data-bs-toggle="modal"
-        data-bs-target="#exampleModal">
-    Create Task
-</button>
-<button type="button" class="open-button" data-bs-toggle="modal"
-        data-bs-target="#Modal">
-    Todo-List
-</button>
-<!-- Modal -->
-<div class="todo-style">
-    <div class="modal fade" id="exampleModal" tabindex="-1"
-         aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background: #30465D">
-                    <h1 class="day fw-bold text-white" id="exampleModalLabel">
-                        Add Task</h1>
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
+    <button type="button" class="open-button" data-bs-toggle="modal"
+            data-bs-target="#example-modal">
+        Create Task
+    </button>
+    <button type="button" class="open-button" data-bs-toggle="modal"
+            data-bs-target="#modal">
+        Todo-List
+    </button>
+    <!-- Modal -->
+    <div class="todo-style">
+        <div class="modal fade" id="example-modal" tabindex="-1"
+             aria-labelledby="example-modal-Label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header top-todo">
+                        <h1 id="example-modal-Label">
+                            Add Task</h1>
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="/task/add" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" value="{{date_str}}"
+                                   name="date_str">
+                            <label for="customer-time">Select
+                                Hour:<em>&#x2a;</em></label>
+                            <input id="customer-time" name="time_str"
+                                   required=""
+                                   type="time">
+                            <label for="customer-title">Title:<em>&#x2a;</em></label>
+                            <input id="customer-title" name="title" required=""
+                                   type="text" maxlength="10">
+                            <textarea placeholder="Description:"
+                                      id="customer-descrip" name="description"
+                                      required=""></textarea>
+                            <label>Is important?</label>
+                            <input id="is-important" name="is_important"
+                                   type="checkbox">
+                        </div>
+                        <div class="modal-footer">
+                            <button class="sub-button" type="submit"
+                                    value="Submit"
+                            >Submit
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <form action="/task/add" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" value="{{datestr}}"
-                               name="datestr">
-                        <label for="customerTime">Select
-                            Hour:<em>&#x2a;</em></label>
-                        <input id="customerTime" name="timestr" required=""
-                               type="time">
-                        <label for="customerTitle">Title:<em>&#x2a;</em></label>
-                        <input id="customerTitle" name="title" required=""
-                               type="text" maxlength="10">
-                        <textarea placeholder="Description:"
-                                  id="customerDescrip" name="description"
-                                  required="" type="text"></textarea>
-                        <label>Is important?</label>
-                        <input id="isImportant" name="is_important"
-                               type="checkbox">
-                    </div>
-                    <div class="modal-footer">
-                        <button class="sub-button" type="submit" value="Submit"
-                        >Submit
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="Modal" tabindex="-1"
-         aria-labelledby="ModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background: #30465D">
-                    <h1 class="day fw-bold text-white" id="ModalLabel">Todo
-                        List</h1>
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="table">
-                    <table id="customerDone">
-                        <thead>
-                        <th>Time</th>
-                        <th>Task</th>
-                        <th>Description</th>
-                        <th>Is Done?</th>
-                        </thead>
-                        <tbody>
-                        {% for task in tasks %}
-                        {% if task.is_important %}
-                        <tr style="border-bottom: 5px solid blue">
-                            {% else %}
-                        <tr>
-                            {% endif %}
-                            <td>{{task.time}}</td>
-                            <td>{{task.title}}</td>
-                            <td>{{task.description}}</td>
-                            {% if task.is_done %}
-                            <td>
-                                <form action="/task/setUndone/{{task.id}}"
-                                      method="post">
-                                    <button type="submit">Undone</button>
-                                </form>
-                            </td>
-                            {% else %}
-                            <td>
-                                <form action="/task/setDone/{{task.id}}"
-                                      method="post">
-                                    <button type="submit">Done</button>
-                                </form>
-                            </td>
-                            {% endif %}
+        <div class="modal fade" id="modal" tabindex="-1"
+             aria-labelledby="modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header top-todo">
+                        <h1 id="modal-label">Todo
+                            List</h1>
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="table">
+                        <table id="customer-done">
+                            <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Task</th>
+                                <th>Description</th>
+                                <th>Is Done?</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for task in tasks %}
                             {% if task.is_important %}
-                            <td><a href="#"
-                                   onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', true)"
-                                   class="edit">Edit</a></td>
-                            {% else %}
-                            <td><a href="#"
-                                   onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', false)"
-                                   class="edit">Edit</a></td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="todo-style">
-    <div class="modal fade" id="editModal" tabindex="-1"
-         aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="background: #30465D">
-                    <h1 class="day fw-bold text-white" id="editModalLabel">
-                        Edit Task</h1>
-                    <button type="button" class="btn-close"
-                            data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                </div>
-                <form action="/task/edit" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" value="{{datestr}}"
-                               name="datestr">
-                        <input type="hidden" value="" name="task_id"
-                               id="editTaskId">
-                        <label for="customerTime2">Select
-                            Hour:<em>&#x2a;</em></label>
-                        <input id="customerTime2" name="timestr" required=""
-                               type="time">
-                        <label for="customerTitle2">Title:<em>&#x2a;</em></label>
-                        <input id="customerTitle2" name="title" required=""
-                               type="text" maxlength="10">
-                        <textarea placeholder="Description:"
-                                  id="customerDescrip2" name="description"
-                                  required="" type="text"></textarea>
-                        <label>Is important?</label>
-                        <input id="isImportant2" name="is_important"
-                               type="checkbox">
+                            <tr class="important">
+                                {% else %}
+                            <tr>
+                                {% endif %}
+                                <td>{{ task.time }}</td>
+                                <td>{{ task.title }}</td>
+                                <td>{{ task.description }}</td>
+                                {% if task.is_done %}
+                                <td>
+                                    <form action="/task/undone/{{task.id}}"
+                                          method="post">
+                                        <button type="submit">Undone</button>
+                                    </form>
+                                </td>
+                                {% else %}
+                                <td>
+                                    <form action="/task/done/{{task.id}}"
+                                          method="post">
+                                        <button type="submit">Done</button>
+                                    </form>
+                                </td>
+                                {% endif %}
+                                {% if task.is_important %}
+                                <td>
+                                    <button type="button" class="edit"
+                                            data-bs-toggle="modal"
+                                            onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', true)"
+                                            data-bs-target="#edit-modal">
+                                        Edit
+                                    </button>
+                                </td>
+
+                                {% else %}
+                                <td>
+                                    <button type="button" class="edit"
+                                            data-bs-toggle="modal"
+                                            onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', false)"
+                                            data-bs-target="#edit-modal">
+                                        Edit
+                                    </button>
+                                </td>
+
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
-                        <button class="sub-button" type="submit" value="Submit"
-                        >Save
-                        </button>
-                        <button class="del-button" type="button"
-                                onclick="deleteModal()"
-                        >Delete
-                        </button>
                     </div>
-                </form>
-                <form action="/task/delete" method="post" id="deleteTaskForm">
-                    <input type="hidden" id="deleteTaskId" name="taskId">
-                </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-  <div class="all_day_events">
-    {% for event in all_day_events %}
-      <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
-    {% endfor %}
-  </div>
-  <div class="schedule">
-    <div class="container times bg-primeary position">
-      {% for hour in range(25)%}
-      <div class='hour-block'>
-        <div class="row bg-transparent hour-mark">
-          {% if view == 'day'%}
-          {% set hour = hour|string() %}
-          {{hour.zfill(2)}}:00
-          {% endif %}
+    <div class="todo-style">
+        <div class="modal fade" id="edit-modal" tabindex="-1"
+             aria-labelledby="edit-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header" style="background: #2B346A">
+                        <h1 id="edit-modal-label">
+                            Edit Task</h1>
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="/task/edit" method="post">
+                        <div class="modal-body">
+                            <input type="hidden" value="{{date_str}}"
+                                   name="date_str">
+                            <input type="hidden" value="" name="task_id"
+                                   id="edit-task-id">
+                            <label for="customer-time2">Select
+                                Hour:<em>&#x2a;</em></label>
+                            <input id="customer-time2" name="time_str"
+                                   required=""
+                                   type="time">
+                            <label for="customer-title2">Title:<em>&#x2a;</em></label>
+                            <input id="customer-title2" name="title"
+                                   required=""
+                                   type="text" maxlength="10">
+                            <textarea placeholder="Description:"
+                                      id="customer-descrip2" name="description"
+                                      required=""></textarea>
+                            <label>Is important?</label>
+                            <input id="is-important2" name="is_important"
+                                   type="checkbox">
+                        </div>
+                        <div class="modal-footer">
+                            <button class="sub-button" type="submit"
+                                    value="Submit"
+                            >Save
+                            </button>
+                            <button class="del-button" type="button"
+                                    onclick="deleteModal()"
+                            >Delete
+                            </button>
+                        </div>
+                    </form>
+                    <form action="/task/delete" method="post"
+                          id="delete-task-form">
+                        <input type="hidden" id="delete-task-id"
+                               name="task_id">
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="hour-bar row text-white border-bottom"></div>
-      </div>
-      {% endfor %}
     </div>
-    <div class="event-grid">
-      {% for event, attr in events %}
-      <div id="event{{event.id}}" class="d-flex flex-column text-truncate px-2 event"
-           style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
-        <div class="d-flex flex-column justify-content-evenly event-details">
-          <p class="text-truncate my-0 {{attr.title_size_class}}">{{ event.title }}</p>
-          {% if attr.total_time_visible %}
-          <p class="total-time text-truncate fw-light my-0">{{attr.total_time}}</p>
-          {% endif %}
-        </div>
-        <div class="d-flex flex-row justify-content-around align-items-end action-container"
-             style="grid-row: {{attr.grid_position}};">
-          <a href="/edit/{{event.id}}" title="Edit event" class="action-icon"><img class="pb-1"
-                                                                                   src="{{ url_for('static', path='/images/icons/pencil.svg')}}"></a>
-          <a href="/delete/{{event.id}}" title="Delete event" class="action-icon"><img class="pb-1"
-                                                                                       src="{{ url_for('static', path='/images/icons/trash-can.svg')}}"></a>
-          <a href="/event/{{event.id}}" title="See full event" class="action-icon"><img class="pb-1"
-                                                                                        src="{{ url_for('static', path='/images/icons/view.svg')}}"></a>
-        </div>
-      </div>
-      {% endfor %}
+    <div class="all_day_events">
+        {% for event in all_day_events %}
+        <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
+        {% endfor %}
     </div>
-  </div>
-  {% if view == 'day'%}
-  <button title="Add Event" class="event-btn add-event-icon">
-    <ion-icon name="add"></ion-icon>
-  </button>
-  {% endif %}
+    <div class="schedule">
+        <div class="container times bg-primeary position">
+            {% for hour in range(25)%}
+            <div class='hour-block'>
+                <div class="row bg-transparent hour-mark">
+                    {% if view == 'day'%}
+                    {% set hour = hour|string() %}
+                    {{hour.zfill(2)}}:00
+                    {% endif %}
+                </div>
+                <div class="hour-bar row text-white border-bottom"></div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="event-grid">
+            {% for event, attr in events %}
+            <div id="event{{event.id}}"
+                 class="d-flex flex-column text-truncate px-2 event"
+                 style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
+                <div class="d-flex flex-column justify-content-evenly event-details">
+                    <p class="text-truncate my-0 {{attr.title_size_class}}">{{
+                        event.title }}</p>
+                    {% if attr.total_time_visible %}
+                    <p class="total-time text-truncate fw-light my-0">
+                        {{attr.total_time}}</p>
+                    {% endif %}
+                </div>
+                <div class="d-flex flex-row justify-content-around align-items-end action-container"
+                     style="grid-row: {{attr.grid_position}};">
+                    <a href="/edit/{{event.id}}" title="Edit event"
+                       class="action-icon"><img class="pb-1"
+                                                src="{{ url_for('static', path='/images/icons/pencil.svg')}}"></a>
+                    <a href="/delete/{{event.id}}" title="Delete event"
+                       class="action-icon"><img class="pb-1"
+                                                src="{{ url_for('static', path='/images/icons/trash-can.svg')}}"></a>
+                    <a href="/event/{{event.id}}" title="See full event"
+                       class="action-icon"><img class="pb-1"
+                                                src="{{ url_for('static', path='/images/icons/view.svg')}}"></a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if view == 'day'%}
+    <button title="Add Event" class="event-btn add-event-icon">
+        <ion-icon name="add"></ion-icon>
+    </button>
+    {% endif %}
 </div>
 {% if view == 'day'%}
 <div id="event_block"></div>{% endif %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
         crossorigin="anonymous"></script>
-<script type="text/javascript" src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
+<script type="text/javascript"
+        src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
 {% endblock body %}

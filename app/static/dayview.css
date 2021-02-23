@@ -176,10 +176,11 @@ body {
 
 .open-button {
     background-color: var(--primary);
+    max-width: 10%;
     color: #fff;
     margin-top: 0.75em;
+    margin-left: 45.5%;
     font-size: 1.25em;
-    padding: 0.875em;
     border-radius: 20px;
     transition-duration: 0.4s;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
@@ -191,9 +192,18 @@ body {
   box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
+.top-todo {
+    background: #2B346A;
+}
+
 .todo-style h1 {
     color: #fff;
     text-align: center;
+}
+
+.important {
+    border-bottom: 5px solid blue;
+    margin-left: 3em;
 }
 
 .todo-style input[type="text"],
