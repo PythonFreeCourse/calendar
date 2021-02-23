@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 
 from app.database.models import Event, User
 from app.dependencies import get_db, templates
-from app.internal import international_days, zodiac
+from app.internal import international_days, locations, shabbat, zodiac
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -165,7 +165,7 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
+    user = session.query(User).filter_by(username="new_user").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -177,6 +177,9 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
+    location_and_shabbat = locations.get_user_location(session)
+    user_location = location_and_shabbat['location']['title']
+    shabbat_obj = shabbat.get_shabbat_if_date_friday(location_and_shabbat, day.date())
     events_n_attrs = get_events_and_attributes(
         day=day,
         session=session,
@@ -200,5 +203,7 @@ async def dayview(
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
+            "user_location": user_location,
+            "shabbat": shabbat_obj
         },
     )

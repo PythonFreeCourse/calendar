@@ -431,6 +431,15 @@ class InternationalDays(Base):
     international_day = Column(String, nullable=False)
 
 
+class Location(Base):
+    __tablename__ = "locations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    country = Column(String, nullable=False)
+    city = Column(String, nullable=False)
+    zip_number = Column(String, nullable=False)
+
+
 # insert language data
 
 # Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu

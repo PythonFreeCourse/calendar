@@ -31,6 +31,16 @@
         The International days are: "{{ international_day.international_day }}"
     </div>
     {% endif %}
+    {% if user_location %}
+    <div class="location"style="color:green">{{user_location}}</div>
+    {% endif %}
+    {% if shabbat %}
+    <div class="shabbat" style="color:red">
+        {{ gettext(" :זמני הדלקת נרות") }}<br>
+       {{ gettext(" :כניסת שבת %(enter)s", enter=shabbat['start_hour']) }}<br>
+       {{ gettext(" :צאת שבת %(exit)s", exit=shabbat['end_hour']) }}
+    </div>
+    {% endif %}
     <div class="all_day_events">
         {% for event in all_day_events %}
         <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
