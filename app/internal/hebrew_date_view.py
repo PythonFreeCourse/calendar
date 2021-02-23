@@ -21,6 +21,7 @@ EN_TO_HEB_MONTH_NAMES = {
     'Elul': 'אלול',
 }
 
+
 def get_month_name_by_num(date: datetime) -> str:
     """Returns the Hebrew name date for the specific day.
 
