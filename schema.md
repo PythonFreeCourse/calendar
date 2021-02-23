@@ -56,6 +56,19 @@
     └── conftest.py
     └── test_profile.py
     └── test_app.py
+    └── tests_ui
+        ├──cypress
+            ├──enums
+            ├──fixtures
+            ├──integration
+            ├──plugins
+            ├──screenshots
+            ├──support
+            └──videos
+        ├──node_modules
+        ├──cypress.json
+        ├──package-lock.json
+        └──package.json
     ├── conftest.py
     ├── test_agenda_internal.py
     ├── test_agenda_route.py

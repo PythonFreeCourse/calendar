@@ -1,3 +1,4 @@
+import datetime
 import io
 
 from loguru import logger
@@ -40,7 +41,13 @@ def get_placeholder_user():
 async def profile(
         request: Request,
         session=Depends(get_db),
+<<<<<<< HEAD
+        new_user=Depends(get_placeholder_user),
+        new_event=Depends(get_placeholder_event)):
+
+=======
         new_user=Depends(get_placeholder_user)):
+>>>>>>> b91708d299bde83bbd10ff93496b23af9d35dd8f
     # Get relevant data from database
     upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
