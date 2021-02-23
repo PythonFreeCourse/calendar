@@ -84,7 +84,6 @@ def form_mock():
 
 
 def test_create_features_at_startup(mocker, session, mock_features):
-
     mocker.patch("app.internal.features.features", mock_features)
     mocker.patch("app.internal.features.is_feature_exists", return_value=False)
 
@@ -138,12 +137,10 @@ def test_is_feature_exist_in_enabled(
     user,
 ):
     feat = session.query(Feature).filter_by(name=feature.name).first()
-
     mocker.patch(
         "app.internal.features.get_user_enabled_features",
         return_value=[feat],
     )
-
     assert internal.is_feature_enabled(user, feat, session)
 
 
@@ -158,7 +155,6 @@ async def test_is_feature_enabled(mocker, session, association_on, user):
         "app.internal.features.current_user_from_db",
         return_value=user,
     )
-
     assert (
         await internal.is_access_allowd(route="/route", request=None) is True
     )
