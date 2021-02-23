@@ -372,3 +372,8 @@ main {
 .button:hover {
   font-weight: 700;
 }
+
+.dates-calc {
+    background-color: #222831;
+    color: white;
+}
