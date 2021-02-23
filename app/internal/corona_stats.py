@@ -121,9 +121,6 @@ def insert_to_db_if_needed(
 
 
 async def get_vacinated_data() -> JSON:
-    # the api updates during the day, so we want to stay updated.
-    # res = requests.get(CORONA_API_URL, headers=headers)
-    # return json.loads(res.text)[-1]
     async with httpx.AsyncClient() as client:
         res = await client.get(CORONA_API_URL, headers=headers)
         return json.loads(res.text)[-1]
