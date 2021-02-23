@@ -20,8 +20,8 @@ from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
-from app.internal.security.dependancies import current_user
-import os
+from app.internal.security.dependencies import current_user
+from os.path import relpath
 
 
 def create_tables(engine, psql_environment):
@@ -133,8 +133,8 @@ routers_to_include = [
 for router in routers_to_include:
     app.include_router(router)
 
-EMPTY_HEART_PATH = os.path.relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
-FULL_HEART_PATH = os.path.relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
+EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
+FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
 
 
 @app.get("/", include_in_schema=False)
