@@ -3,7 +3,7 @@ from typing import List
 
 from app.dependencies import get_db, SessionLocal
 from app.database.models import User, UserFeature, Feature
-from app.internal.security.dependancies import current_user_from_db
+from app.internal.security.dependencies import current_user_from_db
 from app.internal.features import (
     create_user_feature_association,
     is_association_exists_in_db,

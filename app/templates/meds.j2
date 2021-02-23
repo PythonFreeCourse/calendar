@@ -1,0 +1,71 @@
+{% extends "partials/index/index_base.html" %}
+
+{% block content %}
+  <div class="container col col-sm-7 col-md-5 col-lg-4 mt-3">
+    <header class="text-center">
+      <h1>Did You Remember to Take Your Meds?</h1>
+    </header>
+
+    {% if errors %}
+      <div class="mb-2 pb-0 alert alert-danger text-center">
+        {% for error in errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post">
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="name">Medication Name:</label>
+        <input class="form-control" type="text" name="name" id="name" value="{{ data['name'] }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="start">Start Date:</label>
+        <input class="form-control" type="date" name="start" id="start" value="{{ data['start'] }}" required>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="first">Starting Time (Optional):</label>
+        <input class="form-control" type="time" name="first" id="first" value="{{ data['first'] }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="end">Finish Date:</label>
+        <input class="form-control" type="date" name="end" id="end" value="{{ data['end'] }}" required>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="amount">Daily Amount:</label>
+        <input class="form-control" type="number" name="amount" id="amount" value="{{ data['amount'] }}" min="1" max="{{ quantity }}" required>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="early">Earliest Reminder:</label>
+        <input class="form-control" type="time" name="early" id="early" value="{{ data['early'] }}" required>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="late">Latest Reminder:</label>
+        <input class="form-control" type="time" name="late" id="late" value="{{ data['late'] }}" required>
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="min">Minimal Interval:</label>
+        <input class="form-control" type="time" name="min" id="min" min="00:01" value="{{ data['min'] }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="max">Maximal Interval:</label>
+        <input class="form-control" type="time" name="max" id="max" value="{{ data['max'] }}">
+      </div>
+
+      <div class="input-group mb-2">
+        <label class="font-weight-bold input-group-text" for="note">Note:</label>
+        <input class="form-control" type="text" name="note" id="note" value="{{ data['note'] }}">
+      </div>
+
+      <button type="submit" class="btn btn-sm btn-primary">Create Reminders</button>
+    </form>
+  </div>
+{% endblock content %}

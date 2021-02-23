@@ -5,7 +5,7 @@ from typing import List
 
 from app.database.models import UserFeature, Feature, User
 from app.dependencies import get_db, SessionLocal
-from app.internal.security.dependancies import current_user_from_db
+from app.internal.security.dependencies import current_user_from_db
 from app.internal.security.ouath2 import get_authorization_cookie
 from app.internal.features_index import features
 from app.internal.utils import create_model

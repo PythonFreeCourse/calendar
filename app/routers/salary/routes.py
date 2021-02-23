@@ -8,7 +8,8 @@ from starlette.responses import RedirectResponse, Response
 
 from app.database.models import SalarySettings
 from app.dependencies import get_db, templates
-from app.internal.utils import create_model, get_current_user
+from app.internal.utils import (create_model, get_current_user,
+                                get_time_from_string)
 from app.routers.salary import utils
 
 router = APIRouter(
@@ -111,9 +112,9 @@ async def create_settings(request: Request,
             'holiday_category_id': form['holiday_category_id'],
             'regular_hour_basis': form['regular_hour_basis'],
             'night_hour_basis': form['night_hour_basis'],
-            'night_start': utils.get_time_from_string(form['night_start']),
-            'night_end': utils.get_time_from_string(form['night_end']),
-            'night_min_len': utils.get_time_from_string(form['night_min_len']),
+            'night_start': get_time_from_string(form['night_start']),
+            'night_end': get_time_from_string(form['night_end']),
+            'night_min_len': get_time_from_string(form['night_min_len']),
             'first_overtime_amount': form['first_overtime_amount'],
             'first_overtime_pay': form['first_overtime_pay'],
             'second_overtime_pay': form['second_overtime_pay'],

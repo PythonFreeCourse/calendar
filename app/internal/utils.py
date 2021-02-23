@@ -1,4 +1,5 @@
-from typing import Any, List, Optional
+from datetime import date, datetime, time
+from typing import Any, List, Optional, Union
 
 from sqlalchemy.orm import Session
 
@@ -41,7 +42,7 @@ def get_current_user(session: Session) -> User:
 
 
 def get_available_users(session: Session) -> List[User]:
-    """this function return all availible users."""
+    """this function return all available users."""
     return session.query(User).filter(not User.disabled).all()
 
 
@@ -56,6 +57,26 @@ def get_user(session: Session, user_id: int) -> Optional[User]:
         (User | None): User instance for `user_id` if exists, None otherwise.
     """
     return session.query(User).filter_by(id=user_id).first()
+
+
+def get_time_from_string(string: str) -> Optional[Union[date, time]]:
+    """Converts time string to a date or time object.
+
+    Args:
+        string (str): Time string.
+
+    Returns:
+        datetime.time | datetime.date | None: Date or Time object if valid,
+                                              None otherwise.
+    """
+    formats = {'%Y-%m-%d': 'date', '%H:%M': 'time', '%H:%M:%S': 'time'}
+    for time_format, method in formats.items():
+        try:
+            time_obj = getattr(datetime.strptime(string, time_format), method)
+        except ValueError:
+            pass
+        else:
+            return time_obj()
 
 
 def get_placeholder_user() -> User:

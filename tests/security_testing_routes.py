@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 
-from app.internal.security.dependancies import (
+from app.internal.security.dependencies import (
     current_user, current_user_from_db,
     is_logged_in, is_manager, User
 )
