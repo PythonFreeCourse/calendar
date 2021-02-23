@@ -12,7 +12,6 @@ from app.database.models import Country, Event
 from app.resources.countries import countries
 
 ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
-HOUR_MINUTE_FORMAT = "%H:%M"
 
 
 def raise_if_zoom_link_invalid(vc_link):
@@ -25,14 +24,18 @@ def raise_if_zoom_link_invalid(vc_link):
 
 def get_invited_emails(invited_from_form: str) -> List[str]:
     invited_emails = []
+    if not invited_from_form:
+        return [""]
     for invited_email in invited_from_form.split(","):
         invited_email = invited_email.strip()
         try:
             validate_email(invited_email, check_deliverability=False)
         except EmailSyntaxError:
-            logging.exception(f"{invited_email} is not a valid email address")
-            continue
-        invited_emails.append(invited_email)
+            logging.exception(
+                f"{invited_email} is not a valid email address",
+            )
+        else:
+            invited_emails.append(invited_email)
 
     return invited_emails
 
