@@ -126,7 +126,7 @@ def add_countries_to_db(session: Session) -> None:
             existing = session.query(Country).filter_by(name=name).first()
             if not existing:
                 new_country = Country(name=name, timezone=str(capital_city))
-                session.add(new_country)
+                session.merge(new_country)
     session.commit()
     session.close()
 
