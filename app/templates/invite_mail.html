@@ -1,0 +1,16 @@
+{% extends "mail_base.html" %}
+
+
+{% block content %}
+
+  <div class="container mt-4">
+    <h1>Hi, {{ recipient }}!</h1>
+    <h2>{{ sender }} invites you to join {{ site_name }}.</h2>
+    <p>if you want to join please click on the <a href={{ registration_link }}>link</a></p>
+    <p>if you want to get acquainted with our application please click on the <a href={{ home_link }}>link</a></p>
+    <p>This email has been sent to {{ recipient_mail }}.</p>
+    <p>If you think it was sent in error, please ignore it</p>
+  </div>
+
+
+{% endblock %}

@@ -1,0 +1,374 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+}
+
+/* Grids */
+/* -> Website Structure */
+.pyldr-container {
+  display: flex;
+  height: 100%;
+}
+
+nav {
+  z-index: 5;
+  padding: var(--space_xs);
+}
+
+.menu {
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  top:var(--space_s);
+}
+
+.fixed-features,
+.user-features,
+#open-features {
+  text-align: center;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-features {
+  margin-top: 3rem;
+}
+
+.fixed-features div {
+  font-size: var(--text_xxl);
+  height: 3rem;
+}
+
+.fixed-features div:hover {
+  color: var(--secondary);
+}
+
+.user-features div {
+  height: 1.75rem;
+  width: 1.75rem;
+  font-size: var(--text_m);
+  margin: var(--space_s) auto auto auto;
+  color: var(--background);
+  background-color: var(--positive);
+  border-radius: 0.125rem;
+}
+
+.user-features div:hover {
+  color: var(--primary);
+  background-color: var(--secondary);
+}
+
+.user-features div:visited:active {
+  color: var(--primary);
+  background-color: var(--secondary);
+}
+
+#open-features {
+  font-size: var(--icon_l);
+  margin-top: var(--space_s);
+}
+
+#feature-settings {
+  visibility: hidden;
+  width: 0.1rem;
+  background-color: var(--surface);
+}
+
+.settings-open {
+    width: 20rem;
+}
+
+img {fill: var(--background);}
+
+header {
+  z-index: 5;
+  position: sticky;
+  top: 0;
+  display: flex;
+  grid-flow: row wrap;
+  margin: 0 var(--space_s);
+  background-color: var(--background);
+}
+
+header div {
+  flex: 1;
+}
+
+#logo-div {
+  text-align: end;
+}
+
+/* Main Element Grid */
+main {
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.calendar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.day-view-visible {
+  flex: 0 1 30%;
+  opacity: 1;
+  transition: all 1s;
+}
+
+.calender-days-titles {
+  z-index: 4;
+  position: sticky;
+  align-self: flex-start;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin: var(--space_s) var(--space_s) 0 var(--space_s);
+  background-color: var(--background);
+  align-self: stretch;
+}
+
+/* The Calendar Grid */
+#calender-grid {
+  flex: 1;
+  display: grid;
+  grid-auto-rows: 20%;
+  grid-template-rows: repeat(5, 20%);
+  overflow-y: scroll;
+  height: 100%;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+#calender-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.week {
+  flex: 1;
+  display: grid;
+  margin: 0 var(--space_s);
+  grid-template-columns: repeat(7, 1fr);
+  font-weight: 800;
+  font-size: var(--text_m);
+}
+
+.week:hover {
+  box-shadow: -0.25rem 0 0 0 var(--secondary);
+}
+
+.day {
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  font-size: var(--text_xs);
+  padding: 0 var(--space_s);
+  border: 0.095rem solid var(--surface);
+
+  overflow-y: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.day::-webkit-scrollbar {
+  display: none;
+}
+
+.event {
+  font-weight: 400;
+}
+
+.day:hover {border: 0.1rem solid var(--primary);}
+
+.day:hover .day-number{color: var(--negative);}
+
+.day:hover .add-small {
+  display: block;
+}
+
+.day-number {
+  font-weight: 800;
+  font-size: var(--text_m);
+  text-align: left;
+}
+
+.day_current {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.month-day-header {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.month-day-header div {
+  flex-grow: 2;
+}
+
+.month-day-header:last-child {
+  text-align: right;
+}
+
+.add-small {
+  display: none;
+  font-weight: 800;
+  font-size: var(--text_m);
+  padding-right: var(--space_xs);
+}
+
+/* Months Navigation */
+#months-navigation {
+  display: flex;
+  flex-flow: column;
+  width: var(--space_xl);
+  margin: 0 var(--space_s);
+  align-items: center;
+}
+
+#months-navigation * {
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: var(--space_s);
+}
+
+#pre-month-title,
+#aft-month-title {
+  font-size: var(--text_s);
+}
+
+#current-month-title {
+  font-weight: 800;
+  font-size: var(--text_m);
+}
+
+.sticky {
+  z-index: 4;
+  position: sticky;
+}
+
+#month0 {
+  font-size: var(--text_m);
+  font-weight: 800;
+}
+
+#month-1,
+#month1 {
+  font-size: var(--text_s);
+  opacity: 0.8;
+}
+
+#month-2,
+#month2,
+#month-2 + ion-icon,
+#month1 + ion-icon {
+  font-size: var(--text_xs);
+  opacity: 0.6;
+}
+
+/* Events - Rotation*/
+.month-event {
+  position: relative;
+  perspective: 94rem;
+  -moz-perspective: 94rem;
+  height: 1.5rem;
+}
+
+.month-event div{
+  height: 1.5rem;
+  width: 100%;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+}
+
+.back {
+  transform: rotateX(180deg);
+}
+
+.month-event:hover .front {
+  transform: rotateX(-180deg);
+}
+
+.month-event:hover .back {
+  transform: rotateX(0);
+}
+
+.daily {
+  font-weight: 700;
+  border-radius: 0.25rem;
+  padding: 0 var(--space_s);
+}
+
+/* Titles */
+.day-title {
+  font-weight: 600;
+  font-size: var(--text_m);
+}
+
+.title {
+  font-weight: 800;
+  font-size: var(--text_xl);
+  margin-bottom: calc(var(--space_s) * -1);
+}
+
+.sec-title {
+  font-weight: 500;
+  font-size: var(--text_s);
+}
+
+/* Text Colors */
+.text-yellow {color: var(--secondary);}
+
+.text-gray {color: var(--on-surface);}
+
+.text-lightgray {color: var(--background);}
+
+.text-darkblue {color: var(--primary);}
+
+/* Borders */
+.border-dash-darkblue {border: 0.125rem dashed  var(--primary);}
+
+.border-darkblue {border: 0.125rem solid  var(--primary);}
+
+.underline-yellow {border-bottom: 0.25rem solid  var(--secondary);}
+
+/* Background Color */
+.background-darkblue {background-color: var(--primary-variant);}
+
+.background-red {background-color: var(--negative);}
+
+.background-lightgray {background-color: var(--surface);}
+
+.background-yellow {background-color: var(--secondary);}
+
+.background-green {background-color: var(--positive);}
+
+/* Buttons */
+
+.button {
+  border-radius: 0.15rem;
+  font-size: var(--text_s);
+  font-weight: 800;
+  padding: 0.15rem 0.25rem;
+}
+
+.button:hover {
+  font-weight: 700;
+}

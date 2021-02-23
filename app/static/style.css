@@ -1,63 +1,161 @@
-body {
-    background: #A1FFCE;
-    background: -webkit-linear-gradient(to right, #FAFFD1, #A1FFCE);
-    background: linear-gradient(to right, #FAFFD1, #A1FFCE);
-}
-
 .profile-image {
-    width: 7em;
+  width: 7em;
 }
 
 .card-profile {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 .card-event {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 .card-event:hover {
-    transform: scale(1.02);
+  transform: scale(1.02);
+}
+
+.top-line {
+  height: 0.25rem;
+}
+
+.bg-gradient2 {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 97, 215, 1) 0%,
+    rgba(0, 200, 255, 1) 100%
+  );
+}
+
+h2,
+p {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#inner:hover {
+  cursor: pointer;
+  padding: 50px;
+  background-color: linear-gradient(
+    135deg,
+    rgba(0, 97, 215, 1) 0%,
+    rgba(0, 200, 255, 1) 100%
+  );
+}
+
+#inner {
+  transition: background 0.2s ease, padding 0.8s linear;
+}
+
+.landing-page-button {
+  border-radius: 9999px;
+  justify-content: center;
 }
 
 .event-posted-time {
-    font-size: 0.7rem;
+  font-size: 0.7rem;
 }
 
 .no-border {
-    border: none;
+  border: none;
 }
 
 .profile-modal-fadeIn {
-    -webkit-animation-name: profile-modal-fadeIn;
-    animation-name: profile-modal-fadeIn;
-    
-    -webkit-animation-duration: 1s;
-    animation-duration: 1s;
-    -webkit-animation-fill-mode: both;
-    animation-fill-mode: both;
+  -webkit-animation-name: profile-modal-fadeIn;
+  animation-name: profile-modal-fadeIn;
+
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+@keyframes profile-modal-fadeIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
   }
-  
-  @keyframes profile-modal-fadeIn {
-    from {
-      opacity: 0;
-      -webkit-transform: translate3d(-100%, 0, 0);
-      transform: translate3d(-100%, 0, 0);
-    }
-  
-    to {
-      opacity: 1;
-      -webkit-transform: translate3d(0, 0, 0);
-      transform: translate3d(0, 0, 0);
-    }
+
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
-  
+}
+
 .profile-modal-dialog {
-    margin: 0;
+  margin: 0;
+}
+
+.card-body {
+  overflow: auto;
 }
 
 .profile-modal-header {
-    border: none;
-    background-color:whitesmoke;
+  border: none;
+  background-color: whitesmoke;
 }
-  
+
+#on,
+#off {
+  background: rgb(197, 204, 197);
+  border: 0.2em solid black;
+  border-radius: 0.5em;
+  padding: 1em;
+  margin: 1.5em;
+  color: rgb(20, 20, 20);
+  font-size: 1em;
+  transition-duration: 0.1s;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: whitesmoke;
+}
+
+#activate {
+  margin-bottom: 1em;
+}
+
+#rangeInput-sfx,
+#rangeInput-music {
+  display: block;
+}
+
+.audio-section {
+  margin-bottom: 1em;
+}
+
+.error-message {
+  line-height: 0;
+  color: red;
+  padding-left: 12.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+}
+
+.error-message {
+  line-height: 0;
+  color: red;
+  padding-left: 12.5rem;
+  margin-bottom: 1em;
+}
+
+.input-upload-file {
+  margin-top: 1em;
+}
+
+.upload-file {
+  margin: auto 1em auto 0em;
+}
+
+h2.modal-title {
+  font-size: 1.25rem;
+}
+
+#sfx {
+  width: 5rem;
+  height: 2.5rem;
+  margin-top: 1rem;
+}

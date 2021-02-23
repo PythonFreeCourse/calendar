@@ -1,8 +1,8 @@
-from datetime import datetime, date
+from datetime import date, datetime
 
-from app.internal import agenda_events
 import pytest
 
+from app.internal import agenda_events
 from app.internal.agenda_events import get_events_per_dates
 
 
@@ -44,3 +44,26 @@ class TestAgenda:
             end=date.today(),
         )
         assert list(events) == []
+
+    def test_make_dict_for_graph_data(self, today_event, session):
+        events_for_graph = agenda_events.make_dict_for_graph_data(
+            session,
+            user_id=today_event.owner_id,
+        )
+        assert isinstance(events_for_graph, dict)
+
+    def test_get_events_for_the_week_success(self, today_event, session):
+        events, events_for_graph = agenda_events.get_events_for_the_week(
+            session,
+            user_id=today_event.owner_id,
+        )
+        assert isinstance(events_for_graph, dict)
+        assert list(events) == [today_event]
+
+    def test_get_events_for_the_week_failure(self, yesterday_event, session):
+        events, events_for_graph = agenda_events.get_events_for_the_week(
+            session,
+            user_id=yesterday_event.owner_id,
+        )
+        assert list(events) == []
+        assert isinstance(events_for_graph, dict)

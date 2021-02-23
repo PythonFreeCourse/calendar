@@ -1,0 +1,37 @@
+repos:
+  # Flake8 to check style is OK
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+    - id: flake8
+  # yapf to fix many style mistakes
+  - repo: https://github.com/ambv/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        entry: black
+        language: python
+        language_version: python3
+        require_serial: true
+        types_or: [python, pyi]
+  # More built in style checks and fixes
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    - id: trailing-whitespace
+    - id: check-docstring-first
+    - id: check-json
+    - id: check-added-large-files
+    - id: check-yaml
+    - id: debug-statements
+    - id: requirements-txt-fixer
+    - id: check-merge-conflict
+    - id: end-of-file-fixer
+    - id: sort-simple-yaml
+  - repo: meta
+    hooks:
+    - id: check-useless-excludes
+  - repo: https://github.com/asottile/add-trailing-comma
+    rev: v2.1.0
+    hooks:
+    -   id: add-trailing-comma

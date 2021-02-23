@@ -1,17 +1,18 @@
-from app.routers.event_images import attach_image_to_event,\
-    generate_flare_link_from_lemmatized_word, get_image_name,\
-    remove_non_alphabet_chars, search_token_in_related_words
-from app import config
 import pytest
 
+from app import config
+from app.routers.event_images import (attach_image_to_event,
+                                      generate_flare_link_from_lemmatized_word,
+                                      get_image_name,
+                                      remove_non_alphabet_chars,
+                                      search_token_in_related_words)
 
 static = config.STATIC_ABS_PATH
 
-
 lemmatized_words = [
-    ("ran",  f'{static}\\event_flairs\\ran.jpg'),
+    ("ran", f'{static}\\event_flairs\\ran.jpg'),
     ("food", f'{static}\\event_flairs\\food.jpg'),
-    ("i",  f'{static}\\event_flairs\\i.jpg'),
+    ("i", f'{static}\\event_flairs\\i.jpg'),
     ("drank", f'{static}\\event_flairs\\drank.jpg'),
 ]
 

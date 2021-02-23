@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, Invitation, UserEvent
-from app.routers.export import event_to_ical
-from app.routers.user import does_user_exist, get_users
 from app.internal.utils import save
+from app.internal.export import get_icalendar
+from app.routers.user import does_user_exist, get_users
 
 
 def sort_emails(
@@ -33,7 +33,7 @@ def send_email_invitation(
 ) -> bool:
     """Sends an email with an invitation."""
 
-    ical_invitation = event_to_ical(event, participants)  # noqa: F841
+    ical_invitation = get_icalendar(event, participants)  # noqa: F841
     for _ in participants:
         # TODO: send email
         pass
@@ -72,8 +72,8 @@ def accept(invitation: Invitation, session: Session) -> None:
         event_id=invitation.event.id
     )
     invitation.status = 'accepted'
-    save(invitation, session=session)
-    save(association, session=session)
+    save(session, invitation)
+    save(session, association)
 
 
 def share(event: Event, participants: List[str], session: Session) -> bool:

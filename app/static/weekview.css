@@ -1,0 +1,41 @@
+:root {
+    --primary:#30465D;
+    --primary-variant:#FFDE4D;
+    --secondary:#EF5454;
+    --borders:#E7E7E7;
+    --borders-variant:#F7F7F7;
+}
+
+.day-weekview {
+    border-left: 1px solid var(--borders);
+    width: 100%;
+}
+
+#week-view {
+    display: grid;
+    grid-template-rows: 1fr;
+    grid-template-columns: 2.3em 1fr;
+}
+
+
+#week-schedule {
+    grid-row: 1;
+    grid-column: 2;
+    z-index: 10;
+}
+
+#hoursgrid {
+    grid-row: 1;
+    grid-column: 1;
+    flex: 1;
+    margin-top: 4em;
+    margin-left: 0.8em;
+    z-index: 30;
+}
+
+.hour-top {
+    color: white;
+    width: 2.4em;
+    margin-left: -2;
+    overflow: hidden;
+}

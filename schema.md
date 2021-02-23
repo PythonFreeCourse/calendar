@@ -11,15 +11,26 @@
 │   ├── internal
 │       ├── __init__.py
 │       ├── admin.py
-│   ├── routers
-│       ├── __init__.py
-│       ├── profile.py
+│       ├── agenda_events.py
+│       ├── email.py
 │   ├── media
 │       ├── example.png
+│       ├── fake_user.png
 │       ├── profile.png
+│   ├── routers
+│       ├── __init__.py
+│       ├── agenda.py
+│       ├── categories.py
+│       ├── email.py
+│       ├── event.py
+│       ├── profile.py
 │   ├── static
-│       ├── style.css
+│       ├── event
+│           ├── eventedit.css
+│           ├── eventview.css
+│       ├── agenda_style.css
 │       ├── popover.js
+│       ├── style.css
 │   ├── templates
 │       ├── base.html
 │       ├── home.html
@@ -29,6 +40,11 @@
 ├── schema.md
 └── tests
     ├── __init__.py
-    └── conftest.py
+    ├── conftest.py
+    ├── test_agenda_internal.py
+    ├── test_agenda_route.py
+    ├── test_app.py
+    ├── test_categories.py
+    ├── test_email.py
+    ├── test_event.py
     └── test_profile.py
-    └── test_app.py

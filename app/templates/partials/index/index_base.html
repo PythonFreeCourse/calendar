@@ -1,0 +1,13 @@
+{% extends "partials/base.html" %}
+{% block head %}
+  {{ super() }}
+  <!-- CSS -->
+  <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet" type="text/css">
+{% endblock head %}
+{% block body %}
+  {% include 'partials/index/navigation.html' %}
+
+  {% block content %}
+  {% endblock %}
+
+{% endblock body %}
