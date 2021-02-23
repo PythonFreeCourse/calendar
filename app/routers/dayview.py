@@ -177,7 +177,7 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
-    hebrew_obj = hebrew_date_view.get_hebrew_date(day.date())
+    hebrew_obj = hebrew_date_view.get_hebrew_date_in_words(day.date())
     events_n_attrs = get_events_and_attributes(
         day=day,
         session=session,

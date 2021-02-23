@@ -2,7 +2,7 @@ from datetime import datetime
 from pyluach import dates
 
 from app.internal.hebrew_date_view import (
-    get_hebrew_date,
+    get_hebrew_date_in_words,
     from_greogian_to_hebrew_date,
     get_month_name_by_num,
 )
@@ -15,7 +15,7 @@ ADAR_B = datetime.strptime("2019-03-08", "%Y-%m-%d").date()
 
 
 def test_get_hebrew_date():
-    result = get_hebrew_date(DAY)
+    result = get_hebrew_date_in_words(DAY)
     assert result == "י״ז טבת תשפ״א"
 
 
