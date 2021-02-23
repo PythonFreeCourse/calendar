@@ -79,7 +79,6 @@ items_details = [
     ('rio de janeiro', 'Brazil'),
     ('pago pago', 'American Samoa'),
     ('jerusalem', 'Israel'),
-    ('new york', 'United States'),
     ('Narnia', None),
 ]
 

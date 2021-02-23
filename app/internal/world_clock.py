@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 import json
+import logging
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import dateutil.parser
@@ -175,10 +176,11 @@ def get_country(city_name: str) -> Optional[str]:
     Returns:
         str: The suitable country name.
     """
-    details = load_city_country_data_set()
-    for city_element in details:
-        if city_name.title() in city_element[CITY_NAME_KEY].title():
-            return city_element[COUNTRY_NAME_KEY_IN_CITIES]
+    data = load_city_country_data_set()
+    details = data.get(city_name.title())
+    if not details:
+        return
+    return details.get(COUNTRY_NAME_KEY_IN_CITIES)
 
 
 def get_subcountry(city_name: str) -> Optional[str]:
@@ -188,10 +190,11 @@ def get_subcountry(city_name: str) -> Optional[str]:
     Returns:
         str: The suitable subcountry name.
     """
-    details = load_city_country_data_set()
-    for city_element in details:
-        if city_name.title() in city_element[CITY_NAME_KEY].title():
-            return city_element[SUBCOUNTRY_NAME_KEY_IN_CITIES]
+    data = load_city_country_data_set()
+    details = data.get(city_name.title())
+    if not details:
+        return
+    return details.get(SUBCOUNTRY_NAME_KEY_IN_CITIES)
 
 
 async def get_api_data(url: str) -> Optional[List[Any]]:
@@ -205,8 +208,8 @@ async def get_api_data(url: str) -> Optional[List[Any]]:
         async with httpx.AsyncClient() as client:
             resp = await client.get(url)
             return resp.json()
-    except (json.JSONDecodeError, httpx.HTTPError) as errh:
-        print("Http Error:", errh)
+    except (json.JSONDecodeError, httpx.HTTPError):
+        logging.exception("Http Error")
 
 
 async def parse_timezones_list() -> List[Tuple[str, ...]]:
@@ -445,14 +448,9 @@ def get_part_of_day_and_feedback(time: datetime) -> Tuple[str, str]:
         tuple: The part of day description and the feedback.
     """
     for part in PARTS_OF_THE_DAY_FEEDBACK:
-        if (
-            time
-            >= datetime.strptime(
-                part.start,
-                "%H:%M:%S",
-            )
-            and time <= datetime.strptime(part.end, "%H:%M:%S")
-        ):
+        start_time = datetime.strptime(part.start, "%H:%M:%S",)
+        end_time = datetime.strptime(part.end, "%H:%M:%S")
+        if (time >= start_time and time <= end_time):
             return part.time, part.desirability
 
 
