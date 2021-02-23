@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 
-from app.database.database import get_db
+from app.dependencies import get_db
 
 
 class TestApp:
 
-    def test_get_db(self):
+    @staticmethod
+    def test_get_db():
         assert isinstance(next(get_db()), Session)

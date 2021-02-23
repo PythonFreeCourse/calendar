@@ -27,7 +27,7 @@ class TestAgenda:
             next_month_event, old_event
     ):
         resp = agenda_test_client.get(TestAgenda.AGENDA)
-        assert resp.status_code == status.HTTP_200_OK
+        assert resp.ok
         assert b"event 1" in resp.content
         assert b"event 2" in resp.content
         assert b"event 3" not in resp.content
@@ -86,7 +86,7 @@ class TestAgenda:
         assert b"event 5" in resp.content
         assert b"event 6" not in resp.content
 
-    def test_agenda_start_bigger_than_end(self, agenda_test_client):
+    def test_agenda_start_bigger_than_end(self, agenda_test_client, session):
         start_date = self.today_date.date()
         end_date = (self.today_date - timedelta(days=2)).date()
         resp = agenda_test_client.get(
