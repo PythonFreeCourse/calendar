@@ -26,14 +26,9 @@ def get_parasha_only_to_saturday(date: datetime) -> Optional[str]:
          If the date is Saturday, return the parasha name,
          else return None.
     """
-
     date_split = str(date).split('-')
     new_date_format = [int(x) for x in date_split]
-    gregorian_date = dates.GregorianDate(
-        new_date_format[0],
-        new_date_format[1],
-        new_date_format[2]
-    )
+    gregorian_date = dates.GregorianDate(*new_date_format)
     if gregorian_date == gregorian_date.shabbos():
         return parshios.getparsha_string(gregorian_date)
 
@@ -47,8 +42,8 @@ def get_parasha_object(session: Session, date: datetime) -> Parasha:
 
     Returns:
         A HebrewView object.
+        IF the specific day in not Saturday, it return None.
     """
-
     parasha_name = get_parasha_only_to_saturday(date)
     if parasha_name is None:
         return None

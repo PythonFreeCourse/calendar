@@ -107,7 +107,7 @@ def _get_data_from_json(path: str) -> List[Dict[str, Any]]:
         A list of dictionary objects.
     """
     try:
-        with open(path, 'r', encoding='utf-8-sig') as json_file:
+        with open(path, 'r', encoding='utf-8') as json_file:
             json_content = json.load(json_file)
     except (IOError, ValueError):
         file_name = os.path.basename(path)
