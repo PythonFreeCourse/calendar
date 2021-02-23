@@ -7,9 +7,10 @@ from app import main
 from app.database.models import Base, User
 from app.routers import (
     agenda,
+    audio,
     categories,
-    event,
     cursor,
+    event,
     friendview,
     google_connect,
     invitation,
@@ -104,6 +105,10 @@ def profile_test_client() -> Generator[Session, None, None]:
 @pytest.fixture(scope="session")
 def cursor_test_client() -> Iterator[TestClient]:
     yield from create_test_client(cursor.get_db)
+
+
+def audio_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(audio.get_db)
 
 
 @pytest.fixture(scope="session")

@@ -30,6 +30,11 @@
     <script defer type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
     <script defer type="text/javascript" src="{{ url_for('static', path='/cursor.js') }}"></script>
 
+
+    <!-- Audio -->
+    <audio id="my-audio" muted="true"></audio>
+    <audio id="sfx" muted="true"></audio>
+
   {% endblock head %}
   {% block title %}
     <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
