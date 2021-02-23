@@ -136,7 +136,7 @@ def load_country_continent_data_set() -> List[Dict[str, str]]:
     """Load the country-continent data set.
 
     Returns:
-        list: The country-continent data set.
+        list: The country-continent data set
     """
     with open(COUNTRY_TO_CONTINENT_DATA_SET_PATH) as file:
         return json.load(file)
