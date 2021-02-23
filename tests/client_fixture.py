@@ -16,6 +16,7 @@ from app.routers import (
     invitation,
     meds,
     profile,
+    weekview,
     weekly_tasks,
     weight,
 )
@@ -77,6 +78,11 @@ def create_logged_test_client(
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def weekview_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(weekview.get_db)
 
 
 @pytest.fixture(scope="session")
