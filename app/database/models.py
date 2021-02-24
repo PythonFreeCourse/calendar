@@ -115,6 +115,8 @@ class Event(Base):
     end = Column(DateTime, nullable=False)
     content = Column(String)
     location = Column(String, nullable=True)
+    latitude = Column(String, nullable=True)
+    longitude = Column(String, nullable=True)
     vc_link = Column(String, nullable=True)
     is_google_event = Column(Boolean, default=False)
     color = Column(String, nullable=True)
