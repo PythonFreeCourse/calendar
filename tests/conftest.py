@@ -1,11 +1,12 @@
 import calendar
 
+import nest_asyncio
 import pytest
+from app.config import PSQL_ENVIRONMENT
+from app.database.models import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.config import PSQL_ENVIRONMENT
-from app.database.models import Base
 
 pytest_plugins = [
     'tests.user_fixture',
@@ -80,3 +81,6 @@ def sqlite_engine():
 @pytest.fixture
 def Calendar():
     return calendar.Calendar(0)
+
+
+nest_asyncio.apply()

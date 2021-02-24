@@ -162,3 +162,7 @@ app/routers/stam
 .idea
 
 junit/
+
+# .DS_Store
+.DS_Store
+DS_Store
