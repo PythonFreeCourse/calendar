@@ -1,5 +1,4 @@
-from fastapi import Depends, FastAPI, Request
-from fastapi import status
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,

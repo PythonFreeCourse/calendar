@@ -1,16 +1,16 @@
-from fastapi import APIRouter, Depends, Request, Form
+from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm import Session
 
 from app.database.models import MessageStatusEnum
-from app.dependencies import templates, get_db
+from app.dependencies import get_db, templates
 from app.internal.notification import (
-    get_invitation_by_id,
-    get_unread_notifications,
     get_all_messages,
-    get_message_by_id,
     get_archived_notifications,
-    raise_wrong_id_error,
+    get_invitation_by_id,
+    get_message_by_id,
+    get_unread_notifications,
     is_owner,
+    raise_wrong_id_error,
 )
 from app.internal.security.dependencies import current_user, is_logged_in
 
@@ -48,9 +48,11 @@ async def view_notifications(
         {
             "request": request,
             "new_messages": bool(get_all_messages),
-            "notifications": get_unread_notifications(
-                session=db,
-                user_id=user.user_id,
+            "notifications": list(
+                get_unread_notifications(
+                    session=db,
+                    user_id=user.user_id,
+                ),
             ),
         },
     )
@@ -76,9 +78,11 @@ async def view_archive(
         "archive.html",
         {
             "request": request,
-            "notifications": get_archived_notifications(
-                session=db,
-                user_id=user.user_id,
+            "notifications": list(
+                get_archived_notifications(
+                    session=db,
+                    user_id=user.user_id,
+                ),
             ),
         },
     )

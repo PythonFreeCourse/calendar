@@ -4,6 +4,12 @@
     margin: 0 25% 0 5%;
 }
 
+#link {
+    font-size: 1.5rem;
+}
+
+
+/* notifications */
 #notifications-box {
     margin-top: 1rem;
 

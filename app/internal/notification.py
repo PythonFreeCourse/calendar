@@ -1,5 +1,5 @@
 from operator import attrgetter
-from typing import List, Union
+from typing import Iterator, List, Union, Callable
 
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -22,15 +22,15 @@ WRONG_NOTIFICATION_ID = (
 
 NOTIFICATION_TYPE = Union[Invitation, Message]
 
-UNREAD_STATUS = [
+UNREAD_STATUS = {
     InvitationStatusEnum.UNREAD,
     MessageStatusEnum.UNREAD,
-]
+}
 
-ARCHIVED = [
+ARCHIVED = {
     InvitationStatusEnum.DECLINED,
     MessageStatusEnum.READ,
-]
+}
 
 
 async def get_message_by_id(
@@ -38,7 +38,8 @@ async def get_message_by_id(
     session: Session,
 ) -> Union[Message, None]:
     """Returns an invitation by an id.
-    if id does not exist, returns None."""
+    if id does not exist, returns None.
+    """
     return session.query(Message).filter_by(id=message_id).first()
 
 
@@ -89,18 +90,18 @@ def raise_wrong_id_error() -> None:
 def filter_notifications(
     session: Session,
     user_id: int,
-    func: Union[_is_unread, _is_archived],
-) -> List[NOTIFICATION_TYPE]:
+    func: Callable[[NOTIFICATION_TYPE], bool],
+) -> Iterator[NOTIFICATION_TYPE]:
     """Filters notifications by "func"."""
-    return list(filter(func, get_all_notifications(session, user_id)))
+    yield from filter(func, get_all_notifications(session, user_id))
 
 
 def get_unread_notifications(
     session: Session,
     user_id: int,
-) -> List[NOTIFICATION_TYPE]:
+) -> Iterator[NOTIFICATION_TYPE]:
     """Returns all unread notifications."""
-    return filter_notifications(session, user_id, _is_unread)
+    yield from filter_notifications(session, user_id, _is_unread)
 
 
 def get_archived_notifications(
@@ -108,7 +109,7 @@ def get_archived_notifications(
     user_id: int,
 ) -> List[NOTIFICATION_TYPE]:
     """Returns all archived notifications."""
-    return filter_notifications(session, user_id, _is_archived)
+    yield from filter_notifications(session, user_id, _is_archived)
 
 
 def get_all_notifications(

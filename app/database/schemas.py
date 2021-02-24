@@ -24,7 +24,6 @@ class UserBase(BaseModel):
     email: str
     full_name: str
 
-    # TODO: Add language_id field
     language_id: Optional[int] = 1
     description: Optional[str] = None
     target_weight: Optional[Union[int, float]] = None
