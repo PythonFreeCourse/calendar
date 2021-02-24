@@ -2,10 +2,11 @@ from fastapi import Depends, Request
 from functools import wraps
 from starlette.responses import RedirectResponse
 from typing import List
+from sqlalchemy.sql import exists
 
-from app.database.models import UserFeature, Feature, User
+from app.database.models import UserFeature, Feature
 from app.dependencies import get_db, SessionLocal
-from app.internal.security.dependencies import current_user_from_db
+from app.internal.security.dependencies import current_user
 from app.internal.security.ouath2 import get_authorization_cookie
 from app.internal.features_index import features
 from app.internal.utils import create_model
@@ -47,18 +48,19 @@ def create_features_at_startup(session: SessionLocal) -> bool:
     return True
 
 
-def is_association_exists_in_db(
-    form: dict,
+def is_user_has_feature(
     session: SessionLocal,
-    user: User,
+    feature_id: int,
+    user_id: int,
 ) -> bool:
-    db_association = (
-        session.query(UserFeature)
-        .filter_by(feature_id=form["feature_id"], user_id=user.id)
-        .first()
-    )
+    is_exists = session.query(
+        exists().where(
+            UserFeature.user_id == user_id
+            and (UserFeature.feature_id == feature_id),
+        ),
+    ).scalar()
 
-    return db_association is not None
+    return is_exists
 
 
 def delete_feature(
@@ -71,16 +73,14 @@ def delete_feature(
 
 
 def is_feature_exists(feature: dict, session: SessionLocal) -> bool:
-    db_feature = (
-        session.query(Feature)
-        .filter(
-            (Feature.name == feature["name"])
-            | (Feature.route == feature["route"]),
-        )
-        .first()
-    )
+    is_exists = session.query(
+        exists().where(
+            Feature.name == feature["name"]
+            and Feature.route == feature["route"],
+        ),
+    ).scalar()
 
-    return db_feature is not None
+    return is_exists
 
 
 def update_feature(
@@ -96,24 +96,14 @@ def update_feature(
     return feature
 
 
-def is_feature_enabled(
-    user: User,
-    feature: Feature,
-    session: SessionLocal = Depends(get_db),
-) -> bool:
-    enabled_features = get_user_enabled_features(session=session, user=user)
-    return any(ef.id == feature.id for ef in enabled_features)
-
-
 async def is_access_allowd(request: Request, route: str) -> bool:
-
     session = SessionLocal()
 
-    # To get current user.
+    # Get current user.
     # Note: can't use dependency beacause its designed for routes only.
-    # Needed to it manualy.
+    # current_user return schema not an db model.
     jwt = await get_authorization_cookie(request=request)
-    user = await current_user_from_db(request=request, jwt=jwt, db=session)
+    user = await current_user(request=request, jwt=jwt, db=session)
 
     feature = session.query(Feature).filter_by(route=route).first()
 
@@ -122,13 +112,14 @@ async def is_access_allowd(request: Request, route: str) -> bool:
         # route that gived by to the request.
         return True
 
-    user_pref = (
-        session.query(UserFeature)
-        .filter_by(feature_id=feature.id, user_id=user.id)
-        .first()
-    )
+    user_ptef = session.query(
+        exists().where(
+            UserFeature.feature_id == feature.id
+            and (UserFeature.user_id == user.user_id),
+        ),
+    ).scalar()
 
-    return user_pref is not None and user_pref.is_enable
+    return user_ptef
 
 
 def create_feature(
@@ -166,21 +157,11 @@ def create_user_feature_association(
     )
 
 
-def get_user_enabled_features(
+def get_user_installed_features(
     user_id: int,
     session: SessionLocal = Depends(get_db),
 ) -> List[Feature]:
-    enabled = []
-    user_prefs = session.query(UserFeature).filter_by(user_id=user_id).all()
-
-    for pref in user_prefs:
-        if pref.is_enable:
-            feature = (
-                session.query(Feature).filter_by(id=pref.feature_id).first()
-            )
-            enabled.append(feature)
-
-    return enabled
+    return session.query(UserFeature).filter_by(user_id=user_id).all()
 
 
 async def get_user_uninstalled_features(
@@ -190,17 +171,17 @@ async def get_user_uninstalled_features(
     uninstalled = []
     all_features = session.query(Feature).all()
 
-    # To get current user.
+    # Get current user.
     # Note: can't use dependency beacause its designed for routes only.
-    # Needed to it manualy.
+    # current_user return schema not an db model.
     jwt = await get_authorization_cookie(request=request)
-    user = await current_user_from_db(request=request, jwt=jwt, db=session)
+    user = await current_user(request=request, jwt=jwt, db=session)
 
     for feat in all_features:
-        in_enabled = is_feature_enabled(
-            feature=feat,
+        in_enabled = is_user_has_feature(
             session=session,
-            user_id=user.id,
+            feature_id=feat.id,
+            user_id=user.user_id,
         )
 
         if not in_enabled:

@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Request, Depends
+from sqlalchemy.sql import exists
 from typing import List
 
 from app.dependencies import get_db, SessionLocal
 from app.database.models import User, UserFeature, Feature
-from app.internal.security.dependencies import current_user_from_db
+from app.internal.security.dependencies import current_user
 from app.internal.features import (
     create_user_feature_association,
-    is_association_exists_in_db,
+    is_user_has_feature,
 )
 
 router = APIRouter(
@@ -29,46 +30,51 @@ async def index(
 async def add_feature_to_user(
     request: Request,
     session: SessionLocal = Depends(get_db),
-    user: User = Depends(current_user_from_db),
-) -> UserFeature or bool:
+    user: User = Depends(current_user),
+) -> bool:
     form = await request.form()
 
-    feat = session.query(Feature).filter_by(id=form["feature_id"]).first()
+    # feat = session.query(Feature).filter_by(id=form["feature_id"]).first()
+    feat = session.query(
+        exists().where(Feature.id == form["feature_id"]),
+    ).scalar()
 
-    is_exist = is_association_exists_in_db(
-        form=form,
+    is_exist = is_user_has_feature(
         session=session,
-        user=user,
+        feature_id=form["feature_id"],
+        user_id=user.user_id,
     )
 
-    if feat is None or is_exist:
+    if not feat or is_exist:
         # in case there is no feature in the database with that same id
         # and or the association is exist
         return False
 
-    association = create_user_feature_association(
+    create_user_feature_association(
         db=session,
-        feature_id=feat.id,
-        user_id=user.id,
+        feature_id=form["feature_id"],
+        user_id=user.user_id,
         is_enable=True,
     )
 
-    return session.query(UserFeature).filter_by(id=association.id).first()
+    return is_user_has_feature(
+        session=session, feature_id=form["feature_id"], user_id=user.user_id,
+    )
 
 
 @router.post("/delete")
 async def delete_user_feature_association(
     request: Request,
     session: SessionLocal = Depends(get_db),
-    user: User = Depends(current_user_from_db),
+    user: User = Depends(current_user),
 ) -> bool:
     form = await request.form()
-    feature_id = form["feature_id"]
+    feature_id = int(form["feature_id"])
 
-    is_exist = is_association_exists_in_db(
-        form=form,
+    is_exist = is_user_has_feature(
         session=session,
-        user=user,
+        feature_id=feature_id,
+        user_id=user.user_id,
     )
 
     if not is_exist:
@@ -76,7 +82,7 @@ async def delete_user_feature_association(
 
     session.query(UserFeature).filter_by(
         feature_id=feature_id,
-        user_id=user.id,
+        user_id=user.user_id,
     ).delete()
     session.commit()
 

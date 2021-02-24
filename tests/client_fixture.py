@@ -119,11 +119,6 @@ def salary_test_client() -> Iterator[TestClient]:
 
 
 @pytest.fixture(scope="session")
-def features_test_client() -> Iterator[TestClient]:
-    yield from create_test_client(features.get_db)
-
-
-@pytest.fixture(scope="session")
 def meds_test_client() -> Iterator[TestClient]:
     yield from create_test_client(meds.get_db)
 
