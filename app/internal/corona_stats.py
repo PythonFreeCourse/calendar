@@ -127,8 +127,8 @@ async def get_vacinated_data() -> JSON:
 
 
 def get_vacinated_data_from_db(db: Session = Depends(get_db)) -> CoronaStats:
-    # I'm pulling once a day, it won't be the most updated data
-    # but we dont want to be blocked for to many requests
+    # pulls once a day, it won't be the most updated data
+    # but we dont want to be blocked for too many requests
     return (
         db.query(CoronaStats)
         .filter(func.date(CoronaStats.date_inserted) == date.today())
