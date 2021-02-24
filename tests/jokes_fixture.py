@@ -16,5 +16,5 @@ def joke(session: Session) -> Joke:
     yield from add_joke(
         session=session,
         id_joke=1,
-        text="Chuck Norris can slam a revolving door.",
+        text='Chuck Norris can slam a revolving door.',
     )

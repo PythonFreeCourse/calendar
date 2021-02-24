@@ -8,16 +8,14 @@ from app import config
 from app.internal.logger_customizer import LoggerCustomizer
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope='module')
 def logger_instance():
-    _logger = LoggerCustomizer.make_logger(
-        config.LOG_PATH,
-        config.LOG_FILENAME,
-        config.LOG_LEVEL,
-        config.LOG_ROTATION_INTERVAL,
-        config.LOG_RETENTION_INTERVAL,
-        config.LOG_FORMAT,
-    )
+    _logger = LoggerCustomizer.make_logger(config.LOG_PATH,
+                                           config.LOG_FILENAME,
+                                           config.LOG_LEVEL,
+                                           config.LOG_ROTATION_INTERVAL,
+                                           config.LOG_RETENTION_INTERVAL,
+                                           config.LOG_FORMAT)
 
     return _logger
 
