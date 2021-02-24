@@ -7,10 +7,9 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from starlette.templating import _TemplateResponse
 
-from app.internal.security.ouath2 import get_hashed_password
-from app.database import schemas
-from app.database import models
+from app.database import models, schemas
 from app.dependencies import get_db, templates
+from app.internal.security.ouath2 import get_hashed_password
 from app.internal.utils import save
 
 router = APIRouter(
