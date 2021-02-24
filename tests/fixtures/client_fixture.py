@@ -17,6 +17,8 @@ from app.routers import (
     meds,
     notification,
     profile,
+    weekview,
+    weekly_tasks,
     weight,
 )
 from app.routers.salary import routes as salary
@@ -26,6 +28,17 @@ from tests.conftest import get_test_db, test_engine
 LOGIN_DATA_TYPE = Dict[str, str]
 
 main.app.include_router(security_testing_routes.router)
+
+REGISTER_DETAIL = {
+    "username": "correct_user",
+    "full_name": "full_name",
+    "password": "correct_password",
+    "confirm_password": "correct_password",
+    "email": "example@email.com",
+    "description": "",
+}
+
+LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
 
 
 def login_client(client: TestClient, data: LOGIN_DATA_TYPE) -> None:
@@ -57,6 +70,26 @@ def create_test_client(get_db_function) -> Generator[Session, None, None]:
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+def create_logged_test_client(
+    get_db_function,
+) -> Generator[Session, None, None]:
+    Base.metadata.create_all(bind=test_engine)
+    main.app.dependency_overrides[get_db_function] = get_test_db
+
+    with TestClient(main.app) as client:
+        client.post(client.app.url_path_for("register"), data=REGISTER_DETAIL)
+        client.post(client.app.url_path_for("login"), data=LOGIN_DATA)
+        yield client
+
+    main.app.dependency_overrides = {}
+    Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def weekview_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(weekview.get_db)
 
 
 @pytest.fixture(scope="session")
@@ -107,6 +140,11 @@ def profile_test_client() -> Generator[Session, None, None]:
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="function")
+def weekly_tasks_test_client():
+    yield from create_logged_test_client(weekly_tasks.get_db)
 
 
 @pytest.fixture(scope="session")

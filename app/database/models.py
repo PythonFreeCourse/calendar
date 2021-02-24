@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import calendar
+
 from datetime import datetime
 import enum
 from typing import Any, Dict
@@ -6,6 +9,7 @@ from typing import Any, Dict
 from sqlalchemy import (
     Boolean,
     Column,
+    Date,
     DateTime,
     DDL,
     Enum,
@@ -74,6 +78,14 @@ class User(Base):
         back_populates="owner",
         uselist=False,
     )
+
+    weekly_tasks = relationship(
+        "WeeklyTask",
+        cascade="all, delete",
+        back_populates="owner",
+    )
+
+    tasks = relationship("Task", cascade="all, delete", back_populates="owner")
 
     def __repr__(self):
         return f"<User {self.id}>"
@@ -323,6 +335,57 @@ class OAuthCredentials(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates=__tablename__, uselist=False)
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    description = Column(String)
+    is_done = Column(Boolean, default=False)
+    is_important = Column(Boolean, nullable=False)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="tasks")
+
+
+class WeeklyTask(Base):
+    __tablename__ = "weekly_tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String)
+    days = Column(String, nullable=False)
+    content = Column(String)
+    is_important = Column(Boolean, nullable=False)
+    task_time = Column(String, nullable=False)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates=__tablename__)
+
+    def set_days(self, days: str):
+        """Gets days represented by names
+        and sets them in the days field"""
+        atomic_days = []
+        days_list = days.split(", ")
+        day_abbr = list(calendar.day_abbr)
+        for day in days_list:
+            day_num = day_abbr.index(day)
+            atomic_days.append(str(day_num))
+        self.days = "".join(atomic_days)
+
+    def get_days(self) -> str:
+        """return days represented by names"""
+        days = []
+        atomic_days = self.days
+        day_abbr = list(calendar.day_abbr)
+        for day_num in atomic_days:
+            day_num = int(day_num)
+            day_name = day_abbr[day_num]
+            days.append(day_name)
+        return ", ".join(days)
 
 
 class SalarySettings(Base):
