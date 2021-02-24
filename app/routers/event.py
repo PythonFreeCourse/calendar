@@ -612,7 +612,8 @@ def _create_shared_list(
         return None
     shared_list = create_model(db, SharedList, title=title)
     try:
-        for item in list(raw_shared_list.values())[0]:
+        items = list(raw_shared_list.values())[0]
+        for item in items:
             item = create_model(db, SharedListItem, **item)
             shared_list.items.append(item)
     except (IndexError, KeyError) as e:
