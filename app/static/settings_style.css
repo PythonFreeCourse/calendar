@@ -62,12 +62,12 @@
   color: #5786f5;
 }
 
-.tabShow {
+.tab-show {
   display: block;
   transition: all .5s ease-in;
 }
 
-.tabHide {
+.tab-hide {
   display: none;
 }
 
@@ -88,12 +88,12 @@
   width: 250px;
 }
 
-.tabShow p {
+.tab-show p {
   display: block;
   align-self: left;
 }
 
-.tabShow h2 {
+.tab-show h2 {
   display: block;
   align-self: left;
   font-weight: bold;
@@ -107,11 +107,11 @@
 @media screen and (max-width: 700px) {
   .settings {
     display: block;
-    font-size: 3.5vw;
+    font-size: 3vw;
   }
 
   #settings-left {
-    padding: 3em 0em 0em 4em;
+    padding: 1.5em 0em 0em 2em;
     width: 100%;
   }
 
@@ -133,7 +133,7 @@
   }
 
   .settings-main {
-    padding: 4em 4em;
+    padding: 2em 2em;
   }
   .settings-main .form-select {
     width: 250px;

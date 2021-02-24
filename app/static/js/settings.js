@@ -3,16 +3,16 @@ const tabBtn =
 
 
 function tabClick(tab_id) {
-    let shown_tab = document.querySelector(".tabShow")
+    let shown_tab = document.querySelector(".tab-show")
     let selected_tab_content = document.querySelector("#" + tab_id + "-content")
-    shown_tab.classList.remove("tabShow")
-    shown_tab.classList.add("tabHide")
+    shown_tab.classList.remove("tab-show")
+    shown_tab.classList.add("tab-hide")
     for (btn of tabBtn) {
         btn.children[0].classList.remove("active")
     }
     document.getElementById(tab_id).classList.add("active")
-    selected_tab_content.classList.remove("tabHide")
-    selected_tab_content.classList.add("tabShow")
+    selected_tab_content.classList.remove("tab-hide")
+    selected_tab_content.classList.add("tab-show")
 };
 
 
