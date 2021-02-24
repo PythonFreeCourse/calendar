@@ -1,11 +1,11 @@
 <div class="event_info_row title" style="border-bottom: 4px solid {{ event.color }}">
-    <div class="event_info_row_start">
-        <h1>{{ event.title }}</h1>
-    </div>
-    <div class="event_info_row_end">
-        <!--        <span class="icon">AVAILABILITY</span>-->
-        <!--        <span class="icon">PRIVACY</span>-->
-    </div>
+  <div class="event_info_row_start">
+    <h1>{{ event.title }}</h1>
+  </div>
+  <div class="event_info_row_end">
+    <!--        <span class="icon">AVAILABILITY</span>-->
+    <!--        <span class="icon">PRIVACY</span>-->
+  </div>
 </div>
 <div class="event_info_row">
     <span class="icon">ICON</span>
@@ -35,24 +35,39 @@
   <address>VC link<a href="{{ event.vc_link }}">VC URL</a></address>
 </div>
 {% endif %}
+
+{% if event.latitude is not none and event.longitude is not none %}
+  <div class="google_maps_object">
+    <iframe
+      width="600"
+      height="400"
+      frameborder="0"
+      scrolling="no"
+      marginheight="0"
+      marginwidth="0"
+      src="https://maps.google.com/maps?q={{event.latitude}},{{event.longitude}}&hl=es;z=14&amp;output=embed">
+    </iframe>
+  </div>
+{% endif %}
+
 {% if event.invitees %}
 <form method="POST" action="/event/{{event.id}}/owner">
-    <div class="mb-3"></div>
-    <label for="username">{{ gettext('Choose user') }}</label>
-    <select id="username" name="username">
-        {% for username in event.invitees.split(',') %}
-      <option value="{{username}}">{{username}}</option>
-      {% endfor %}
-    </select>
-    <input type="submit" class="btn btn-primary" value="Change owner">
+  <div class="mb-3"></div>
+  <label for="username">{{ gettext('Choose user') }}</label>
+  <select id="username" name="username">
+    {% for username in event.invitees.split(',') %}
+    <option value="{{username}}">{{username}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" class="btn btn-primary" value="Change owner">
 </form>
 {% endif %}
 <p class="event_info_row">
-    {{event.owner.username}}
+  {{event.owner.username}}
 </p>
 
 <div class="event_info_buttons_row event_info_row_end">
-    <!-- Buttons could and should be replaced with button-like anchors if need so -->
-    <button type="button">Duplicate</button>
-    <button type="button">Edit</button>
+  <!-- Buttons could and should be replaced with button-like anchors if need so -->
+  <button type="button">Duplicate</button>
+  <button type="button">Edit</button>
 </div>
