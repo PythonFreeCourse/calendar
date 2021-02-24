@@ -148,6 +148,17 @@ INVALID_FIELD_UPDATE = [
     {"end": datetime(1990, 1, 1)},
 ]
 
+REGISTER_DETAIL = {
+    "username": "correct_user",
+    "full_name": "full_name",
+    "password": "correct_password",
+    "confirm_password": "correct_password",
+    "email": "example@email.com",
+    "description": "",
+}
+
+LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
+
 
 def test_get_events(event_test_client, session, event):
     response = event_test_client.get("/event/")
@@ -162,7 +173,21 @@ def test_create_event_api(event_test_client, session, event):
     assert response.ok
 
 
-def test_eventedit(event_test_client, session):
+def test_eventedit_without_user(event_test_client, session):
+    response = event_test_client.get("/event/edit")
+    assert response.ok
+    assert b"Login" in response.content
+
+
+def test_eventedit_with_user(event_test_client, session):
+    event_test_client.post(
+        event_test_client.app.url_path_for("register"),
+        data=REGISTER_DETAIL,
+    )
+    event_test_client.post(
+        event_test_client.app.url_path_for("login"),
+        data=LOGIN_DATA,
+    )
     response = event_test_client.get("/event/edit")
     assert response.ok
     assert b"Event Details" in response.content
@@ -181,7 +206,7 @@ def test_eventview_with_id(event_test_client, session, event):
     assert b"Some random location" in response.content
     waze_link = b"https://waze.com/ul?q=Some%20random%20location"
     assert waze_link in response.content
-    assert b'VC link' not in response.content
+    assert b"VC link" not in response.content
 
 
 def test_eventview_without_location(event_test_client, session, event):

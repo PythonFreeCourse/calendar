@@ -96,7 +96,7 @@ def get_categories_list(
     user: User,
     db_session: Session = Depends(get_db),
 ) -> List[Category]:
-    return get_user_categories(db_session, user.id)
+    return get_user_categories(db_session, user.user_id)
 
 
 @router.get("/edit", include_in_schema=False)
