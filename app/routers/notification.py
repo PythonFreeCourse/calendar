@@ -12,7 +12,8 @@ from app.internal.notification import (
     raise_wrong_id_error,
     is_owner,
 )
-from app.internal.security.dependancies import current_user, is_logged_in
+from app.internal.security.dependencies import current_user, is_logged_in
+
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import safe_redirect_response
 
