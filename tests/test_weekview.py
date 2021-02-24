@@ -1,5 +1,5 @@
-from bs4 import BeautifulSoup
 import pytest
+from bs4 import BeautifulSoup
 
 from app.database.models import User
 from app.routers.event import create_event

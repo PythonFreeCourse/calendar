@@ -1,5 +1,4 @@
 import pytest
-
 from starlette.status import HTTP_302_FOUND
 
 from app.database.models import User

@@ -7,14 +7,12 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm.session import Session
 
 from app.database.models import Event, User
-from app.dependencies import get_db, TEMPLATES_PATH
-from app.internal.security.dependencies import (
-    current_user,
-)
+from app.dependencies import TEMPLATES_PATH, get_db
+from app.internal.security.dependencies import current_user
 from app.routers.dayview import (
     CurrentTimeAttributes,
-    dayview,
     EventsAttributes,
+    dayview,
     get_all_day_events,
     get_events_and_attributes,
 )
