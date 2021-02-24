@@ -28,6 +28,7 @@ from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.event import (
     get_invited_emails,
+    get_location_coordinates,
     get_messages,
     get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
@@ -148,9 +149,16 @@ async def create_new_event(
         invited_emails,
     )
     shared_list = extract_shared_list_from_data(event_info=data, db=session)
+    latitude, longitude = None, None
 
     if vc_link:
         raise_if_zoom_link_invalid(vc_link)
+    else:
+        location_details = await get_location_coordinates(location)
+        if not isinstance(location_details, str):
+            location = location_details.name
+            latitude = location_details.latitude
+            longitude = location_details.longitude
 
     event = create_event(
         db=session,
@@ -161,6 +169,8 @@ async def create_new_event(
         owner_id=owner_id,
         content=content,
         location=location,
+        latitude=latitude,
+        longitude=longitude,
         vc_link=vc_link,
         invitees=invited_emails,
         category_id=category_id,
@@ -428,6 +438,8 @@ def create_event(
     content: Optional[str] = None,
     location: Optional[str] = None,
     vc_link: str = None,
+    latitude: Optional[str] = None,
+    longitude: Optional[str] = None,
     color: Optional[str] = None,
     invitees: List[str] = None,
     category_id: Optional[int] = None,
@@ -450,6 +462,8 @@ def create_event(
         content=content,
         owner_id=owner_id,
         location=location,
+        latitude=latitude,
+        longitude=longitude,
         vc_link=vc_link,
         color=color,
         emotion=get_emotion(title, content),
