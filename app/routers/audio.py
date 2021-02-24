@@ -10,16 +10,16 @@ from starlette.status import HTTP_302_FOUND
 from app.database.models import User
 from app.dependencies import SOUNDS_PATH, get_db, templates
 from app.internal.audio import (
-    get_audio_settings,
-    handle_vol,
-    SoundKind,
-    Sound,
-    init_audio_tracks,
-    save_audio_settings,
     DEFAULT_MUSIC,
     DEFAULT_MUSIC_VOL,
     DEFAULT_SFX,
     DEFAULT_SFX_VOL,
+    Sound,
+    SoundKind,
+    get_audio_settings,
+    handle_vol,
+    init_audio_tracks,
+    save_audio_settings,
 )
 from app.internal.security.dependencies import current_user
 
@@ -37,11 +37,9 @@ def audio_settings(
     user: User = Depends(current_user),
 ) -> templates.TemplateResponse:
     """A route to the audio settings.
-
     Args:
         request (Request): the http request
         session (Session): the database.
-
     Returns:
         templates.TemplateResponse: renders the audio.html page
         with the relevant information.
@@ -75,7 +73,6 @@ async def get_choices(
     user: User = Depends(current_user),
 ) -> RedirectResponse:
     """This function saves users' choices in the db.
-
     Args:
         request (Request): the http request
         session (Session): the database.
@@ -92,7 +89,6 @@ async def get_choices(
         sfx_vol (Optional[int], optional): a number in the range (0, 1)
         indicating the desired sfx volume, or None if disabled.
         user (User): current user.
-
     Returns:
         RedirectResponse: redirect the user to home.html.
     """
@@ -113,10 +109,8 @@ async def start_audio(
     user: User = Depends(current_user),
 ) -> RedirectResponse:
     """Starts audio according to audio settings.
-
     Args:
         session (Session): the database.
-
     Returns:
         RedirectResponse: redirect the user to home.html.
     """

@@ -6,33 +6,31 @@ from sqlalchemy.orm import Session
 from app.database.models import User
 from app.internal import utils
 
-
 TIMES = [
-    ('2021-01-14', date(2021, 1, 14)),
-    ('13:30', time(13, 30)),
-    ('15:42:00', time(15, 42)),
-    ('15', None),
-    ('2021-01', None),
-    ('15:42:00.5', None),
+    ("2021-01-14", date(2021, 1, 14)),
+    ("13:30", time(13, 30)),
+    ("15:42:00", time(15, 42)),
+    ("15", None),
+    ("2021-01", None),
+    ("15:42:00.5", None),
 ]
 
 
 class TestUtils:
-
     def test_save_success(self, user: User, session: Session) -> None:
-        user.username = 'edit_username'
+        user.username = "edit_username"
         assert utils.save(session, user)
 
     def test_save_failure(self, session: Session) -> None:
-        user = 'not a user instance'
+        user = "not a user instance"
         assert not utils.save(session, user)
 
     def test_create_model(self, session: Session) -> None:
         assert session.query(User).first() is None
         info = {
-            'username': 'test',
-            'email': 'test@test.com',
-            'password': 'test1234'
+            "username": "test",
+            "email": "test@test.com",
+            "password": "test1234",
         }
         utils.create_model(session, User, **info)
         assert session.query(User).first()
@@ -52,7 +50,10 @@ class TestUtils:
         assert utils.get_user(session, user.id) == user
         assert utils.get_user(session, 2) is None
 
-    @pytest.mark.parametrize('string, formatted_time', TIMES)
-    def test_get_time_from_string(self, string: str,
-                                  formatted_time: time) -> None:
+    @pytest.mark.parametrize("string, formatted_time", TIMES)
+    def test_get_time_from_string(
+        self,
+        string: str,
+        formatted_time: time,
+    ) -> None:
         assert utils.get_time_from_string(string) == formatted_time

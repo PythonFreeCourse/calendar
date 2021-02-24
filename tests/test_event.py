@@ -1,16 +1,19 @@
-from datetime import datetime, timedelta
 import json
-import pytest
+import os
+from datetime import datetime, timedelta
 
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
-from sqlalchemy.sql.elements import Null
+from PIL import Image
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
 
-
+from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import get_db
+from app.dependencies import UPLOAD_PATH, get_db
+from app.internal.event import add_countries_to_db, get_all_countries_names
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
@@ -117,6 +120,14 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     "is_google_event": "False",
 }
 
+CONVERT_TIME_FORM_DATA = {
+    "countries": "France, Paris",
+    "start_date": "2021-02-02",
+    "start_time": "14:00",
+    "end_date": "2021-02-02",
+    "end_time": "15:00",
+}
+
 CORRECT_ADD_EVENT_DATA = {
     "title": "test",
     "start": "2021-02-13T09:03:49.560Z",
@@ -139,6 +150,17 @@ INVALID_FIELD_UPDATE = [
     {"end": datetime(1990, 1, 1)},
 ]
 
+REGISTER_DETAIL = {
+    "username": "correct_user",
+    "full_name": "full_name",
+    "password": "correct_password",
+    "confirm_password": "correct_password",
+    "email": "example@email.com",
+    "description": "",
+}
+
+LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
+
 
 def test_get_events(event_test_client, session, event):
     response = event_test_client.get("/event/")
@@ -153,10 +175,41 @@ def test_create_event_api(event_test_client, session, event):
     assert response.ok
 
 
-def test_eventedit(event_test_client):
+def test_eventedit_without_user(event_test_client, session):
+    response = event_test_client.get("/event/edit")
+    assert response.ok
+    assert b"Login" in response.content
+
+
+def test_eventedit_with_user(event_test_client, session):
+    event_test_client.post(
+        event_test_client.app.url_path_for("register"),
+        data=REGISTER_DETAIL,
+    )
+    event_test_client.post(
+        event_test_client.app.url_path_for("login"),
+        data=LOGIN_DATA,
+    )
     response = event_test_client.get("/event/edit")
     assert response.ok
     assert b"Event Details" in response.content
+
+
+def test_get_all_countries(session):
+    assert get_all_countries_names(session)
+
+
+def test_db_returns_countries_matching_timezone(event_test_client, session):
+    add_countries_to_db(session)
+    country_name = "Israel, Jerusalem"
+    response = event_test_client.get(
+        event_test_client.app.url_path_for(
+            "check_timezone",
+            country_name=country_name,
+        ),
+    )
+    assert response.ok
+    assert b'{"timezone":"Asia/Jerusalem"}' in response.content
 
 
 def test_eventview_with_id(event_test_client, session, event):
@@ -168,7 +221,7 @@ def test_eventview_with_id(event_test_client, session, event):
     assert b"Some random location" in response.content
     waze_link = b"https://waze.com/ul?q=Some%20random%20location"
     assert waze_link in response.content
-    assert b'VC link' not in response.content
+    assert b"VC link" not in response.content
 
 
 def test_eventview_without_location(event_test_client, session, event):
@@ -538,6 +591,36 @@ def test_change_owner(client, event_test_client, user, session, event):
 def test_deleting_an_event_does_not_exist(event_test_client, event):
     response = event_test_client.delete("/event/2")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_event_with_image(event_test_client, client, session):
+    img = Image.new("RGB", (60, 30), color="red")
+    img.save("pil_red.png")
+    with open("pil_red.png", "rb") as img:
+        imgstr = img.read()
+    files = {"event_img": imgstr}
+    data = {**CORRECT_EVENT_FORM_DATA}
+    response = event_test_client.post(
+        client.app.url_path_for("create_new_event"),
+        data=data,
+        files=files,
+    )
+    event_created = session.query(Event).order_by(Event.id.desc()).first()
+    event_id = event_created.id
+    is_event_image = f"{event_id}{PICTURE_EXTENSION}" == event_created.image
+    assert response.ok
+    assert (
+        client.app.url_path_for("eventview", event_id=event_id).strip(
+            f"{event_id}",
+        )
+        in response.headers["location"]
+    )
+    assert is_event_image is True
+    event_image_path = os.path.join(UPLOAD_PATH, event_created.image)
+    os.remove(event_image_path)
+    os.remove("pil_red.png")
+    session.delete(event_created)
+    session.commit()
 
 
 def test_can_show_event_public(event, session, user):

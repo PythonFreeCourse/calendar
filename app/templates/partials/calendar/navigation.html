@@ -1,6 +1,5 @@
 <nav class="text-lightgray background-darkblue">
   <div class="menu">
-
     <div class="fixed-features">
       <div>
         <a href="/profile">
@@ -8,10 +7,17 @@
         </a>
       </div>
       <div>
+        <a href="{{ url_for('view_notifications') }}">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </a>
+      </div>
+      <div>
         <ion-icon name="search" alt="Search icon"></ion-icon>
       </div>
       <div>
+        <a href="{{ url_for('settings') }}">
         <ion-icon name="settings-outline"></ion-icon>
+        </a>
       </div>
       <div>
         <ion-icon name="calendar-outline"></ion-icon>
@@ -23,6 +29,9 @@
         <a title="About Us" href="{{ url_for('about') }}">
           <ion-icon name="information-circle-outline"></ion-icon>
         </a>
+      </div>
+      <div>
+        <ion-icon id="darkmode" name="moon-outline"></ion-icon>
       </div>
     </div>
 
@@ -39,6 +48,5 @@
     <div id="open-features">
       <ion-icon name="ellipsis-vertical"></ion-icon>
     </div>
-
   </div>
 </nav>

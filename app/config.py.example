@@ -27,6 +27,10 @@ PSQL_ENVIRONMENT = False
 MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
+# For security reasons, set the upload path to a local absolute path.
+# Or for testing environment - just specify a folder name
+# that will be created under /app/
+UPLOAD_DIRECTORY = 'event_images'
 
 
 # DEFAULT WEBSITE LANGUAGE
@@ -63,6 +67,7 @@ email_conf = ConnectionConfig(
 JWT_KEY = "JWT_KEY_PLACEHOLDER"
 JWT_ALGORITHM = "HS256"
 JWT_MIN_EXP = 60 * 24 * 7
+
 templates = Jinja2Templates(directory=os.path.join("app", "templates"))
 
 # application name

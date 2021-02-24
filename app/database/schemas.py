@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 
-from pydantic import BaseModel, validator, EmailStr, EmailError
-
+from pydantic import BaseModel, EmailError, EmailStr, validator
 
 EMPTY_FIELD_STRING = "field is required"
 MIN_FIELD_LENGTH = 3
@@ -25,7 +24,10 @@ class UserBase(BaseModel):
     username: str
     email: str
     full_name: str
+
+    language_id: Optional[int] = 1
     description: Optional[str] = None
+    target_weight: Optional[Union[int, float]] = None
 
     class Config:
         orm_mode = True
@@ -69,6 +71,8 @@ class UserCreate(UserBase):
         """Validating username length is legal"""
         if not (MIN_FIELD_LENGTH < len(username) < MAX_FIELD_LENGTH):
             raise ValueError("must contain between 3 to 20 charactars")
+        if username.startswith("@"):
+            raise ValueError("username can not start with '@'")
         return username
 
     @validator("password")
