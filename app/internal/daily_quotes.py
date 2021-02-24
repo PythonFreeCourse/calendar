@@ -1,11 +1,15 @@
 from datetime import date
+from os.path import relpath
 from typing import Dict, List, Optional
+from app.dependencies import MEDIA_PATH
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
 from app.database.models import Quote, UserQuotes
 
+EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
+FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
 TOTAL_DAYS = 366
 
 

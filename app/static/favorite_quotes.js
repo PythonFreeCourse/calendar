@@ -1,5 +1,5 @@
-const FULL_HEART = "../media/full_heart.png";
-const EMPTY_HEART = "../media/empty_heart.png";
+const FULL_HEART = "../../media/full_heart.png";
+const EMPTY_HEART = "../../media/empty_heart.png";
 
 // Adding event listener
 window.addEventListener("load", function () {
@@ -45,7 +45,7 @@ function save_or_remove_quote(quote_id, to_save) {
   const method = to_save ? "post" : "delete";
   let xhr = new XMLHttpRequest();
   quote_id = parseInt(quote_id);
-  xhr.open(method, "/");
+  xhr.open(method, "/quotes/db");
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.send(`quote_id=${quote_id}`);
 }

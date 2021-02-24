@@ -1,6 +1,4 @@
-from os.path import relpath
-
-from fastapi import Depends, FastAPI, Form, Request, status
+from fastapi import Depends, FastAPI, Request, status
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
     get_swagger_ui_oauth2_redirect_html,
@@ -62,6 +60,7 @@ from app.routers import (  # noqa: E402
     email,
     event,
     export,
+    favorite_quotes,
     four_o_four,
     friendview,
     google_connect,
@@ -110,6 +109,7 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
+    favorite_quotes.router,
     four_o_four.router,
     friendview.router,
     google_connect.router,
@@ -134,9 +134,6 @@ for router in routers_to_include:
 
 json_data_loader.load_to_database(next(get_db()))
 
-EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
-FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
-
 
 @app.get("/", include_in_schema=False)
 @logger.catch()
@@ -154,59 +151,7 @@ async def home(
         {
             "request": request,
             "quote": quote_of_day,
-            "empty_heart": EMPTY_HEART_PATH,
-            "full_heart": FULL_HEART_PATH,
-        },
-    )
-
-
-@app.post("/")
-async def save_quote(
-    user: models.User = Depends(current_user),
-    quote_id: int = Form(...),
-    db: Session = Depends(get_db),
-):
-    """Saves a quote in the database."""
-    record = (
-        db.query(models.UserQuotes)
-        .filter(
-            models.UserQuotes.user_id == user.user_id,
-            models.UserQuotes.quote_id == quote_id,
-        )
-        .first()
-    )
-    if not record:
-        db.add(models.UserQuotes(user_id=user.user_id, quote_id=quote_id))
-        db.commit()
-
-
-@app.delete("/")
-async def delete_quote(
-    user: models.User = Depends(current_user),
-    quote_id: int = Form(...),
-    db: Session = Depends(get_db),
-):
-    """Deletes a quote from the database."""
-    db.query(models.UserQuotes).filter(
-        models.UserQuotes.user_id == user.user_id,
-        models.UserQuotes.quote_id == quote_id,
-    ).delete()
-    db.commit()
-
-
-@app.get("/favorite_quotes")
-async def favorite_quotes(
-    request: Request,
-    db: Session = Depends(get_db),
-    user: models.User = Depends(current_user),
-):
-    """html page for displaying the users' favorite quotes."""
-    quotes = daily_quotes.get_quotes(db, user.user_id)
-    return templates.TemplateResponse(
-        "favorite_quotes.html",
-        {
-            "request": request,
-            "quotes": quotes,
-            "full_heart": FULL_HEART_PATH,
+            "empty_heart": daily_quotes.EMPTY_HEART_PATH,
+            "full_heart": daily_quotes.FULL_HEART_PATH,
         },
     )

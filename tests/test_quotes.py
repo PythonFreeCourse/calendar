@@ -5,11 +5,14 @@ from app.internal.security.dependencies import current_user
 from tests.test_login import test_login_successfull
 
 from app.main import app
+from app.routers.favorite_quotes import router
 
 DATE = date(2021, 1, 1)
 DATE2 = date(2021, 1, 2)
 HOME_URL = app.url_path_for("home")
-FAVORITE_QUOTES_URL = app.url_path_for("favorite_quotes")
+SAVE_URL = router.url_path_for("save_quote")
+DELETE_URL = router.url_path_for("delete_quote")
+FAVORITE_QUOTES_URL = router.url_path_for("favorite_quotes")
 
 
 def test_get_quote():
@@ -43,7 +46,7 @@ def test_save_quote(session, quotes_test_client, quote1):
         "user": current_user,
     }
     quotes = daily_quotes.get_quotes(session, 1)
-    response = quotes_test_client.post(url=HOME_URL, data=data)
+    response = quotes_test_client.post(url=SAVE_URL, data=data)
     assert response.ok
     assert len(daily_quotes.get_quotes(session, 1)) == len(quotes) + 1
 
@@ -54,7 +57,7 @@ def test_delete_quote(session, quotes_test_client, quote1):
         "quote_id": quote1.id,
         "to_save": False,
     }
-    response = quotes_test_client.delete(url=HOME_URL, data=data)
+    response = quotes_test_client.delete(url=DELETE_URL, data=data)
     assert response.ok
     assert len(daily_quotes.get_quotes(session, 1)) == 0
 
