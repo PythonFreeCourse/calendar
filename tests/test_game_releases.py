@@ -16,19 +16,33 @@ DAY_TYPES = [cg.Day, cg.DayWeekend, cg.Today, cg.FirstDayMonth]
 WEEK_DAYS = cg.Week.WEEK_DAYS
 
 
-class TestCalendarGrid:
+class TestGameReleases:
     @staticmethod
-    def test_get_calendar(client):
-        response = client.get("/calendar/month")
+    def test_get_subscribe(client):
+        response = client.get("/game-releases/subscribe")
         assert response.ok
         assert b"SUNDAY" in response.content
 
     @staticmethod
-    def test_get_calendar_extends(client):
-        days = 42
+    def test_get_unsubscribe(client):
+        response = client.get("/game-releases/subscribe")
+        assert response.ok
+        assert b"SUNDAY" in response.content
+
+    @staticmethod
+    def test_get_game_releases_month(client):
         response = client.get(
-            f"/calendar/month/add/{DAY.set_id()}?days={days}",
+            "/calendar/get_game_releases_next_month",
         )
+        assert response.ok
+        assert b"08-May" in response.content
+
+    @staticmethod
+    def test_get_game_releases(client):
+        day_1 = "2020-12-10"
+        day_2 = "2020-12-20"
+        dates = {"from_date": day_1, "to_date": day_2}
+        response = client.post("/calendar/get_releases_by_dates/", json=dates)
         assert response.ok
         assert b"08-May" in response.content
 

@@ -1,22 +1,22 @@
-import requests
 import datetime
-
-from loguru import logger
-
-# from typing import Dict, List, Union
-
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
+from loguru import logger
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from starlette.templating import _TemplateResponse
 
+import requests
 from app.database.models import UserSettings
 from app.dependencies import get_db, templates
-from app.internal.utils import get_current_user, create_model
+from app.internal.security.dependancies import current_user
+from app.internal.security.schema import CurrentUser
+from app.internal.utils import create_model
+
+# from typing import Dict, List, Union
 
 
 router = APIRouter(
@@ -66,7 +66,6 @@ def is_user_signed_up_for_game_releases(
 
 @router.post("/get_releases_by_dates")
 async def fetch_released_games(request: Request, session=Depends(get_db)):
-    # current_user = get_current_user(session)
     data = await request.form()
 
     from_date = data["from_date"]
@@ -80,7 +79,7 @@ async def fetch_released_games(request: Request, session=Depends(get_db)):
     return HTMLResponse(content=content, status_code=HTTPStatus.OK)
 
 
-@router.get("/get_game_releases")
+@router.get("/get_game_releases_next_month")
 def get_game_releases_month(request: Request):
     today = datetime.datetime.today()
     delta = datetime.timedelta(days=30)
@@ -125,8 +124,9 @@ def get_games_data(start_date, end_date):
 async def subscribe_game_release_service(
     request: Request,
     session: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ) -> _TemplateResponse:
-    current_user_id = get_current_user(session).id
+    current_user_id = user.user_id
 
     if is_user_signed_up_for_game_releases(session, current_user_id):
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
@@ -154,8 +154,9 @@ async def subscribe_game_release_service(
 async def unsubscribe_game_release_service(
     request: Request,
     session: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ) -> _TemplateResponse:
-    current_user_id = get_current_user(session).id
+    current_user_id = user.user_id
 
     if not is_user_signed_up_for_game_releases(session, current_user_id):
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)

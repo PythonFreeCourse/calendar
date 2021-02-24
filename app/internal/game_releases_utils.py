@@ -1,3 +1,10 @@
+from __future__ import annotations
+
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app.routers.calendar_grid import Week, Day
+
 from datetime import datetime
 
 from collections import defaultdict
@@ -6,15 +13,21 @@ from loguru import logger
 
 import requests
 
+# from app.routers.calendar_grid import Week
 
-def add_game_events_to_weeks(weeks, is_active=True):
+
+def add_game_events_to_weeks(weeks: List["Week"], is_active: bool = True):
     if not is_active:
         return weeks
-    first_day = datetime.strptime(weeks[0].days[0].set_id(), "%d-%B-%Y")
-    last_day = datetime.strptime(weeks[-1].days[-1].set_id(), "%d-%B-%Y")
+    first_week: Week = weeks[0]
+    last_week: Week = weeks[-1]
+    first_day: Day = first_week.days[0]
+    last_day: Day = last_week.days[-1]
+    first_day_str = datetime.strptime(first_day.set_id(), "%d-%B-%Y")
+    last_day_str = datetime.strptime(last_day.set_id(), "%d-%B-%Y")
     games_released = get_games_data_separated_by_days(
-        start_date=first_day.strftime("%Y-%m-%d"),
-        end_date=last_day.strftime("%Y-%m-%d"),
+        start_date=first_day_str.strftime("%Y-%m-%d"),
+        end_date=last_day_str.strftime("%Y-%m-%d"),
     )
     for week in weeks:
         for day in week.days:
