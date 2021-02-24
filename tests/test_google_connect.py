@@ -1,15 +1,14 @@
 from datetime import datetime
+
 import pytest
-from loguru import logger
-
-import app.internal.google_connect as google_connect
-from app.routers.event import create_event
-from app.database.models import OAuthCredentials
-
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import HttpMock
+from loguru import logger
 
+import app.internal.google_connect as google_connect
+from app.database.models import OAuthCredentials
+from app.routers.event import create_event
 from app.routers.register import _create_user
 
 

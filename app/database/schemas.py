@@ -1,6 +1,6 @@
 from typing import Optional, Union
-from pydantic import BaseModel, validator, EmailStr, EmailError
 
+from pydantic import BaseModel, EmailError, EmailStr, validator
 
 EMPTY_FIELD_STRING = "field is required"
 MIN_FIELD_LENGTH = 3

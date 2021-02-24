@@ -10,16 +10,16 @@ from starlette.status import HTTP_302_FOUND
 from app.database.models import User
 from app.dependencies import SOUNDS_PATH, get_db, templates
 from app.internal.audio import (
-    get_audio_settings,
-    handle_vol,
-    SoundKind,
-    Sound,
-    init_audio_tracks,
-    save_audio_settings,
     DEFAULT_MUSIC,
     DEFAULT_MUSIC_VOL,
     DEFAULT_SFX,
     DEFAULT_SFX_VOL,
+    Sound,
+    SoundKind,
+    get_audio_settings,
+    handle_vol,
+    init_audio_tracks,
+    save_audio_settings,
 )
 from app.internal.security.dependencies import current_user
 

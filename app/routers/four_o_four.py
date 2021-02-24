@@ -1,6 +1,7 @@
-from app.dependencies import templates
 from fastapi import APIRouter
 from starlette.requests import Request
+
+from app.dependencies import templates
 
 router = APIRouter(
     prefix="/404",
@@ -11,5 +12,4 @@ router = APIRouter(
 
 @router.get("/")
 async def not_implemented(request: Request):
-    return templates.TemplateResponse("four_o_four.j2",
-                                      {"request": request})
+    return templates.TemplateResponse("four_o_four.j2", {"request": request})
