@@ -1,3 +1,5 @@
+from os.path import relpath
+
 from fastapi import Depends, FastAPI, Form, Request, status
 from fastapi.openapi.docs import (
     get_swagger_ui_html,
@@ -21,7 +23,6 @@ from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
 from app.internal.security.dependencies import current_user
-from os.path import relpath
 
 
 def create_tables(engine, psql_environment):
