@@ -179,7 +179,10 @@ async def dayview(
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
     location_and_shabbat = locations.get_user_location(session)
     user_location = location_and_shabbat['location']['title']
-    shabbat_obj = shabbat.get_shabbat_if_date_friday(location_and_shabbat, day.date())
+    shabbat_obj = shabbat.get_shabbat_if_date_friday(
+        location_and_shabbat,
+        day.date()
+    )
     events_n_attrs = get_events_and_attributes(
         day=day,
         session=session,

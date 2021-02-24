@@ -48,5 +48,7 @@ def get_user_location(session: Session) -> str:
             A user location string.
         """
     my_location = return_zip_to_location(session)
-    location_details = requests.get(f"https://www.hebcal.com/shabbat?cfg=json&geonameid={my_location}")
+    location_details = requests.get(
+        f"https://www.hebcal.com/shabbat?cfg=json&geonameid={my_location}"
+    )
     return location_details.json()
