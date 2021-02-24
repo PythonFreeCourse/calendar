@@ -83,7 +83,7 @@ async def test_get_corona_stats(httpx_mock, session):
 def test_serialize_stats():
     stats_object = CoronaStats(
         vaccinated_second_dose_perc=100,
-        vaccinated_second_dose_cum=200,
+        vaccinated_second_dose_total=200,
         vaccinated=0,
     )
 

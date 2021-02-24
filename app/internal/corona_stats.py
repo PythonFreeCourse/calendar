@@ -51,7 +51,7 @@ def create_stats_object(corona_stats_data: JSON) -> CoronaStats:
         vaccinated_second_dose=corona_stats_data.get(
             "vaccinated_seconde_dose",
         ),
-        vaccinated_second_dose_cum=corona_stats_data.get(
+        vaccinated_second_dose_total=corona_stats_data.get(
             "vaccinated_seconde_dose_cum",
         ),
         vaccinated_second_dose_perc=corona_stats_data.get(
@@ -66,19 +66,19 @@ def serialize_stats(stats_object: CoronaStats) -> Dict[str, Any]:
         "vaccinated_second_dose_perc": (
             stats_object.vaccinated_second_dose_perc
         ),
-        "vaccinated_second_dose_cum": (
-            stats_object.vaccinated_second_dose_cum
+        "vaccinated_second_dose_total": (
+            stats_object.vaccinated_second_dose_total
         ),
     }
 
 
 def serialize_dict_stats(stats_dict: Dict[str, Any]) -> Dict[str, Any]:
-    """ api Dit -> pylender Dict """
+    """ api Dict -> pylender Dict """
     return {
         "vaccinated_second_dose_perc": (
             stats_dict.get("vaccinated_seconde_dose_population_perc")
         ),
-        "vaccinated_second_dose_cum": (
+        "vaccinated_second_dose_total": (
             stats_dict.get("vaccinated_seconde_dose_cum")
         ),
     }

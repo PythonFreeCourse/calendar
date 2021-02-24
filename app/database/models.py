@@ -385,7 +385,7 @@ class CoronaStats(Base):
     vaccinated_cum = Column(Integer, nullable=False)
     vaccinated_population_perc = Column(Integer, nullable=False)
     vaccinated_second_dose = Column(Integer, nullable=False)
-    vaccinated_second_dose_cum = Column(Integer, nullable=False)
+    vaccinated_second_dose_total = Column(Integer, nullable=False)
     vaccinated_second_dose_perc = Column(Float, nullable=False)
 
 
