@@ -1,13 +1,14 @@
 {% for game in games %}
-<label for={{game['slug']}} class="game">{{game['name']}}</strong> 
-<input type="checkbox" name={{game['slug']}} class="form-check-input">
+<div><b for={{game['slug']}} class="game">{{game['name']}}</b></div>
 <!-- <input type="checkbox" name={{game['slug']}} class="form-check-input"> -->
-<div>-Platforms</div>
+<!-- <input type="checkbox" name={{game['slug']}} class="form-check-input"> -->
+<div><b>Platforms</b></div>
 {% for platform in game['platforms']%}
 <div>{{platform}}</div>
 {% endfor %}
-<div>-Release date</div>
-{{game['release_date']}}
+<div><b>Release date</b></div>
+<div>{{game['release_date']}}</div>
+
 <div>&nbsp;</div>
 {% endfor %}
 <script>

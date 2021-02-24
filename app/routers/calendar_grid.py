@@ -6,6 +6,8 @@ from typing import Dict, Iterator, List, Tuple
 
 import pytz
 
+from app.internal.game_releases_utils import add_game_events_to_weeks
+
 MONTH_BLOCK: int = 6
 
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
@@ -32,21 +34,16 @@ class Day:
         self.dailyevents: List[Tuple] = []
         self.events: List[Tuple] = []
         self.css: Dict[str, str] = {
-            'day_container': 'day',
-            'date': 'day-number',
-            'daily_event': 'month-event',
-            'daily_event_front': ' '.join([
-                'daily',
-                'front',
-                'background-warmyellow'
-            ]),
-            'daily_event_back': ' '.join([
-                'daily',
-                'back',
-                'text-darkblue',
-                'background-lightgray'
-            ]),
-            'event': 'event',
+            "day_container": "day",
+            "date": "day-number",
+            "daily_event": "month-event",
+            "daily_event_front": " ".join(
+                ["daily", "front", "background-warmyellow"],
+            ),
+            "daily_event_back": " ".join(
+                ["daily", "back", "text-darkblue", "background-lightgray"],
+            ),
+            "event": "event",
         }
 
     def __str__(self) -> str:
@@ -62,12 +59,12 @@ class Day:
 
     @classmethod
     def get_user_local_time(cls) -> datetime:
-        greenwich = pytz.timezone('GB')
+        greenwich = pytz.timezone("GB")
         return greenwich.localize(datetime.now())
 
     @classmethod
     def convert_str_to_date(cls, date_string: str) -> datetime:
-        return datetime.strptime(date_string, '%d-%B-%Y')
+        return datetime.strptime(date_string, "%d-%B-%Y")
 
     @classmethod
     def is_weekend(cls, date: date) -> bool:
@@ -79,21 +76,16 @@ class DayWeekend(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'day_container': 'day ',
-            'date': ' '.join(['day-number', 'text-gray']),
-            'daily_event': 'month-event',
-            'daily_event_front': ' '.join([
-                'daily',
-                'front',
-                'background-warmyellow'
-            ]),
-            'daily_event_back': ' '.join([
-                'daily',
-                'back',
-                'text-darkblue',
-                'background-lightgray'
-            ]),
-            'event': 'event',
+            "day_container": "day ",
+            "date": " ".join(["day-number", "text-gray"]),
+            "daily_event": "month-event",
+            "daily_event_front": " ".join(
+                ["daily", "front", "background-warmyellow"],
+            ),
+            "daily_event_back": " ".join(
+                ["daily", "back", "text-darkblue", "background-lightgray"],
+            ),
+            "event": "event",
         }
 
 
@@ -101,26 +93,18 @@ class Today(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'day_container': ' '.join([
-                'day',
-                'text-darkblue',
-                'background-yellow'
-            ]),
-            'date': 'day-number',
-            'daily_event': 'month-event',
-            'daily_event_front': ' '.join([
-                'daily',
-                'front',
-                'text-lightgray',
-                'background-darkblue'
-            ]),
-            'daily_event_back': ' '.join([
-                'daily',
-                'back',
-                'text-darkblue',
-                'background-lightgray'
-            ]),
-            'event': 'event',
+            "day_container": " ".join(
+                ["day", "text-darkblue", "background-yellow"],
+            ),
+            "date": "day-number",
+            "daily_event": "month-event",
+            "daily_event_front": " ".join(
+                ["daily", "front", "text-lightgray", "background-darkblue"],
+            ),
+            "daily_event_back": " ".join(
+                ["daily", "back", "text-darkblue", "background-lightgray"],
+            ),
+            "event": "event",
         }
 
 
@@ -128,25 +112,18 @@ class FirstDayMonth(Day):
     def __init__(self, date: datetime):
         super().__init__(date)
         self.css = {
-            'day_container': ' '.join([
-                'day',
-                'text-darkblue',
-                'background-lightgray'
-            ]),
-            'date': 'day-number',
-            'daily_event': 'month-event',
-            'daily_event_front': ' '.join([
-                'daily front',
-                'text-lightgray',
-                'background-red'
-            ]),
-            'daily_event_back': ' '.join([
-                'daily',
-                'back',
-                'text-darkblue',
-                'background-lightgray'
-            ]),
-            'event': 'event',
+            "day_container": " ".join(
+                ["day", "text-darkblue", "background-lightgray"],
+            ),
+            "date": "day-number",
+            "daily_event": "month-event",
+            "daily_event_front": " ".join(
+                ["daily front", "text-lightgray", "background-red"],
+            ),
+            "daily_event_back": " ".join(
+                ["daily", "back", "text-darkblue", "background-lightgray"],
+            ),
+            "event": "event",
         }
 
     def __str__(self) -> str:
@@ -175,8 +152,7 @@ def create_day(day: datetime) -> Day:
 def get_next_date(date: datetime) -> Iterator[Day]:
     """Generate date objects from a starting given date."""
     yield from (
-        create_day(date + timedelta(days=i))
-        for i in itertools.count(start=1)
+        create_day(date + timedelta(days=i)) for i in itertools.count(start=1)
     )
 
 
@@ -197,13 +173,16 @@ def get_n_days(date: datetime, n: int) -> Iterator[Day]:
 
 
 def create_weeks(
-        days: Iterator[Day],
-        length: int = Week.WEEK_DAYS
+    days: Iterator[Day],
+    length: int = Week.WEEK_DAYS,
 ) -> List[Week]:
     """Return lists of Weeks objects."""
     ndays: List[Day] = list(days)
     num_days: int = len(ndays)
-    return [Week(ndays[i:i + length]) for i in range(0, num_days, length)]
+    weeks = [Week(ndays[i : i + length]) for i in range(0, num_days, length)]
+
+    add_game_events_to_weeks(weeks, is_active=True)
+    return weeks
 
 
 def get_month_block(day: Day, n: int = MONTH_BLOCK) -> List[Week]:
