@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from fastapi import status
 import pytest
+from fastapi import status
 
 from app.telegram.handlers import MessageHandler, reply_unknown_user
 from app.telegram.keyboards import DATE_FORMAT

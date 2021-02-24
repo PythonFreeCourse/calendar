@@ -121,8 +121,9 @@ async def is_access_allowd(request: Request, route: str) -> bool:
     user_ptef = session.query(
         exists().where(
             UserFeature.feature_id == feature.id
-            and (UserFeature.user_id == user.user_id),
-        ),
+        ).where(
+            UserFeature.user_id == user.user_id
+        )
     ).scalar()
 
     return user_ptef

@@ -130,7 +130,7 @@ def test_is_feature_exist_in_db(session, feature):
     assert internal.is_feature_exists({
         'name': 'test',
         'route': '/test'
-        }, session)
+    }, session)
 
 
 def test_update_feature(session, feature, update_dict):

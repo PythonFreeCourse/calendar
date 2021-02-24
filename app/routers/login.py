@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 
 from app.dependencies import get_db, templates
-from app.internal.security.ouath2 import authenticate_user, create_jwt_token
 from app.internal.security import schema
+from app.internal.security.ouath2 import authenticate_user, create_jwt_token
 from app.internal.utils import safe_redirect_response
 
 router = APIRouter(

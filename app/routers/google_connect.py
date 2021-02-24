@@ -1,10 +1,10 @@
-from fastapi import Depends, APIRouter, Request
-from starlette.responses import RedirectResponse
+from fastapi import APIRouter, Depends, Request
 from loguru import logger
+from starlette.responses import RedirectResponse
 
-from app.internal.utils import get_current_user
 from app.dependencies import get_db
-from app.internal.google_connect import get_credentials, fetch_save_events
+from app.internal.google_connect import fetch_save_events, get_credentials
+from app.internal.utils import get_current_user
 from app.routers.profile import router as profile
 from app.internal.features import feature_access_filter
 
@@ -17,11 +17,13 @@ router = APIRouter(
 
 @router.get("/sync")
 @feature_access_filter
-async def google_sync(request: Request,
-                      session=Depends(get_db)) -> RedirectResponse:
-    '''Sync with Google - if user never synced with google this funcion will take
+async def google_sync(
+    request: Request,
+    session=Depends(get_db),
+) -> RedirectResponse:
+    """Sync with Google - if user never synced with google this funcion will take
     the user to a consent screen to use his google calendar data with the app.
-    '''
+    """
 
     user = get_current_user(session)  # getting active user
 
@@ -35,5 +37,5 @@ async def google_sync(request: Request,
     # fetch and save the events com from Google Calendar
     fetch_save_events(credentials=credentials, user=user, session=session)
 
-    url = profile.url_path_for('profile')
+    url = profile.url_path_for("profile")
     return RedirectResponse(url=url)
