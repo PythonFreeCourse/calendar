@@ -34,19 +34,19 @@
             <div class="left-options-bar">
               <div class="settings-options">
                 <ul id="options">
-                  <li class="tab"><a id="tab0" onclick="tabClick(this.id);" class="active">
+                  <li class="tab"><a id="tab0" class="active">
                     Language and region
                   </a></li>
-                  <li class="tab"><a id="tab1" onclick="tabClick(this.id);">
+                  <li class="tab"><a id="tab1">
                     Audio settings
                   </a></li>
-                  <li class="tab"><a id="tab2" onclick="tabClick(this.id);">
+                  <li class="tab"><a id="tab2">
                     View options
                   </a></li>
-                  <li class="tab"><a id="tab3" onclick="tabClick(this.id);">
+                  <li class="tab"><a id="tab3">
                     Keyboard shortcuts
                   </a></li>
-                  <li class="tab"><a id="tab4" onclick="tabClick(this.id);">
+                  <li class="tab"><a id="tab4">
                     Event settings
                   </a></li>
                 </ul>
@@ -54,10 +54,10 @@
             </div>
           </section>
         </div>
-        
+
         <div id="settings-main" class="settings-main">
           <!-- Language and region -->
-          <article id="settings_content" class="tabShow">
+          <article id="tab0-content" class="tabShow">
             <h2>Language and region</h2>
             <p>Language</p>
             <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
@@ -82,7 +82,7 @@
             </select>
           </article>
           <!-- Audio settings -->
-          <article id="settings_content" class="audio-settings tabShow">
+          <article id="tab1-content" class="tabHide">
             <h2>Audio settings</h2>
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
@@ -94,7 +94,7 @@
             </div>
           </article>
           <!-- View options -->
-          <article id="settings_content" class="view-options tabShow">
+          <article id="tab2-content" class="tabHide">
             <h2>View options</h2>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" value="" id="view-tick1">
@@ -115,6 +115,8 @@
               </label>
             </div>
           </article>
+          <article id="tab3-content" class="tabHide"></article>
+          <article id="tab4-content" class="tabHide"></article>
         </div>
       </main>
     </div>
