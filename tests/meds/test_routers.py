@@ -28,4 +28,3 @@ def test_meds_send_form_success(meds_test_client: TestClient, session: Session,
     path = meds.router.url_path_for('medications')
     response = meds_test_client.post(path, data=form, allow_redirects=True)
     assert response.ok
-    
