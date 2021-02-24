@@ -1,11 +1,11 @@
 window.addEventListener('load', () => {
-    document.getElementById("btn-add-item").addEventListener('click', addItem)
+    document.getElementById("btn-add-item").addEventListener('click', addItem);
 });
 
 
 function addItem() {
-    const LIST_ITEMS_NUM = document.querySelectorAll("#Items > div").length;
-    const list_items = document.getElementById("Items");
+    const LIST_ITEMS_NUM = document.querySelectorAll("#items > div").length;
+    const list_items = document.getElementById("items");
     let shared_list_item = document.getElementById("shared-list-item").cloneNode(true);
 
     shared_list_item.className = "shared-list-item-on";
@@ -16,7 +16,7 @@ function addItem() {
         }
     }
     list_items.appendChild(shared_list_item);
-    document.querySelector("#" + shared_list_item.id + " > .remove-btn").addEventListener('click', () => {
+    document.querySelector(`#${shared_list_item.id} > .remove-btn`).addEventListener('click', () => {
         removeItem(shared_list_item, list_items);
     })
 }
