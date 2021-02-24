@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 # GENERAL
 DOMAIN = 'Our-Domain'
 
+
 # DATABASE
 DEVELOPMENT_DATABASE_STRING = "sqlite:///./dev.db"
 # Set the following True if working on PSQL environment or set False otherwise
