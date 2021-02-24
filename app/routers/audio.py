@@ -23,7 +23,6 @@ from app.internal.audio import (
 )
 from app.internal.security.dependencies import current_user
 
-
 router = APIRouter(
     prefix="/audio",
     tags=["audio"],
