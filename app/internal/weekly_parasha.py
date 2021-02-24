@@ -3,6 +3,7 @@ from typing import Dict, Optional
 from pyluach import dates, parshios
 
 from app.database.models import Parasha
+
 from sqlalchemy.orm import Session
 
 

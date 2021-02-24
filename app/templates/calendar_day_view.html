@@ -18,9 +18,9 @@
     {% endif %}
     {% if parasha %}
     <div class="parashot">
-        {{ gettext(" :פרשת השבוע %(hebrew)s", hebrew=parasha.name) }}
+        {{ gettext(" Weekly Torah Portion: %(hebrew)s", hebrew=parasha.name) }}
         <br>{{ gettext("%(name)s", name=parasha.hebrew_name) }}
-        <a href={{parasha.link}} target="_blank">{{ gettext(" פירוט בלינק נפרד על %(parashah)s", parashah=parasha.hebrew_name) }}</a>
+        <a href={{parasha.link}} target="_blank">{{ gettext(" Detailing in a separate link on %(parashah)s", parashah=parasha.hebrew_name) }}</a>
     </div>
     {% endif %}
     {% else %}
