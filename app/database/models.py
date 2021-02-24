@@ -382,7 +382,7 @@ class CoronaStats(Base):
     date_ = Column(DateTime, nullable=False)
     date_inserted = Column(DateTime, default=datetime.utcnow)
     vaccinated = Column(Integer, nullable=False)
-    vaccinated_cum = Column(Integer, nullable=False)
+    vaccinated_total = Column(Integer, nullable=False)
     vaccinated_population_perc = Column(Integer, nullable=False)
     vaccinated_second_dose = Column(Integer, nullable=False)
     vaccinated_second_dose_total = Column(Integer, nullable=False)

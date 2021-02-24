@@ -44,7 +44,7 @@ def create_stats_object(corona_stats_data: JSON) -> CoronaStats:
             DATETIME_FORMAT,
         ),
         vaccinated=corona_stats_data.get("vaccinated"),
-        vaccinated_cum=corona_stats_data.get("vaccinated_cum"),
+        vaccinated_total=corona_stats_data.get("vaccinated_cum"),
         vaccinated_population_perc=corona_stats_data.get(
             "vaccinated_population_perc",
         ),
