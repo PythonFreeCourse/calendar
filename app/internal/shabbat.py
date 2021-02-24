@@ -39,7 +39,6 @@ def get_shabbat_if_date_friday(
             Shabbat start end ending time if specific date
              is Saturday, else None
         """
-    print(shabbat_time)
     shabbat_obj = shabbat_time_by_user_location(shabbat_time)
     if date == shabbat_obj['start_date']:
         return shabbat_obj

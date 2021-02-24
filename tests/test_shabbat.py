@@ -25,7 +25,9 @@ FRIDAY = date(2021, 2, 27)
 
 
 def test_get_shabbat_if_date_friday():
-    result = shabbat.get_shabbat_if_date_friday(SHABBAT_TIME, FRIDAY.date())
+    result = shabbat.get_shabbat_if_date_friday(SHABBAT_TIME, FRIDAY)
+    print(SHABBAT_TIME)
+    print(FRIDAY)
     assert result.start_hour == '17:15'
 
 def test_return_none_if_date_no_friday():
