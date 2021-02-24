@@ -10,6 +10,6 @@
       {{ event.title }} - {{ event.content if event.content is not none }}
     </p>
     <hr class="mb-0">
-    <a href="/event/{{ event.id }}">{{ event.title }} details</a>
+    <a href="{{ url_for('eventview', event_id=event.id) }}">{{ event.title }} details</a>
   </div>
 </div>
