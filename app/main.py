@@ -19,7 +19,9 @@ from app.dependencies import (
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.dependencies import current_user
-from app.internal.security.ouath2 import auth_exception_handler
+from app.internal.security.ouath2 import (
+    auth_exception_handler,
+)
 from app.routers.salary import routes as salary
 
 
@@ -140,16 +142,26 @@ json_data_loader.load_to_database(next(get_db()))
 async def home(
     request: Request,
     db: Session = Depends(get_db),
-    user: models.User = Depends(current_user),
 ):
     """Home page for the website."""
+    user_id = False
+    if "Authorization" in request.cookies:
+        jwt = request.cookies["Authorization"]
+        user = await current_user(request=request, db=db, jwt=jwt)
+        user_id = user.user_id
+    is_connected = True if user_id else False
     quote_of_day = daily_quotes.get_quote_of_day(db)
-    if daily_quotes.is_quote_favorite(db, user.user_id, quote_of_day):
+    if is_connected and daily_quotes.is_quote_favorite(
+        db,
+        user_id,
+        quote_of_day,
+    ):
         quote_of_day.is_favorite = True
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
+            "is_connected": is_connected,
             "quote": quote_of_day,
             "empty_heart": daily_quotes.EMPTY_HEART_PATH,
             "full_heart": daily_quotes.FULL_HEART_PATH,

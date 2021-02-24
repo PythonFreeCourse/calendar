@@ -153,6 +153,14 @@ p#p-quote {
   height: 1.5em;
 }
 
+#full-heart {
+  display: none;
+}
+
+#empty-heart {
+  display: none;
+}
+
 #favorite-quotes {
   margin-bottom: 1.5em;
 }

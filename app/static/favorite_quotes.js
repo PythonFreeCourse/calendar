@@ -3,6 +3,20 @@ const EMPTY_HEART = "../../media/empty_heart.png";
 
 // Adding event listener
 window.addEventListener("load", function () {
+  const quoteContainer = document.getElementById("quote-container");
+  if (quoteContainer) {
+    const isConnected = quoteContainer.dataset.connected;
+    if (isConnected === "True") {
+      const fullHeart = document.getElementById("full-heart");
+      const emptyHeart = document.getElementById("empty-heart");
+      if (fullHeart) {
+        fullHeart.style.display = "inline";
+      } else {
+        emptyHeart.style.display = "inline";
+      }
+    }
+  }
+
   let hearts = Array.from(document.getElementsByClassName("heart"));
   hearts.forEach((heart_element) => {
     if (heart_element) {

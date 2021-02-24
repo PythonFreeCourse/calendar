@@ -12,7 +12,7 @@
             <p>
                 Open Source Calendar built with Python
             </p>
-            <div class="d-flex position-relative">
+            <div class="d-flex position-relative" id="quote-container" data-connected={{is_connected}}>
                 <div class="container mx-auto gap-3">
                 {% if quote %}
                     <p><cite><q id="quote">{{ quote.text }}</q></cite>
@@ -22,9 +22,9 @@
                         <span >&nbsp;
                     {% endif %}
                     {% if quote.is_favorite %}
-                    <img src="{{full_heart}}" data-heart="on" data-qid="{{quote.id}}" class="heart">
+                    <img src="{{full_heart}}" data-heart="on" data-qid="{{quote.id}}" id="full-heart" class="heart">
                     {% else %}
-                    <img src="{{empty_heart}}" data-heart="off" data-qid="{{quote.id}}" class="heart">
+                    <img src="{{empty_heart}}" data-heart="off" data-qid="{{quote.id}}" id="empty-heart" class="heart">
                     {% endif %}
                     </span>
                     </p>
