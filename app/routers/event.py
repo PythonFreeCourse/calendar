@@ -1,8 +1,8 @@
-from datetime import datetime as dt
 import json
-from operator import attrgetter
-from typing import Any, Dict, List, Optional, Tuple
 import urllib
+from datetime import datetime as dt
+from operator import attrgetter
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -11,10 +11,18 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.sql.elements import Null
 from starlette import status
+from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
-from app.database.models import Comment, Event, User, UserEvent
+from app.database.models import (
+    Comment,
+    Event,
+    SharedList,
+    SharedListItem,
+    User,
+    UserEvent,
+)
 from app.dependencies import get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
@@ -29,10 +37,10 @@ from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
-
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,
@@ -52,6 +60,12 @@ router = APIRouter(
     tags=["event"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class SharedItem(NamedTuple):
+    name: str
+    amount: float
+    participant: str
 
 
 class EventModel(BaseModel):
@@ -134,6 +148,7 @@ async def create_new_event(
         title,
         invited_emails,
     )
+    shared_list = extract_shared_list_from_data(event_info=data, db=session)
     latitude, longitude = None, None
 
     if vc_link:
@@ -161,6 +176,7 @@ async def create_new_event(
         category_id=category_id,
         availability=availability,
         is_google_event=is_google_event,
+        shared_list=shared_list,
         privacy=privacy,
     )
 
@@ -429,6 +445,7 @@ def create_event(
     category_id: Optional[int] = None,
     availability: bool = True,
     is_google_event: bool = False,
+    shared_list: Optional[SharedList] = None,
     privacy: str = PrivacyKinds.Public.name,
 ):
     """Creates an event and an association."""
@@ -453,6 +470,7 @@ def create_event(
         invitees=invitees_concatenated,
         all_day=all_day,
         category_id=category_id,
+        shared_list=shared_list,
         availability=availability,
         is_google_event=is_google_event,
     )
@@ -549,6 +567,60 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+def extract_shared_list_from_data(
+    event_info: ImmutableMultiDict,
+    db: Session,
+) -> Optional[SharedList]:
+    """Extract shared list items from POST data.
+    Return:
+        SharedList: SharedList object stored in the database.
+    """
+    raw_items = zip(
+        event_info.getlist("item-name"),
+        event_info.getlist("item-amount"),
+        event_info.getlist("item-participant"),
+    )
+    items = []
+    title = event_info.get("shared-list-title")
+    for name, amount, participant in raw_items:
+        item = SharedItem(name, amount, participant)
+        if _check_item_is_valid(item):
+            item_dict = item._asdict()
+            item_dict["amount"] = float(item_dict["amount"])
+            items.append(item_dict)
+    return _create_shared_list({title: items}, db)
+
+
+def _check_item_is_valid(item: SharedItem) -> bool:
+    return (
+        item is not None
+        and item.amount.isnumeric()
+        and item.participant is not None
+    )
+
+
+def _create_shared_list(
+    raw_shared_list: Dict[str, Dict[str, Any]],
+    db: Session,
+) -> Optional[SharedList]:
+    try:
+        title = list(raw_shared_list.keys())[0] or "Shared List"
+    except IndexError as e:
+        logger.exception(e)
+        return None
+    shared_list = create_model(db, SharedList, title=title)
+    try:
+        items = list(raw_shared_list.values())[0]
+        for item in items:
+            item = create_model(db, SharedListItem, **item)
+            shared_list.items.append(item)
+    except (IndexError, KeyError) as e:
+        logger.exception(e)
+        return None
+    else:
+        return shared_list
 
 
 def get_template_to_share_event(

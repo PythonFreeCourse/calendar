@@ -9,11 +9,11 @@ from sqlalchemy.orm import Session
 from app import config
 from app.database import engine, models
 from app.dependencies import (
-    get_db,
-    logger,
     MEDIA_PATH,
     SOUNDS_PATH,
     STATIC_PATH,
+    get_db,
+    logger,
     templates,
 )
 from app.internal import daily_quotes, json_data_loader
@@ -63,11 +63,11 @@ from app.routers import (  # noqa: E402
     four_o_four,
     friendview,
     google_connect,
-    invitation,
     joke,
     login,
     logout,
     meds,
+    notification,
     profile,
     register,
     search,
@@ -114,11 +114,11 @@ routers_to_include = [
     four_o_four.router,
     friendview.router,
     google_connect.router,
-    invitation.router,
     joke.router,
     login.router,
     logout.router,
     meds.router,
+    notification.router,
     profile.router,
     register.router,
     salary.router,

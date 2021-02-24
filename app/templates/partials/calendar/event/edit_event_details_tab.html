@@ -49,6 +49,30 @@
    <input type="text" id="vc_link" name="vc_link" placeholder="VC URL">
 </div>
 
+<div class="shared_list" id="shared-list">
+  <div class="card card-body" id="shared-list-card">
+    <input type="text" class="form-control" name="shared-list-title" placeholder="Title">
+    <div id="items"></div>
+    <div id="hidden">
+      <div class="form_row shared-list-item-off" id="shared-list-item">
+        <label for="item_name">Item name:</label>
+        <input type="text" class="form-control" name="item-name" placeholder="Item name">
+        <label for="item_amount">Amount:</label>
+        <input type="text" class="form-control" name="item-amount" placeholder="Amount">
+        <label for="item_participant">Participant:</label>
+        <input type="text" class="form-control" name="item-participant" placeholder="Participant">
+        <button type="button" class="btn btn-labeled btn-danger remove-btn" id="btn-remove-item">
+          <i id="btn-remove-label" class="fa fa-minus-circle"></i>
+        </button>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-add-item" type="button">
+      Add an item
+    </button>
+  </div>
+</div>
+
+
 <div class="form_row">
    <label for="invited">Invited emails: </label>
    <input type="text" id="invited" name="invited" placeholder="Invited emails, separated by commas">

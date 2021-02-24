@@ -1,13 +1,12 @@
-from datetime import datetime, timedelta
 import json
-import pytest
+from datetime import datetime, timedelta
 
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
-from sqlalchemy.sql.elements import Null
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
-
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
@@ -168,7 +167,7 @@ def test_eventview_with_id(event_test_client, session, event):
     assert b"Some random location" in response.content
     waze_link = b"https://waze.com/ul?q=Some%20random%20location"
     assert waze_link in response.content
-    assert b'VC link' not in response.content
+    assert b"VC link" not in response.content
 
 
 def test_eventview_without_location(event_test_client, session, event):
