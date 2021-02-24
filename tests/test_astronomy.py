@@ -1,14 +1,13 @@
 import datetime
 
-from fastapi import status
 import httpx
 import pytest
 import requests
 import responses
 import respx
+from fastapi import status
 
-from app.internal.astronomy import ASTRONOMY_URL
-from app.internal.astronomy import get_astronomical_data
+from app.internal.astronomy import ASTRONOMY_URL, get_astronomical_data
 
 RESPONSE_FROM_MOCK = {
     "location": {
@@ -29,14 +28,14 @@ RESPONSE_FROM_MOCK = {
             "moonset": "03:04 AM",
             "moon_phase": "Waxing Gibbous",
             "moon_illumination": "79",
-        }
-    }
+        },
+    },
 }
 
 ERROR_RESPONSE_FROM_MOCK = {
     "error": {
         "message": "Error Text",
-    }
+    },
 }
 
 
@@ -45,7 +44,7 @@ async def test_get_astronomical_data(httpx_mock):
     requested_date = datetime.datetime(day=4, month=4, year=2020)
     httpx_mock.add_response(method="GET", json=RESPONSE_FROM_MOCK)
     output = await get_astronomical_data(requested_date, "tel aviv")
-    assert output['success']
+    assert output["success"]
 
 
 @respx.mock
@@ -58,7 +57,7 @@ async def test_astronomical_data_error_from_api():
         json=ERROR_RESPONSE_FROM_MOCK,
     )
     output = await get_astronomical_data(requested_date, "123")
-    assert not output['success']
+    assert not output["success"]
 
 
 @respx.mock
@@ -66,9 +65,10 @@ async def test_astronomical_data_error_from_api():
 async def test_astronomical_exception_from_api(httpx_mock):
     requested_date = datetime.datetime.now() + datetime.timedelta(days=3)
     respx.get(ASTRONOMY_URL).mock(
-        return_value=httpx.Response(status.HTTP_500_INTERNAL_SERVER_ERROR))
+        return_value=httpx.Response(status.HTTP_500_INTERNAL_SERVER_ERROR),
+    )
     output = await get_astronomical_data(requested_date, "456")
-    assert not output['success']
+    assert not output["success"]
 
 
 @responses.activate
@@ -82,4 +82,4 @@ async def test_astronomical_no_response_from_api():
     )
     requests.get(ASTRONOMY_URL)
     output = await get_astronomical_data(requested_date, "789")
-    assert not output['success']
+    assert not output["success"]
