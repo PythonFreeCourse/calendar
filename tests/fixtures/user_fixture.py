@@ -25,10 +25,11 @@ def user(session: Session) -> Generator[User, None, None]:
 @pytest.fixture
 def user2(session: Session) -> Generator[User, None, None]:
     mock_user = create_model(
-        session, User,
-        username='test_username2',
-        password='test_password2',
-        email='test2.email@gmail.com',
+        session,
+        User,
+        username="test_username2",
+        password="test_password2",
+        email="test2.email@gmail.com",
         language_id=1,
     )
     yield mock_user

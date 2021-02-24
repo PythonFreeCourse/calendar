@@ -8,21 +8,21 @@ from app.config import PSQL_ENVIRONMENT
 from app.database.models import Base
 
 pytest_plugins = [
-    'tests.user_fixture',
-    'tests.event_fixture',
-    'tests.dayview_fixture',
-    'tests.invitation_fixture',
-    'tests.association_fixture',
-    'tests.client_fixture',
-    'tests.weekly_tasks_fixture',
-    'tests.asyncio_fixture',
-    'tests.logger_fixture',
-    'tests.category_fixture',
-    'smtpdfix',
-    'tests.quotes_fixture',
-    'tests.zodiac_fixture',
-    'tests.jokes_fixture',
-    'tests.comment_fixture',
+    "fixtures.tests.user_fixture",
+    "fixtures.tests.event_fixture",
+    "fixtures.tests.dayview_fixture",
+    "fixtures.tests.invitation_fixture",
+    "fixtures.tests.association_fixture",
+    "fixtures.tests.client_fixture",
+    "fixtures.tests.weekly_tasks_fixture",
+    "fixtures.tests.asyncio_fixture",
+    "fixtures.tests.logger_fixture",
+    "fixtures.tests.category_fixture",
+    "fixtures.tests.quotes_fixture",
+    "fixtures.tests.zodiac_fixture",
+    "fixtures.tests.jokes_fixture",
+    "fixtures.tests.comment_fixture",
+    "smtpdfix",
 ]
 
 # When testing in a PostgreSQL environment please make sure that:
@@ -31,21 +31,22 @@ pytest_plugins = [
 
 if PSQL_ENVIRONMENT:
     SQLALCHEMY_TEST_DATABASE_URL = (
-        "postgresql://postgres:1234"
-        "@localhost/postgres"
+        "postgresql://postgres:1234" "@localhost/postgres"
     )
-    test_engine = create_engine(
-        SQLALCHEMY_TEST_DATABASE_URL
-    )
+    test_engine = create_engine(SQLALCHEMY_TEST_DATABASE_URL)
 
 else:
     SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
     test_engine = create_engine(
-        SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
+        SQLALCHEMY_TEST_DATABASE_URL,
+        connect_args={"check_same_thread": False},
     )
 
 TestingSessionLocal = sessionmaker(
-    autocommit=False, autoflush=False, bind=test_engine)
+    autocommit=False,
+    autoflush=False,
+    bind=test_engine,
+)
 
 
 def get_test_db():
@@ -66,11 +67,15 @@ def session():
 def sqlite_engine():
     SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
     sqlite_test_engine = create_engine(
-        SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
+        SQLALCHEMY_TEST_DATABASE_URL,
+        connect_args={"check_same_thread": False},
     )
 
     TestingSession = sessionmaker(
-        autocommit=False, autoflush=False, bind=sqlite_test_engine)
+        autocommit=False,
+        autoflush=False,
+        bind=sqlite_test_engine,
+    )
 
     yield sqlite_test_engine
     session = TestingSession()

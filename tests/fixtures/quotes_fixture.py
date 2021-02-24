@@ -6,7 +6,10 @@ from app.internal.utils import create_model, delete_instance
 
 
 def add_quote(
-        session: Session, id_quote: int, text: str, author: str
+    session: Session,
+    id_quote: int,
+    text: str,
+    author: str,
 ) -> Quote:
     quote = create_model(
         session,
@@ -24,8 +27,8 @@ def quote1(session: Session) -> Quote:
     yield from add_quote(
         session=session,
         id_quote=1,
-        text='You have to believe in yourself.',
-        author='Sun Tzu',
+        text="You have to believe in yourself.",
+        author="Sun Tzu",
     )
 
 
@@ -34,6 +37,6 @@ def quote2(session: Session) -> Quote:
     yield from add_quote(
         session=session,
         id_quote=2,
-        text='Wisdom begins in wonder.',
-        author='Socrates',
+        text="Wisdom begins in wonder.",
+        author="Socrates",
     )

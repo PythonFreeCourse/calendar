@@ -10,7 +10,9 @@ from app.internal.utils import create_model, delete_instance
 
 @pytest.fixture
 def invitation(
-        event: Event, user: User, session: Session
+    event: Event,
+    user: User,
+    session: Session,
 ) -> Generator[Invitation, None, None]:
     """Returns an Invitation object after being created in the database.
 
@@ -23,7 +25,8 @@ def invitation(
         An Invitation object.
     """
     invitation = create_model(
-        session, Invitation,
+        session,
+        Invitation,
         creation=datetime.now(),
         recipient=user,
         event=event,

@@ -8,7 +8,8 @@ from app.internal.utils import create_model, delete_instance
 @pytest.fixture
 def zodiac_sign(session: Session) -> Zodiac:
     zodiac = create_model(
-        session, Zodiac,
+        session,
+        Zodiac,
         name="aries",
         start_month=3,
         start_day_in_month=20,
