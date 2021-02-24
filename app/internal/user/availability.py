@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, User
+
 # from app.internal.utils import get_current_user
 
 
@@ -11,8 +12,11 @@ def disable(session: Session, user_id: int) -> bool:
     returns:
     True if function worked properly
     False if it didn't."""
-    future_events_user_owns = session.query(Event).filter(
-        Event.start > datetime.now(), Event.owner_id == user_id).all()
+    future_events_user_owns = (
+        session.query(Event)
+        .filter(Event.start > datetime.now(), Event.owner_id == user_id)
+        .all()
+    )
 
     if future_events_user_owns:
         return False

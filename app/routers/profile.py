@@ -1,18 +1,20 @@
 import io
 
-from loguru import logger
 from fastapi import APIRouter, Depends, File, Request, UploadFile
+from loguru import logger
 from PIL import Image
+from sqlalchemy.exc import SQLAlchemyError
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-from sqlalchemy.exc import SQLAlchemyError
 
 from app import config
 from app.database.models import User
-from app.dependencies import get_db, MEDIA_PATH, templates, GOOGLE_ERROR
+from app.dependencies import GOOGLE_ERROR, MEDIA_PATH, get_db, templates
+from app.internal.import_holidays import (
+    get_holidays_from_file,
+    save_holidays_to_db,
+)
 from app.internal.on_this_day_events import get_on_this_day_events
-from app.internal.import_holidays import (get_holidays_from_file,
-                                          save_holidays_to_db)
 from app.internal.privacy import PrivacyKinds
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
@@ -27,20 +29,21 @@ router = APIRouter(
 
 def get_placeholder_user():
     return User(
-        username='new_user',
-        email='my@email.po',
-        password='1a2s3d4f5g6',
-        full_name='My Name',
+        username="new_user",
+        email="my@email.po",
+        password="1a2s3d4f5g6",
+        full_name="My Name",
         language_id=1,
-        telegram_id='',
+        telegram_id="",
     )
 
 
 @router.get("/")
 async def profile(
-        request: Request,
-        session=Depends(get_db),
-        new_user=Depends(get_placeholder_user)):
+    request: Request,
+    session=Depends(get_db),
+    new_user=Depends(get_placeholder_user),
+):
     # Get relevant data from database
     upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
@@ -49,28 +52,41 @@ async def profile(
         session.commit()
         user = session.query(User).filter_by(id=1).first()
 
-    signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo',
-             'Virgo', 'Libra', 'Scorpio', 'Sagittarius',
-             'Capricorn', 'Aquarius', 'Pisces']
+    signs = [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces",
+    ]
     on_this_day_data = get_on_this_day_events(session)
 
-    return templates.TemplateResponse("profile.html", {
-        "request": request,
-        "user": user,
-        "events": upcoming_events,
-        "signs": signs,
-        "google_error": GOOGLE_ERROR,
-        "on_this_day_data": on_this_day_data,
-        "privacy": PrivacyKinds
-    })
+    return templates.TemplateResponse(
+        "profile.html",
+        {
+            "request": request,
+            "user": user,
+            "events": upcoming_events,
+            "signs": signs,
+            "google_error": GOOGLE_ERROR,
+            "on_this_day_data": on_this_day_data,
+            "privacy": PrivacyKinds,
+        },
+    )
 
 
 @router.post("/update_user_fullname")
-async def update_user_fullname(
-        request: Request, session=Depends(get_db)):
+async def update_user_fullname(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
-    new_fullname = data['fullname']
+    new_fullname = data["fullname"]
 
     # Update database
     user.full_name = new_fullname
@@ -81,11 +97,10 @@ async def update_user_fullname(
 
 
 @router.post("/update_user_email")
-async def update_user_email(
-        request: Request, session=Depends(get_db)):
+async def update_user_email(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
-    new_email = data['email']
+    new_email = data["email"]
 
     # Update database
     user.email = new_email
@@ -96,11 +111,10 @@ async def update_user_email(
 
 
 @router.post("/update_user_description")
-async def update_profile(
-        request: Request, session=Depends(get_db)):
+async def update_profile(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
-    new_description = data['description']
+    new_description = data["description"]
 
     # Update database
     user.description = new_description
@@ -112,7 +126,9 @@ async def update_profile(
 
 @router.post("/upload_user_photo")
 async def upload_user_photo(
-        file: UploadFile = File(...), session=Depends(get_db)):
+    file: UploadFile = File(...),
+    session=Depends(get_db),
+):
     user = session.query(User).filter_by(id=1).first()
     pic = await file.read()
 
@@ -127,11 +143,10 @@ async def upload_user_photo(
 
 
 @router.post("/update_telegram_id")
-async def update_telegram_id(
-        request: Request, session=Depends(get_db)):
+async def update_telegram_id(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
-    new_telegram_id = data['telegram_id']
+    new_telegram_id = data["telegram_id"]
 
     # Update database
     user.telegram_id = new_telegram_id
@@ -142,13 +157,10 @@ async def update_telegram_id(
 
 
 @router.post("/privacy")
-async def update_calendar_privacy(
-        request: Request,
-        session=Depends(get_db)
-):
+async def update_calendar_privacy(request: Request, session=Depends(get_db)):
     user = session.query(User).filter_by(id=1).first()
     data = await request.form()
-    new_privacy = data['privacy']
+    new_privacy = data["privacy"]
 
     # Update database
     user.privacy = new_privacy
@@ -160,9 +172,12 @@ async def update_calendar_privacy(
 
 @router.get("/holidays/import")
 def import_holidays(request: Request):
-    return templates.TemplateResponse("import_holidays.html", {
-        "request": request,
-    })
+    return templates.TemplateResponse(
+        "import_holidays.html",
+        {
+            "request": request,
+        },
+    )
 
 
 async def process_image(image, user):
@@ -185,8 +200,7 @@ def get_image_crop_area(width, height):
 
 
 @router.post("/holidays/update")
-async def update(
-        file: UploadFile = File(...), session=Depends(get_db)):
+async def update(file: UploadFile = File(...), session=Depends(get_db)):
     icsfile = await file.read()
     holidays = get_holidays_from_file(icsfile.decode(), session)
     try:

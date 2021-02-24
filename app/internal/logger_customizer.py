@@ -1,7 +1,8 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 
-from loguru import _Logger as Logger, logger
+from loguru import _Logger as Logger
+from loguru import logger
 
 
 class LoggerConfigError(Exception):
@@ -9,14 +10,16 @@ class LoggerConfigError(Exception):
 
 
 class LoggerCustomizer:
-
     @classmethod
-    def make_logger(cls, log_path: Path,
-                    log_filename: str,
-                    log_level: str,
-                    log_rotation_interval: str,
-                    log_retention_interval: str,
-                    log_format: str) -> Logger:
+    def make_logger(
+        cls,
+        log_path: Path,
+        log_filename: str,
+        log_level: str,
+        log_rotation_interval: str,
+        log_retention_interval: str,
+        log_format: str,
+    ) -> Logger:
         """Creates a logger from given configurations
 
         Args:
@@ -42,23 +45,25 @@ class LoggerCustomizer:
                 level=log_level,
                 retention=log_retention_interval,
                 rotation=log_rotation_interval,
-                format=log_format
+                format=log_format,
             )
         except (TypeError, ValueError) as err:
             raise LoggerConfigError(
                 f"You have an issue with the logger configuration: {err!r}, "
-                "fix it please")
+                "fix it please",
+            )
 
         return logger
 
     @classmethod
-    def customize_logging(cls,
-                          file_path: Path,
-                          level: str,
-                          rotation: str,
-                          retention: str,
-                          format: str
-                          ) -> Logger:
+    def customize_logging(
+        cls,
+        file_path: Path,
+        level: str,
+        rotation: str,
+        retention: str,
+        format: str,
+    ) -> Logger:
         """Used to customize the logger instance
 
         Args:
@@ -79,7 +84,7 @@ class LoggerCustomizer:
             enqueue=True,
             backtrace=True,
             level=level.upper(),
-            format=format
+            format=format,
         )
         logger.add(
             str(file_path),
@@ -88,7 +93,7 @@ class LoggerCustomizer:
             enqueue=True,
             backtrace=True,
             level=level.upper(),
-            format=format
+            format=format,
         )
 
         return logger

@@ -1,8 +1,8 @@
-from datetime import datetime as dt
 import json
+import urllib
+from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
-import urllib
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel
@@ -37,10 +37,10 @@ from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
-
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,

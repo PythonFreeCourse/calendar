@@ -5,19 +5,19 @@ from pydantic.main import BaseModel
 from sqlalchemy.orm.session import Session
 
 from app.database.models import Event
-from app.internal.utils import (create_model, get_time_from_string)
+from app.internal.utils import create_model, get_time_from_string
 
 MAX_EVENT_QUANTITY = 50
 
 ERRORS = {
-    'finish': 'Finish Date must must be later than or equal to Start Date',
-    'max': 'Maximal Interval must must be larger than or equal to Minimal \
-        Interval',
-    'amount': 'Interval between Earliest Reminder and Latest Reminder not \
-        long enough for Daily Amount with Minimal Interval',
-    'quantity': 'Total number of reminders can\'t be larger than '
-                + f'{MAX_EVENT_QUANTITY}. Please lower the daily amount, or '
-                + 'choose a shorter time period.'
+    "finish": "Finish Date must must be later than or equal to Start Date",
+    "max": "Maximal Interval must must be larger than or equal to Minimal \
+        Interval",
+    "amount": "Interval between Earliest Reminder and Latest Reminder not \
+        long enough for Daily Amount with Minimal Interval",
+    "quantity": "Total number of reminders can't be larger than "
+    + f"{MAX_EVENT_QUANTITY}. Please lower the daily amount, or "
+    + "choose a shorter time period.",
 }
 
 
@@ -35,6 +35,7 @@ class Form(BaseModel):
     end (datetime) - Last reminder date and time.
     note (str, optional) - Additional description.
     """
+
     name: Optional[str]
     first: Optional[time]
     amount: int
@@ -47,8 +48,12 @@ class Form(BaseModel):
     note: Optional[str]
 
 
-def adjust_day(datetime_obj: datetime, early: time, late: time,
-               eq: bool = False) -> datetime:
+def adjust_day(
+    datetime_obj: datetime,
+    early: time,
+    late: time,
+    eq: bool = False,
+) -> datetime:
     """Returns datetime_obj as same or following day as needed.
 
     Args:
@@ -77,25 +82,29 @@ def trans_form(web_form: Dict[str, str]) -> Tuple[Form, Dict[str, Any]]:
             - Dictionary version of Form object.
     """
     form = {}
-    form['name'] = web_form['name']
-    start_date = get_time_from_string(web_form['start'])
-    form['first'] = get_time_from_string(web_form['first'])
-    end_date = get_time_from_string(web_form['end'])
-    form['amount'] = int(web_form['amount'])
-    form['early'] = get_time_from_string(web_form['early'])
-    form['late'] = get_time_from_string(web_form['late'])
-    form['min'] = get_time_from_string(web_form['min'])
-    form['max'] = get_time_from_string(web_form['max'])
-    first_time = form['first'] if form['first'] else form['early']
-    form['start'] = datetime.combine(start_date, first_time)
+    form["name"] = web_form["name"]
+    start_date = get_time_from_string(web_form["start"])
+    form["first"] = get_time_from_string(web_form["first"])
+    end_date = get_time_from_string(web_form["end"])
+    form["amount"] = int(web_form["amount"])
+    form["early"] = get_time_from_string(web_form["early"])
+    form["late"] = get_time_from_string(web_form["late"])
+    form["min"] = get_time_from_string(web_form["min"])
+    form["max"] = get_time_from_string(web_form["max"])
+    first_time = form["first"] if form["first"] else form["early"]
+    form["start"] = datetime.combine(start_date, first_time)
     end_date = adjust_day(
-        end_date, web_form['early'], web_form['late'], eq=True)
-    form['end'] = datetime.combine(end_date, form['late'])
-    form['note'] = web_form['note']
+        end_date,
+        web_form["early"],
+        web_form["late"],
+        eq=True,
+    )
+    form["end"] = datetime.combine(end_date, form["late"])
+    form["note"] = web_form["note"]
 
     form_obj = Form(**form)
-    form['start'] = form['start'].date()
-    form['end'] = form['end'].date()
+    form["start"] = form["start"].date()
+    form["end"] = form["end"].date()
     return form_obj, form
 
 
@@ -131,8 +140,7 @@ def get_interval_in_minutes(early: time, late: time) -> int:
     return round(interval.seconds / 60)
 
 
-def validate_amount(amount: int, min: time, early: time,
-                    late: time) -> bool:
+def validate_amount(amount: int, min: time, early: time, late: time) -> bool:
     """Returns True if interval is sufficient for reminder amount with minimal
     interval constraint, False otherwise
 
@@ -176,14 +184,14 @@ def validate_form(form: Form) -> List[str]:
     """
     errors = []
     if form.end < form.start:
-        errors.append(ERRORS['finish'])
+        errors.append(ERRORS["finish"])
     if form.max < form.min:
-        errors.append(ERRORS['max'])
+        errors.append(ERRORS["max"])
     if not validate_amount(form.amount, form.min, form.early, form.late):
-        errors.append(ERRORS['amount'])
+        errors.append(ERRORS["amount"])
     datetimes = get_reminder_datetimes(form)
     if not validate_events(datetimes):
-        errors.append(ERRORS['quantity'])
+        errors.append(ERRORS["quantity"])
 
     return errors
 
@@ -224,15 +232,23 @@ def get_reminder_times(form: Form) -> List[time]:
         times.append(reminder.time())
 
     wasted_time = get_interval_in_minutes(times[-1], form.late) / 2
-    times = [(datetime.combine(datetime.min, time_obj)
-              + timedelta(minutes=wasted_time)).time()
-             for time_obj in times]
+    times = [
+        (
+            datetime.combine(datetime.min, time_obj)
+            + timedelta(minutes=wasted_time)
+        ).time()
+        for time_obj in times
+    ]
 
     return times
 
 
-def validate_datetime(reminder: datetime, day: date, early: time,
-                      late: time) -> bool:
+def validate_datetime(
+    reminder: datetime,
+    day: date,
+    early: time,
+    late: time,
+) -> bool:
     """Returns True if reminder is between earlist and latest reminder times on
     a given date or equal to any of them, False otherwise.
 
@@ -253,8 +269,12 @@ def validate_datetime(reminder: datetime, day: date, early: time,
     return early_datetime <= reminder <= late_datetime
 
 
-def validate_first_day_reminder(previous: datetime, reminder_time: time,
-                                min: time, max: time) -> bool:
+def validate_first_day_reminder(
+    previous: datetime,
+    reminder_time: time,
+    min: time,
+    max: time,
+) -> bool:
     """Returns True if interval between reminders is valid, false otherwise.
 
     Args:
@@ -272,8 +292,12 @@ def validate_first_day_reminder(previous: datetime, reminder_time: time,
     return max_minutes >= interval >= min_minutes
 
 
-def get_different_time_reminder(previous: datetime, min: time, early: time,
-                                late: time) -> Optional[datetime]:
+def get_different_time_reminder(
+    previous: datetime,
+    min: time,
+    early: time,
+    late: time,
+) -> Optional[datetime]:
     """Returns datetime object for first day reminder with non-standard time.
 
     Args:
@@ -291,8 +315,11 @@ def get_different_time_reminder(previous: datetime, min: time, early: time,
         return reminder
 
 
-def create_first_day_reminder(form: Form, reminder_time: time,
-                              previous: datetime) -> Optional[datetime]:
+def create_first_day_reminder(
+    form: Form,
+    reminder_time: time,
+    previous: datetime,
+) -> Optional[datetime]:
     """Returns datetime object for reminder on first day.
 
     form (Form): Form object containing all relevant data.
@@ -305,15 +332,25 @@ def create_first_day_reminder(form: Form, reminder_time: time,
     reminder = datetime.combine(form.start.date(), reminder_time)
     reminder = adjust_day(reminder, form.early, reminder_time)
     if reminder > form.start:
-        if not validate_first_day_reminder(previous, reminder_time, form.min,
-                                           form.max):
-            reminder = get_different_time_reminder(previous, form.min,
-                                                   form.early, form.late)
+        if not validate_first_day_reminder(
+            previous,
+            reminder_time,
+            form.min,
+            form.max,
+        ):
+            reminder = get_different_time_reminder(
+                previous,
+                form.min,
+                form.early,
+                form.late,
+            )
         return reminder
 
 
-def get_first_day_reminders(form: Form,
-                            times: List[time]) -> Iterator[datetime]:
+def get_first_day_reminders(
+    form: Form,
+    times: List[time],
+) -> Iterator[datetime]:
     """Generates datetime objects for reminders on the first day.
 
     Args:
@@ -335,8 +372,13 @@ def get_first_day_reminders(form: Form,
                 i += 1
 
 
-def reminder_generator(times: List[time], early: time, start: datetime,
-                       day: date, end: datetime) -> Iterator[datetime]:
+def reminder_generator(
+    times: List[time],
+    early: time,
+    start: datetime,
+    day: date,
+    end: datetime,
+) -> Iterator[datetime]:
     """Generates datetime objects for reminders based on times and date.
 
     Args:
@@ -372,8 +414,13 @@ def get_reminder_datetimes(form: Form) -> Iterator[datetime]:
         if day == 0 and form.first:
             yield from get_first_day_reminders(form, times)
         else:
-            yield from reminder_generator(times, form.early, form.start, day,
-                                          form.end)
+            yield from reminder_generator(
+                times,
+                form.early,
+                form.start,
+                day,
+                form.end,
+            )
 
 
 def create_events(session: Session, user_id: int, form: Form) -> None:
@@ -384,16 +431,16 @@ def create_events(session: Session, user_id: int, form: Form) -> None:
         user_id (int): ID of user to create events for.
         form (Form): Form object containing all relevant data.
     """
-    title = 'It\'s time to take your meds'
+    title = "It's time to take your meds"
     if form.name:
-        title = f'{form.name.title()} - {title}'
+        title = f"{form.name.title()} - {title}"
     datetimes = get_reminder_datetimes(form)
     for event_time in datetimes:
         event_data = {
-            'title': title,
-            'start': event_time,
-            'end': event_time + timedelta(minutes=5),
-            'content': form.note,
-            'owner_id': user_id,
+            "title": title,
+            "start": event_time,
+            "end": event_time + timedelta(minutes=5),
+            "content": form.note,
+            "owner_id": user_id,
         }
         create_model(session, Event, **event_data)

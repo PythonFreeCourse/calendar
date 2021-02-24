@@ -5,7 +5,7 @@ from iso639 import languages
 from loguru import logger
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm.session import Session
-from textblob import download_corpora, TextBlob
+from textblob import TextBlob, download_corpora
 from textblob.exceptions import NotTranslated
 
 from app.database.models import Language
@@ -31,10 +31,11 @@ def translate_text_for_user(text: str, session: Session, user_id: int) -> str:
     return translate_text(text, target_lang)
 
 
-def translate_text(text: str,
-                   target_lang: str,
-                   original_lang: Optional[str] = None,
-                   ) -> str:
+def translate_text(
+    text: str,
+    target_lang: str,
+    original_lang: Optional[str] = None,
+) -> str:
     """Translates text to the target language.
 
     Args:
@@ -56,9 +57,12 @@ def translate_text(text: str,
         return text
 
     try:
-        return str(TextBlob(text).translate(
-            from_lang=language_code,
-            to=_get_language_code(target_lang)))
+        return str(
+            TextBlob(text).translate(
+                from_lang=language_code,
+                to=_get_language_code(target_lang),
+            ),
+        )
     except NotTranslated:
         return text
 
@@ -88,7 +92,7 @@ def _get_user_language(user_id: int, session: Session) -> str:
         logger.critical(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail='Error raised',
+            detail="Error raised",
         )
 
 

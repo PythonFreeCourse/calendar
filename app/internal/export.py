@@ -1,8 +1,10 @@
 from datetime import datetime
 from typing import List
 
-from icalendar import Calendar, Event as IEvent, vCalAddress, vText
 import pytz
+from icalendar import Calendar
+from icalendar import Event as IEvent
+from icalendar import vCalAddress, vText
 from sqlalchemy.orm import Session
 
 from app.config import DOMAIN, ICAL_VERSION, PRODUCT_ID
@@ -31,7 +33,8 @@ def get_icalendar(event: Event, emails: List[str]) -> bytes:
 
 
 def get_icalendar_with_multiple_events(
-        session: Session, events: List[Event]
+    session: Session,
+    events: List[Event],
 ) -> bytes:
     """Returns an iCalendar event in bytes.
 
@@ -58,8 +61,8 @@ def get_icalendar_with_multiple_events(
 def _create_icalendar() -> Calendar:
     """Returns an iCalendar."""
     calendar = Calendar()
-    calendar.add('version', ICAL_VERSION)
-    calendar.add('prodid', PRODUCT_ID)
+    calendar.add("version", ICAL_VERSION)
+    calendar.add("prodid", PRODUCT_ID)
 
     return calendar
 
@@ -92,19 +95,19 @@ def _create_icalendar_event(event: Event) -> IEvent:
         An iCalendar event.
     """
     data = [
-        ('organizer', _get_v_cal_address(event.owner.email, organizer=True)),
-        ('uid', _generate_id(event)),
-        ('dtstart', event.start),
-        ('dtstamp', datetime.now(tz=pytz.utc)),
-        ('dtend', event.end),
-        ('summary', event.title),
+        ("organizer", _get_v_cal_address(event.owner.email, organizer=True)),
+        ("uid", _generate_id(event)),
+        ("dtstart", event.start),
+        ("dtstamp", datetime.now(tz=pytz.utc)),
+        ("dtend", event.end),
+        ("summary", event.title),
     ]
 
     if event.location:
-        data.append(('location', event.location))
+        data.append(("location", event.location))
 
     if event.content:
-        data.append(('description', event.content))
+        data.append(("description", event.content))
 
     ievent = IEvent()
     for param in data:
@@ -123,13 +126,13 @@ def _get_v_cal_address(email: str, organizer: bool = False) -> vCalAddress:
     Returns:
         A vCalAddress object.
     """
-    attendee = vCalAddress(f'MAILTO:{email}')
+    attendee = vCalAddress(f"MAILTO:{email}")
     if organizer:
-        attendee.params['partstat'] = vText('ACCEPTED')
-        attendee.params['role'] = vText('CHAIR')
+        attendee.params["partstat"] = vText("ACCEPTED")
+        attendee.params["role"] = vText("CHAIR")
     else:
-        attendee.params['partstat'] = vText('NEEDS-ACTION')
-        attendee.params['role'] = vText('PARTICIPANT')
+        attendee.params["partstat"] = vText("NEEDS-ACTION")
+        attendee.params["role"] = vText("PARTICIPANT")
 
     return attendee
 
@@ -147,10 +150,10 @@ def _generate_id(event: Event) -> bytes:
         A unique encoded ID in bytes.
     """
     return (
-            str(event.id)
-            + event.start.strftime('%Y%m%d')
-            + event.end.strftime('%Y%m%d')
-            + f'@{DOMAIN}'
+        str(event.id)
+        + event.start.strftime("%Y%m%d")
+        + event.end.strftime("%Y%m%d")
+        + f"@{DOMAIN}"
     ).encode()
 
 
@@ -163,4 +166,4 @@ def _add_attendees(ievent: IEvent, emails: List[str]):
     """
     for email in emails:
         if verify_email_pattern(email):
-            ievent.add('attendee', _get_v_cal_address(email), encode=0)
+            ievent.add("attendee", _get_v_cal_address(email), encode=0)
