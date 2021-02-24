@@ -33,6 +33,7 @@ def fake_user_events(session):
     create_event(
         db=session,
         title='Cool today event',
+        color='red',
         start=today_date,
         end=today_date + timedelta(days=2),
         all_day=False,
@@ -44,6 +45,7 @@ def fake_user_events(session):
     create_event(
         db=session,
         title='Cool (somewhen in two days) event',
+        color='blue',
         start=today_date + timedelta(days=1),
         end=today_date + timedelta(days=3),
         all_day=False,
