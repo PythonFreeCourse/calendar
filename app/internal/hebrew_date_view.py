@@ -36,7 +36,7 @@ def get_month_name_by_num(date: datetime) -> str:
             return EN_TO_HEB_MONTH_NAMES[month.name]
 
 
-def from_greogian_to_hebrew_date(date: datetime):
+def from_greogian_to_hebrew_date(date: datetime) -> str:
     """Returns the Hebrew date for the specific greogian date.
 
     Args:
@@ -45,9 +45,7 @@ def from_greogian_to_hebrew_date(date: datetime):
     Returns:
         A Hebrew date string.
     """
-    date_split = str(date).split('-')
-    new_date_format = [int(x) for x in date_split]
-    gregorian_date = dates.GregorianDate(*new_date_format)
+    gregorian_date = dates.GregorianDate(date.year,date.month,date.day)
     return gregorian_date.to_heb()
 
 

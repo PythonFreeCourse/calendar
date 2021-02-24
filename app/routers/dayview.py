@@ -165,7 +165,7 @@ async def dayview(
     view="day",
 ):
     # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
+    user = session.query(User).filter_by(username="new_user").first()
     if not user:
         error_message = "User not found."
         raise HTTPException(
@@ -201,6 +201,6 @@ async def dayview(
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
-            "hebrewView": hebrew_obj,
+            "hebrew_view": hebrew_obj,
         },
     )

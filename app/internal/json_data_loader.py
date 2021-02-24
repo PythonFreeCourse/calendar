@@ -14,6 +14,7 @@ def load_to_database(session: Session) -> None:
 
     On startup, data from the JSON files should be added to the database and
     not be accessed from a network call for each request as it is costly.
+
     The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'.
 
