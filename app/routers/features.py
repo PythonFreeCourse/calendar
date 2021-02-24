@@ -27,15 +27,18 @@ async def index(
 ) -> templates:
     features = {
         "installed": get_user_installed_features(
-            session=session, user_id=user.user_id,
+            session=session,
+            user_id=user.user_id,
         ),
         "uninstalled": await get_user_uninstalled_features(
-            session=session, request=request,
+            session=session,
+            request=request,
         ),
     }
 
     return templates.TemplateResponse(
-        "features.html", {"request": request, "features": features},
+        "features.html",
+        {"request": request, "features": features},
     )
 
 

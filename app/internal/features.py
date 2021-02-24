@@ -57,11 +57,9 @@ def is_user_has_feature(
     user_id: int,
 ) -> bool:
     return session.query(
-        exists().where(
-            UserFeature.user_id == user_id
-        ).where(
-            UserFeature.feature_id == feature_id
-        )
+        exists()
+        .where(UserFeature.user_id == user_id)
+        .where(UserFeature.feature_id == feature_id),
     ).scalar()
 
 
@@ -76,11 +74,9 @@ def delete_feature(
 
 def is_feature_exists(feature: Dict[str, str], session: Session) -> bool:
     is_exists = session.query(
-        exists().where(
-            Feature.name == feature["name"]
-        ).where(
-            Feature.route == feature["route"]
-        )
+        exists()
+        .where(Feature.name == feature["name"])
+        .where(Feature.route == feature["route"]),
     ).scalar()
 
     return is_exists
@@ -178,9 +174,12 @@ def get_user_installed_features(
     user_id: int,
     session: Session = Depends(get_db),
 ) -> List[Feature]:
-    return session.query(Feature).join(UserFeature).filter(
-        UserFeature.user_id == user_id
-    ).all()
+    return (
+        session.query(Feature)
+        .join(UserFeature)
+        .filter(UserFeature.user_id == user_id)
+        .all()
+    )
 
 
 async def get_user_uninstalled_features(

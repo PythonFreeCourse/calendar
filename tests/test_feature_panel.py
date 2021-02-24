@@ -71,7 +71,7 @@ def association_on(session, user):
 def update_dict():
     update = {
         "name": "test",
-        "route": "/route-test",
+        "route": "/test",
         "description": "update",
         "creator": "test",
     }
@@ -81,9 +81,7 @@ def update_dict():
 
 @pytest.fixture
 def form_mock():
-    form = {"feature_id": 1, "user_id": 1}
-
-    return form
+    return {"feature_id": 1, "user_id": 1}
 
 
 def test_create_features_at_startup(mocker, session, mock_features):
@@ -107,9 +105,8 @@ def test_create_association(mocker, session, user, feature):
 
 def test_get_user_enabled_features(session, feature, association_on, user):
     assert (
-        internal.get_user_installed_features(session=session, user_id=user.id)[
-            0
-        ]
+        internal.get_user_installed_features(
+            session=session, user_id=user.id)[0]
         is not None
     )
 
@@ -129,8 +126,11 @@ def test_delete_feature(session, feature):
     assert feat is None
 
 
-def test_is_feature_exist_in_db(session, feature, update_dict):
-    assert internal.is_feature_exists(update_dict, session)
+def test_is_feature_exist_in_db(session, feature):
+    assert internal.is_feature_exists({
+        'name': 'test',
+        'route': '/test'
+        }, session)
 
 
 def test_update_feature(session, feature, update_dict):
