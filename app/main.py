@@ -12,11 +12,14 @@ from app.dependencies import (
     MEDIA_PATH,
     SOUNDS_PATH,
     STATIC_PATH,
+    UPLOAD_PATH,
     get_db,
     logger,
     templates,
+    SessionLocal,
 )
 from app.internal import daily_quotes, json_data_loader
+import app.internal.features as internal_features
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
@@ -39,6 +42,11 @@ create_tables(engine, config.PSQL_ENVIRONMENT)
 app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.mount(
+    "/event_images",
+    StaticFiles(directory=UPLOAD_PATH),
+    name="event_images",
+)
 app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
@@ -60,6 +68,7 @@ from app.routers import (  # noqa: E402
     email,
     event,
     export,
+    features,
     four_o_four,
     friendview,
     google_connect,
@@ -70,7 +79,9 @@ from app.routers import (  # noqa: E402
     notification,
     profile,
     register,
+    reset_password,
     search,
+    settings,
     telegram,
     user,
     weekview,
@@ -110,6 +121,7 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
+    features.router,
     four_o_four.router,
     friendview.router,
     google_connect.router,
@@ -120,8 +132,10 @@ routers_to_include = [
     notification.router,
     profile.router,
     register.router,
+    reset_password.router,
     salary.router,
     search.router,
+    settings.router,
     telegram.router,
     user.router,
     weekview.router,
@@ -131,6 +145,13 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
+
+
+@app.on_event("startup")
+async def startup_event():
+    session = SessionLocal()
+    internal_features.create_features_at_startup(session=session)
+    session.close()
 
 
 # TODO: I add the quote day to the home page

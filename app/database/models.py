@@ -34,6 +34,16 @@ from app.internal.privacy import PrivacyKinds
 Base: DeclarativeMeta = declarative_base()
 
 
+class UserFeature(Base):
+    __tablename__ = "user_feature"
+
+    id = Column(Integer, primary_key=True, index=True)
+    feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
+    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+
+    is_enable = Column(Boolean, default=False)
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -69,6 +79,7 @@ class User(Base):
     )
     comments = relationship("Comment", back_populates="user")
 
+    features = relationship("Feature", secondary=UserFeature.__tablename__)
     oauth_credentials = relationship(
         "OAuthCredentials",
         cascade="all, delete",
@@ -83,6 +94,18 @@ class User(Base):
     async def get_by_username(db: Session, username: str) -> User:
         """query database for a user by unique username"""
         return db.query(User).filter(User.username == username).first()
+
+
+class Feature(Base):
+    __tablename__ = "features"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    route = Column(String, nullable=False)
+    creator = Column(String, nullable=True)
+    description = Column(String, nullable=False)
+
+    users = relationship("User", secondary=UserFeature.__tablename__)
 
 
 class Event(Base):
@@ -103,6 +126,7 @@ class Event(Base):
     invitees = Column(String)
     privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
+    image = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
@@ -113,6 +137,11 @@ class Event(Base):
         "UserEvent",
         cascade="all, delete",
         back_populates="events",
+    )
+    shared_list = relationship(
+        "SharedList",
+        uselist=False,
+        back_populates="event",
     )
     comments = relationship("Comment", back_populates="event")
 
@@ -436,12 +465,34 @@ class WikipediaEvents(Base):
     date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
+class CoronaStats(Base):
+    __tablename__ = "corona_stats"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(DateTime, nullable=False)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
+    vaccinated = Column(Integer, nullable=False)
+    vaccinated_total = Column(Integer, nullable=False)
+    vaccinated_population_perc = Column(Integer, nullable=False)
+    vaccinated_second_dose = Column(Integer, nullable=False)
+    vaccinated_second_dose_total = Column(Integer, nullable=False)
+    vaccinated_second_dose_perc = Column(Float, nullable=False)
+
+
 class Quote(Base):
     __tablename__ = "quotes"
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+
+
+class Country(Base):
+    __tablename__ = "countries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+    timezone = Column(String, nullable=False)
 
 
 class Comment(Base):
@@ -479,6 +530,41 @@ class Zodiac(Base):
         )
 
 
+class SharedListItem(Base):
+    __tablename__ = "shared_list_item"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    participant = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    shared_list_id = Column(Integer, ForeignKey("shared_list.id"))
+
+    shared_list = relationship("SharedList", back_populates="items")
+
+    def __repr__(self):
+        return (
+            f"<Item {self.id}: {self.name} "
+            f"Amount: {self.amount} "
+            f"Participant: {self.participant} "
+            f"Notes: {self.notes})>"
+        )
+
+
+class SharedList(Base):
+    __tablename__ = "shared_list"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey("events.id"))
+    title = Column(String, nullable=True)
+
+    items = relationship("SharedListItem", back_populates="shared_list")
+    event = relationship("Event", back_populates="shared_list")
+
+    def __repr__(self):
+        return f"<Shared list {self.id}: " f"Items: {self.items}>"
+
+
 class Joke(Base):
     __tablename__ = "jokes"
 
@@ -497,9 +583,11 @@ class InternationalDays(Base):
 
 # insert language data
 
-# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
-# https://stackoverflow.com/questions/17461251
+
 def insert_data(target, session: Session, **kw):
+    """insert language data
+    Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+    https://stackoverflow.com/questions/17461251"""
     session.execute(
         target.insert(),
         {"id": 1, "name": "English"},
