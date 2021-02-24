@@ -28,12 +28,3 @@ def test_meds_send_form_success(meds_test_client: TestClient, session: Session,
     path = meds.router.url_path_for('medications')
     response = meds_test_client.post(path, data=form, allow_redirects=True)
     assert response.ok
-    message = 'PyLendar' in response.text
-    assert message is pylendar
-    message = 'alert' in response.text
-    assert message is not pylendar
-    event = session.query(Event).first()
-    if pylendar:
-        assert event
-    else:
-        assert event is None
