@@ -23,6 +23,7 @@ window.addEventListener("load", function () {
  * Uses the save_or_remove_quote function to handle db operations.
  */
 function onHeartClick(heart_element) {
+  console.log("here")
   const quote_id = heart_element.dataset.qid;
   if (heart_element.dataset.heart == "off") {
     heart_element.src = FULL_HEART;
