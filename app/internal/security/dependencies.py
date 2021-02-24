@@ -20,7 +20,7 @@ async def is_logged_in(
     """
     A dependency function protecting routes for only logged in user
     """
-    jwt_payload = await get_jwt_token(db, jwt)
+    jwt_payload = get_jwt_token(jwt)
     user_id = jwt_payload.get("user_id")
     if not user_id:
         raise HTTPException(
@@ -38,7 +38,7 @@ async def is_manager(
     """
     A dependency function protecting routes for only logged in manager
     """
-    jwt_payload = await get_jwt_token(db, jwt)
+    jwt_payload = get_jwt_token(jwt)
     user_id = jwt_payload.get("user_id")
     if jwt_payload.get("is_manager") and user_id:
         return True
@@ -58,7 +58,7 @@ async def current_user_from_db(
     Returns logged in User object.
     A dependency function protecting routes for only logged in user.
     """
-    jwt_payload = await get_jwt_token(db, jwt)
+    jwt_payload = get_jwt_token(jwt)
     username = jwt_payload.get("sub")
     user_id = jwt_payload.get("user_id")
     db_user = await User.get_by_username(db, username=username)
@@ -81,7 +81,7 @@ async def current_user(
     Returns logged in User object.
     A dependency function protecting routes for only logged in user.
     """
-    jwt_payload = await get_jwt_token(db, jwt)
+    jwt_payload = get_jwt_token(jwt)
     username = jwt_payload.get("sub")
     user_id = jwt_payload.get("user_id")
     if not user_id:

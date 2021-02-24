@@ -110,7 +110,7 @@ async def reset_password(
     validatting form data against token details.
     If all validations succeed, hashing new password and updating database.
     """
-    jwt_payload = await get_jwt_token(db, email_verification_token)
+    jwt_payload = get_jwt_token(email_verification_token)
     jwt_username = jwt_payload.get("sub")
     form = await request.form()
     form_dict = dict(form)

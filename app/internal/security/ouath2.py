@@ -21,10 +21,12 @@ oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
 
 
 async def update_password(
-        db: Session, username: str, user_password: str) -> None:
+    db: Session,
+    username: str,
+    user_password: str,
+) -> None:
     """Updating User password in database"""
-    db_user = await User.get_by_username(
-        db=db, username=username)
+    db_user = await User.get_by_username(db=db, username=username)
     hashed_password = get_hashed_password(user_password)
     db_user.password = hashed_password
     db.commit()
@@ -42,8 +44,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 async def is_email_compatible_to_username(
-        db: Session, user: schema.ForgotPassword,
-        email: bool = False) -> Union[schema.ForgotPassword, bool]:
+    db: Session,
+    user: schema.ForgotPassword,
+    email: bool = False,
+) -> Union[schema.ForgotPassword, bool]:
     """
     Verifying database record by username.
     Comparing given email to database record,
@@ -53,13 +57,16 @@ async def is_email_compatible_to_username(
         return False
     if db_user.email == user.email:
         return schema.ForgotPassword(
-                username=user.username,
-                user_id=db_user.id, email=db_user.email)
+            username=user.username,
+            user_id=db_user.id,
+            email=db_user.email,
+        )
     return False
 
 
 async def authenticate_user(
-        db: Session, user: schema.LoginUser,
+    db: Session,
+    user: schema.LoginUser,
 ) -> Union[schema.LoginUser, bool]:
     """
     Verifying database record by username.
@@ -71,8 +78,11 @@ async def authenticate_user(
         return False
     elif verify_password(user.password, db_user.password):
         return schema.LoginUser(
-            user_id=db_user.id, is_manager=db_user.is_manager,
-            username=user.username, password=db_user.password)
+            user_id=db_user.id,
+            is_manager=db_user.is_manager,
+            username=user.username,
+            password=db_user.password,
+        )
     return False
 
 
@@ -93,18 +103,17 @@ def create_jwt_token(
     return jwt_token
 
 
-async def get_jwt_token(
-    db: Session,
-        token: str = Depends(oauth_schema),
-        path: Union[bool, str] = None) -> User:
+def get_jwt_token(
+    token: str = Depends(oauth_schema),
+    path: Union[bool, str] = None,
+) -> User:
     """
     Check whether JWT token is correct.
     Returns jwt payloads if correct.
     Raises HTTPException if fails to decode.
     """
     try:
-        jwt_payload = jwt.decode(
-            token, JWT_KEY, algorithms=JWT_ALGORITHM)
+        jwt_payload = jwt.decode(token, JWT_KEY, algorithms=JWT_ALGORITHM)
     except InvalidSignatureError:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
@@ -121,7 +130,8 @@ async def get_jwt_token(
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
             headers=path,
-            detail="Your token is incorrect. Please log in again")
+            detail="Your token is incorrect. Please log in again",
+        )
     return jwt_payload
 
 
@@ -151,5 +161,5 @@ async def auth_exception_handler(
     paramas = f"?next={exc.headers}&message={exc.detail}"
     url = f"/login{paramas}"
     response = RedirectResponse(url=url, status_code=HTTP_302_FOUND)
-    response.delete_cookie('Authorization')
+    response.delete_cookie("Authorization")
     return response

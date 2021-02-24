@@ -43,7 +43,7 @@ RESET_PASSWORD_BAD_CREDENTIALS = [
 RESET_PASSWORD_DETAILS = {
     "username": "correct_user",
     "password": "new_password",
-    "confirm_password": "new_password",
+    "confirm-password": "new_password",
 }
 
 
@@ -141,6 +141,7 @@ def test_reset_password_successfully(session, security_test_client):
         security_test_client.app.url_path_for("reset_password") + f"{params}",
         data=RESET_PASSWORD_DETAILS,
     )
+    print(res.content)
     assert res.status_code == HTTP_302_FOUND
 
 
