@@ -124,7 +124,7 @@
   }
 
   .settings-options ul {
-    padding-left: 0;
+    padding-left: 0em;
   }
 
   .settings-options ul li {
@@ -144,6 +144,6 @@
   }
 
   .settings-main p {
-    margin: 1em 0px;
+    margin: 1em 0em;
   }
 }
