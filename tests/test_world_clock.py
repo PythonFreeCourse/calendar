@@ -1,17 +1,18 @@
 from datetime import datetime
-import pytest
 
 import httpx
+import pytest
 import respx
 
 from app.internal.world_clock import (
+    TIMEZONES_BASE_URL,
     generate_possible_timezone_path,
     generate_possible_timezone_path_by_country,
     get_all_possible_timezone_paths_for_given_place,
     get_api_data,
+    get_arbitrary_timezone_of_country,
     get_continent,
     get_country,
-    get_arbitrary_timezone_of_country,
     get_current_time_in_place,
     get_part_of_day_and_feedback,
     get_subcountry,
@@ -27,7 +28,6 @@ from app.internal.world_clock import (
     search_timezone_by_just_place,
     standardize_continent,
     standardize_country_or_place,
-    TIMEZONES_BASE_URL,
 )
 
 
@@ -101,7 +101,8 @@ items_details = [
 @pytest.mark.asyncio
 @pytest.mark.parametrize("country, place, res", items_details)
 async def test_generate_possible_timezone_path_by_country(country, place, res):
-    assert await generate_possible_timezone_path_by_country(country, place) == res
+    assert (await generate_possible_timezone_path_by_country(country, place)
+            == res)
 
 
 items_details = [
@@ -175,9 +176,11 @@ items_details = [
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("continent_name, standardized_continent", items_details)
+@pytest.mark.parametrize("continent_name, standardized_continent",
+                         items_details)
 async def test_standardize_continent(continent_name, standardized_continent):
-    assert await standardize_continent(continent_name) == standardized_continent
+    assert (await standardize_continent(continent_name)
+            == standardized_continent)
 
 
 items_details = [
@@ -221,7 +224,8 @@ items_details = [
 @pytest.mark.asyncio
 @pytest.mark.parametrize("place_name, possibilities", items_details)
 async def test_get_all_possible_timezone_paths_for_given_place(
-    place_name, possibilities,
+    place_name,
+    possibilities,
 ):
     assert (
         await get_all_possible_timezone_paths_for_given_place(place_name)
@@ -251,7 +255,8 @@ async def test_get_current_time_in_place():
 
 
 def test_get_part_of_day_and_feedback():
-    assert get_part_of_day_and_feedback(datetime.strptime("02:42:45", "%H:%M:%S")) == (
+    assert get_part_of_day_and_feedback(
+        datetime.strptime("02:42:45", "%H:%M:%S")) == (
         "Late night",
         "Not possible",
     )
@@ -261,12 +266,14 @@ items_details = [
     (
         "22:22:12",
         "Haifa",
-        [("20:22:12", "Evening", "Better not"), ("21:22:12", "Night", "Better not")],
+        [("20:22:12", "Evening", "Better not"),
+         ("21:22:12", "Night", "Better not")],
     ),
     (
         "22:22:12",
         "Australia",
-        [("10:22:12", "Morning", "OK"), ("11:22:12", "Late morning", "OK")],
+        [("10:22:12", "Morning", "OK"),
+         ("11:22:12", "Late morning", "OK")],
     ),
 ]
 

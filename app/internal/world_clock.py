@@ -1,13 +1,12 @@
-from datetime import datetime, timedelta
 import json
 import logging
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import dateutil.parser
 import httpx
 
 from app import config
-
 
 TOTAL_SEC_IN_HOUR = 3600
 BLANK = " "
@@ -61,7 +60,12 @@ PARTS_OF_THE_DAY_FEEDBACK = [
         end="07:59:59",
         desirability="Better not",
     ),
-    MeetingTime(time="Morning", start="08:00:00", end="10:59:59", desirability="OK"),
+    MeetingTime(
+        time="Morning",
+        start="08:00:00",
+        end="10:59:59",
+        desirability="OK"
+    ),
     MeetingTime(
         time="Late morning",
         start="11:00:00",
@@ -74,7 +78,12 @@ PARTS_OF_THE_DAY_FEEDBACK = [
         end="12:59:59",
         desirability="OK",
     ),
-    MeetingTime(time="Afternoon", start="13:00:00", end="15:59:59", desirability="OK"),
+    MeetingTime(
+        time="Afternoon",
+        start="13:00:00",
+        end="15:59:59",
+        desirability="OK"
+    ),
     MeetingTime(
         time="Late afternoon",
         start="16:00:00",
@@ -206,7 +215,8 @@ async def parse_timezones_list() -> List[Tuple[str, ...]]:
     """
     timezones = await get_api_data(TIMEZONES_BASE_URL)
     if timezones:
-        return [tuple(timezone.split(PATH_SEPARETOR)) for timezone in timezones]
+        return [tuple(timezone.split(PATH_SEPARETOR))
+                for timezone in timezones]
 
 
 async def get_timezones_parts(part: str) -> List[str]:
@@ -335,13 +345,17 @@ async def get_all_possible_timezone_paths_for_given_place(
     country = get_country(place_name)
     country = standardize_country_or_place(country)
     if country:
-        res = await generate_possible_timezone_path_by_country(country, place_name)
+        res = await generate_possible_timezone_path_by_country(
+            country, place_name
+        )
         if res:
             return res
     continent = get_continent(place_name)
     continent = await standardize_continent(continent)
     if not continent:
-        res = await generate_possible_timezone_path_with_no_extra_data(place_name)
+        res = await generate_possible_timezone_path_with_no_extra_data(
+            place_name
+        )
         return res
     return possibilities.append(f"{continent}/{place_name}")
 
@@ -393,7 +407,9 @@ async def get_timezone_path_for_given_place(place_name: str) -> Optional[str]:
     Returns:
         str: The timezone path.
     """
-    possibilities = await get_all_possible_timezone_paths_for_given_place(place_name)
+    possibilities = await get_all_possible_timezone_paths_for_given_place(
+        place_name
+    )
     timezones = await get_api_data(TIMEZONES_BASE_URL)
     if not timezones:
         return
@@ -457,8 +473,8 @@ def get_equivalent_time_in_place(
     delta_in_hours = int(
         (time_part - time_in_place).total_seconds() / TOTAL_SEC_IN_HOUR,
     )
-    wanted_time_there = (wanted_time + timedelta(hours=delta_in_hours)).strftime(
-        "%H:%M:%S",
+    wanted_time_there = (
+        (wanted_time + timedelta(hours=delta_in_hours)).strftime("%H:%M:%S",)
     )
     return datetime.strptime(wanted_time_there, "%H:%M:%S")
 
