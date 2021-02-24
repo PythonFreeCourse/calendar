@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h1>Weekly Tasks</h1>
+</div>
+
+<!-- weekly tasks -->
+<div class="container mt-4">
+
+    {% for weekly_task in weekly_tasks %}
+        <div class="card card-event mb-2 pb-0">
+            <div class="card-header d-flex justify-content-between">
+
+                <!-- Task repeat days and time -->
+                <small>
+                    <i><span class="text-decoration-underline">Every:</span> {{ weekly_task.get_days() }}</i>
+                    <i><span class="text-decoration-underline">at:</span> {{ weekly_task.task_time }} </i>
+                </small>
+                <!-- End Task repeat days and time -->
+
+                <!-- Task settings -->
+                <span>
+                    <div class="fa-ellipsis-h dropdown">
+                        <a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            options
+                        </a>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                                <li>
+                                    <form action="{{ url_for('edit_weekly_task') }}" method="GET">
+                                        <button class="dropdown-item" name="edit_id" type="submit" value="{{ weekly_task.id }}">
+                                            edit
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <button id="removeButton" class="dropdown-item" data-url="{{ url_for('delete_weekly_task') }}" onclick="deleteTask('{{ weekly_task.id }}')">
+                                        remove
+                                    </button>
+                                </li>
+                            </form>
+                        </ul>
+                    </div>
+                </span>
+                <!-- End Task settings -->
+            </div>
+
+            <!-- Set content -->
+            {% if weekly_task.content == None %}
+                {% set content = "" %}
+            {% else %}
+                {% set content = weekly_task.content %}
+            {% endif %}
+            <!-- End Set content -->
+
+            <!-- Task title and content -->
+            <div class="card-body pb-1">
+                <p class="card-title">
+                    <span class="fw-bold">{{ weekly_task.title }}</span>
+                </p>
+                <p class="card-title">
+                    {{ content }}
+                </p>
+                <hr class="mb-0">
+                <small class="text-muted">important: {{ weekly_task.is_important }}</small>
+            </div>
+            <!-- End Task title and content -->
+
+        </div>
+    {% endfor %}
+
+</div>
+<!-- weekly tasks End -->
+
+<!-- add weekly task  -->
+<div class="container mt-4">
+    <a class="btn btn-success" href="{{ url_for('add_weekly_task') }}" role="button">Add Weekly Task</a>
+</div>
+<!-- End add weekly task  -->
+
+<!-- Send delete method script -->
+<script>
+    function deleteTask(id) {
+        var url = document.getElementById('removeButton').getAttribute("data-url");
+        const signData = url + "?remove_id=" + id;
+        const xhr = new XMLHttpRequest();
+        xhr.open("DELETE", signData, false);
+        xhr.onload = function () {
+            document.location.reload();
+        };
+        xhr.send();
+      }
+</script>
+<!-- End script -->
+{% endblock %}

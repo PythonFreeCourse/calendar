@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <div class="container mt-4">
+        {% if mode == "edit" %}
+        <!-- when on edit mode  -->
+            <h1>Edit Weekly Tasks</h1>
+            {% set weekly_task_id = weekly_task.id %}
+
+        {% else %}
+        <!-- when on add mode  -->
+            <h1>Add Weekly Tasks</h1>
+            {% set weekly_task_id = "0" %}
+
+        {% endif %}
+    </div>
+
+    <!-- show massage if weekly_task not added or edited -->
+    {% if massage %}
+        <div class="alert alert-danger container mt-4" role="alert">
+            {{ massage }}
+        </div>
+    {% endif %}
+
+    {% if weekly_task %}
+        {% if weekly_task.is_important %}
+            {% set is_important = "checked" %}
+        {% endif %}
+
+        {% set title = weekly_task.title or "" %}
+
+        {% set content = weekly_task.content or "" %}
+    {% endif %}
+
+
+    <!-- Weekly Tasks inputs -->
+    <form class="container mt-5" action="{{ url_for('weekly_task_execute', mode=mode) }}" method="post">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input type="text" class="form-control" value="{{ title }}" id="title" name="title" aria-describedby="emailHelp">
+        </div>
+
+        <!-- days input checkbox -->
+        <label for="days" class="form-label">Repeat Days:</label>
+        <div id="days">
+            <ul class="list-group">
+                {% for day_full_name, day, is_checked in checked_days %}
+
+                    <li class="list-group-item">
+                        <input class="form-check-input me-1" type="checkbox" value="True" name="{{ day }}" {{ is_checked }}>
+                        {{ day_full_name }}
+                    </li>
+
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="mb-3">
+            <label for="task_time" class="form-label">Time Of The Day:</label>
+            <input type="time" class="form-control" value="{{ weekly_task.task_time }}" id="task_time" name="task_time">
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-text">Description:</span>
+            <textarea class="form-control" aria-label="content" id="content" name="content">{{ content }}</textarea>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_important" name="is_important" {{is_important}}>
+            <label class="form-check-label" for="is_important">Important</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+        <!-- weekly task id for editing the weekly task -->
+        <input type="hidden" name="weekly_task_id" value="{{ weekly_task_id }}">
+
+
+    </form>
+    <!-- End Weekly Tasks inputs -->
+
+{% endblock %}
