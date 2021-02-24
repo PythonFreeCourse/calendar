@@ -1,8 +1,10 @@
-from typing import Dict
+from typing import Dict, Optional, Union
 from datetime import datetime
 
 
-def shabbat_time_by_user_location(shabbat_time: Dict[str, str]) -> Dict:
+def shabbat_time_by_user_location(
+        shabbat_time: Dict[str, str]
+) -> Dict[str, Union[str, datetime]]:
     """Returns the shabbat time of the user location..
 
         Args:
@@ -25,7 +27,8 @@ def shabbat_time_by_user_location(shabbat_time: Dict[str, str]) -> Dict:
 
 def get_shabbat_if_date_friday(
         shabbat_time: Dict[str, str],
-        date: datetime) -> Dict:
+        date: datetime
+) -> Optional[Dict[str, Union[str, datetime]]]:
     """Returns shabbat start end ending time if specific date
      is Saturday, else None.
 

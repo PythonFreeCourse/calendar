@@ -33,8 +33,8 @@ def return_zip_to_location(session: Session) -> str:
     """
     ip_and_location = requests.get('http://ipinfo.io/json').json()
     for location in session.query(Location).all():
-        if location.city == ip_and_location['city'] and \
-                location.country == ip_and_location['country']:
+        if (location.city == ip_and_location['city']) and \
+                (location.country == ip_and_location['country']):
             return location.zip_number
 
 

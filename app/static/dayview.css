@@ -165,7 +165,7 @@ body {
   height: 1.2rem;
 }
 
-.location {
+.new-location {
     position: absolute;
     right: 1.2rem;
     top: 15rem;
@@ -176,18 +176,19 @@ body {
     background-color: var(--surface-variant);
     box-shadow: 1px 1px 2px #999;
     line-height: 1.2;
-    height: 6rem;
+    height: 2rem;
     width: 5.2rem;
     align-items: center;
     justify-content: center;
     font-weight: bold;
     font-size: 0.65rem;
+    color: green;
 }
 
 .shabbat {
     position: absolute;
     right: 1.2rem;
-    top: 20rem;
+    top: 17rem;
     padding-right: var(--space_xs);
     padding-left: var(--space_xs);
     padding-bottom: var(--space_xxs);
@@ -201,4 +202,5 @@ body {
     justify-content: center;
     font-weight: bold;
     font-size: 0.65rem;
+    color: red;
 }
