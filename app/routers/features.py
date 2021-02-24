@@ -8,7 +8,7 @@ from app.internal.features import (
     is_association_exists_in_db,
     get_user_uninstalled_features,
     get_user_enabled_features,
-    remove_follower
+    remove_follower,
 )
 
 router = APIRouter(
@@ -20,21 +20,21 @@ router = APIRouter(
 
 @router.get("/")
 async def index(
-    request: Request, session: SessionLocal = Depends(get_db),
+    request: Request,
+    session: SessionLocal = Depends(get_db),
     user: User = Depends(current_user_from_db),
 ) -> templates:
     features = {
         "installed": get_user_enabled_features(
-            session=session, user_id=user.id),
-        "uninstalled": get_user_uninstalled_features(session=session)
+            session=session, user_id=user.id,
+        ),
+        "uninstalled": await get_user_uninstalled_features(
+            session=session, request=request,
+        ),
     }
-    print(features)
+
     return templates.TemplateResponse(
-        "features.html",
-        {
-            "request": request,
-            "features": features
-        }
+        "features.html", {"request": request, "features": features},
     )
 
 

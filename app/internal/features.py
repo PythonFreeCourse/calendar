@@ -43,7 +43,7 @@ def feature_access_filter(call_next):
 def create_features_at_startup(session: SessionLocal) -> bool:
     for feat in features:
         if not is_feature_exists(feature=feat, session=session):
-            icon = icons.get(feat['name'])
+            icon = icons.get(feat["name"])
             create_feature(**feat, icon=icon, db=session)
 
     return True
@@ -106,11 +106,13 @@ def update_feature(
 
 
 def is_feature_enabled(
-    user: User,
+    user_id: User,
     feature: Feature,
     session: SessionLocal = Depends(get_db),
 ) -> bool:
-    enabled_features = get_user_enabled_features(session=session, user=user)
+    enabled_features = get_user_enabled_features(
+        session=session, user_id=user_id,
+    )
     return any(ef.id == feature.id for ef in enabled_features)
 
 
@@ -160,7 +162,7 @@ def create_feature(
         route=route,
         creator=creator,
         description=description,
-        icon=icon
+        icon=icon,
     )
 
 
