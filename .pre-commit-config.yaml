@@ -1,9 +1,4 @@
 repos:
-  # Flake8 to check style is OK
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
-    hooks:
-    - id: flake8
   # More built in style checks and fixes
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -23,6 +18,7 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
+        args: ["--profile", "black", "--line-length", "79"]
       - id: isort
         name: isort (cython)
         types: [cython]
@@ -46,3 +42,8 @@ repos:
     rev: v2.1.0
     hooks:
     -   id: add-trailing-comma
+  # Flake8 to check style is OK
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+    - id: flake8
