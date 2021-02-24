@@ -19,9 +19,10 @@ from app.routers import (
     weight,
 )
 from app.routers.salary import routes as salary
-from tests import security_testing_routes
+from tests import security_testing_routes, global_var_testing_routes
 from tests.conftest import get_test_db, test_engine
 
+main.app.include_router(global_var_testing_routes.router)
 main.app.include_router(security_testing_routes.router)
 
 
@@ -50,6 +51,11 @@ def create_test_client(get_db_function) -> Generator[Session, None, None]:
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def global_var_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(global_var_testing_routes.get_db)
 
 
 @pytest.fixture(scope="session")

@@ -49,6 +49,7 @@ cp app/config.py.example app/config.py
 # Edit the variables' values.
 # Rendering JWT_KEY:
 python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
+```
 
 ### Running tox
 ```shell
