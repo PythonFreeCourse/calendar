@@ -9,7 +9,8 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.internal.agenda_events import get_events_in_time_frame
 from app.internal.export import get_icalendar_with_multiple_events
-from app.internal.utils import get_current_user
+from app.internal.security.schema import CurrentUser
+from tests.security_testing_routes import current_user
 
 router = APIRouter(
     prefix="/export",
@@ -20,9 +21,10 @@ router = APIRouter(
 
 @router.get("/")
 def export(
-        start_date: Union[date, str],
-        end_date: Union[date, str],
-        db: Session = Depends(get_db),
+    start_date: Union[date, str],
+    end_date: Union[date, str],
+    db: Session = Depends(get_db),
+    user: CurrentUser = Depends(current_user),
 ) -> StreamingResponse:
     """Returns the Export page route.
 
@@ -30,19 +32,18 @@ def export(
         start_date: A date or an empty string.
         end_date: A date or an empty string.
         db: Optional; The database connection.
+        user: user schema object.
 
     Returns:
-        # TODO add description
+        A StreamingResponse that contains an .ics file.
     """
-    # TODO: connect to real user
-    user = get_current_user(db)
-    events = get_events_in_time_frame(start_date, end_date, user.id, db)
+    events = get_events_in_time_frame(start_date, end_date, user.user_id, db)
     file = BytesIO(get_icalendar_with_multiple_events(db, list(events)))
     return StreamingResponse(
         content=file,
         media_type="text/calendar",
         headers={
-            # Change filename to "pylandar.ics".
-            "Content-Disposition": "attachment;filename=pylandar.ics",
+            # Change filename to "PyLendar.ics".
+            "Content-Disposition": "attachment;filename=PyLendar.ics",
         },
     )

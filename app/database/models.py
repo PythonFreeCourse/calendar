@@ -1,6 +1,6 @@
 from __future__ import annotations
-
 from datetime import datetime
+import enum
 from typing import Any, Dict
 
 from sqlalchemy import (
@@ -8,6 +8,7 @@ from sqlalchemy import (
     Column,
     DateTime,
     DDL,
+    Enum,
     event,
     Float,
     ForeignKey,
@@ -226,20 +227,80 @@ if PSQL_ENVIRONMENT:
     )
 
 
+class InvitationStatusEnum(enum.Enum):
+    UNREAD = 0
+    ACCEPTED = 1
+    DECLINED = 2
+
+
+class MessageStatusEnum(enum.Enum):
+    UNREAD = 0
+    READ = 1
+
+
 class Invitation(Base):
     __tablename__ = "invitations"
 
     id = Column(Integer, primary_key=True, index=True)
-    status = Column(String, nullable=False, default="unread")
+    creation = Column(DateTime, default=datetime.now, nullable=False)
+    status = Column(
+        Enum(InvitationStatusEnum),
+        default=InvitationStatusEnum.UNREAD,
+        nullable=False,
+    )
+
     recipient_id = Column(Integer, ForeignKey("users.id"))
     event_id = Column(Integer, ForeignKey("events.id"))
-    creation = Column(DateTime, default=datetime.now)
-
     recipient = relationship("User")
     event = relationship("Event")
 
+    def decline(self, session: Session) -> None:
+        """declines the invitation."""
+        self.status = InvitationStatusEnum.DECLINED
+        session.merge(self)
+        session.commit()
+
+    def accept(self, session: Session) -> None:
+        """Accepts the invitation by creating an
+        UserEvent association that represents
+        participantship at the event."""
+
+        association = UserEvent(
+            user_id=self.recipient.id,
+            event_id=self.event.id,
+        )
+        self.status = InvitationStatusEnum.ACCEPTED
+        session.merge(self)
+        session.add(association)
+        session.commit()
+
     def __repr__(self):
-        return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
+        return f"<Invitation ({self.event.owner} to {self.recipient})>"
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    body = Column(String, nullable=False)
+    link = Column(String)
+    creation = Column(DateTime, default=datetime.now, nullable=False)
+    status = Column(
+        Enum(MessageStatusEnum),
+        default=MessageStatusEnum.UNREAD,
+        nullable=False,
+    )
+
+    recipient_id = Column(Integer, ForeignKey("users.id"))
+    recipient = relationship("User")
+
+    def mark_as_read(self, session):
+        self.status = MessageStatusEnum.READ
+        session.merge(self)
+        session.commit()
+
+    def __repr__(self):
+        return f"<Message {self.id}>"
 
 
 class UserSettings(Base):
