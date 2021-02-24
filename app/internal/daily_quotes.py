@@ -63,11 +63,14 @@ def get_quotes(session: Session, user_id: int) -> List[Quote]:
 def is_quote_favorite(
     session: Session,
     user_id: int,
-    quote_id: int,
+    quote_of_day: Quote,
 ) -> bool:
     """Checks if the daily quote is in favorites list."""
+    if not quote_of_day:
+        return False
+
     user_quotes = session.query(UserQuotes).filter_by(user_id=user_id).all()
     for user_quote in user_quotes:
-        if user_quote.quote_id == quote_id:
+        if user_quote.quote_id == quote_of_day.id:
             return True
     return False

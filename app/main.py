@@ -80,8 +80,6 @@ from app.routers import (  # noqa: E402
     whatsapp,
 )
 
-json_data_loader.load_to_database(next(get_db()))
-
 
 @app.get("/docs", include_in_schema=False)
 async def custom_swagger_ui_html():
@@ -133,6 +131,8 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
+
+json_data_loader.load_to_database(next(get_db()))
 
 EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
 FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
