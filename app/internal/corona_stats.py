@@ -60,7 +60,7 @@ def create_stats_object(corona_stats_data: JSON) -> CoronaStats:
     )
 
 
-def serialize_stats(stats_object: CoronaStats) -> Dict:
+def serialize_stats(stats_object: CoronaStats) -> Dict[str, Any]:
     """ DB Object -> Dict """
     return {
         "vaccinated_second_dose_perc": (
@@ -72,7 +72,7 @@ def serialize_stats(stats_object: CoronaStats) -> Dict:
     }
 
 
-def serialize_dict_stats(stats_dict: Dict) -> Dict:
+def serialize_dict_stats(stats_dict: Dict) -> Dict[str, Any]:
     """ api Dit -> pylender Dict """
     return {
         "vaccinated_second_dose_perc": (
