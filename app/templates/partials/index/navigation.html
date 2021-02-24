@@ -30,7 +30,7 @@
                     <a class="nav-link" href="{{ url_for( 'audio_settings') }}">Audio Settings</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('categories') }}">Categories</a>
+                    <a class="nav-link" href="{{ url_for('get_categories') }}">Categories</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">{{ gettext("About Us") }}</a>
@@ -42,6 +42,12 @@
                   <a href="{{ url_for('view_notifications') }}">
                     <ion-icon name="notifications-outline"></ion-icon>
                   </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('salary_home') }}">Salary</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('medications') }}">Medication</a>
                 </li>
             </ul>
         </div>

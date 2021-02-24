@@ -32,22 +32,24 @@ def fake_user_events(session):
     session.commit()
     create_event(
         db=session,
-        title='Cool today event',
+        title="Cool today event",
+        color="red",
         start=today_date,
         end=today_date + timedelta(days=2),
         all_day=False,
-        content='test event',
+        content="test event",
         owner_id=user.id,
         location="Here",
         is_google_event=False,
     )
     create_event(
         db=session,
-        title='Cool (somewhen in two days) event',
+        title="Cool (somewhen in two days) event",
+        color="blue",
         start=today_date + timedelta(days=1),
         end=today_date + timedelta(days=3),
         all_day=False,
-        content='this week test event',
+        content="this week test event",
         owner_id=user.id,
         location="Here",
         is_google_event=False,
