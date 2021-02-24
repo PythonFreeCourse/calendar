@@ -9,13 +9,13 @@ from sqlalchemy.orm import Session
 from app import config
 from app.database import engine, models
 from app.dependencies import (
-    EVENT_IMAGES_PATH,
     get_db,
     logger,
     MEDIA_PATH,
     SOUNDS_PATH,
     STATIC_PATH,
     templates,
+    UPLOAD_PATH,
 )
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
@@ -42,7 +42,7 @@ app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
 app.mount(
     "/event_images",
-    StaticFiles(directory=EVENT_IMAGES_PATH),
+    StaticFiles(directory=UPLOAD_PATH),
     name="event_images",
 )
 app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")

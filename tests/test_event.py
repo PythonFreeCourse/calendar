@@ -12,7 +12,7 @@ from starlette import status
 
 from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import EVENT_IMAGES_PATH, get_db
+from app.dependencies import get_db, UPLOAD_PATH
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
@@ -170,7 +170,7 @@ def test_eventview_with_id(event_test_client, session, event):
     assert b"Some random location" in response.content
     waze_link = b"https://waze.com/ul?q=Some%20random%20location"
     assert waze_link in response.content
-    assert b'VC link' not in response.content
+    assert b"VC link" not in response.content
 
 
 def test_eventview_without_location(event_test_client, session, event):
@@ -565,7 +565,7 @@ def test_event_with_image(event_test_client, client, session):
         in response.headers["location"]
     )
     assert is_event_image is True
-    event_image_path = os.path.join(EVENT_IMAGES_PATH, event_created.image)
+    event_image_path = os.path.join(UPLOAD_PATH, event_created.image)
     os.remove(event_image_path)
     os.remove("pil_red.png")
     session.delete(event_created)

@@ -11,7 +11,6 @@ from app.internal.logger_customizer import LoggerCustomizer
 GOOGLE_ERROR = config.CLIENT_SECRET_FILE is None
 APP_PATH = os.path.dirname(os.path.realpath(__file__))
 MEDIA_PATH = os.path.join(APP_PATH, config.MEDIA_DIRECTORY)
-EVENT_IMAGES_PATH = os.path.join(APP_PATH, config.EVENT_IMAGE_DIRECTORY)
 STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
 SOUNDS_PATH = os.path.join(STATIC_PATH, "tracks")
@@ -27,6 +26,15 @@ logger = LoggerCustomizer.make_logger(
     config.LOG_RETENTION_INTERVAL,
     config.LOG_FORMAT,
 )
+
+if os.path.isdir(config.UPLOAD_DIRECTORY):
+    UPLOAD_PATH = config.UPLOAD_DIRECTORY
+else:
+    try:
+        os.mkdir(os.path.join(os.getcwd(), config.UPLOAD_DIRECTORY))
+    except OSError as e:
+        logger.critical(e)
+        raise OSError(e)
 
 
 def get_db() -> Session:

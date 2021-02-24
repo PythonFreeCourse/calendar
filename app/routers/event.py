@@ -19,7 +19,7 @@ from starlette.templating import _TemplateResponse
 
 from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import EVENT_IMAGES_PATH, get_db, logger, templates
+from app.dependencies import get_db, logger, templates, UPLOAD_PATH
 from app.internal.event import (
     get_invited_emails,
     get_messages,
@@ -193,7 +193,7 @@ def process_image(
     image_data = list(resized.getdata())
     image_without_exif = Image.new(resized.mode, resized.size)
     image_without_exif.putdata(image_data)
-    image_without_exif.save(f"{EVENT_IMAGES_PATH}/{file_name}")
+    image_without_exif.save(f"{UPLOAD_PATH}/{file_name}")
     return file_name
 
 
