@@ -687,7 +687,7 @@ async def delete_comment(
     return RedirectResponse(path, status_code=303)
 
 
-@router.get("/check_country_timezone/{country_name}", include_in_schema=False)
+@router.get("/timezone/country/{country_name}", include_in_schema=False)
 async def check_timezone(
     country_name,
     request: Request,

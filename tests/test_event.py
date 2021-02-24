@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
+import json
 
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
-import json
 import pytest
 from sqlalchemy.sql.elements import Null
 from sqlalchemy.orm.session import Session
@@ -11,7 +11,7 @@ from starlette import status
 
 from app.database.models import Comment, Event
 from app.dependencies import get_db
-from app.internal.event import get_all_countries_names
+from app.internal.event import add_countries_to_db, get_all_countries_names
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
@@ -195,6 +195,14 @@ def test_eventedit_with_user(event_test_client, session):
 
 def test_get_all_countries(session):
     assert get_all_countries_names(session)
+
+
+def test_db_returns_countries_matching_timezone(event_test_client, session):
+    add_countries_to_db(session)
+    country_name = "Israel, Jerusalem"
+    response = event_test_client.get(f"/event/timezone/country/{country_name}")
+    assert response.ok
+    assert b'{"timezone":"Asia/Jerusalem"}' in response.content
 
 
 def test_eventview_with_id(event_test_client, session, event):
