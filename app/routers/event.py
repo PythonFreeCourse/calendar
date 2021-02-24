@@ -33,6 +33,7 @@ from app.routers.categories import get_user_categories
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,

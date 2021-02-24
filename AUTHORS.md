@@ -34,6 +34,7 @@
          * ShiZinDle - Developer
          * YairEn - Developer
          * LiranCaduri - Developer
+         * IdanPelled - Developer
 
 # Special thanks to
 
