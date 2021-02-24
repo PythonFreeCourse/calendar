@@ -9,11 +9,12 @@ from sqlalchemy.orm import Session
 from app import config
 from app.database import engine, models
 from app.dependencies import (
-    get_db,
-    logger,
     MEDIA_PATH,
     SOUNDS_PATH,
     STATIC_PATH,
+    UPLOAD_PATH,
+    get_db,
+    logger,
     templates,
 )
 from app.internal import daily_quotes, json_data_loader
@@ -39,6 +40,11 @@ create_tables(engine, config.PSQL_ENVIRONMENT)
 app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.mount(
+    "/event_images",
+    StaticFiles(directory=UPLOAD_PATH),
+    name="event_images",
+)
 app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 

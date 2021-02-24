@@ -1,4 +1,4 @@
-from typing import Generator, Iterator, Dict
+from typing import Dict, Generator, Iterator
 
 import pytest
 from fastapi.testclient import TestClient
@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
-
 from app.routers import (
     agenda,
     audio,
