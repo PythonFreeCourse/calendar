@@ -68,6 +68,7 @@ async def profile(
         "Aquarius",
         "Pisces",
     ]
+    
     on_this_day_data = get_on_this_day_events(session)
 
     return templates.TemplateResponse(
