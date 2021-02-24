@@ -6,7 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from app.database.models import CoronaStats
 from app.internal import corona_stats
 
-FAKE_DATA = [
+fake_data = [
     {
         "Day_Date": "2020-12-19T00:00:00.000Z",
         "vaccinated": 41,
@@ -58,14 +58,14 @@ def test_get_vacinated_data_from_db(session):
 
 @pytest.mark.asyncio
 async def test_get_vacinated_data(httpx_mock):
-    test_data = json.dumps(FAKE_DATA)
+    test_data = json.dumps(fake_data)
     httpx_mock.add_response(method="GET", json=test_data)
     data = await corona_stats.get_vacinated_data()
     assert data
 
 
 def test_save_corona_stats(session):
-    test_data = (FAKE_DATA)[-1]
+    test_data = (fake_data)[-1]
 
     corona_stats.save_corona_stats(test_data, session)
 
@@ -74,7 +74,7 @@ def test_save_corona_stats(session):
 
 @pytest.mark.asyncio
 async def test_get_corona_stats(httpx_mock, session):
-    httpx_mock.add_response(method="GET", json=FAKE_DATA)
+    httpx_mock.add_response(method="GET", json=fake_data)
     data = await corona_stats.get_corona_stats(session)
     assert data
     assert not is_empty(session)
@@ -92,7 +92,7 @@ def test_serialize_stats():
 
 
 def test_create_stats_object():
-    stats_object = FAKE_DATA[-1]
+    stats_object = fake_data[-1]
 
     unserialized = corona_stats.create_stats_object(stats_object)
     assert type(unserialized) is CoronaStats
