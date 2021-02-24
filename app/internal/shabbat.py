@@ -14,7 +14,7 @@ def shabbat_time_by_user_location(shabbat_time: Dict[str, str]) -> Dict:
     shabbat_limit = {
         'start_hour': shabbat_time['items'][5]['title'].split(': ')[1],
         'start_date': datetime.strptime(
-            shabbat_time['items'][5]['date'].split('T')[0],"%Y-%m-%d"
+            shabbat_time['items'][5]['date'].split('T')[0], "%Y-%m-%d"
         ).date(),
         'end_hour': shabbat_time['items'][7]['title'].split(': ')[1],
         'end_date': datetime.strptime(
@@ -24,7 +24,7 @@ def shabbat_time_by_user_location(shabbat_time: Dict[str, str]) -> Dict:
 
 
 def get_shabbat_if_date_friday(
-        shabbat_time: Dict[str,str],
+        shabbat_time: Dict[str, str],
         date: datetime) -> Dict:
     """Returns shabbat start end ending time if specific date
      is Saturday, else None.
