@@ -10,8 +10,7 @@ from starlette.datastructures import MultiDict
 
 TEST_SHARED_LISTS = [
     {
-        "title": "Choco list",
-        "items": [
+        "Choco list": [
             {
                 "name": "Chocolate",
                 "amount": 2,
@@ -20,7 +19,11 @@ TEST_SHARED_LISTS = [
             },
         ],
     },
-    {"items": [{"name": "Notebooks", "amount": 2.5, "participant": "Efrat"}]},
+    {
+        "TestList": [
+            {"name": "Notebooks", "amount": 2.5, "participant": "Efrat"},
+        ],
+    },
 ]
 
 VALID_DATA = MultiDict(
@@ -60,15 +63,15 @@ def test_create_shared(test_list, session):
     communication with db is working."""
     shared_list = _create_shared_list(test_list, session)
     assert (
-        shared_list.title == test_list.get("title")
+        shared_list.title == list(test_list.keys())[0]
         or shared_list.title == "Shared List"
     )
-    assert shared_list.items[0].name == test_list["items"][0]["name"]
+    assert shared_list.items[0].name == list(test_list.values())[0][0]["name"]
 
 
 def test_create_shared_list(session):
     """Test shared list with wrong data is not created."""
-    assert _create_shared_list(WRONG_DATA, session) is None
+    assert _create_shared_list(MultiDict(), session) is None
 
 
 def test_extract_shared_list_from_data_correct(session):
@@ -76,7 +79,6 @@ def test_extract_shared_list_from_data_correct(session):
     VALID_DATA.setlist("item-name", ["Vanilla", "Strawberries", "Coffee"])
     VALID_DATA.setlist("item-amount", ["3", "2", "1"])
     VALID_DATA.setlist("item-participant", ["Elior", "Efrat", "Yam"])
-    print(extract_shared_list_from_data(VALID_DATA, session).items)
     assert len(extract_shared_list_from_data(VALID_DATA, session).items) == 3
 
 

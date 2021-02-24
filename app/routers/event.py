@@ -1,7 +1,7 @@
-import json
 from datetime import datetime as dt
+import json
 from operator import attrgetter
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 import urllib
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -577,37 +577,45 @@ def extract_shared_list_from_data(
     Return:
         SharedList: SharedList object stored in the database.
     """
-
-    items = zip(
+    raw_items = zip(
         event_info.getlist("item-name"),
         event_info.getlist("item-amount"),
         event_info.getlist("item-participant"),
     )
-    shared_list = {"title": event_info.get("shared-list-title"), "items": []}
-    for name, amount, participant in items:
+    items = []
+    title = event_info.get("shared-list-title")
+    for name, amount, participant in raw_items:
         item = SharedItem(name, amount, participant)
         if _check_item_is_valid(item):
             item_dict = item._asdict()
             item_dict["amount"] = float(item_dict["amount"])
-            shared_list["items"].append(item_dict)
-    return _create_shared_list(shared_list, db)
+            items.append(item_dict)
+    return _create_shared_list({title: items}, db)
 
 
 def _check_item_is_valid(item: SharedItem) -> bool:
-    return item != "" and item.amount.isnumeric() and item.participant != ""
+    return (
+        item is not None
+        and item.amount.isnumeric()
+        and item.participant is not None
+    )
 
 
 def _create_shared_list(
-    raw_shared_list: Dict[str, Union[str, Dict[str, Any]]],
+    raw_shared_list: Dict[str, Dict[str, Any]],
     db: Session,
 ) -> Optional[SharedList]:
-    title = raw_shared_list.get("title") or "Shared List"
+    try:
+        title = list(raw_shared_list.keys())[0] or "Shared List"
+    except IndexError as e:
+        logger.exception(e)
+        return None
     shared_list = create_model(db, SharedList, title=title)
     try:
-        for item in raw_shared_list["items"]:
+        for item in list(raw_shared_list.values())[0]:
             item = create_model(db, SharedListItem, **item)
             shared_list.items.append(item)
-    except (AttributeError, KeyError) as e:
+    except (IndexError, KeyError) as e:
         logger.exception(e)
         return None
     else:
