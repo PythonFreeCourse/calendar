@@ -171,5 +171,6 @@ def get_invitation_by_id(
     session: Session,
 ) -> Union[Invitation, None]:
     """Returns an invitation by an id.
-    if id does not exist, returns None."""
+    if id does not exist, returns None.
+    """
     return session.query(Invitation).filter_by(id=invitation_id).first()
