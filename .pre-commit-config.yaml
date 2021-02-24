@@ -19,7 +19,7 @@ repos:
     - id: end-of-file-fixer
     - id: sort-simple-yaml
   - repo: https://github.com/pycqa/isort
-    rev: 5.6.3
+    rev: 5.7.0
     hooks:
       - id: isort
         name: isort (python)
