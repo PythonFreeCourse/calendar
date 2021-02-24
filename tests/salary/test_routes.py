@@ -199,7 +199,6 @@ def test_invalid_category_redirect(
     response = salary_test_client.get(path)
     assert any(temp.status_code == status.HTTP_307_TEMPORARY_REDIRECT
                for temp in response.history)
-    print(response.text)
     assert message in response.text
 
 
