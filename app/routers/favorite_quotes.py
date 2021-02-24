@@ -55,13 +55,12 @@ async def favorite_quotes(
     user: models.User = Depends(current_user),
 ):
     """html page for displaying the users' favorite quotes."""
-    FAVORITES = f"../../{daily_quotes.FULL_HEART_PATH}"
     quotes = daily_quotes.get_quotes(db, user.user_id)
     return templates.TemplateResponse(
         "favorite_quotes.html",
         {
             "request": request,
             "quotes": quotes,
-            "full_heart": FAVORITES,
+            "full_heart": daily_quotes.FAVORITES_PATH,
         },
     )

@@ -10,6 +10,7 @@ from app.database.models import Quote, UserQuotes
 
 EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
 FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
+FAVORITES_PATH = f"../../{FULL_HEART_PATH}"
 TOTAL_DAYS = 366
 
 
