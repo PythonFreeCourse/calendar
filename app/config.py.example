@@ -27,9 +27,9 @@ PSQL_ENVIRONMENT = False
 MEDIA_DIRECTORY = 'media'
 PICTURE_EXTENSION = '.png'
 AVATAR_SIZE = (120, 120)
-"""For security reasons, set the upload path to a local absolute path.
-Or for testing environment - just specify a folder name
-that will be created under /app/"""
+# For security reasons, set the upload path to a local absolute path.
+# Or for testing environment - just specify a folder name
+# that will be created under /app/
 UPLOAD_DIRECTORY = 'event_images'
 
 
