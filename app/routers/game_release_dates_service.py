@@ -12,7 +12,7 @@ from starlette.templating import _TemplateResponse
 import requests
 from app.database.models import UserSettings
 from app.dependencies import get_db, templates
-from app.internal.security.dependancies import current_user
+from app.internal.security.dependencies import current_user
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
 
@@ -85,12 +85,10 @@ def get_game_releases_month(request: Request):
     delta = datetime.timedelta(days=30)
     today_str = today.strftime("%Y-%m-%d")
     in_month_str = (today + delta).strftime("%Y-%m-%d")
-    template = templates.get_template(
-        "partials/calendar/feature_settings/game_release_modal.html",
-    )
+
     games = get_games_data(today_str, in_month_str)
-    content = template.render(games=games)
-    return HTMLResponse(content=content, status_code=HTTPStatus.OK)
+
+    return games
 
 
 # @router.post
@@ -129,6 +127,7 @@ async def subscribe_game_release_service(
     current_user_id = user.user_id
 
     if is_user_signed_up_for_game_releases(session, current_user_id):
+        logger.debug("User already signed up for games")
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
     else:
         games_setting_true = {UserSettings.video_game_releases: True}

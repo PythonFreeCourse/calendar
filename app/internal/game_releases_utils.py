@@ -82,6 +82,6 @@ def translate_ymd_date_to_dby(ymd_str: str):
     return ymd_time.strftime("%d-%B-%Y")
 
 
-def translate_calendar_date_to_ymd(dby_str: str):
+def translate_dby_date_to_ymd(dby_str: str):
     dby_time = datetime.strptime(dby_str, "%d-%B-%Y")
     return dby_time.strftime("%Y-%m-%d")
