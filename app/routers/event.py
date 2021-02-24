@@ -16,21 +16,24 @@ from starlette.templating import _TemplateResponse
 
 from app.database.models import Comment, Event, User, UserEvent
 from app.dependencies import get_db, logger, templates
+from app.internal import comment as cmt
+from app.internal.emotion import get_emotion
 from app.internal.event import (
     get_invited_emails,
+    get_location_coordinates,
     get_messages,
     get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
 )
-from app.internal import comment as cmt
-from app.internal.emotion import get_emotion
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
+
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,
@@ -132,9 +135,16 @@ async def create_new_event(
         title,
         invited_emails,
     )
+    latitude, longitude = None, None
 
     if vc_link:
         raise_if_zoom_link_invalid(vc_link)
+    else:
+        location_details = await get_location_coordinates(location)
+        if not isinstance(location_details, str):
+            location = location_details.name
+            latitude = location_details.latitude
+            longitude = location_details.longitude
 
     event = create_event(
         db=session,
@@ -145,6 +155,8 @@ async def create_new_event(
         owner_id=owner_id,
         content=content,
         location=location,
+        latitude=latitude,
+        longitude=longitude,
         vc_link=vc_link,
         invitees=invited_emails,
         category_id=category_id,
@@ -411,6 +423,8 @@ def create_event(
     content: Optional[str] = None,
     location: Optional[str] = None,
     vc_link: str = None,
+    latitude: Optional[str] = None,
+    longitude: Optional[str] = None,
     color: Optional[str] = None,
     invitees: List[str] = None,
     category_id: Optional[int] = None,
@@ -432,6 +446,8 @@ def create_event(
         content=content,
         owner_id=owner_id,
         location=location,
+        latitude=latitude,
+        longitude=longitude,
         vc_link=vc_link,
         color=color,
         emotion=get_emotion(title, content),
