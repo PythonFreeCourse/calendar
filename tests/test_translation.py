@@ -1,11 +1,14 @@
+import pytest
 from fastapi import HTTPException
 from iso639 import languages
-import pytest
 from textblob import TextBlob
 
 from app.internal.translation import (
-    _detect_text_language, _get_language_code, _get_user_language,
-    translate_text, translate_text_for_user
+    _detect_text_language,
+    _get_language_code,
+    _get_user_language,
+    translate_text,
+    translate_text_for_user,
 )
 
 TEXT = [
@@ -20,31 +23,46 @@ TEXT = [
 def test_translate_text_with_original_lang(text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert "Hello my friend" == answer
-    assert TextBlob(text).detect_language() == languages.get(
-        name=original_lang.capitalize()).alpha2
-    assert TextBlob(answer).detect_language() == languages.get(
-        name=target_lang.capitalize()).alpha2
+    assert (
+        TextBlob(text).detect_language()
+        == languages.get(name=original_lang.capitalize()).alpha2
+    )
+    assert (
+        TextBlob(answer).detect_language()
+        == languages.get(name=target_lang.capitalize()).alpha2
+    )
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
 def test_translate_text_without_original_lang(
-        text, target_lang, original_lang):
+    text,
+    target_lang,
+    original_lang,
+):
     answer = translate_text(text, target_lang)
     assert "Hello my friend" == answer
-    assert TextBlob(answer).detect_language() == languages.get(
-        name=target_lang.capitalize()).alpha2
+    assert (
+        TextBlob(answer).detect_language()
+        == languages.get(name=target_lang.capitalize()).alpha2
+    )
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
 def test_translate_text_with_identical_original_and_target_lang(
-        text, target_lang, original_lang):
+    text,
+    target_lang,
+    original_lang,
+):
     answer = translate_text(text, original_lang, original_lang)
     assert answer == text
 
 
 @pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
 def test_translate_text_with_same_original_target_lang_without_original_lang(
-        text, target_lang, original_lang):
+    text,
+    target_lang,
+    original_lang,
+):
     answer = translate_text(text, original_lang)
     assert answer == text
 
@@ -73,7 +91,12 @@ def test_get_user_language(user, session):
 
 @pytest.mark.parametrize("text, target_lang, original_lang", TEXT)
 def test_translate_text_for_valid_user(
-        text, target_lang, original_lang, session, user):
+    text,
+    target_lang,
+    original_lang,
+    session,
+    user,
+):
     user_id = user.id
     answer = translate_text_for_user(text, session, user_id)
     assert answer == "Hello my friend"
@@ -90,36 +113,51 @@ def test_detect_text_language():
     assert answer == "en"
 
 
-@pytest.mark.parametrize("text, target_lang, original_lang",
-                         [("Hoghhflaff", "english", "spanish"),
-                          ("Bdonfdjourr", "english", "french"),
-                          ("Hafdllnnc", "english", "german"),
-                          ])
+@pytest.mark.parametrize(
+    "text, target_lang, original_lang",
+    [
+        ("Hoghhflaff", "english", "spanish"),
+        ("Bdonfdjourr", "english", "french"),
+        ("Hafdllnnc", "english", "german"),
+    ],
+)
 def test_translate_text_with_text_impossible_to_translate(
-        text, target_lang, original_lang):
+    text,
+    target_lang,
+    original_lang,
+):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
 
 
-@pytest.mark.parametrize("text, target_lang, original_lang",
-                         [("@Здравствуй#мой$друг!", "english", "russian"),
-                          ("@Hola#mi$amigo!", "english", "spanish"),
-                          ("@Bonjour#mon$ami!", "english", "french"),
-                          ("@Hallo#mein$Freund!", "english", "german"),
-                          ])
+@pytest.mark.parametrize(
+    "text, target_lang, original_lang",
+    [
+        ("@Здравствуй#мой$друг!", "english", "russian"),
+        ("@Hola#mi$amigo!", "english", "spanish"),
+        ("@Bonjour#mon$ami!", "english", "french"),
+        ("@Hallo#mein$Freund!", "english", "german"),
+    ],
+)
 def test_translate_text_with_symbols(text, target_lang, original_lang):
     answer = translate_text(text, target_lang, original_lang)
     assert "@ Hello # my $ friend!" == answer
 
 
-@pytest.mark.parametrize("text, target_lang, original_lang",
-                         [("Привет мой друг", "italian", "spanish"),
-                          ("Hola mi amigo", "english", "russian"),
-                          ("Bonjour, mon ami", "russian", "german"),
-                          ("Ciao amico", "french", "german")
-                          ])
+@pytest.mark.parametrize(
+    "text, target_lang, original_lang",
+    [
+        ("Привет мой друг", "italian", "spanish"),
+        ("Hola mi amigo", "english", "russian"),
+        ("Bonjour, mon ami", "russian", "german"),
+        ("Ciao amico", "french", "german"),
+    ],
+)
 def test_translate_text_with_with_incorrect_lang(
-        text, target_lang, original_lang):
+    text,
+    target_lang,
+    original_lang,
+):
     answer = translate_text(text, target_lang, original_lang)
     assert answer == text
 

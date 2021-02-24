@@ -1,18 +1,18 @@
-from datetime import datetime, timedelta
 import json
 import os
-import pytest
+from datetime import datetime, timedelta
 
-from PIL import Image
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
-from sqlalchemy.sql.elements import Null
+from PIL import Image
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
 
 from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import get_db, UPLOAD_PATH
+from app.dependencies import UPLOAD_PATH, get_db
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app

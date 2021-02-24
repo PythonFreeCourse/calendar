@@ -39,40 +39,42 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('logout') }}">{{ gettext("Sign Out") }}</a>
-                            <li class="nav-item">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
-                                </li>
-                                <li class="nav-item">
-                                  <a class="nav-link" href="{{ url_for( 'audio_settings') }}">Audio Settings</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('search') }}">Search</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('friendview') }}">Friend View</a>
-                                </li>
-                                <li class="nav-item">
-                                    <button id="a-joke" class="btn btn-link">Make me Laugh</button>
-                                </li>
-                                <li class="nav-item"></li>
-                                    <a class="nav-link" href="{{ url_for('category_color_insert') }}">Create Categories</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('weight') }}">Weight</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('about') }}">{{ gettext("About Us") }}</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ url_for('credits') }}">Credits</a>
-                                </li>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">Sign Up</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="{{ url_for( 'audio_settings') }}">Audio Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('search') }}">Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('friendview') }}">Friend View</a>
+                        </li>
+                        <li class="nav-item">
+                            <button id="a-joke" class="btn btn-link">Make me Laugh</button>
+                        </li>
+                        <li class="nav-item"></li>
+                            <a class="nav-link" href="{{ url_for('category_color_insert') }}">Create Categories</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('weight') }}">Weight</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('about') }}">{{ gettext("About Us") }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('credits') }}">Credits</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="{{ url_for('view_notifications') }}">
+                              <ion-icon name="notifications-outline"></ion-icon>
+                          </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -80,6 +82,7 @@
 
         {% block content %}{% endblock %}
     </div>
+
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
@@ -95,5 +98,4 @@
     <audio id="sfx" muted="true"></audio>
 
 </body>
-
 </html>

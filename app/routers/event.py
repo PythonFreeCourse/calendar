@@ -1,13 +1,12 @@
-from datetime import datetime as dt
-import json
 import io
+import json
+import urllib
+from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, Optional, Tuple
-from PIL import Image
-import urllib
-
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request
+from PIL import Image
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -19,7 +18,7 @@ from starlette.templating import _TemplateResponse
 
 from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import get_db, logger, templates, UPLOAD_PATH
+from app.dependencies import UPLOAD_PATH, get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.event import (
@@ -37,6 +36,7 @@ IMAGE_HEIGHT = 200
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,
