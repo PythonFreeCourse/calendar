@@ -1,27 +1,15 @@
 import logging
 import re
-from typing import List, NamedTuple, Set, Union
+from typing import List, Set
 
 from email_validator import EmailSyntaxError, validate_email
 from fastapi import HTTPException
-from geopy.adapters import AioHTTPAdapter
-from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
-from geopy.geocoders import Nominatim
-from loguru import logger
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from app.database.models import Event
 
-
 ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
-
-
-class Location(NamedTuple):
-    # Location type hint class.
-    latitude: str
-    longitude: str
-    name: str
 
 
 def raise_if_zoom_link_invalid(vc_link):
@@ -113,27 +101,3 @@ def get_messages(
             f"Want to create another one {weeks_diff} after too?",
         )
     return messages
-
-
-async def get_location_coordinates(
-    address: str,
-) -> Union[Location, str]:
-    """Return location coordinates and accurate
-    address of the specified location."""
-    try:
-        async with Nominatim(
-            user_agent="Pylendar",
-            adapter_factory=AioHTTPAdapter,
-        ) as geolocator:
-            geolocation = await geolocator.geocode(address)
-    except (GeocoderTimedOut, GeocoderUnavailable) as e:
-        logger.exception(str(e))
-    else:
-        if geolocation is not None:
-            location = Location(
-                latitude=geolocation.latitude,
-                longitude=geolocation.longitude,
-                name=geolocation.raw["display_name"],
-            )
-            return location
-    return address

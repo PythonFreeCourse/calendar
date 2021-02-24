@@ -4,24 +4,20 @@ import pytest
 from sqlalchemy.orm import Session
 
 from app.database.models import User
-from app.database.schemas import UserCreate
 from app.internal.utils import create_model, delete_instance
-from app.routers.register import create_user
 
 
 @pytest.fixture
-async def user(session: Session) -> Generator[User, None, None]:
-    schema = UserCreate(
+def user(session: Session) -> Generator[User, None, None]:
+    mock_user = create_model(
+        session,
+        User,
         username="test_username",
         password="test_password",
-        confirm_password="test_password",
         email="test.email@gmail.com",
-        full_name="test_full_name",
-        description="test_description",
         language_id=1,
         target_weight=60,
     )
-    mock_user = await create_user(session, schema)
     yield mock_user
     delete_instance(session, mock_user)
 
@@ -29,11 +25,10 @@ async def user(session: Session) -> Generator[User, None, None]:
 @pytest.fixture
 def user2(session: Session) -> Generator[User, None, None]:
     mock_user = create_model(
-        session,
-        User,
-        username="test_username2",
-        password="test_password2",
-        email="test2.email@gmail.com",
+        session, User,
+        username='test_username2',
+        password='test_password2',
+        email='test2.email@gmail.com',
         language_id=1,
     )
     yield mock_user

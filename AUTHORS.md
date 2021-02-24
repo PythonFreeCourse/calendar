@@ -33,7 +33,6 @@
          * PureDreamer - Developer
          * ShiZinDle - Developer
          * YairEn - Developer
-         * IdanPelled - Developer
 
 # Special thanks to
 

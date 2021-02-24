@@ -50,6 +50,10 @@ div.event_info_row,
   margin-block-end: 0.2em;
 }
 
+.title {
+  border-bottom: 4px solid blue;
+}
+
 .title h1 {
   white-space: nowrap;
   margin-block-start: 0.2em;
@@ -68,8 +72,4 @@ div.event_info_row,
 
 button {
   height: 100%;
-}
-
-.google_maps_object {
-  width: 100%;
 }

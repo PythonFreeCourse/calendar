@@ -1,12 +1,11 @@
-from typing import Generator, Iterator, Dict
+from typing import Generator, Iterator
 
-import pytest
 from fastapi.testclient import TestClient
+import pytest
 from sqlalchemy.orm import Session
 
 from app import main
 from app.database.models import Base, User
-
 from app.routers import (
     agenda,
     audio,
@@ -14,8 +13,8 @@ from app.routers import (
     event,
     friendview,
     google_connect,
+    invitation,
     meds,
-    notification,
     profile,
     weekview,
     weekly_tasks,
@@ -24,8 +23,6 @@ from app.routers import (
 from app.routers.salary import routes as salary
 from tests import security_testing_routes
 from tests.conftest import get_test_db, test_engine
-
-LOGIN_DATA_TYPE = Dict[str, str]
 
 main.app.include_router(security_testing_routes.router)
 
@@ -39,10 +36,6 @@ REGISTER_DETAIL = {
 }
 
 LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
-
-
-def login_client(client: TestClient, data: LOGIN_DATA_TYPE) -> None:
-    client.post(client.app.url_path_for("login"), data=data)
 
 
 def get_test_placeholder_user() -> User:
@@ -98,11 +91,6 @@ def agenda_test_client() -> Generator[TestClient, None, None]:
 
 
 @pytest.fixture(scope="session")
-def notification_test_client():
-    yield from create_test_client(notification.get_db)
-
-
-@pytest.fixture(scope="session")
 def friendview_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(friendview.get_db)
 
@@ -120,6 +108,11 @@ def event_test_client() -> Generator[TestClient, None, None]:
 @pytest.fixture(scope="session")
 def home_test_client() -> Generator[TestClient, None, None]:
     yield from create_test_client(main.get_db)
+
+
+@pytest.fixture(scope="session")
+def invitation_test_client() -> Generator[TestClient, None, None]:
+    yield from create_test_client(invitation.get_db)
 
 
 @pytest.fixture(scope="session")

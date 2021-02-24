@@ -2,7 +2,8 @@ from typing import Dict, List
 
 from sqlalchemy.orm import Session
 
-from app.database.models import Event, Invitation
+from app.database.models import Event, Invitation, UserEvent
+from app.internal.utils import save
 from app.internal.export import get_icalendar
 from app.routers.user import does_user_exist, get_users
 
@@ -31,11 +32,11 @@ def send_email_invitation(
         event: Event,
 ) -> bool:
     """Sends an email with an invitation."""
-    if participants:
-        ical_invitation = get_icalendar(event, participants)  # noqa: F841
-        for _ in participants:
-            # TODO: send email
-            pass
+
+    ical_invitation = get_icalendar(event, participants)  # noqa: F841
+    for _ in participants:
+        # TODO: send email
+        pass
     return True
 
 
@@ -49,6 +50,7 @@ def send_in_app_invitation(
     for participant in participants:
         # email is unique
         recipient = get_users(email=participant, session=session)[0]
+
         if recipient.id != event.owner.id:
             session.add(Invitation(recipient=recipient, event=event))
 
@@ -58,6 +60,20 @@ def send_in_app_invitation(
 
     session.commit()
     return True
+
+
+def accept(invitation: Invitation, session: Session) -> None:
+    """Accepts an invitation by creating an
+    UserEvent association that represents
+    participantship at the event."""
+
+    association = UserEvent(
+        user_id=invitation.recipient.id,
+        event_id=invitation.event.id
+    )
+    invitation.status = 'accepted'
+    save(session, invitation)
+    save(session, association)
 
 
 def share(event: Event, participants: List[str], session: Session) -> bool:

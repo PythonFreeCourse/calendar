@@ -13,10 +13,10 @@ today_date = datetime.today().replace(hour=0, minute=0, second=0)
 def event(sender: User, category: Category, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event",
+        title='event',
         start=today_date,
         end=today_date,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
         location="Some random location",
         vc_link=None,
@@ -28,11 +28,11 @@ def event(sender: User, category: Category, session: Session) -> Event:
 def today_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event 1",
+        title='event 1',
         start=today_date + timedelta(hours=7),
         end=today_date + timedelta(hours=9),
         all_day=False,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
     )
 
@@ -41,12 +41,11 @@ def today_event(sender: User, session: Session) -> Event:
 def today_event_2(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event 2",
-        color="blue",
+        title='event 2',
         start=today_date + timedelta(hours=3),
         end=today_date + timedelta(days=2, hours=3),
         all_day=False,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
     )
 
@@ -55,12 +54,11 @@ def today_event_2(sender: User, session: Session) -> Event:
 def yesterday_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event 3",
-        color="green",
+        title='event 3',
         start=today_date - timedelta(hours=8),
         end=today_date,
         all_day=False,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
     )
 
@@ -69,12 +67,11 @@ def yesterday_event(sender: User, session: Session) -> Event:
 def next_week_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event 4",
-        color="blue",
+        title='event 4',
         start=today_date + timedelta(days=7, hours=2),
         end=today_date + timedelta(days=7, hours=4),
         all_day=False,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
     )
 
@@ -83,12 +80,11 @@ def next_week_event(sender: User, session: Session) -> Event:
 def next_month_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event 5",
-        color="green",
+        title='event 5',
         start=today_date + timedelta(days=20, hours=4),
         end=today_date + timedelta(days=20, hours=6),
         all_day=False,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
     )
 
@@ -97,12 +93,11 @@ def next_month_event(sender: User, session: Session) -> Event:
 def old_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event 6",
-        color="red",
+        title='event 6',
         start=today_date - timedelta(days=5),
         end=today_date - timedelta(days=1),
         all_day=False,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
     )
 
@@ -111,11 +106,11 @@ def old_event(sender: User, session: Session) -> Event:
 def all_day_event(sender: User, category: Category, session: Session) -> Event:
     return create_event(
         db=session,
-        title="event",
+        title='event',
         start=today_date,
         end=today_date,
         all_day=True,
-        content="test event",
+        content='test event',
         owner_id=sender.id,
         location="Some random location",
         category_id=category.id,
