@@ -4,16 +4,6 @@ repos:
     rev: 3.8.4
     hooks:
     - id: flake8
-  # yapf to fix many style mistakes
-  - repo: https://github.com/ambv/black
-    rev: 20.8b1
-    hooks:
-      - id: black
-        entry: black
-        language: python
-        language_version: python3
-        require_serial: true
-        types_or: [python, pyi]
   # More built in style checks and fixes
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -28,6 +18,27 @@ repos:
     - id: check-merge-conflict
     - id: end-of-file-fixer
     - id: sort-simple-yaml
+  - repo: https://github.com/pycqa/isort
+    rev: 5.6.3
+    hooks:
+      - id: isort
+        name: isort (python)
+      - id: isort
+        name: isort (cython)
+        types: [cython]
+      - id: isort
+        name: isort (pyi)
+        types: [pyi]
+  # Black: to fix many style mistakes
+  - repo: https://github.com/ambv/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        entry: black
+        language: python
+        language_version: python3
+        require_serial: true
+        types_or: [python, pyi]
   - repo: meta
     hooks:
     - id: check-useless-excludes
