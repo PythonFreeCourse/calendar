@@ -73,9 +73,10 @@ def test_create_shared_list(session):
 
 def test_extract_shared_list_from_data_correct(session):
     """Check the shared list extraction function is working."""
-    VALID_DATA.setlist("item_name", ["Vanilla", "Strawberries", "Coffee"])
-    VALID_DATA.setlist("item_amount", ["3", "2", "1"])
-    VALID_DATA.setlist("item_participant", ["Elior", "Efrat", "Yam"])
+    VALID_DATA.setlist("item-name", ["Vanilla", "Strawberries", "Coffee"])
+    VALID_DATA.setlist("item-amount", ["3", "2", "1"])
+    VALID_DATA.setlist("item-participant", ["Elior", "Efrat", "Yam"])
+    print(extract_shared_list_from_data(VALID_DATA, session).items)
     assert len(extract_shared_list_from_data(VALID_DATA, session).items) == 3
 
 
@@ -90,7 +91,7 @@ def test_extract_shared_list_from_data_false_info(session):
 
 def test_extract_shared_list_from_data_error_handling(session):
     """Test error handling during extraction."""
-    WRONG_DATA.setlist("item_name", ["Vanilla", "Strawberries", "Coffee"])
+    WRONG_DATA.setlist("item-name", ["Vanilla", "Strawberries", "Coffee"])
     assert extract_shared_list_from_data(WRONG_DATA, session)
 
 
