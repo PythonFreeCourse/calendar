@@ -78,6 +78,12 @@
    <input type="text" id="invited" name="invited" placeholder="Invited emails, separated by commas">
 </div>
 
+<div class="form_row">
+    <label for="event_img">Image: </label>
+    <input type="file" id="event_img" name="event_img"
+          accept="image/png, image/jpeg">
+</div>
+
 <div class="form_row textarea">
   <textarea id="say" name="description" placeholder="Description"></textarea>
 </div>
@@ -95,8 +101,8 @@
   <div class="form_row_end">
     <label for="event_type">All-day:</label>
     <select id="event_type" name="event_type" required>
-        <option value="on">Yes</option>
-        <option value="off" selected>No</option>
+      <option value="on">Yes</option>
+      <option value="off" selected>No</option>
     </select>
 
     <label for="availability">Availability:</label>

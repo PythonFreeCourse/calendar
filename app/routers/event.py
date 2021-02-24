@@ -1,10 +1,12 @@
+import io
 import json
 import urllib
 from datetime import datetime as dt
 from operator import attrgetter
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request
+from PIL import Image
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -15,6 +17,7 @@ from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
+from app.config import PICTURE_EXTENSION
 from app.database.models import (
     Comment,
     Event,
@@ -23,7 +26,7 @@ from app.database.models import (
     User,
     UserEvent,
 )
-from app.dependencies import get_db, logger, templates
+from app.dependencies import UPLOAD_PATH, get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.event import (
@@ -37,6 +40,7 @@ from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
+IMAGE_HEIGHT = 200
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
@@ -119,6 +123,7 @@ async def eventedit(
 @router.post("/edit", include_in_schema=False)
 async def create_new_event(
     request: Request,
+    event_img: bytes = File(None),
     session=Depends(get_db),
 ) -> Response:
     data = await request.form()
@@ -180,12 +185,42 @@ async def create_new_event(
         privacy=privacy,
     )
 
+    if event_img:
+        image = process_image(event_img, event.id)
+        event.image = image
+        session.commit()
+
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
         router.url_path_for("eventview", event_id=event.id)
         + f'?messages={"---".join(messages)}',
         status_code=status.HTTP_302_FOUND,
     )
+
+
+def process_image(
+    img: bytes,
+    event_id: int,
+    img_height: int = IMAGE_HEIGHT,
+) -> str:
+    """Resized and saves picture without exif (to avoid malicious date))
+    according to required height and keep aspect ratio"""
+    try:
+        image = Image.open(io.BytesIO(img))
+    except IOError:
+        error_message = "The uploaded file is not a valid image"
+        logger.exception(error_message)
+        return
+    width, height = image.size
+    height_to_req_height = img_height / float(height)
+    new_width = int(float(width) * float(height_to_req_height))
+    resized = image.resize((new_width, img_height), Image.ANTIALIAS)
+    file_name = f"{event_id}{PICTURE_EXTENSION}"
+    image_data = list(resized.getdata())
+    image_without_exif = Image.new(resized.mode, resized.size)
+    image_without_exif.putdata(image_data)
+    image_without_exif.save(f"{UPLOAD_PATH}/{file_name}")
+    return file_name
 
 
 def get_waze_link(event: Event) -> str:
@@ -447,6 +482,7 @@ def create_event(
     is_google_event: bool = False,
     shared_list: Optional[SharedList] = None,
     privacy: str = PrivacyKinds.Public.name,
+    image: Optional[str] = None,
 ):
     """Creates an event and an association."""
 
@@ -473,6 +509,7 @@ def create_event(
         shared_list=shared_list,
         availability=availability,
         is_google_event=is_google_event,
+        image=image,
     )
     create_model(db, UserEvent, user_id=owner_id, event_id=event.id)
     return event

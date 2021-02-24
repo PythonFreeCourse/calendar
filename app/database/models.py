@@ -103,6 +103,7 @@ class Event(Base):
     invitees = Column(String)
     privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
+    image = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
