@@ -42,6 +42,7 @@ def today_event_2(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
         title='event 2',
+        color='blue',
         start=today_date + timedelta(hours=3),
         end=today_date + timedelta(days=2, hours=3),
         all_day=False,
@@ -55,6 +56,7 @@ def yesterday_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
         title='event 3',
+        color='green',
         start=today_date - timedelta(hours=8),
         end=today_date,
         all_day=False,
@@ -68,6 +70,7 @@ def next_week_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
         title='event 4',
+        color='blue',
         start=today_date + timedelta(days=7, hours=2),
         end=today_date + timedelta(days=7, hours=4),
         all_day=False,
@@ -81,6 +84,7 @@ def next_month_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
         title='event 5',
+        color="green",
         start=today_date + timedelta(days=20, hours=4),
         end=today_date + timedelta(days=20, hours=6),
         all_day=False,
@@ -94,6 +98,7 @@ def old_event(sender: User, session: Session) -> Event:
     return create_event(
         db=session,
         title='event 6',
+        color="red",
         start=today_date - timedelta(days=5),
         end=today_date - timedelta(days=1),
         all_day=False,
