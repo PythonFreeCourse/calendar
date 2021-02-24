@@ -45,7 +45,7 @@ def from_greogian_to_hebrew_date(date: datetime) -> str:
     Returns:
         A Hebrew date string.
     """
-    gregorian_date = dates.GregorianDate(date.year,date.month,date.day)
+    gregorian_date = dates.GregorianDate(date.year, date.month, date.day)
     return gregorian_date.to_heb()
 
 
