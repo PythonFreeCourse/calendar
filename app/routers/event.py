@@ -579,11 +579,11 @@ def extract_shared_list_from_data(
     """
 
     items = zip(
-        event_info.getlist("item_name"),
-        event_info.getlist("item_amount"),
-        event_info.getlist("item_participant"),
+        event_info.getlist("item-name"),
+        event_info.getlist("item-amount"),
+        event_info.getlist("item-participant"),
     )
-    shared_list = {"title": event_info.get("title"), "items": []}
+    shared_list = {"title": event_info.get("shared-list-title"), "items": []}
     for name, amount, participant in items:
         item = SharedItem(name, amount, participant)
         if _check_item_is_valid(item):
