@@ -3,6 +3,7 @@ import pytest
 from app.database.models import Feature, UserFeature
 import app.internal.features as internal
 import app.routers.features as route
+from tests.test_login import LOGIN_DATA, REGISTER_DETAIL
 
 
 @pytest.fixture
@@ -106,13 +107,19 @@ def test_create_association(mocker, session, user, feature):
 
 def test_get_user_enabled_features(session, feature, association_on, user):
     assert (
-        internal.get_user_enabled_features(session=session, user_id=user.id)[0]
+        internal.get_user_installed_features(session=session, user_id=user.id)[
+            0
+        ]
         is not None
     )
 
 
-def test_is_association_exist_in_db(session, form_mock, association_off, user):
-    assert internal.is_association_exists_in_db(form_mock, session, user)
+def test_is_user_has_feature(session, feature, association_off, user):
+    assert internal.is_user_has_feature(
+        session=session,
+        user_id=user.id,
+        feature_id=feature.id,
+    )
 
 
 def test_delete_feature(session, feature):
@@ -131,21 +138,6 @@ def test_update_feature(session, feature, update_dict):
     assert feature.description == "update"
 
 
-def test_is_feature_exist_in_enabled(
-    mocker,
-    session,
-    feature,
-    association_on,
-    user,
-):
-    feat = session.query(Feature).filter_by(name=feature.name).first()
-    mocker.patch(
-        "app.internal.features.get_user_enabled_features",
-        return_value=[feat],
-    )
-    assert internal.is_feature_enabled(user, feat, session)
-
-
 @pytest.mark.asyncio
 async def test_is_feature_enabled(mocker, session, association_on, user):
     mocker.patch("app.internal.features.SessionLocal", return_value=session)
@@ -154,9 +146,10 @@ async def test_is_feature_enabled(mocker, session, association_on, user):
         return_value=None,
     )
     mocker.patch(
-        "app.internal.features.current_user_from_db",
+        "app.internal.features.current_user",
         return_value=user,
     )
+
     assert (
         await internal.is_access_allowd(route="/route", request=None) is True
     )
@@ -168,6 +161,7 @@ def test_create_feature(session):
         route="/route",
         description="testing",
         creator="test",
+        db=session,
     )
     assert feat.name == "test1"
 
@@ -185,28 +179,50 @@ def test_add_follower(session, feature):
     assert feature.followers == 1
 
 
-def test_index(mocker, features_test_client, mock_features):
+def test_index(security_test_client):
     url = route.router.url_path_for("index")
 
-    resp = features_test_client.get(url)
+    resp = security_test_client.get(url)
     assert resp.ok
 
 
-def test_add_feature_to_user(features_test_client, feature, form_mock):
+def test_add_feature_to_user(form_mock, security_test_client):
     url = route.router.url_path_for("add_feature_to_user")
 
-    resp = features_test_client.post(url, data=form_mock)
+    security_test_client.post(
+        security_test_client.app.url_path_for("register"),
+        data=REGISTER_DETAIL,
+    )
+    security_test_client.post(
+        security_test_client.app.url_path_for("login"),
+        data=LOGIN_DATA,
+    )
+
+    resp = security_test_client.post(url, data=form_mock)
     assert resp.ok
 
 
 def test_delete_user_feature_association(
-    mocker,
-    features_test_client,
     form_mock,
-    association_on,
     feature,
+    security_test_client,
 ):
+
+    security_test_client.post(
+        security_test_client.app.url_path_for("register"),
+        data=REGISTER_DETAIL,
+    )
+    security_test_client.post(
+        security_test_client.app.url_path_for("login"),
+        data=LOGIN_DATA,
+    )
+    security_test_client.post(
+        route.router.url_path_for("add_feature_to_user"),
+        data=form_mock,
+    )
+
     url = route.router.url_path_for("delete_user_feature_association")
 
-    resp = features_test_client.post(url, data=form_mock)
+    resp = security_test_client.post(url, data=form_mock)
     assert resp.ok
+    assert resp.content == b"true"

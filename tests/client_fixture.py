@@ -11,7 +11,6 @@ from app.routers import (
     audio,
     categories,
     event,
-    features,
     friendview,
     google_connect,
     invitation,
@@ -116,11 +115,6 @@ def security_test_client():
 @pytest.fixture(scope="session")
 def salary_test_client() -> Iterator[TestClient]:
     yield from create_test_client(salary.get_db)
-
-
-@pytest.fixture(scope="session")
-def features_test_client() -> Iterator[TestClient]:
-    yield from create_test_client(features.get_db)
 
 
 @pytest.fixture(scope="session")
