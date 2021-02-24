@@ -2,11 +2,16 @@ from bisect import bisect_left
 from datetime import datetime, timedelta
 from typing import Dict, Iterator, Optional, Tuple, Union
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.database.models import Event, User
 from app.dependencies import get_db, templates
-from app.internal import zodiac
+from app.internal import international_days, zodiac
+from app.internal.security.dependencies import (
+    current_user,
+)
+
+# from app.internal.security.schema import CurrentUser
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -188,17 +193,10 @@ def get_all_day_events(
 async def dayview(
     request: Request,
     date: str,
-    session=Depends(get_db),
     view="day",
+    session=Depends(get_db),
+    user: User = Depends(current_user),
 ):
-    # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
-    if not user:
-        error_message = "User not found."
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=error_message,
-        )
     try:
         day = datetime.strptime(date, "%Y-%m-%d")
     except ValueError as err:
@@ -207,14 +205,15 @@ async def dayview(
     events_with_attrs = get_events_and_attributes(
         day=day,
         session=session,
-        user_id=user.id,
+        user_id=user.user_id,
     )
     all_day_events = get_all_day_events(
         day=day,
         session=session,
-        user_id=user.id,
+        user_id=user.user_id,
     )
     current_time_with_attrs = CurrentTimeAttributes(date=day)
+    inter_day = international_days.get_international_day_per_day(session, day)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
@@ -224,6 +223,7 @@ async def dayview(
             "all_day_events": all_day_events,
             "month": month,
             "day": day.day,
+            "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
             "current_time": current_time_with_attrs,

@@ -2,6 +2,11 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
+from fastapi import APIRouter, Depends, Form, Request
+from sqlalchemy.orm.session import Session
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
+
 from app.database.models import User
 from app.dependencies import SOUNDS_PATH, get_db, templates
 from app.internal.audio import (
@@ -17,11 +22,6 @@ from app.internal.audio import (
     DEFAULT_SFX_VOL,
 )
 from app.internal.security.dependencies import current_user
-from fastapi import APIRouter, Depends, Form, Request
-from sqlalchemy.orm.session import Session
-from starlette.responses import RedirectResponse
-from starlette.status import HTTP_302_FOUND
-
 
 router = APIRouter(
     prefix="/audio",
