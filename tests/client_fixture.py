@@ -11,7 +11,6 @@ from app.routers import (
     audio,
     categories,
     event,
-    features,
     friendview,
     google_connect,
     invitation,

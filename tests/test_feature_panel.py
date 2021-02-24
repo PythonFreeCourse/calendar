@@ -114,7 +114,9 @@ def test_get_user_enabled_features(session, feature, association_on, user):
 
 def test_is_user_has_feature(session, feature, association_off, user):
     assert internal.is_user_has_feature(
-        session=session, user_id=user.id, feature_id=feature.id,
+        session=session,
+        user_id=user.id,
+        feature_id=feature.id,
     )
 
 
@@ -157,6 +159,7 @@ def test_create_feature(session):
         route="/route",
         description="testing",
         creator="test",
+        db=session,
     )
     assert feat.name == "test1"
 
@@ -172,10 +175,12 @@ def test_add_feature_to_user(form_mock, security_test_client):
     url = route.router.url_path_for("add_feature_to_user")
 
     security_test_client.post(
-        security_test_client.app.url_path_for("register"), data=REGISTER_DETAIL,
+        security_test_client.app.url_path_for("register"),
+        data=REGISTER_DETAIL,
     )
     security_test_client.post(
-        security_test_client.app.url_path_for("login"), data=LOGIN_DATA,
+        security_test_client.app.url_path_for("login"),
+        data=LOGIN_DATA,
     )
 
     resp = security_test_client.post(url, data=form_mock)
@@ -183,17 +188,22 @@ def test_add_feature_to_user(form_mock, security_test_client):
 
 
 def test_delete_user_feature_association(
-    form_mock, feature, security_test_client,
+    form_mock,
+    feature,
+    security_test_client,
 ):
 
     security_test_client.post(
-        security_test_client.app.url_path_for("register"), data=REGISTER_DETAIL,
+        security_test_client.app.url_path_for("register"),
+        data=REGISTER_DETAIL,
     )
     security_test_client.post(
-        security_test_client.app.url_path_for("login"), data=LOGIN_DATA,
+        security_test_client.app.url_path_for("login"),
+        data=LOGIN_DATA,
     )
     security_test_client.post(
-        route.router.url_path_for("add_feature_to_user"), data=form_mock,
+        route.router.url_path_for("add_feature_to_user"),
+        data=form_mock,
     )
 
     url = route.router.url_path_for("delete_user_feature_association")

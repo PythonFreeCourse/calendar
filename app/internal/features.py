@@ -1,8 +1,9 @@
 from fastapi import Depends, Request
 from functools import wraps
 from starlette.responses import RedirectResponse
-from typing import List
+from typing import Dict, List
 from sqlalchemy.sql import exists
+from sqlalchemy.orm import Session
 
 from app.database.models import UserFeature, Feature
 from app.dependencies import get_db, SessionLocal
@@ -41,7 +42,7 @@ def feature_access_filter(call_next):
     return wrapper
 
 
-def create_features_at_startup(session: SessionLocal) -> bool:
+def create_features_at_startup(session: Session) -> bool:
     for feat in features:
         if not is_feature_exists(feature=feat, session=session):
             create_feature(**feat, db=session)
@@ -49,7 +50,7 @@ def create_features_at_startup(session: SessionLocal) -> bool:
 
 
 def is_user_has_feature(
-    session: SessionLocal,
+    session: Session,
     feature_id: int,
     user_id: int,
 ) -> bool:
@@ -65,14 +66,14 @@ def is_user_has_feature(
 
 def delete_feature(
     feature: Feature,
-    session: SessionLocal = Depends(get_db),
+    session: Session = Depends(get_db),
 ) -> None:
     session.query(UserFeature).filter_by(feature_id=feature.id).delete()
     session.query(Feature).filter_by(id=feature.id).delete()
     session.commit()
 
 
-def is_feature_exists(feature: dict, session: SessionLocal) -> bool:
+def is_feature_exists(feature: Dict[str, str], session: Session) -> bool:
     is_exists = session.query(
         exists().where(
             Feature.name == feature["name"]
@@ -85,8 +86,8 @@ def is_feature_exists(feature: dict, session: SessionLocal) -> bool:
 
 def update_feature(
     feature: Feature,
-    feature_dict: dict,
-    session: SessionLocal = Depends(get_db),
+    feature_dict: Dict[str, str],
+    session: Session = Depends(get_db),
 ) -> Feature:
     feature.name = feature_dict["name"]
     feature.route = feature_dict["route"]
@@ -126,11 +127,10 @@ def create_feature(
     name: str,
     route: str,
     description: str,
+    db: Session,
     creator: str = None,
-    db: SessionLocal = Depends(),
 ) -> Feature:
     """Creates a feature."""
-    db = SessionLocal()
     return create_model(
         db,
         Feature,
@@ -142,7 +142,7 @@ def create_feature(
 
 
 def create_user_feature_association(
-    db: SessionLocal,
+    db: Session,
     feature_id: int,
     user_id: int,
     is_enable: bool,
@@ -159,14 +159,14 @@ def create_user_feature_association(
 
 def get_user_installed_features(
     user_id: int,
-    session: SessionLocal = Depends(get_db),
+    session: Session = Depends(get_db),
 ) -> List[Feature]:
     return session.query(UserFeature).filter_by(user_id=user_id).all()
 
 
 async def get_user_uninstalled_features(
     request: Request,
-    session: SessionLocal = Depends(get_db),
+    session: Session = Depends(get_db),
 ) -> List[Feature]:
     uninstalled = []
     all_features = session.query(Feature).all()

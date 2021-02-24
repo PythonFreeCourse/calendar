@@ -34,7 +34,6 @@ async def add_feature_to_user(
 ) -> bool:
     form = await request.form()
 
-    # feat = session.query(Feature).filter_by(id=form["feature_id"]).first()
     feat = session.query(
         exists().where(Feature.id == form["feature_id"]),
     ).scalar()
@@ -58,7 +57,9 @@ async def add_feature_to_user(
     )
 
     return is_user_has_feature(
-        session=session, feature_id=form["feature_id"], user_id=user.user_id,
+        session=session,
+        feature_id=form["feature_id"],
+        user_id=user.user_id,
     )
 
 
