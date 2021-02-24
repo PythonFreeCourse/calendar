@@ -54,14 +54,11 @@ def is_user_has_feature(
     feature_id: int,
     user_id: int,
 ) -> bool:
-    is_exists = session.query(
-        exists().where(
-            UserFeature.user_id == user_id
-            and (UserFeature.feature_id == feature_id),
-        ),
+    return session.query(
+        exists()
+        .where(UserFeature.user_id == user_id)
+        .where(UserFeature.feature_id == feature_id),
     ).scalar()
-
-    return is_exists
 
 
 def delete_feature(
@@ -75,10 +72,9 @@ def delete_feature(
 
 def is_feature_exists(feature: Dict[str, str], session: Session) -> bool:
     is_exists = session.query(
-        exists().where(
-            Feature.name == feature["name"]
-            and Feature.route == feature["route"],
-        ),
+        exists()
+        .where(Feature.name == feature["name"])
+        .where(Feature.route == feature["route"]),
     ).scalar()
 
     return is_exists
@@ -116,8 +112,9 @@ async def is_access_allowd(request: Request, route: str) -> bool:
     user_ptef = session.query(
         exists().where(
             UserFeature.feature_id == feature.id
-            and (UserFeature.user_id == user.user_id),
-        ),
+        ).where(
+            UserFeature.user_id == user.user_id
+        )
     ).scalar()
 
     return user_ptef

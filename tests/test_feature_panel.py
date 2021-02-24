@@ -127,8 +127,11 @@ def test_delete_feature(session, feature):
     assert feat is None
 
 
-def test_is_feature_exist_in_db(session, feature, update_dict):
-    assert internal.is_feature_exists(update_dict, session)
+def test_is_feature_exist_in_db(session, feature):
+    assert internal.is_feature_exists({
+        'name': 'test',
+        'route': '/test'
+    }, session)
 
 
 def test_update_feature(session, feature, update_dict):
