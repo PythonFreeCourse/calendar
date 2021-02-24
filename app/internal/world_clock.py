@@ -33,7 +33,6 @@ CONTINENTS = {
     "Pacific",
 }
 CITY_NAME_KEY = "name"
-COUNTRY_NAME_KEY_IN_CONTITNENTS = "Country_Name"
 COUNTRY_NAME_KEY_IN_CITIES = "country"
 SUBCOUNTRY_NAME_KEY_IN_CITIES = "subcountry"
 CONTINENT_NAME_KEY = "Continent_Name"
@@ -62,12 +61,7 @@ PARTS_OF_THE_DAY_FEEDBACK = [
         end="07:59:59",
         desirability="Better not",
     ),
-    MeetingTime(
-        time="Morning",
-        start="08:00:00",
-        end="10:59:59",
-        desirability="OK"
-    ),
+    MeetingTime(time="Morning", start="08:00:00", end="10:59:59", desirability="OK"),
     MeetingTime(
         time="Late morning",
         start="11:00:00",
@@ -80,12 +74,7 @@ PARTS_OF_THE_DAY_FEEDBACK = [
         end="12:59:59",
         desirability="OK",
     ),
-    MeetingTime(
-        time="Afternoon",
-        start="13:00:00",
-        end="15:59:59",
-        desirability="OK"
-    ),
+    MeetingTime(time="Afternoon", start="13:00:00", end="15:59:59", desirability="OK"),
     MeetingTime(
         time="Late afternoon",
         start="16:00:00",
@@ -150,13 +139,11 @@ def get_continent(country_name: str) -> Optional[str]:
     Returns:
         str: The suitable continent name.
     """
-    details = load_country_continent_data_set()
-    for country_element in details:
-        if (country_name.title() in
-                country_element[COUNTRY_NAME_KEY_IN_CONTITNENTS]):
-            return normalize_continent_name(
-                country_element[CONTINENT_NAME_KEY]
-            )
+    data = load_country_continent_data_set()
+    details = data.get(country_name.title())
+    if not details:
+        return
+    return details.get(CONTINENT_NAME_KEY)
 
 
 def load_city_country_data_set() -> List[Dict[str, str]]:
@@ -218,7 +205,8 @@ async def parse_timezones_list() -> List[Tuple[str, ...]]:
         list: The parsed data.
     """
     timezones = await get_api_data(TIMEZONES_BASE_URL)
-    return [tuple(timezone.split(PATH_SEPARETOR)) for timezone in timezones]
+    if timezones:
+        return [tuple(timezone.split(PATH_SEPARETOR)) for timezone in timezones]
 
 
 async def get_timezones_parts(part: str) -> List[str]:
@@ -263,11 +251,10 @@ async def search_timezone_by_just_place(place_name: str) -> Optional[str]:
     Returns:
         str: The suitable timezone.
     """
-    res = [
-        timezone
-        for timezone in await get_api_data(TIMEZONES_BASE_URL)
-        if place_name in timezone
-    ]
+    timezones = await get_api_data(TIMEZONES_BASE_URL)
+    if not timezones:
+        return
+    res = [timezone for timezone in timezones if place_name in timezone]
     if res:
         return res[UNPACK_ELEMENT]
 
@@ -348,17 +335,13 @@ async def get_all_possible_timezone_paths_for_given_place(
     country = get_country(place_name)
     country = standardize_country_or_place(country)
     if country:
-        res = await generate_possible_timezone_path_by_country(
-            country, place_name
-        )
+        res = await generate_possible_timezone_path_by_country(country, place_name)
         if res:
             return res
     continent = get_continent(place_name)
     continent = await standardize_continent(continent)
     if not continent:
-        res = await generate_possible_timezone_path_with_no_extra_data(
-            place_name
-        )
+        res = await generate_possible_timezone_path_with_no_extra_data(place_name)
         return res
     return possibilities.append(f"{continent}/{place_name}")
 
@@ -410,10 +393,10 @@ async def get_timezone_path_for_given_place(place_name: str) -> Optional[str]:
     Returns:
         str: The timezone path.
     """
-    possibilities = await get_all_possible_timezone_paths_for_given_place(
-        place_name
-    )
+    possibilities = await get_all_possible_timezone_paths_for_given_place(place_name)
     timezones = await get_api_data(TIMEZONES_BASE_URL)
+    if not timezones:
+        return
     for possibility in possibilities:
         if possibility in timezones:
             return f"{TIMEZONES_BASE_URL}/{possibility}"
@@ -448,9 +431,12 @@ def get_part_of_day_and_feedback(time: datetime) -> Tuple[str, str]:
         tuple: The part of day description and the feedback.
     """
     for part in PARTS_OF_THE_DAY_FEEDBACK:
-        start_time = datetime.strptime(part.start, "%H:%M:%S",)
+        start_time = datetime.strptime(
+            part.start,
+            "%H:%M:%S",
+        )
         end_time = datetime.strptime(part.end, "%H:%M:%S")
-        if (time >= start_time and time <= end_time):
+        if time >= start_time and time <= end_time:
             return part.time, part.desirability
 
 
@@ -471,8 +457,8 @@ def get_equivalent_time_in_place(
     delta_in_hours = int(
         (time_part - time_in_place).total_seconds() / TOTAL_SEC_IN_HOUR,
     )
-    wanted_time_there = (
-        (wanted_time + timedelta(hours=delta_in_hours)).strftime("%H:%M:%S",)
+    wanted_time_there = (wanted_time + timedelta(hours=delta_in_hours)).strftime(
+        "%H:%M:%S",
     )
     return datetime.strptime(wanted_time_there, "%H:%M:%S")
 
