@@ -1,34 +1,35 @@
 from __future__ import annotations
-from datetime import datetime
+
 import enum
+from datetime import datetime
 from typing import Any, Dict
 
 from sqlalchemy import (
+    DDL,
+    JSON,
     Boolean,
     Column,
     DateTime,
-    DDL,
     Enum,
-    event,
     Float,
     ForeignKey,
     Index,
     Integer,
-    JSON,
     String,
     Time,
     UniqueConstraint,
+    event,
 )
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.ext.declarative.api import declarative_base, DeclarativeMeta
-from sqlalchemy.orm import relationship, Session
+from sqlalchemy.ext.declarative.api import DeclarativeMeta, declarative_base
+from sqlalchemy.orm import Session, relationship
 from sqlalchemy.sql.schema import CheckConstraint
 
+import app.routers.salary.config as SalaryConfig
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
 from app.internal.privacy import PrivacyKinds
-import app.routers.salary.config as SalaryConfig
 
 Base: DeclarativeMeta = declarative_base()
 

@@ -1,9 +1,12 @@
 import datetime
 
 from app.internal.notification import get_all_invitations
-from app.internal.statistics import get_statistics
-from app.internal.statistics import INVALID_DATE_RANGE, INVALID_USER
-from app.internal.statistics import SUCCESS_STATUS
+from app.internal.statistics import (
+    INVALID_DATE_RANGE,
+    INVALID_USER,
+    SUCCESS_STATUS,
+    get_statistics,
+)
 from app.routers.event import create_event
 from app.routers.register import _create_user
 from app.routers.share import send_in_app_invitation
