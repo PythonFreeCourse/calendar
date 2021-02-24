@@ -72,7 +72,7 @@ def serialize_stats(stats_object: CoronaStats) -> Dict[str, Any]:
     }
 
 
-def serialize_dict_stats(stats_dict: Dict) -> Dict[str, Any]:
+def serialize_dict_stats(stats_dict: Dict[str, Any]) -> Dict[str, Any]:
     """ api Dit -> pylender Dict """
     return {
         "vaccinated_second_dose_perc": (
