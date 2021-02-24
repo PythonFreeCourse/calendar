@@ -10,7 +10,7 @@ def weekly_task():
         title="Test Task 1",
         content="my content",
         is_important=True,
-        the_time="11:00",
+        task_time="11:00",
     )
     w_t.set_days("Mon, Sat, Sun")
     return w_t
@@ -22,7 +22,7 @@ def weekly_task2():
         title="Test Task 2",
         content="my content2",
         is_important=False,
-        the_time="12:00",
+        task_time="12:00",
     )
     w_t.set_days("Sat, Sun")
     return w_t
@@ -35,7 +35,7 @@ def weekly_task3():
         days="Sat",
         content="my content3",
         is_important=False,
-        the_time="12:00",
+        task_time="12:00",
     )
     w_t.set_days("Sat")
     return w_t
@@ -50,14 +50,14 @@ def input_weekly_task():
         "sat": True,
         "content": "my content",
         "is_important": True,
-        "the_time": "11:00",
+        "task_time": "11:00",
     }
 
 
 @pytest.fixture
 def weekly_task_time(weekly_task):
-    date_time_string = f"2021-01-28 {weekly_task.the_time}"
+    date_time_string = f"2021-01-28 {weekly_task.task_time}"
     date_time_format = "%Y-%m-%d %H:%M"
     date_time = datetime.strptime(date_time_string, date_time_format)
-    the_time = date_time.time()
-    return the_time
+    task_time = date_time.time()
+    return task_time

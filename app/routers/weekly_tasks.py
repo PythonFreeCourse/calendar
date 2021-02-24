@@ -70,7 +70,7 @@ def get_days_string(
     return days
 
 
-@router.get("/")
+@router.get("/", include_in_schema=False)
 async def weekly_tasks_manager(
     request: Request,
     user: schema.CurrentUser = Depends(current_user_from_db),
@@ -165,7 +165,7 @@ def weekly_task_execute(
     sat: bool = Form(False),
     content: str = Form(None),
     is_important: bool = Form(False),
-    the_time: datetime.time = Form(None),
+    task_time: datetime.time = Form(None),
     weekly_task_id: int = Form(...),
 ):
 
@@ -177,14 +177,14 @@ def weekly_task_execute(
         title,
         days,
         content,
-        the_time,
+        task_time,
         is_important,
         weekly_task_id=weekly_task_id,
     )
 
     if mode == "add":
         # creating the weekly task
-        created = create_weekly_task(user, weekly_task, session)
+        created = create_weekly_task(weekly_task, session)
         executed = created
 
     else:  # mode == "edit":
@@ -223,7 +223,7 @@ def weekly_task_failed(
     days: str = Cookie(...),
     is_important: bool = Cookie(False),
 ):
-    the_time = None
+    task_time = None
     if title == "None":
         title = None
     if content == "None":
@@ -233,7 +233,7 @@ def weekly_task_failed(
         title,
         days,
         content,
-        the_time,
+        task_time,
         is_important,
         id,
     )

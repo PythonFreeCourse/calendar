@@ -36,7 +36,7 @@ def test_weekly_tasks_add(
     assert weekly_task.title.encode() in data
     assert weekly_task.get_days().encode() in data
     assert weekly_task.content.encode() in data
-    assert weekly_task.the_time.encode() in data
+    assert weekly_task.task_time.encode() in data
 
 
 def test_weekly_tasks_failed_add(weekly_tasks_test_client, weekly_task):
@@ -84,7 +84,7 @@ def test_weekly_tasks_edit(
     assert b"Edit Weekly Tasks" in data
     assert weekly_task.title.encode() in data
     assert weekly_task.content.encode() in data
-    assert weekly_task.the_time.encode() in data
+    assert weekly_task.task_time.encode() in data
 
     # Sets the input to edit mode
     input_weekly_task["mode"] = "edit"
@@ -111,7 +111,7 @@ def test_weekly_tasks_edit(
     assert weekly_task.get_days().encode() not in data
     assert b"Mon, Thu, Fri, Sat" in data
     assert weekly_task.content.encode() in data
-    assert weekly_task.the_time.encode() in data
+    assert weekly_task.task_time.encode() in data
 
 
 def test_weekly_tasks_failed_edit(

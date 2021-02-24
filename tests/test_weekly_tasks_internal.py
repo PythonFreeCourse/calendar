@@ -13,9 +13,13 @@ from app.internal.weekly_tasks import (
 
 
 def test_weekly_tasks_check_inputs(weekly_task_time):
-    ok = check_inputs(days="", the_time=None, title="the title")
+    ok = check_inputs(days="", task_time=None, title="the title")
     assert not ok
-    ok = check_inputs(days="Sun", the_time=weekly_task_time, title="the title")
+    ok = check_inputs(
+        days="Sun",
+        task_time=weekly_task_time,
+        title="the title",
+    )
     assert ok
 
 
@@ -23,38 +27,36 @@ def test_weekly_tasks_create_task(user, session):
     date_time = datetime(2021, 1, 21, 3, 19)
     task = Task(
         title="task1",
-        content="my content",
+        description="my description",
         is_done=False,
         is_important=True,
-        date_time=date_time,
-        user_id=user.id,
+        date=date_time.date(),
+        time=date_time.time(),
+        owner_id=user.id,
     )
     created = create_task(task, user, session)
     assert created
     created = create_task(task, user, session)
     assert not created
     created_task = user.tasks[0]
-    assert created_task.date_time == date_time
+    assert created_task.date == date_time.date()
+    assert created_task.time == date_time.time()
 
 
 def test_create_weekly_task(user, session, weekly_task):
     # creating the weekly task
     weekly_task.user_id = user.id
-    created = create_weekly_task(user, weekly_task, session)
+    created = create_weekly_task(weekly_task, session)
     assert created
     # checks if weekly task been added to the db
     user_w_t = user.weekly_tasks[0]
     assert user_w_t
     assert user_w_t.content == weekly_task.content
-    assert user_w_t.the_time == weekly_task.the_time
-
-    # trying to add weekly task with the same title
-    created = create_weekly_task(user, weekly_task, session)
-    assert not created
+    assert user_w_t.task_time == weekly_task.task_time
 
     # adding without a title
     weekly_task.title = None
-    created = create_weekly_task(user, weekly_task, session)
+    created = create_weekly_task(weekly_task, session)
     assert not created
 
     # the user's weekly tasks should remain in quantity 1
@@ -71,12 +73,12 @@ def test_change_weekly_task(
 ):
     # creating weekly task for edit testing
     weekly_task.user_id = user.id
-    created = create_weekly_task(user, weekly_task, session)
+    created = create_weekly_task(weekly_task, session)
     assert created
 
     # creating another weekly task for edit testing
     weekly_task2.user_id = user.id
-    created = create_weekly_task(user, weekly_task2, session)
+    created = create_weekly_task(weekly_task2, session)
     assert created
     user_w_t = user.weekly_tasks
     assert len(user_w_t) == 2
@@ -96,10 +98,10 @@ def test_change_weekly_task(
     assert changed_user_w_t.title == weekly_task.title
     assert changed_user_w_t.content == weekly_task.content
 
-    # trying to edit weekly task for an existing title
-    # weekly_task3.title == weekly_task2.title
+    # editing without a title
     weekly_task3.user_id = user.id
     weekly_task3.id = edit_id
+    weekly_task3.title = None
     changed = change_weekly_task(user, weekly_task3, session)
     assert not changed
     edited_w_t = user.weekly_tasks[0]
@@ -115,7 +117,7 @@ def test_weekly_task_change_permission(
 ):
     # creating the weekly task
     weekly_task.user_id = user.id
-    created = create_weekly_task(user, weekly_task, session)
+    created = create_weekly_task(weekly_task, session)
     assert created
     user_w_task = user.weekly_tasks[0]
     assert user_w_task
@@ -148,7 +150,7 @@ def test_weekly_task_from_input(user, weekly_task, weekly_task_time):
     assert w_t.days == weekly_task.days
     assert w_t.content == weekly_task.content
     assert w_t.is_important == weekly_task.is_important
-    assert w_t.the_time == weekly_task.the_time
+    assert w_t.task_time == weekly_task.task_time
 
     # not all inputs are ok
     w_t = weekly_task_from_input(
@@ -163,12 +165,12 @@ def test_weekly_task_from_input(user, weekly_task, weekly_task_time):
     # As much data as possible is saved, except for time and days
     assert w_t.content == weekly_task.content
     assert w_t.days != weekly_task.days
-    assert w_t.the_time != weekly_task.the_time
+    assert w_t.task_time != weekly_task.task_time
 
 
 def test_remove_weekly_task(user, session, weekly_task):
     weekly_task.user_id = user.id
-    created = create_weekly_task(user, weekly_task, session)
+    created = create_weekly_task(weekly_task, session)
     assert created
 
     # Checks if the weekly task exists in the db
@@ -188,7 +190,7 @@ def test_remove_weekly_task(user, session, weekly_task):
 
 def test_weekly_tasks_generate_tasks(user, session, weekly_task):
     weekly_task.user_id = user.id
-    created = create_weekly_task(user, weekly_task, session)
+    created = create_weekly_task(weekly_task, session)
     assert created
 
     # Activates the generator
@@ -205,11 +207,11 @@ def test_weekly_tasks_generate_tasks(user, session, weekly_task):
     # The Tasks should be defined according to the weekly task
     for task in tasks:
         assert weekly_task.title == task.title
-        assert weekly_task.content == task.content
+        assert weekly_task.content == task.description
         assert weekly_task.is_important == task.is_important
-        time_string = task.date_time.strftime("%H:%M")
-        assert weekly_task.the_time == time_string
-        day = task.date_time.strftime("%a")
+        time_string = task.time.strftime("%H:%M")
+        assert weekly_task.task_time == time_string
+        day = task.date.strftime("%a")
         assert day in weekly_task.get_days()
 
     # another activation at the same day

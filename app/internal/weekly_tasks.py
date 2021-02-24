@@ -6,9 +6,9 @@ from app.database.models import User, Task, WeeklyTask
 from sqlalchemy.orm.session import Session
 
 
-def check_inputs(days: str, the_time: time, title: str) -> bool:
+def check_inputs(days: str, task_time: time, title: str) -> bool:
     """Checks inputs, used by the weekly_task_from_input function"""
-    return days and the_time and title
+    return days and task_time and title
 
 
 def weekly_task_from_input(
@@ -16,7 +16,7 @@ def weekly_task_from_input(
     title: Optional[str],
     days: str,
     content: Optional[str],
-    the_time: Optional[time],
+    task_time: Optional[time],
     is_important: bool,
     weekly_task_id: int = 0,
 ) -> WeeklyTask:
@@ -28,7 +28,7 @@ def weekly_task_from_input(
         title (str): Title of the Weekly Task.
         days (str): Return days of the Weekly Task.
         content (str): Content of the Weekly Task.
-        the_time (time): Return time of the Weekly Task.
+        task_time (time): Return time of the Weekly Task.
         is_important (bool): If the task is important.
         weekly_task_id (int): The id of the weekly task, zero if not mentioned.
 
@@ -49,16 +49,15 @@ def weekly_task_from_input(
     if weekly_task_id != 0:
         weekly_task.id = weekly_task_id
 
-    inputs_ok = check_inputs(days, the_time, title)
+    inputs_ok = check_inputs(days, task_time, title)
     if not inputs_ok:
         return weekly_task
     weekly_task.set_days(days)
-    weekly_task.the_time = the_time.strftime("%H:%M")
+    weekly_task.task_time = task_time.strftime("%H:%M")
     return weekly_task
 
 
 def create_weekly_task(
-    user: User,
     weekly_task: WeeklyTask,
     session: Session,
 ) -> bool:
@@ -72,12 +71,12 @@ def create_weekly_task(
     Returns:
         bool: Shows if the weekly_task has been added to the db.
     """
-    if not weekly_task.days or not weekly_task.the_time:
-        return False
-    task_titles = (
-        user_weekly_task.title for user_weekly_task in user.weekly_tasks
+    inputs_ok = check_inputs(
+        weekly_task.days,
+        weekly_task.task_time,
+        weekly_task.title,
     )
-    if weekly_task.title in task_titles:
+    if not inputs_ok:
         return False
     session.add(weekly_task)
     session.commit()
@@ -100,19 +99,15 @@ def change_weekly_task(
     Returns:
         bool: Shows if the weekly_task has been edited in the db.
     """
-    if weekly_task.days is None or weekly_task.the_time is None:
+    inputs_ok = check_inputs(
+        weekly_task.days,
+        weekly_task.task_time,
+        weekly_task.title,
+    )
+    if not inputs_ok:
         return False
     w_task_query = session.query(WeeklyTask)
     old_weekly_task = w_task_query.filter_by(id=weekly_task.id).first()
-
-    user_titles = (
-        user_weekly_task.title
-        for user_weekly_task in user.weekly_tasks
-        if user_weekly_task.title != old_weekly_task.title
-    )
-
-    if weekly_task.title in user_titles:
-        return False
 
     if weekly_task.user_id != user.id:
         return False
@@ -121,16 +116,17 @@ def change_weekly_task(
     old_weekly_task.days = weekly_task.days
     old_weekly_task.content = weekly_task.content
     old_weekly_task.is_important = weekly_task.is_important
-    old_weekly_task.the_time = weekly_task.the_time
+    old_weekly_task.task_time = weekly_task.task_time
     session.commit()
     return True
 
 
 def create_task(task: Task, user: User, session: Session) -> bool:
     """Make a task, used by the generate_tasks function"""
-    user_tasks_query = session.query(Task).filter_by(user_id=user.id)
-    task_by_time = user_tasks_query.filter_by(date_time=task.date_time)
-    task_by_title_and_time = task_by_time.filter_by(title=task.title)
+    user_tasks_query = session.query(Task).filter_by(owner_id=user.id)
+    task_by_time = user_tasks_query.filter_by(time=task.time)
+    task_by_date_time = task_by_time.filter_by(date=task.date)
+    task_by_title_and_time = task_by_date_time.filter_by(title=task.title)
     task_exist = task_by_title_and_time.first()
     if task_exist:
         return False
@@ -139,13 +135,13 @@ def create_task(task: Task, user: User, session: Session) -> bool:
     return True
 
 
-def get_datetime(day: str, the_time: str) -> datetime:
+def get_datetime(day: str, task_time: str) -> datetime:
     """Getting the datetime of days in the current week,
     used by the generate_tasks function"""
     current_date = date.today()
     current_week_num = current_date.strftime("%W")
     current_year = current_date.strftime("%Y")
-    date_string = f"{day} {the_time} {current_week_num} {current_year}"
+    date_string = f"{day} {task_time} {current_week_num} {current_year}"
     return datetime.strptime(date_string, "%a %H:%M %W %Y")
 
 
@@ -153,18 +149,19 @@ def generate_tasks(user: User, session: Session) -> Iterator[bool]:
     """Generates tasks for the week
     based on all the weekly tasks the user have"""
     for weekly_task in user.weekly_tasks:
-        the_time = weekly_task.the_time
+        task_time = weekly_task.task_time
         days = weekly_task.get_days()
         days_list = days.split(", ")
         for day in days_list:
-            date_time = get_datetime(day, the_time)
+            date_time = get_datetime(day, task_time)
             task = Task(
                 title=weekly_task.title,
-                content=weekly_task.content,
+                description=weekly_task.content,
                 is_done=False,
                 is_important=weekly_task.is_important,
-                date_time=date_time,
-                user_id=user.id,
+                date=date_time.date(),
+                time=date_time.time(),
+                owner_id=user.id,
             )
             yield create_task(task, user, session)
 

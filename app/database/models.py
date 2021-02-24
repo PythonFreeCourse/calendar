@@ -8,6 +8,7 @@ from typing import Any, Dict
 from sqlalchemy import (
     Boolean,
     Column,
+    Date,
     DateTime,
     DDL,
     event,
@@ -277,13 +278,14 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
-    content = Column(String)
-    is_done = Column(Boolean, nullable=False)
+    description = Column(String)
+    is_done = Column(Boolean, default=False)
     is_important = Column(Boolean, nullable=False)
-    date_time = Column(DateTime, nullable=False)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    owner = relationship("User", back_populates=__tablename__)
+    owner = relationship("User", back_populates="tasks")
 
 
 class WeeklyTask(Base):
@@ -294,7 +296,7 @@ class WeeklyTask(Base):
     days = Column(String, nullable=False)
     content = Column(String)
     is_important = Column(Boolean, nullable=False)
-    the_time = Column(String, nullable=False)
+    task_time = Column(String, nullable=False)
 
     user_id = Column(Integer, ForeignKey("users.id"))
     owner = relationship("User", back_populates=__tablename__)
