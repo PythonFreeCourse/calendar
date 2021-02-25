@@ -18,7 +18,7 @@ DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
 CORONA_API_URL = (
     "https://datadashboardapi.health.gov.il/api/queries/vaccinated"
 )
-user_agent_list = [
+USER_AGENT_OPTIONS = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5)"
     " AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0)"
@@ -119,7 +119,7 @@ def insert_to_db_if_needed(
 
 async def get_vacinated_data() -> Dict[str, Any]:
     async with httpx.AsyncClient() as client:
-        headers = {"User-Agent": random.choice(user_agent_list)}
+        headers = {"User-Agent": random.choice(USER_AGENT_OPTIONS)}
         res = await client.get(CORONA_API_URL, headers=headers)
         return json.loads(res.text)[-1]
 
