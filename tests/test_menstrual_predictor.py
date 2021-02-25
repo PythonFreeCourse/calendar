@@ -11,7 +11,7 @@ class TestMenstrualPredictor:
     def test_menstrual_predictor_sign_up(client, session):
         resp = client.post(
             TestMenstrualPredictor.PREDICTOR_PREFIX,
-            json={"avg_period_length": 8, "last_period_date": "2020-11-07"},
+            json={"avg-period-length": 8, "last-period-date": "2020-11-07"},
         )
         assert resp.ok
 

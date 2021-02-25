@@ -4,9 +4,9 @@
         <h3>Please fill in your details</h3>
         <form method="post">
             <div class="row">
-                <label for="avg_period_length" class="col-sm-2 col-form-label">Average period length</label>
+                <label for="avg-period-length" class="col-sm-2 col-form-label">Average period length</label>
                 <div class="col-auto">
-                    <input type="number" class="form-control" name="avg_period_length" id="avg_period_length" min=1 placeholder="Required" autofocus required><br>
+                    <input type="number" class="form-control" name="avg-period-length" id="avg-period-length" min=1 placeholder="Required" autofocus required><br>
                 </div>
                 <div class="col-auto">
                     <span id="PeriodLengthHelpInline" class="form-text">
@@ -15,12 +15,12 @@
                 </div>
             </div>
             <div class="row">
-                <label for="last_period_date" class="col-sm-2 col-form-label">Last period date</label>
+                <label for="last-period-date" class="col-sm-2 col-form-label">Last period date</label>
                 <div class="col-auto">
-                    <input type="date" class="form-control" name="last_period_date" id="last_period_date" placeholder="Required" required><br>
+                    <input type="date" class="form-control" name="last-period-date" id="last-period-date" placeholder="Required" required><br>
                 </div>
             </div>
-          
+
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
         </form>
     </div>
@@ -33,7 +33,7 @@
         function validate_date_older_than_today(received_date){
             return received_date < new Date();
         }
-        let last_period_date_element = document.getElementById('last_period_date');
+        let last_period_date_element = document.getElementById("last-period-date");
         change_max_to_today_date(last_period_date_element);
     </script>
 {% endblock %}
