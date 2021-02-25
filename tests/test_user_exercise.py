@@ -1,25 +1,26 @@
 from app.routers.user_exercise import create_user_exercise,\
     does_user_exercise_exist, get_user_exercise
-from app.routers.user import create_user
-
+from app.routers.register import _create_user
 
 class TestUserExercise:
 
     def test_create_user_exercise(self, session):
-        _user = create_user(
+        user = _create_user(
             session=session,
-            username='new_test_username',
-            password='new_test_password',
-            email='new_test.email@gmail.com',
+            username="new_test_username",
+            password="new_test_password",
+            email="new_test.email@gmail.com",
             language_id=1,
+            full_name="test_full_name",
+            description="test_description",
         )
         user_exercise = create_user_exercise(
             session=session,
-            user=_user
+            user=user
         )
-        assert user_exercise.user_id == _user.id
+        assert user_exercise.user_id == user.id
         session.delete(user_exercise)
-        session.delete(_user)
+        session.delete(user)
         session.commit()
 
     def test_get_users_exercise_success(self, user_exercise, session):
