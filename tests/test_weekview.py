@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 
 from app.routers.event import create_event
 from app.routers.weekview import get_week_dates
+from tests.fixtures.client_fixture import login_client
+
+DATA = {"username": "test_username", "password": "test_password"}
 
 
 def create_weekview_event(events, session, user):
@@ -24,6 +27,7 @@ def test_get_week_dates(weekdays, sunday):
 
 
 def test_weekview_day_names(session, user, client, weekdays):
+    login_client(client, DATA)
     response = client.get("/week/2021-1-3")
     soup = BeautifulSoup(response.content, "html.parser")
     day_divs = soup.find_all("div", {"class": "day-name"})

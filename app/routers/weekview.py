@@ -8,7 +8,7 @@ from sqlalchemy.orm.session import Session
 
 from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH, get_db
-from app.internal.security.dependancies import current_user, schema
+from app.internal.security.dependencies import current_user, schema
 from app.routers.dayview import (
     DivAttributes,
     dayview,

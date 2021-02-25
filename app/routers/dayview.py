@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from app.database.models import Event
 from app.dependencies import get_db, templates
 from app.internal import international_days, zodiac
-from app.internal.security.dependancies import current_user, schema
+from app.internal.security.dependencies import current_user, schema
 from app.routers.user import get_all_user_events
 
 router = APIRouter()

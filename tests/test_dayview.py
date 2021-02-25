@@ -10,6 +10,9 @@ from app.routers.dayview import (
     is_specific_time_event_in_day,
 )
 from app.routers.event import create_event
+from tests.fixtures.client_fixture import login_client
+
+DATA = {"username": "test_username", "password": "test_password"}
 
 
 def create_dayview_event(events, session, user):
@@ -113,6 +116,7 @@ def test_div_attributes_with_costume_color(event2):
 
 def test_wrong_timeformat(session, user, client, event1, event2, event3):
     create_dayview_event([event1, event2, event3], session=session, user=user)
+    login_client(client, DATA)
     response = client.get("/day/1-2-221")
     print(response)
     assert response.status_code == 404
@@ -120,6 +124,7 @@ def test_wrong_timeformat(session, user, client, event1, event2, event3):
 
 def test_dayview_html(event1, event2, event3, session, user, client):
     create_dayview_event([event1, event2, event3], session=session, user=user)
+    login_client(client, DATA)
     response = client.get("/day/2021-2-1")
     soup = BeautifulSoup(response.content, "html.parser")
     assert "FEBRUARY" in str(soup.find("div", {"id": "top-tab"}))
@@ -146,6 +151,7 @@ def test_dayview_html_with_multiday_event(
 ):
     create_dayview_event([multiday_event], session=session, user=user)
     session.commit()
+    login_client(client, DATA)
     response = client.get(f"/day/{day}")
     soup = BeautifulSoup(response.content, "html.parser")
     grid_pos = f"grid-row: {grid_position};"

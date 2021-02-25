@@ -4,7 +4,16 @@
     <div>
         <div class="title">{{ day.display() }}</div>
         <div class="sec-title">Location 0<sup>o</sup>c 00:00</div>
+        <div class="toggle_view btn-group mt-1 mb-1 me-2 btn-group-sm" role="group" aria-label="Toggle View Mode" id="toggle-view-mode">
+          <input type="radio" class="btn-check btn-sm" name="btnradio" id="day-view-button" autocomplete="off" onclick="change_view('day', '{{ day.dayview_format() }}', 'calendarview')">
+          <label class="btn btn-outline-primary" for="day-view-button">DAY</label>
+          <input type="radio" class="btn-check btn-sm" name="btnradio" id="week-view-button" autocomplete="off" onclick="change_view('week', '{{ day.weekview_format() }}', 'calendarview')">
+          <label class="btn btn-outline-primary" for="week-view-button">WEEK</label>
+          <input type="radio" class="btn-check btn-sm" name="btnradio" id="month-view-button" autocomplete="on" checked onclick="refreshview()">
+          <label class="btn btn-outline-primary" for="month-view-button">MONTH</label>
+        </div>
     </div>
+    <!-- TODO: replace in another page
     <div>
         <h3>Time calculator:</h3>
         <form>
@@ -18,23 +27,13 @@
         </button>
         <strong><p id="demo"></p></strong>
     </div>
-    <div>
-    </div>
+    -->
+
     <div id="logo-div">
       <div class="logo-container">
       <a href="/calendar/month">
-        <img class="logo-pic" src="{{ url_for('static', path='/images/logo/mainlogo.svg')}}">
+        <img class="logo-pic mt-2 ms-3" src="{{ url_for('static', path='/images/logo/mainlogo.svg')}}">
       </a>
-    </div>
-      <div class="toggle_view btn-group mt-1 mb-1 mr-2 btn-group-sm" role="group" aria-label="Toggle View Mode" id="toggle-view-mode">
-        <input type="radio" class="btn-check btn-sm" name="btnradio" id="day-view-button" autocomplete="off" onclick="change_view('day', '{{ day.dayview_format() }}', 'calendarview')">
-        <label class="btn btn-outline-primary" for="day-view-button">DAY</label>
-        <input type="radio" class="btn-check btn-sm" name="btnradio" id="week-view-button" autocomplete="off" onclick="change_view('week', '{{ day.weekview_format() }}', 'calendarview')">
-        <label class="btn btn-outline-primary" for="week-view-button">WEEK</label>
-        <input type="radio" class="btn-check btn-sm" name="btnradio" id="month-view-button" autocomplete="on" checked onclick="refreshview()">
-        <label class="btn btn-outline-primary" for="month-view-button">MONTH</label>
-      </div>
-    </div>
   </header>
   <main>
     {% include 'partials/calendar/monthly_view/monthly_grid.html' %}
