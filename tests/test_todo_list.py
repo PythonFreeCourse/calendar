@@ -88,11 +88,11 @@ def test_if_task_edited(home_test_client, session, task1: Task, task2):
         },
     )
     assert response.status_code == status.HTTP_303_SEE_OTHER
-    task_ex = by_id(session, task1.id)
-    assert task2.title == task_ex.title
-    assert task2.description == task_ex.description
-    assert task2.time == task_ex.time
-    assert task2.is_important == task_ex.is_important
+    session.refresh(task1)
+    assert task2.title == task1.title
+    assert task2.description == task1.description
+    assert task2.time == task1.time
+    assert task2.is_important == task1.is_important
 
 
 def test_if_task_has_done(home_test_client, session, task1: Task):

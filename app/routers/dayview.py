@@ -9,8 +9,6 @@ from app.dependencies import get_db, templates
 from app.internal import international_days, zodiac
 from app.internal.security.dependencies import current_user
 
-# from app.internal.security.schema import CurrentUser
-from app.internal.utils import get_current_user
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -214,7 +212,7 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     tasks = (session.query(Task)
-             .filter(Task.owner_id == user.id)
+             .filter(Task.owner_id == user.user_id)
              .filter(Task.date == day.date())
              .order_by(Task.time)
              )
