@@ -47,8 +47,7 @@ def save_cursor_settings(
         session.query(UserSettings).filter_by(
             user_id=cursor_settings.user_id,
         ).update(cursor_choices)
-        session.commit()
     else:
         cursor_settings = UserSettings(user_id=user.user_id, **cursor_choices)
         session.add(cursor_settings)
-        session.commit()
+    session.commit()

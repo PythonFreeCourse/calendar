@@ -17,7 +17,7 @@ def test_cursor_choices(session, cursor_test_client):
     test_login_successfull(session, cursor_test_client)
     data = {
         "primary_cursor": "arrow",
-        "secondary_cursor": "p1",
+        "secondary_cursor": "sword",
         "user": current_user,
     }
     first_response = cursor_test_client.post(url=GET_CHOICES_URL, data=data)
@@ -28,13 +28,13 @@ def test_cursor_choices(session, cursor_test_client):
     primary2, secondary2 = get_cursor_settings(session, user_id=1)
 
     assert first_response.ok and second_response.ok
-    assert primary1 == "arrow" and secondary1 == "p1"
+    assert primary1 == "arrow" and secondary1 == "sword"
     assert primary2 == "arrow" and secondary2 == "default"
 
 
 def test_load_cursor(session, cursor_test_client):
     data = {
-        "primary_cursor": "cloud",
+        "primary_cursor": "fire",
         "secondary_cursor": "ice",
     }
     response = cursor_test_client.post(url=GET_CHOICES_URL, data=data)
@@ -42,4 +42,4 @@ def test_load_cursor(session, cursor_test_client):
 
     primary_cursor, secondary_cursor = get_cursor_settings(session, user_id=1)
     assert response.ok
-    assert primary_cursor == "cloud" and secondary_cursor == "ice"
+    assert primary_cursor == "fire" and secondary_cursor == "ice"

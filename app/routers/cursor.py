@@ -74,7 +74,7 @@ async def get_cursor_choices(
     return RedirectResponse("/", status_code=HTTP_302_FOUND)
 
 
-@router.get("/load_cursor")
+@router.get("/load")
 async def load_cursor(
     session: Session = Depends(get_db),
     user: User = Depends(current_user),

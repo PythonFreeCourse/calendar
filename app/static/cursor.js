@@ -6,7 +6,7 @@ window.addEventListener("load", get_cursor_choices);
  */
 function get_cursor_choices() {
   const request = new XMLHttpRequest();
-  request.open("GET", "/cursor/load_cursor", true);
+  request.open("GET", "/cursor/load", true);
   request.onload = change_cursor;
   request.send();
 }
