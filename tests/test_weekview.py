@@ -5,8 +5,6 @@ from app.database.models import User
 from app.routers.event import create_event
 from app.routers.weekview import get_week_dates
 
-DATA = {"username": "test_username", "password": "test_password"}
-
 REGISTER_DETAIL = {
     "username": "correct_user",
     "full_name": "full_name",
