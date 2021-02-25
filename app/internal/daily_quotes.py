@@ -1,12 +1,12 @@
 from datetime import date
 from os.path import relpath
 from typing import Dict, List, Optional
-from app.dependencies import MEDIA_PATH
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
 from app.database.models import Quote, UserQuotes
+from app.dependencies import MEDIA_PATH
 
 EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
 FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
@@ -57,12 +57,7 @@ def get_quote_of_day(
 
 def get_quotes(session: Session, user_id: int) -> List[Quote]:
     """Retrieves the users' favorite quotes from the database."""
-    quotes = []
-    user_quotes = session.query(UserQuotes).filter_by(user_id=user_id).all()
-    for user_quote in user_quotes:
-        quote = session.query(Quote).filter_by(id=user_quote.quote_id).first()
-        quotes.append(quote)
-    return quotes
+    return session.query(Quote).filter_by(id=UserQuotes.quote_id).all()
 
 
 def is_quote_favorite(
@@ -74,8 +69,10 @@ def is_quote_favorite(
     if not quote_of_day:
         return False
 
-    user_quotes = session.query(UserQuotes).filter_by(user_id=user_id).all()
-    for user_quote in user_quotes:
-        if user_quote.quote_id == quote_of_day.id:
-            return True
+    if (
+        session.query(UserQuotes)
+        .filter(user_id == user_id, UserQuotes.quote_id == quote_of_day.id)
+        .all()
+    ):
+        return True
     return False

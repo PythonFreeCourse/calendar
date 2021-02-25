@@ -4,17 +4,19 @@ const EMPTY_HEART = "../../media/empty_heart.png";
 // Adding event listener
 window.addEventListener("load", function () {
   const quoteContainer = document.getElementById("quote-container");
-  if (quoteContainer) {
-    const isConnected = quoteContainer.dataset.connected;
-    if (isConnected === "True") {
-      const fullHeart = document.getElementById("full-heart");
-      const emptyHeart = document.getElementById("empty-heart");
-      if (fullHeart) {
-        fullHeart.style.display = "inline";
-      } else {
-        emptyHeart.style.display = "inline";
-      }
-    }
+  if (!quoteContainer) {
+    return;
+  }
+  const isConnected = quoteContainer.dataset.connected;
+  if (isConnected !== "True") {
+    return;
+  }
+  const fullHeart = document.getElementsByClassName("full-heart")[0];
+  const emptyHeart = document.getElementsByClassName("empty-heart")[0];
+  if (fullHeart) {
+    fullHeart.classList.toggle("full-heart");
+  } else if (emptyHeart) {
+    emptyHeart.classList.toggle("empty-heart");
   }
 
   let hearts = Array.from(document.getElementsByClassName("heart"));
@@ -57,9 +59,10 @@ function onHeartClick(heart_element) {
  */
 function save_or_remove_quote(quote_id, to_save) {
   const method = to_save ? "post" : "delete";
-  let xhr = new XMLHttpRequest();
+  const url = method == "post" ? "/quotes/save" : "/quotes/delete";
+  const xhr = new XMLHttpRequest();
   quote_id = parseInt(quote_id);
-  xhr.open(method, "/quotes/db");
+  xhr.open(method, url);
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr.send(`quote_id=${quote_id}`);
 }

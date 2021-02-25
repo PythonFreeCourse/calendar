@@ -6,7 +6,6 @@ from app.dependencies import get_db, templates
 from app.internal import daily_quotes
 from app.internal.security.dependencies import current_user
 
-
 router = APIRouter(
     prefix="/quotes",
     tags=["quotes"],
@@ -14,12 +13,12 @@ router = APIRouter(
 )
 
 
-@router.post("/db")
+@router.post("/save")
 async def save_quote(
     user: models.User = Depends(current_user),
     quote_id: int = Form(...),
     db: Session = Depends(get_db),
-):
+) -> None:
     """Saves a quote in the database."""
     record = (
         db.query(models.UserQuotes)
@@ -34,12 +33,12 @@ async def save_quote(
         db.commit()
 
 
-@router.delete("/db")
+@router.delete("/delete")
 async def delete_quote(
     user: models.User = Depends(current_user),
     quote_id: int = Form(...),
     db: Session = Depends(get_db),
-):
+) -> None:
     """Deletes a quote from the database."""
     db.query(models.UserQuotes).filter(
         models.UserQuotes.user_id == user.user_id,
@@ -53,7 +52,7 @@ async def favorite_quotes(
     request: Request,
     db: Session = Depends(get_db),
     user: models.User = Depends(current_user),
-):
+) -> templates.TemplateResponse:
     """html page for displaying the users' favorite quotes."""
     quotes = daily_quotes.get_quotes(db, user.user_id)
     return templates.TemplateResponse(

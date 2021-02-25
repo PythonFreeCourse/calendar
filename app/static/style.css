@@ -153,15 +153,15 @@ p#p-quote {
   height: 1.5em;
 }
 
-#full-heart {
+.full-heart {
   display: none;
 }
 
-#empty-heart {
+.empty-heart {
   display: none;
 }
 
-#favorite-quotes {
+.favorite-quotes {
   margin-bottom: 1.5em;
 }
 

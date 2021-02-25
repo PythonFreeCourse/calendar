@@ -146,7 +146,7 @@ json_data_loader.load_to_database(next(get_db()))
 async def home(
     request: Request,
     db: Session = Depends(get_db),
-):
+) -> templates.TemplateResponse:
     """Home page for the website."""
     user_id = False
     if "Authorization" in request.cookies:

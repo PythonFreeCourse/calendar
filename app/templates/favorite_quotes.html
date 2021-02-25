@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex position-relative">
+<div class="d-flex position-relative" id="quote-container" data-connected="True">
   <div class="container mx-auto gap-3">
     <h2 id="favorite-quotes">Favorite Quotes</h2>
     {% for quote in quotes %}
