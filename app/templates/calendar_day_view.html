@@ -26,16 +26,16 @@
         <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
         {% endif %}
     </div>
+    <div id="all-day-events" class="d-flex justify-content-center text-truncate my-0 {{size}} text-light">
+        {% for event in all_day_events %}
+            <a href={{ url_for('eventview', event_id=event.id) }}  title="See full event">{{ event.title }}&nbsp;&nbsp;&nbsp;</a>
+        {% endfor %}
+      </div>
     {% if international_day %}
     <div class="international-days">
         The International days are: "{{ international_day.international_day }}"
     </div>
     {% endif %}
-    <div id="all-day-events" class="d-flex justify-content-center text-truncate my-0 {{size}} text-light">
-      {% for event in all_day_events %}
-          <a href={{ url_for('eventview', event_id=event.id) }}  title="See full event">{{ event.title }}&nbsp;&nbsp;&nbsp;</a>
-      {% endfor %}
-    </div>
     <div class="schedule">
         <div class="container times bg-primeary position">
             {% for hour in range(25)%}
@@ -59,7 +59,7 @@
           {% endif %}
         </div>
         <div class="event-grid">
-            {% for event, attr in events %}
+            {% for event, attr in events_and_attr %}
             <div id="event{{event.id}}"
                  class="d-flex flex-column text-truncate px-2 event"
                  style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
