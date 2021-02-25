@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const tabBtn = document.querySelectorAll(".tab");
+    const tabBtn = document.getElementsByClassName("tab");
     for (let i = 0; i < tabBtn.length; i++) {
         const btn = document.getElementById("tab" + i);
         btn.addEventListener('click', () => {
