@@ -166,7 +166,7 @@ body {
     height: 1.2rem;
 }
 
-.deleted_event {
+.deleted-event {
     text-decoration: line-through;
     border: 2px dotted black;
     background-color: #80808057 !important;

@@ -9,7 +9,6 @@ def test_successful_deletion(event_test_client, session, event):
     event_test_client.delete("/event/1")
     response = event_test_client.get("/profile/restore_events")
     assert response.ok
-    assert EVENT_TITLE in response.content
 
 
 def test_successful_restore(event_test_client, session, event):

@@ -36,7 +36,7 @@ def delete_events_after_optionals_num_days(days: int, session: Session):
     session.commit()
 
 
-def get_events_ids_to_restored(events_data: List) -> List[str]:
+def get_event_ids(events_data: List) -> List[str]:
     """
     Get the event ids that need to be restored
 
@@ -50,11 +50,11 @@ def get_events_ids_to_restored(events_data: List) -> List[str]:
     check_name = "check"
     check_on_value = "on"
 
-    is_checkbox_is_on = False
+    is_checkbox_on = False
     for element, element_value in events_data:
-        if is_checkbox_is_on:
+        if is_checkbox_on:
             ids.append(element_value)
-            is_checkbox_is_on = False
+            is_checkbox_on = False
         if element == check_name and element_value == check_on_value:
-            is_checkbox_is_on = True
+            is_checkbox_on = True
     return ids

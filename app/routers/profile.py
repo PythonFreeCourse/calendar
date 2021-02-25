@@ -16,7 +16,7 @@ from app.internal.import_holidays import (
     get_holidays_from_file,
     save_holidays_to_db,
 )
-from app.internal.restore_events import get_events_ids_to_restored
+from app.internal.restore_events import get_event_ids
 from app.internal.privacy import PrivacyKinds
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
@@ -215,11 +215,14 @@ async def update(file: UploadFile = File(...), session=Depends(get_db)):
 
 
 @router.get("/restore_events")
-async def restore_events(request: Request, session=Depends(get_db)):
-    # TODO: Add user.id instead 1
+async def restore_events(
+    request: Request,
+    session=Depends(get_db),
+    user: schema.CurrentUser = Depends(current_user),
+):
     deleted_events = (
         session.query(Event.id, Event.title, Event.start, Event.end)
-        .filter(Event.owner_id == 1, Event.deleted_date.isnot(None))
+        .filter(Event.owner_id == user.user_id, Event.deleted_date.isnot(None))
         .all()
     )
 
@@ -236,7 +239,7 @@ async def restore_events_post(
     user: schema.CurrentUser = Depends(current_user),
 ):
     data = await request.form()
-    events_ids_to_restored = get_events_ids_to_restored(data._list)
+    events_ids_to_restored = get_event_ids(data._list)
 
     restore_del_events = (
         session.query(Event)

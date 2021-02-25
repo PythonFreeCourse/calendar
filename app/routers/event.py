@@ -479,12 +479,9 @@ def _delete_event(db: Session, event: Event):
     try:
         # TODO: Check if user activate the restore deleted events feature
 
-        # Delete event
-        # db.delete(event)
-        event.deleted_date = dt.now()
+        # TODO: Delete event
 
-        # Delete user_event
-        # db.query(UserEvent).filter(UserEvent.event_id == event.id).delete()
+        event.deleted_date = dt.now()
 
         db.commit()
 

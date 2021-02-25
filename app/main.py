@@ -5,6 +5,7 @@ from fastapi.openapi.docs import (
 )
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
+from starlette.templating import _TemplateResponse
 
 from app import config
 from app.database import engine, models
@@ -132,17 +133,20 @@ routers_to_include = [
 for router in routers_to_include:
     app.include_router(router)
 
-DAYS = 30
+DAYS_IN_TRASH = 30
 
 
 # TODO: I add the quote day to the home page
 # until the relevant calendar view will be developed.
 @app.get("/", include_in_schema=False)
 @logger.catch()
-async def home(request: Request, db: Session = Depends(get_db)):
-    # delete permanently events after 30 days
+async def home(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> _TemplateResponse:
+    # Delete permanently events after 30 days
+    delete_events_after_optionals_num_days(DAYS_IN_TRASH, next(get_db()))
 
-    delete_events_after_optionals_num_days(DAYS, next(get_db()))
     quote = daily_quotes.get_quote_of_day(db)
     return templates.TemplateResponse(
         "index.html",

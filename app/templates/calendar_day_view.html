@@ -41,9 +41,7 @@
     </div>
     <div class="event-grid">
       {% for event, attr in events %}
-          {% if event.deleted_date != None %}
-                {% set deleted_event = 'deleted_event' %}
-            {% endif %}
+        {% set deleted_event = 'deleted-event' if event.deleted_date != None else '' %}
       <div id="event{{event.id}}" class="d-flex flex-column text-truncate px-2 event {{ deleted_event }}"
            style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
         <div class="d-flex flex-column justify-content-evenly event-details">
