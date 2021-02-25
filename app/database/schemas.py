@@ -75,6 +75,8 @@ class UserCreate(UserBase):
         """Validating username length is legal"""
         if not (MIN_FIELD_LENGTH < len(username) < MAX_FIELD_LENGTH):
             raise ValueError("must contain between 3 to 20 charactars")
+        if username.startswith("@"):
+            raise ValueError("username can not start with '@'")
         return username
 
     @validator("password")

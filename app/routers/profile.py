@@ -10,15 +10,19 @@ from starlette.status import HTTP_302_FOUND
 from app import config
 from app.database.models import User
 from app.dependencies import GOOGLE_ERROR, MEDIA_PATH, get_db, templates
+from app.internal.corona_stats import get_corona_stats
 from app.internal.import_holidays import (
     get_holidays_from_file,
     save_holidays_to_db,
 )
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.privacy import PrivacyKinds
+from app.internal.showevent import get_upcoming_events
 
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
+FIVE_EVENTS = 5
+# We are presenting up to five upcoming events on the profile page
 
 router = APIRouter(
     prefix="/profile",
@@ -44,13 +48,12 @@ async def profile(
     session=Depends(get_db),
     new_user=Depends(get_placeholder_user),
 ):
-    # Get relevant data from database
-    upcoming_events = range(5)
     user = session.query(User).filter_by(id=1).first()
     if not user:
         session.add(new_user)
         session.commit()
         user = session.query(User).filter_by(id=1).first()
+    upcoming_events = get_upcoming_events(session, user.id)[:FIVE_EVENTS]
 
     signs = [
         "Aries",
@@ -66,7 +69,9 @@ async def profile(
         "Aquarius",
         "Pisces",
     ]
+
     on_this_day_data = get_on_this_day_events(session)
+    corona_stats_data = await get_corona_stats(session)
 
     return templates.TemplateResponse(
         "profile.html",
@@ -77,6 +82,7 @@ async def profile(
             "signs": signs,
             "google_error": GOOGLE_ERROR,
             "on_this_day_data": on_this_day_data,
+            "corona_stats_data": corona_stats_data,
             "privacy": PrivacyKinds,
         },
     )

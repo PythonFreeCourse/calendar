@@ -162,3 +162,11 @@ input[type="submit"] {
 .icon-credits a:active {
   color: rgb(202, 202, 202);
 }
+
+.shared-list-item-off {
+  display: none;
+}
+
+.shared-list-item-on {
+  display: flex;
+}

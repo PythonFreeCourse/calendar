@@ -1,0 +1,136 @@
+/* Settings page */
+
+.sub-title {
+    font-size: 1em;
+    padding-top: 0.2em;
+}
+
+.settings {
+  color: #222831;
+  display: flex;
+  font-size: 0.9em;
+}
+
+#settings-left {
+  padding: 1.5em 1.5em;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(230, 230, 230);
+}
+
+.settings-layout {
+  display: flex;
+}
+
+.left-options-bar {
+  display: flex;
+}
+
+.settings-main article {
+  margin-bottom: 2em;
+}
+
+.settings-options {
+  flex: 1;
+}
+
+.settings-options ul {
+  list-style-type: none;
+  padding-left: 0;
+  padding-right: 1em;
+}
+
+.settings-options ul li {
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+
+.settings-options ul > li > a:hover,
+.settings-options ul li a.active {
+  transition: all .3s ease-in-out;
+  color: #5786f5;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.tab-show {
+  display: block;
+  transition: all .5s ease-in;
+}
+
+.tab-hide {
+  display: none;
+}
+
+.settings-main {
+  flex: 3;
+  padding: 1.5em 1.5em;
+}
+
+.settings-main h2 {
+  margin-bottom: 1em;
+}
+
+.settings-main .form-select {
+  width: 17em;
+}
+
+.tab-show p {
+  display: block;
+  align-self: left;
+}
+
+.tab-show h2 {
+  display: block;
+  align-self: left;
+  font-weight: bold;
+}
+
+.form-select {
+  font-size: 0.8em;
+}
+
+.form-label {
+  margin: 1em 0em;
+}
+
+/* For Mobile */
+@media screen and (max-width: 600px) {
+  .settings {
+    display: block;
+    font-size: 3vw;
+  }
+
+  #settings-left {
+    padding: 1.5em 0em 0em 2em;
+    width: 100%;
+  }
+
+  .settings-options {
+    margin-bottom: 1em;
+  }
+
+  .settings-options ul {
+    padding-left: 0em;
+  }
+
+  .settings-options ul li {
+    margin-bottom: 0.5em;
+    font-weight: bold;
+  }
+
+  .settings-main {
+    padding: 2em 2em;
+  }
+  .settings-main .form-select {
+    width: 17em;
+  }
+
+  .settings-main h2 {
+    margin-bottom: 1em;
+  }
+
+  .settings-main p {
+    margin: 1em 0em;
+  }
+}
