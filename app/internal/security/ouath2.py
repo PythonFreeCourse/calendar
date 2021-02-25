@@ -52,7 +52,10 @@ async def is_email_compatible_to_username(
     Verifying database record by username.
     Comparing given email to database record,
     """
-    db_user = await User.get_by_username(db=db, username=user.username)
+    db_user = await User.get_by_username(
+        db=db,
+        username=user.username.strip("@"),
+    )
     if not db_user:
         return False
     if db_user.email == user.email:

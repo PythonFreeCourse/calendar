@@ -51,13 +51,16 @@ async def forgot_password(
     """
     form = await request.form()
     form_dict = dict(form)
+    form_dict["username"] = "@" + form_dict["username"]
     try:
         # validating form data by creating pydantic schema object
         user = ForgotPassword(**form_dict)
     except ValidationError:
-        user = None
-    if user:
-        user = await is_email_compatible_to_username(db, user)
+        return templates.TemplateResponse(
+            "forgot_password.html",
+            {"request": request, "message": "Please check your credentials"},
+        )
+    user = await is_email_compatible_to_username(db, user)
     if not user:
         return templates.TemplateResponse(
             "forgot_password.html",
@@ -111,7 +114,7 @@ async def reset_password(
     If all validations succeed, hashing new password and updating database.
     """
     jwt_payload = get_jwt_token(email_verification_token)
-    jwt_username = jwt_payload.get("sub")
+    jwt_username = jwt_payload.get("sub").strip("@")
     form = await request.form()
     form_dict = dict(form)
     validated = True

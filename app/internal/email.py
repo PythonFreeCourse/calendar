@@ -219,7 +219,7 @@ async def send_reset_password_mail(
     params = f"?email_verification_token={user.email_verification_token}"
     template = templates.get_template("reset_password_mail.html")
     html = template.render(
-        recipient=user.username,
+        recipient=user.username.strip("@"),
         link=f"{DOMAIN}/reset-password{params}",
         email=user.email,
     )
