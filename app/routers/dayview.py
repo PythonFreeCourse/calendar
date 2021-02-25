@@ -1,14 +1,16 @@
 from bisect import bisect_left
 from datetime import datetime, timedelta
-from typing import Iterator, Optional, Tuple, Union
+from typing import Dict, Iterator, Optional, Tuple, Union
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.database.models import Event, User
 from app.dependencies import get_db, templates
 from app.internal import international_days, weekly_parasha, zodiac
-from app.routers.user import get_all_user_events
+from app.internal.security.dependencies import current_user
 
+# from app.internal.security.schema import CurrentUser
+from app.routers.user import get_all_user_events
 
 router = APIRouter()
 
@@ -27,6 +29,50 @@ class DivAttributes:
     CLASS_SIZES = ("title-size-tiny", "title-size-xsmall", "title-size-small")
     LENGTH_SIZE_STEP = (30, 45, 90)
 
+    def _minutes_position(self, minutes: int) -> Dict[str, int]:
+        """
+        Provides info about the minutes value.
+        Returns a Dict that contains-
+        'minutes position': calculates the number of grid bar quarters
+        that the minutes value covers (from 1 to 4).
+        'min_deviation': calculates the 'spare' minutes left out
+        of a grid bar quarter.
+        (used to indicate the accurate current time)
+        """
+        min_minutes = self.MIN_MINUTES
+        max_minutes = self.MAX_MINUTES
+        for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
+            if min_minutes < minutes <= max_minutes:
+                minute_deviation = minutes - (i - 1) * self.MAX_MINUTES
+                return {"min_position": i, "min_deviation": minute_deviation}
+            min_minutes = max_minutes
+            max_minutes += self.MAX_MINUTES
+
+    def _get_position(self, time: datetime) -> int:
+        grid_hour_position = time.hour * self.FULL_GRID_BAR
+        grid_minutes_modifier = self._minutes_position(time.minute)
+        if grid_minutes_modifier is None:
+            grid_minutes_modifier = 0
+        else:
+            grid_minutes_modifier = grid_minutes_modifier["min_position"]
+        return grid_hour_position + grid_minutes_modifier + self.BASE_GRID_BAR
+
+
+class CurrentTimeAttributes(DivAttributes):
+    def __init__(self, date: datetime) -> None:
+        current = datetime.now()
+        self.dayview_date = date.date()
+        self.is_viewed = self._date_is_today()
+        self.grid_position = self._get_position(current) - 1
+        self.sub_grid_position = self._minutes_position(current.minute)
+        self.sub_grid_position = self.sub_grid_position["min_deviation"]
+
+    def _date_is_today(self) -> bool:
+        today = datetime.today().date()
+        return today == self.dayview_date
+
+
+class EventsAttributes(DivAttributes):
     def __init__(
         self,
         event: Event,
@@ -46,23 +92,6 @@ class DivAttributes:
         if color is None:
             return self.DEFAULT_COLOR
         return color
-
-    def _minutes_position(self, minutes: int) -> Union[int, None]:
-        min_minutes = self.MIN_MINUTES
-        max_minutes = self.MAX_MINUTES
-        for i in range(self.GRID_BAR_QUARTER, self.FULL_GRID_BAR + 1):
-            if min_minutes < minutes <= max_minutes:
-                return i
-            min_minutes = max_minutes
-            max_minutes += 15
-        return None
-
-    def _get_position(self, time: datetime) -> int:
-        grid_hour_position = time.hour * self.FULL_GRID_BAR
-        grid_minutes_modifier = self._minutes_position(time.minute)
-        if grid_minutes_modifier is None:
-            grid_minutes_modifier = 0
-        return grid_hour_position + grid_minutes_modifier + self.BASE_GRID_BAR
 
     def _set_grid_position(self) -> str:
         if self.start_multiday:
@@ -138,12 +167,12 @@ def get_events_and_attributes(
     day: datetime,
     session,
     user_id: int,
-) -> Iterator[Tuple[Event, DivAttributes]]:
+) -> Iterator[Tuple[Event, EventsAttributes]]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
     for event in events:
         if is_specific_time_event_in_day(event, day, day_end):
-            yield event, DivAttributes(event, day)
+            yield event, EventsAttributes(event, day)
 
 
 def get_all_day_events(
@@ -155,53 +184,48 @@ def get_all_day_events(
     day_end = day + timedelta(hours=24)
     for event in events:
         if is_all_day_event_in_day(event=event, day=day, day_end=day_end):
-            yield (event)
+            yield event
 
 
 @router.get("/day/{date}", include_in_schema=False)
 async def dayview(
     request: Request,
     date: str,
-    session=Depends(get_db),
     view="day",
+    session=Depends(get_db),
+    user: User = Depends(current_user),
 ):
-    # TODO: add a login session
-    user = session.query(User).filter_by(username="test_username").first()
-    if not user:
-        error_message = "User not found."
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=error_message,
-        )
     try:
         day = datetime.strptime(date, "%Y-%m-%d")
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
     parasha_obj = weekly_parasha.get_parasha_object(session, day.date())
-    events_n_attrs = get_events_and_attributes(
+    events_with_attrs = get_events_and_attributes(
         day=day,
         session=session,
-        user_id=user.id,
+        user_id=user.user_id,
     )
     all_day_events = get_all_day_events(
         day=day,
         session=session,
-        user_id=user.id,
+        user_id=user.user_id,
     )
+    current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
         {
             "request": request,
-            "events": events_n_attrs,
+            "events_and_attrs": events_with_attrs,
             "all_day_events": all_day_events,
             "month": month,
             "day": day.day,
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
+            "current_time": current_time_with_attrs,
             "parasha": parasha_obj,
         },
     )
