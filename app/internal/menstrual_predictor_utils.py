@@ -1,23 +1,18 @@
 import datetime
 from datetime import timedelta
-
-from loguru import logger
-
 from typing import List, Union
 
 from fastapi import Depends
-
+from loguru import logger
 from sqlalchemy import asc
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.database.models import Event, UserMenstrualPeriodLength
 from app.dependencies import get_db
+from app.internal.security.dependencies import current_user
 from app.internal.security.schema import CurrentUser
-from app.internal.security.dependancies import current_user
-
 from app.routers.event import create_event
-
 
 MENSTRUAL_PERIOD_CATEGORY_ID = 111
 

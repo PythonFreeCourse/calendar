@@ -1,24 +1,22 @@
 import datetime
 
-
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse, Response
 from loguru import logger
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_302_FOUND, HTTP_400_BAD_REQUEST
 
-from app.dependencies import get_db, templates
 from app.database.models import UserMenstrualPeriodLength
+from app.dependencies import get_db, templates
 from app.internal.menstrual_predictor_utils import (
     add_prediction_events_if_valid,
-    is_user_signed_up_to_menstrual_predictor,
     generate_predicted_period_dates,
+    is_user_signed_up_to_menstrual_predictor,
 )
+from app.internal.security.dependencies import current_user
 from app.internal.security.schema import CurrentUser
-from app.internal.security.dependancies import current_user
 from app.internal.utils import create_model
-
 
 router = APIRouter(
     prefix="/menstrual_predictor",
