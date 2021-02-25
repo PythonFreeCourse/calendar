@@ -6,10 +6,15 @@ from sqlalchemy.orm import Session
 
 from app.database.models import Note
 from app.database.schemas import NoteSchema
+from app.internal import utils
 
 
 async def create(session: Session, payload: NoteSchema) -> int:
-    note = Note(title=payload.title, description=payload.description)
+    note = Note(
+        title=payload.title,
+        description=payload.description,
+        creator=payload.creator,
+    )
     session.add(note)
     session.commit()
     session.refresh(note)
@@ -41,7 +46,7 @@ async def update(request: NoteSchema, session: Session, id: int) -> str:
         )
     if request.timestamp is None:
         request.timestamp = datetime.utcnow()
-    note.update(request)
+    note.update(request.dict(exclude_unset=True), synchronize_session=False)
     session.commit()
     return "updated"
 
@@ -60,10 +65,4 @@ async def delete(session: Session, id: int) -> str:
 
 async def create_note(note: NoteSchema, session: Session) -> Dict[str, Any]:
     note_id = await create(session, note)
-    response_object = {
-        "id": note_id,
-        "title": note.title,
-        "description": note.description,
-        "timestamp": note.timestamp,
-    }
-    return response_object
+    return {"id": note_id, **dict(note)}

@@ -2,12 +2,13 @@ from typing import Any, Dict, List, Sequence
 
 from fastapi import APIRouter, Request, status, HTTPException
 from fastapi.param_functions import Depends
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
-from starlette.templating import _TemplateResponse
 
 from app.database.schemas import NoteDB, NoteSchema
 from app.dependencies import get_db, templates
+from app.internal import utils
 from app.internal.notes import notes
 
 
@@ -51,6 +52,7 @@ async def create_note_by_form(
     """Add a note using user-interface form."""
     form = await request.form()
     new_note = NoteSchema(**dict(form))
+    new_note.creator = utils.get_current_user(session)
     await notes.create_note(note=new_note, session=session)
     return RedirectResponse("/notes", status_code=status.HTTP_302_FOUND)
 
@@ -61,6 +63,7 @@ async def create_new_note(
 ) -> Dict[str, Any]:
     """Create a note in the database."""
     new_note = NoteSchema(**dict(request))
+    new_note.creator = utils.get_current_user(session)
     return await notes.create_note(note=new_note, session=session)
 
 
@@ -81,7 +84,7 @@ async def update_note(
 @router.get("/view/{id}", include_in_schema=False)
 async def view_note(
     request: Request, id: int, session: Session = Depends(get_db)
-) -> _TemplateResponse:
+) -> Response:
     """View a note for update using user interface."""
     note = await notes.view(session, id)
     return templates.TemplateResponse(
@@ -92,7 +95,7 @@ async def view_note(
 @router.get("/delete/{id}", include_in_schema=False)
 async def remove_note(
     request: Request, id: int, session: Session = Depends(get_db)
-) -> _TemplateResponse:
+) -> Response:
     """View a note for delete using user interface."""
     note = await notes.view(session, id)
     return templates.TemplateResponse(
@@ -101,7 +104,7 @@ async def remove_note(
 
 
 @router.get("/add", include_in_schema=False)
-async def create_note_form(request: Request) -> _TemplateResponse:
+async def create_note_form(request: Request) -> Response:
     """View form for creating a new note."""
     return templates.TemplateResponse("notes/note.html", {"request": request})
 
@@ -129,7 +132,7 @@ async def read_note(id: int, session: Session = Depends(get_db)) -> NoteDB:
 @router.get("/", include_in_schema=False)
 async def view_notes(
     request: Request, session: Session = Depends(get_db)
-) -> _TemplateResponse:
+) -> Response:
     """View all notes in the database using user interface."""
     data = await notes.get_all(session)
     return templates.TemplateResponse(

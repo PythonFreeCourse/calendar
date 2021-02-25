@@ -106,6 +106,7 @@ class NoteSchema(BaseModel):
     title: str
     description: Optional[str] = None
     timestamp: Optional[datetime]
+    creator: Optional[User]
 
     class Config:
         orm_mode = True

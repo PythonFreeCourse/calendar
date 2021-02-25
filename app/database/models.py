@@ -87,6 +87,8 @@ class User(Base):
         uselist=False,
     )
 
+    notes = relationship("Note", back_populates="creator")
+
     def __repr__(self):
         return f"<User {self.id}>"
 
@@ -605,6 +607,9 @@ class Note(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    creator = relationship("User", back_populates="notes")
 
     def __repr__(self) -> str:
         return f"<Note {self.id} {self.title}>"
