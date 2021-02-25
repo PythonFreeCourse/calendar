@@ -7,9 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.database.models import Event, User
 from app.dependencies import get_db, templates
 from app.internal import international_days, zodiac
-from app.internal.security.dependencies import (
-    current_user,
-)
+from app.internal.security.dependencies import current_user
 
 # from app.internal.security.schema import CurrentUser
 from app.routers.user import get_all_user_events
@@ -219,7 +217,7 @@ async def dayview(
         "calendar_day_view.html",
         {
             "request": request,
-            "events": events_with_attrs,
+            "events_and_attrs": events_with_attrs,
             "all_day_events": all_day_events,
             "month": month,
             "day": day.day,
