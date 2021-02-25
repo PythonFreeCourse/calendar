@@ -3,7 +3,7 @@
 
 {% block content %}
 
-  <div class="container mt-4">
+  <div class="container mt-4 main-text-color">
     <h1>Hello, {{ username }}</h1>
     <form name="searchForm" action="/search" onsubmit="return validateForm()" method="POST" required>
       <div class="form-row align-items-center">
@@ -20,7 +20,7 @@
   </div>
 
   {% if message %}
-    <div class="container mt-4">
+    <div class="container mt-4 main-text-color">
       {{ message }}
     </div>
   {% endif %}

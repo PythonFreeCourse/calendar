@@ -8,7 +8,7 @@ from app.internal.hebrew_date_view import (
     from_gregorian_to_hebrew_date,
     get_month_name_by_num,
 )
-
+from app.internal.languages import set_ui_language
 
 DAY = datetime.strptime("2021-01-01", "%Y-%m-%d").date()
 ADAR = datetime.strptime("2021-02-15", "%Y-%m-%d").date()
@@ -16,13 +16,14 @@ ADAR_A = datetime.strptime("2019-02-15", "%Y-%m-%d").date()
 ADAR_B = datetime.strptime("2019-03-08", "%Y-%m-%d").date()
 
 TRANSLATION_DATES = [
-    (1, "17 Teves 5781"),
-    (2, "י״ז טבת תשפ״א"),
+    (1, "17 Teves 5781", "en"),
+    (2, "י״ז טבת תשפ״א", "he"),
 ]
 
 
-@pytest.mark.parametrize("language_id, hebrew_date", TRANSLATION_DATES)
-def test_get_hebrew_date(language_id, hebrew_date):
+@pytest.mark.parametrize("language_id, hebrew_date, language_code", TRANSLATION_DATES)
+def test_get_hebrew_date(language_id, hebrew_date, language_code):
+    set_ui_language(language_code)
     result = get_hebrew_date_in_words(DAY, language_id)
     assert result == hebrew_date
 

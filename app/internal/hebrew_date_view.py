@@ -38,6 +38,7 @@ def get_hebrew_date_in_words(calendar_date: date, language_id: int) -> str:
     hebrew_date_object = from_gregorian_to_hebrew_date(calendar_date)
     day = hebrew_date_object.day
     month = get_month_name_by_num(hebrew_date_object)
+    month = _("Teves")
     year = hebrew_date_object.year
     if language_id == HEBREW_LANGUAGE_ID:
         day = int_to_gematria(day)

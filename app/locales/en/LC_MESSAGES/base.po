@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-25 17:46+0200\n"
+"POT-Creation-Date: 2021-02-25 21:13+0200\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Kislev"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:13
+#: app/internal/hebrew_date_view.py:13 app/internal/hebrew_date_view.py:41
 msgid "Teves"
 msgstr ""
 
@@ -227,11 +227,5 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Last updated (time) ago"
-#~ msgstr ""
-
-#~ msgid "Teves"
-#~ msgstr ""
-
-#~ msgid "Tevet"
 #~ msgstr ""
 
