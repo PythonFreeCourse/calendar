@@ -1,6 +1,7 @@
 const ROOT = document.documentElement;
+
 window.addEventListener("DOMContentLoaded", (event) => {
-  const button = document.querySelector("#darkmode");
+  const button = document.getElementById("darkmode");
   let isDarkMode = localStorage.getItem("isDarkMode") == "true";
   setThemeMode(isDarkMode, button, ROOT);
   button.addEventListener("click", (event) => {
@@ -11,13 +12,12 @@ window.addEventListener("DOMContentLoaded", (event) => {
 });
 
 function changeIcon(mode) {
-  const modeButton = document.querySelector("#darkmode");
+  const modeButton = document.getElementById("darkmode");
   modeButton.name = mode;
 }
 
 function setThemeMode(isDarkMode, button, root) {
   if (isDarkMode) {
-    console.log(root)
     root.dataset['colorMode'] = "dark";
     button.name = "moon";
     changeIcon("moon");
