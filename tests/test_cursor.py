@@ -1,5 +1,5 @@
-from app.routers.cursor import get_cursor_settings, router
 from app.internal.security.dependencies import current_user
+from app.routers.cursor import get_cursor_settings, router
 from tests.test_login import test_login_successfull
 
 CURSOR_SETTINGS_URL = router.url_path_for("cursor_settings")
@@ -7,7 +7,8 @@ GET_CHOICES_URL = router.url_path_for("get_cursor_choices")
 LOAD_CURSOR_URL = router.url_path_for("load_cursor")
 
 
-def test_get_cursor_settings(cursor_test_client):
+def test_get_cursor_settings(session, cursor_test_client):
+    test_login_successfull(session, cursor_test_client)
     response = cursor_test_client.get(url=CURSOR_SETTINGS_URL)
     assert response.ok
     assert b"Cursor Settings" in response.content
