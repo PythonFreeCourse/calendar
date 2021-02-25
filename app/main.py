@@ -157,11 +157,8 @@ async def home(
         user_id = user.user_id
     is_connected = bool(user_id)
     quote_of_day = daily_quotes.get_quote_of_day(db)
-    if is_connected and daily_quotes.is_quote_favorite(
-        db,
-        user_id,
-        quote_of_day,
-    ):
+    quote = daily_quotes.is_quote_favorite(db, user_id, quote_of_day)
+    if is_connected and quote:
         quote_of_day.is_favorite = True
     return templates.TemplateResponse(
         "index.html",

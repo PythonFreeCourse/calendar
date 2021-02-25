@@ -29,7 +29,7 @@ async def save_quote(
         .first()
     )
     if not record:
-        db.add(models.UserQuotes(user_id=user.user_id, quote_id=quote_id))
+        db.merge(models.UserQuotes(user_id=user.user_id, quote_id=quote_id))
         db.commit()
 
 

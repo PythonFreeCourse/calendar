@@ -1,5 +1,5 @@
 from datetime import date
-from os.path import relpath
+from os.path import join, relpath
 from typing import Dict, List, Optional
 
 from sqlalchemy.orm import Session
@@ -8,9 +8,9 @@ from sqlalchemy.sql.expression import func
 from app.database.models import Quote, UserQuotes
 from app.dependencies import MEDIA_PATH
 
-EMPTY_HEART_PATH = relpath(f"{MEDIA_PATH}\\empty_heart.png", "app")
-FULL_HEART_PATH = relpath(f"{MEDIA_PATH}\\full_heart.png", "app")
-FAVORITES_PATH = f"../../{FULL_HEART_PATH}"
+EMPTY_HEART_PATH = relpath(join(MEDIA_PATH, "empty_heart.png"), "app")
+FULL_HEART_PATH = relpath(join(MEDIA_PATH, "full_heart.png"), "app")
+FAVORITES_PATH = join("../..", FULL_HEART_PATH)
 TOTAL_DAYS = 366
 
 
@@ -69,10 +69,9 @@ def is_quote_favorite(
     if not quote_of_day:
         return False
 
-    if (
+    exists = (
         session.query(UserQuotes)
         .filter(user_id == user_id, UserQuotes.quote_id == quote_of_day.id)
         .all()
-    ):
-        return True
-    return False
+    )
+    return bool(exists)
