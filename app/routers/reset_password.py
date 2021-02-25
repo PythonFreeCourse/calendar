@@ -7,16 +7,15 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 
 from app.dependencies import get_db, templates
+from app.internal.email import BackgroundTasks, send_reset_password_mail
 from app.internal.security.ouath2 import (
-    is_email_compatible_to_username,
-    get_jwt_token,
     create_jwt_token,
+    get_jwt_token,
+    is_email_compatible_to_username,
     update_password,
 )
-from app.internal.email import BackgroundTasks, send_reset_password_mail
 from app.internal.security.schema import ForgotPassword, ResetPassword
 from app.routers.login import router as login_router
-
 
 router = APIRouter(
     prefix="",
@@ -133,6 +132,6 @@ async def reset_password(
     await update_password(db, jwt_username, user.password)
     message = "?message=Success reset password"
     return RedirectResponse(
-        login_router.url_path_for("login_user_form") + f"{message}",
+        login_router.url_path_for("login_user_form") + str(message),
         status_code=HTTP_302_FOUND,
     )

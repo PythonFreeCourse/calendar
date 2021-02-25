@@ -18,7 +18,6 @@ from app.database.models import Event, User
 from app.dependencies import templates
 from app.internal.security.schema import ForgotPassword
 
-
 mail = FastMail(email_conf)
 
 
@@ -219,7 +218,7 @@ async def send_reset_password_mail(
     params = f"?email_verification_token={user.email_verification_token}"
     template = templates.get_template("reset_password_mail.html")
     html = template.render(
-        recipient=user.username.strip("@"),
+        recipient=user.username.lstrip("@"),
         link=f"{DOMAIN}/reset-password{params}",
         email=user.email,
     )

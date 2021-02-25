@@ -54,7 +54,7 @@ async def is_email_compatible_to_username(
     """
     db_user = await User.get_by_username(
         db=db,
-        username=user.username.strip("@"),
+        username=user.username.lstrip("@"),
     )
     if not db_user:
         return False
