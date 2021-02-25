@@ -183,7 +183,10 @@ async def dayview(
     try:
         day = datetime.strptime(date, "%Y-%m-%d")
     except ValueError as err:
-        raise HTTPException(status_code=404, detail=f"{err}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(err),
+        )
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
     events_n_attrs = list(
         get_events_and_attributes(

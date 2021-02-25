@@ -114,7 +114,8 @@ def test_div_attributes_with_costume_color(event2):
 
 def test_wrong_timeformat(session, user, client, event1, event2, event3):
     create_dayview_event([event1, event2, event3], session=session, user=user)
-    response = client.get("/day/1-2-2021")
+    response = client.get("/day/1-2-221")
+    print(response)
     assert response.status_code == 404
 
 

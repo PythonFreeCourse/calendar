@@ -107,6 +107,13 @@ header div {
   text-align: end;
 }
 
+.logo-container {
+  max-width: 5em;
+  height: auto;
+  margin-left: auto;
+  margin-top: 0.5em;
+}
+
 /* Main Element Grid */
 main {
   display: flex;
@@ -374,7 +381,10 @@ main {
 }
 
 /*toggle views*/
-
+.btn-group-sm>.btn, .btn-sm {
+  padding: .1rem .3rem !important;
+  font-size: .7rem !important;
+}
 
 .btn-outline-primary {
   border-color: var(--primary) !important;
