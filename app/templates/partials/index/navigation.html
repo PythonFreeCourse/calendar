@@ -20,29 +20,31 @@
                 </li>
                 <li class="nav-item">
                     <!-- new button for the agenda page. should be available after login
-          place will change later according to the web design -->
+                    place will change later according to the web design -->
                     <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('search') }}">Search</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for( 'audio_settings') }}">Audio Settings</a>
                 </li>
-                </li>
-                    <a class="nav-link" href="{{ url_for('cursor_settings') }}">Cursor Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('view_invitations') }}">Invitations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/search">Search</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('get_categories') }}">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('cursor_settings') }}">Cursor Settings</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('about') }}">{{ gettext("About Us") }}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('credits') }}">Credits</a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{ url_for('view_notifications') }}">
+                    <ion-icon name="notifications-outline"></ion-icon>
+                  </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('salary_home') }}">Salary</a>

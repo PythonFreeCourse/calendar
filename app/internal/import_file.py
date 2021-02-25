@@ -1,12 +1,19 @@
+import re
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-import re
 from typing import (
-    Any, DefaultDict, Dict, Iterator, List, Optional, Tuple, Union
+    Any,
+    DefaultDict,
+    Dict,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    Union,
 )
 
-from icalendar import cal, Calendar
+from icalendar import Calendar, cal
 from loguru import logger
 from sqlalchemy.orm.session import Session
 
@@ -27,21 +34,32 @@ DATE_FORMAT = "%m-%d-%Y"
 DATE_FORMAT2 = "%m-%d-%Y %H:%M"
 DESC_EVENT = "VEVENT"
 
-EVENT_PATTERN = re.compile(r"^(\w{" + str(int(EVENT_HEADER_NOT_EMPTY)) + "," +
-                           str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
-                           str(EVENT_CONTENT_LIMIT) +
-                           r"}),\s(\d{2}-\d{2}-\d{4})," +
-                           r"\s(\d{2}-\d{2}-\d{4})(?:,\s([\w\s-]{0," +
-                           str(LOCATION_LIMIT) +
-                           r"}))?$")
+EVENT_PATTERN = re.compile(
+    r"^(\w{"
+    + str(int(EVENT_HEADER_NOT_EMPTY))
+    + ","
+    + str(EVENT_HEADER_LIMIT)
+    + r"}),\s(\w{0,"
+    + str(EVENT_CONTENT_LIMIT)
+    + r"}),\s(\d{2}-\d{2}-\d{4}),"
+    + r"\s(\d{2}-\d{2}-\d{4})(?:,\s([\w\s-]{0,"
+    + str(LOCATION_LIMIT)
+    + r"}))?$",
+)
 
-EVENT_PATTERN2 = re.compile(r"^(\w{" + str(int(EVENT_HEADER_NOT_EMPTY)) + "," +
-                            str(EVENT_HEADER_LIMIT) + r"}),\s(\w{0," +
-                            str(EVENT_CONTENT_LIMIT) +
-                            r"}),\s(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2})," +
-                            r"\s(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2})" +
-                            r"(?:,\s([\w\s-]{0," + str(LOCATION_LIMIT) +
-                            r"}))?$")
+EVENT_PATTERN2 = re.compile(
+    r"^(\w{"
+    + str(int(EVENT_HEADER_NOT_EMPTY))
+    + ","
+    + str(EVENT_HEADER_LIMIT)
+    + r"}),\s(\w{0,"
+    + str(EVENT_CONTENT_LIMIT)
+    + r"}),\s(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2}),"
+    + r"\s(\d{2}-\d{2}-\d{4}\s\d{2}:\d{2})"
+    + r"(?:,\s([\w\s-]{0,"
+    + str(LOCATION_LIMIT)
+    + r"}))?$",
+)
 
 
 def import_events(path: str, user_id: int, session: Session) -> bool:
@@ -79,8 +97,11 @@ def _is_file_valid_to_import(path: str) -> bool:
     Returns:
         True if the file is a valid to be imported, otherwise returns False.
     """
-    return (_is_file_exists(path) and _is_file_extension_valid(path)
-            and _is_file_size_valid(path))
+    return (
+        _is_file_exists(path)
+        and _is_file_extension_valid(path)
+        and _is_file_size_valid(path)
+    )
 
 
 def _is_file_exists(path: str) -> bool:
@@ -96,8 +117,8 @@ def _is_file_exists(path: str) -> bool:
 
 
 def _is_file_extension_valid(
-        path: str,
-        extension: Union[str, Tuple[str, ...]] = VALID_FILE_EXTENSION,
+    path: str,
+    extension: Union[str, Tuple[str, ...]] = VALID_FILE_EXTENSION,
 ) -> bool:
     """Whether the path is a valid file extension.
 
@@ -176,29 +197,34 @@ def _is_valid_data_event_ics(component: cal.Event) -> bool:
     Returns:
         True if valid, otherwise returns False.
     """
-    return not (str(component.get('summary')) is None
-                or component.get('dtstart') is None
-                or component.get('dtend') is None
-                or not _is_date_in_range(component.get('dtstart').dt)
-                or not _is_date_in_range(component.get('dtend').dt)
-                )
+    return not (
+        str(component.get("summary")) is None
+        or component.get("dtstart") is None
+        or component.get("dtend") is None
+        or not _is_date_in_range(component.get("dtstart").dt)
+        or not _is_date_in_range(component.get("dtend").dt)
+    )
 
 
 def _add_event_component_ics(
-        component: cal.Event, calendar_content: List[Dict[str, Any]]) -> None:
+    component: cal.Event,
+    calendar_content: List[Dict[str, Any]],
+) -> None:
     """Appends event data from an *.ics file.
 
     Args:
         component: An event component.
         calendar_content: A list of event data.
     """
-    calendar_content.append({
-        "Head": str(component.get('summary')),
-        "Content": str(component.get('description')),
-        "S_Date": component.get('dtstart').dt.replace(tzinfo=None),
-        "E_Date": component.get('dtend').dt.replace(tzinfo=None),
-        "Location": str(component.get('location')),
-    })
+    calendar_content.append(
+        {
+            "Head": str(component.get("summary")),
+            "Content": str(component.get("description")),
+            "S_Date": component.get("dtstart").dt.replace(tzinfo=None),
+            "E_Date": component.get("dtend").dt.replace(tzinfo=None),
+            "Location": str(component.get("location")),
+        },
+    )
 
 
 def _get_data_from_txt_file(txt_file_path: str) -> List[Dict[str, Any]]:
@@ -219,7 +245,9 @@ def _get_data_from_txt_file(txt_file_path: str) -> List[Dict[str, Any]]:
         event_data = _get_event_data_from_text(event)
 
         if not _is_event_dates_valid(
-                event_data["start_date"], event_data["end_date"]):
+            event_data["start_date"],
+            event_data["end_date"],
+        ):
             return []
 
         _add_event_component_txt(event_data, calendar_content)
@@ -298,15 +326,17 @@ def _is_event_dates_valid(start: str, end: str) -> bool:
 
     assert start_date is not None and end_date is not None
 
-    is_date_in_range = (_is_date_in_range(start_date)
-                        and _is_date_in_range(end_date))
+    is_date_in_range = _is_date_in_range(start_date) and _is_date_in_range(
+        end_date,
+    )
     is_end_after_start = _is_start_date_before_end_date(start_date, end_date)
     is_duration_valid = _is_event_duration_valid(start_date, end_date)
     return is_date_in_range and is_end_after_start and is_duration_valid
 
 
 def _add_event_component_txt(
-        event: Dict[str, Any], calendar_content: List[Dict[str, Any]]
+    event: Dict[str, Any],
+    calendar_content: List[Dict[str, Any]],
 ) -> None:
     """Appends event data from a txt file.
 
@@ -321,13 +351,15 @@ def _add_event_component_txt(
         start_date = datetime.strptime(event["start_date"], DATE_FORMAT)
         end_date = datetime.strptime(event["end_date"], DATE_FORMAT)
 
-    calendar_content.append({
-        "Head": event["head"],
-        "Content": event["content"],
-        "S_Date": start_date,
-        "E_Date": end_date,
-        "Location": event["location"],
-    })
+    calendar_content.append(
+        {
+            "Head": event["head"],
+            "Content": event["content"],
+            "S_Date": start_date,
+            "E_Date": end_date,
+            "Location": event["location"],
+        },
+    )
 
 
 def _convert_string_to_date(string_date: str) -> Optional[datetime]:
@@ -350,7 +382,8 @@ def _convert_string_to_date(string_date: str) -> Optional[datetime]:
 
 
 def _is_date_in_range(
-        date: datetime, year_range: int = EVENT_VALID_YEARS
+    date: datetime,
+    year_range: int = EVENT_VALID_YEARS,
 ) -> bool:
     """Whether the date is in range.
 
@@ -385,7 +418,9 @@ def _is_start_date_before_end_date(start: datetime, end: datetime) -> bool:
 
 
 def _is_event_duration_valid(
-        start: datetime, end: datetime, max_days: int = EVENT_DURATION_LIMIT
+    start: datetime,
+    end: datetime,
+    max_days: int = EVENT_DURATION_LIMIT,
 ) -> bool:
     """Whether an event duration is valid.
 
@@ -402,8 +437,8 @@ def _is_event_duration_valid(
 
 
 def _is_file_valid_to_save_to_database(
-        events: List[Dict[str, Any]],
-        max_event_start_date: int = MAX_EVENTS_START_DATE,
+    events: List[Dict[str, Any]],
+    max_event_start_date: int = MAX_EVENTS_START_DATE,
 ) -> bool:
     """Whether the number of events starting on the same date is valid.
 
@@ -430,7 +465,9 @@ def _is_file_valid_to_save_to_database(
 
 
 def _save_events_to_database(
-        events: List[Dict[str, Any]], user_id: int, session: Session
+    events: List[Dict[str, Any]],
+    user_id: int,
+    session: Session,
 ) -> None:
     """Inserts the events into the Event table.
 
@@ -446,11 +483,12 @@ def _save_events_to_database(
         end = event["E_Date"]
         location = event["Location"]
         owner_id = user_id
-        create_event(db=session,
-                     title=title,
-                     content=content,
-                     start=start,
-                     end=end,
-                     location=location,
-                     owner_id=owner_id,
-                     )
+        create_event(
+            db=session,
+            title=title,
+            content=content,
+            start=start,
+            end=end,
+            location=location,
+            owner_id=owner_id,
+        )

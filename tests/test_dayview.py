@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from bs4 import BeautifulSoup
 import pytest
+from bs4 import BeautifulSoup
 
 from app.database.models import Event
 from app.routers.dayview import (
@@ -9,7 +9,6 @@ from app.routers.dayview import (
     is_all_day_event_in_day,
     is_specific_time_event_in_day,
 )
-
 from app.routers.event import create_event
 
 

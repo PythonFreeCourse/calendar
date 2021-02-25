@@ -28,6 +28,16 @@ logger = LoggerCustomizer.make_logger(
     config.LOG_FORMAT,
 )
 
+if os.path.isdir(config.UPLOAD_DIRECTORY):
+    UPLOAD_PATH = config.UPLOAD_DIRECTORY
+else:
+    try:
+        UPLOAD_PATH = os.path.join(os.getcwd(), config.UPLOAD_DIRECTORY)
+        os.mkdir(UPLOAD_PATH)
+    except OSError as e:
+        logger.critical(e)
+        raise OSError(e)
+
 
 def get_db() -> Session:
     db = SessionLocal()
