@@ -30,7 +30,7 @@ def test_meds_send_form_success(meds_test_client: TestClient, session: Session,
     assert response.ok
     message = 'PyLendar' in response.text
     assert message is pylendar
-    message = 'alert' in response.text
+    message = 'alert-danger' in response.text
     assert message is not pylendar
     event = session.query(Event).first()
     if pylendar:
