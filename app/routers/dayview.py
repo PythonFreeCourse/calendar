@@ -189,7 +189,7 @@ async def dayview(
     )
     inter_day = international_days.get_international_day_per_day(session, day)
     location_and_shabbat = locations.get_user_location(session)
-    user_location = location_and_shabbat['location']['title']
+    location = location_and_shabbat['location']['title']
     shabbat_obj = shabbat.get_shabbat_if_date_friday(
         location_and_shabbat,
         day.date()
@@ -206,7 +206,7 @@ async def dayview(
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
-            "user_location": user_location,
+            "user_location": location,
             "shabbat": shabbat_obj,
         },
     )
