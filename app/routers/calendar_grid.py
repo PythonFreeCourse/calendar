@@ -181,7 +181,7 @@ def create_weeks(
     num_days: int = len(ndays)
     weeks = [Week(ndays[i : i + length]) for i in range(0, num_days, length)]
 
-    weeks = add_game_events_to_weeks(weeks, is_active=True)
+    weeks = add_game_events_to_weeks(weeks, is_active=False)
     return weeks
 
 
