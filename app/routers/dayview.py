@@ -212,11 +212,15 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     location_and_shabbat = locations.get_user_location(session)
-    location = location_and_shabbat["location"]["title"]
-    shabbat_obj = shabbat.get_shabbat_if_date_friday(
-        location_and_shabbat,
-        day.date(),
-    )
+    if location_and_shabbat:
+        location = location_and_shabbat["location"]["title"]
+        shabbat_obj = shabbat.get_shabbat_if_date_friday(
+            location_and_shabbat,
+            day.date(),
+        )
+    else:
+        location = None
+        shabbat_obj = None
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",

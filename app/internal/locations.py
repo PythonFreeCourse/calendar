@@ -32,12 +32,13 @@ def return_zip_to_location(session: Session) -> Optional[str]:
     Returns:
         A zip number for the user location.
     """
-    response = requests.get("http://ipinfo.io/json").json()
+    response = requests.get("http://ipinfo.io/json")
     if not response.ok:
         return None
+    location_by_ip = response.json()
     for location in session.query(Location).all():
-        if (location.city == response["city"]
-                and location.country == response["country"]):
+        if (location.city == location_by_ip["city"]
+                and location.country == location_by_ip["country"]):
             return location.zip_number
 
 
