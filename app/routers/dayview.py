@@ -4,10 +4,11 @@ from typing import Dict, Iterator, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from app.database.models import Event, User
+from app.database.models import Event
 from app.dependencies import get_db, templates
 from app.internal import international_days, locations, shabbat, zodiac
 from app.internal.security.dependencies import current_user
+from app.internal.security.schema import CurrentUser
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -191,7 +192,7 @@ async def dayview(
     date: str,
     view="day",
     session=Depends(get_db),
-    user: User = Depends(current_user),
+    user: CurrentUser = Depends(current_user),
 ):
     try:
         day = datetime.strptime(date, "%Y-%m-%d")
@@ -211,10 +212,10 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     location_and_shabbat = locations.get_user_location(session)
-    location = location_and_shabbat['location']['title']
+    location = location_and_shabbat["location"]["title"]
     shabbat_obj = shabbat.get_shabbat_if_date_friday(
         location_and_shabbat,
-        day.date()
+        day.date(),
     )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
