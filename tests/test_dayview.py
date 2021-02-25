@@ -117,7 +117,9 @@ def test_wrong_timeformat(session, user, client, event1, event2, event3):
     assert response.status_code == 404
 
 
-def test_dayview_html(event1, event2, event3, session, user, client):
+def test_dayview_html(
+        event1, event2, event3, session, user, client,
+        user_location, shabbat):
     create_dayview_event([event1, event2, event3], session=session, user=user)
     response = client.get("/day/2021-2-1")
     soup = BeautifulSoup(response.content, "html.parser")
@@ -142,6 +144,8 @@ def test_dayview_html_with_multiday_event(
     client,
     day,
     grid_position,
+    user_location,
+    shabbat,
 ):
     create_dayview_event([multiday_event], session=session, user=user)
     session.commit()

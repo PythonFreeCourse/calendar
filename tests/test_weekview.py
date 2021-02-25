@@ -23,7 +23,9 @@ def test_get_week_dates(weekdays, sunday):
         assert week_dates[i].strftime("%A") == weekdays[i]
 
 
-def test_weekview_day_names(session, user, client, weekdays):
+def test_weekview_day_names(
+        session, user, client, weekdays,
+        user_location, shabbat):
     response = client.get("/week/2021-1-3")
     soup = BeautifulSoup(response.content, "html.parser")
     day_divs = soup.find_all("div", {"class": "day-name"})
@@ -31,7 +33,9 @@ def test_weekview_day_names(session, user, client, weekdays):
         assert weekdays[i][:3].upper() in str(day_divs[i])
 
 
-def test_weekview_day_dates(session, user, client, sunday):
+def test_weekview_day_dates(
+        session, user, client, sunday,
+        user_location, shabbat):
     response = client.get("/week/2021-1-3")
     soup = BeautifulSoup(response.content, "html.parser")
     day_divs = soup.find_all("span", {"class": "date-nums"})
@@ -54,6 +58,8 @@ def test_weekview_html_events(
     client,
     date,
     event,
+    user_location,
+    shabbat
 ):
     create_weekview_event([event1, event2, event3], session=session, user=user)
     response = client.get(f"/week/{date}")
