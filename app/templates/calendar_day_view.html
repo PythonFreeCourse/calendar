@@ -28,6 +28,7 @@
             <br>{{ gettext("%(name)s", name=parasha.hebrew_name) }}
             <a href={{parasha.link}} target="_blank">{{ gettext(" Detailing in a separate link on %(parashah)s", parashah=parasha.hebrew_name) }}</a>
         </div>
+        {% endif %}
         {% else %}
         <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
         {% endif %}
