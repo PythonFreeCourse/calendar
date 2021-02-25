@@ -21,8 +21,10 @@ function change_cursor() {
   const primary_cursor_path = `url(${CURSORS_PATH}${primary_cursor_choice}), auto`;
   const secondary_cursor_choice = cursor_settings["secondary_cursor"];
   const secondary_cursor_path = `url(${CURSORS_PATH}${secondary_cursor_choice}), auto`;
-  const primary_cursor = primary_cursor_choice !== "default.cur" ? primary_cursor_path : "";
-  const secondary_cursor = secondary_cursor_choice !== "default.cur" ? secondary_cursor_path : "";
+  const primary_cursor =
+    primary_cursor_choice !== "default.cur" ? primary_cursor_path : "";
+  const secondary_cursor =
+    secondary_cursor_choice !== "default.cur" ? secondary_cursor_path : "";
   document.body.style.cursor = primary_cursor;
   const links = document.querySelectorAll("a, button, input, select, label");
   links.forEach((element) => {
