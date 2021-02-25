@@ -13,7 +13,6 @@ from app.internal.notification import (
     raise_wrong_id_error,
 )
 from app.internal.security.dependencies import current_user, is_logged_in
-
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import safe_redirect_response
 

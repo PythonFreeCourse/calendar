@@ -1,12 +1,13 @@
 from datetime import datetime
+
 import pytest
 
-from app.routers.register import _create_user
-from app.routers.user import does_user_exist, get_users
+from app.database.models import Event, UserEvent
 from app.internal.user.availability import disable, enable
 from app.internal.utils import save
-from app.database.models import UserEvent, Event
 from app.routers.event import create_event
+from app.routers.register import _create_user
+from app.routers.user import does_user_exist, get_users
 
 
 @pytest.fixture

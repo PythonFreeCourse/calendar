@@ -1,5 +1,5 @@
 from operator import attrgetter
-from typing import Iterator, List, Union, Callable
+from typing import Callable, Iterator, List, Union
 
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -8,12 +8,11 @@ from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_406_NOT_ACCEPTABLE
 
 from app.database.models import (
     Invitation,
-    Message,
     InvitationStatusEnum,
+    Message,
     MessageStatusEnum,
 )
 from app.internal.utils import create_model
-
 
 WRONG_NOTIFICATION_ID = (
     "The notification id you have entered is wrong\n."
