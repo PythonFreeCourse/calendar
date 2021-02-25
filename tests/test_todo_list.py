@@ -51,7 +51,10 @@ def task2(session, user):
 
 
 def test_if_task_deleted(home_test_client, task1: Task, session):
-    response = home_test_client.post("/task/delete", data={"task_id": task1.id})
+    response = home_test_client.post(
+        "/task/delete",
+        data={"task_id": task1.id},
+    )
     assert response.status_code == status.HTTP_302_FOUND
     with pytest.raises(NoResultFound):
         by_id(session, task1.id)

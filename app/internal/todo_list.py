@@ -1,7 +1,5 @@
-from operator import attrgetter
-from typing import List
+from datetime import date, time
 
-from sqlalchemy import Date, Time
 from sqlalchemy.orm import Session
 
 from app.database.models import Task
@@ -12,8 +10,8 @@ def create_task(
         db: Session,
         title: str,
         description: str,
-        date_str: Date,
-        time_str: Time,
+        date_str: date,
+        time_str: time,
         owner_id: int,
         is_important: bool,
 ) -> Task:
@@ -30,12 +28,6 @@ def create_task(
         is_done=False,
     )
     return task
-
-
-# def sort_by_time(tasks: List[Task]) -> List[Task]:
-#     """Sorts the tasks by the start of the task."""
-#     temp = tasks.copy()
-#     return sorted(temp, key=attrgetter('time'))
 
 
 def by_id(db: Session, task_id: int) -> Task:

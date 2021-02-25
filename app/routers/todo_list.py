@@ -23,8 +23,15 @@ def delete_task(
         task_id: int = Form(...),
         db: Session = Depends(get_db),
 ) -> RedirectResponse:
-    # TODO: Check if the user is the owner of the task.
+    user = get_current_user(db)
     task = by_id(db, task_id)
+    if task.owner_id != user.id:
+        return templates.TemplateResponse(
+            "calendar_day_view.html",
+            {"task_id": task_id},
+            status_code=status.HTTP_403_FORBIDDEN,
+        )
+
     date_str = task.date.strftime('%Y-%m-%d')
     try:
         # Delete task
@@ -38,8 +45,6 @@ def delete_task(
             {"task_id": task_id},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-        # TODO: Send them a cancellation notice
-        # if the deletion is successful
     return RedirectResponse(
         url=f"/day/{date_str}",
         status_code=status.HTTP_302_FOUND,
@@ -55,7 +60,6 @@ async def add_task(
         is_important: bool = Form(False),
         session: Session = Depends(get_db),
 ) -> RedirectResponse:
-    # TODO replace with a real user
     user = get_current_user(session)
     create_task(
         session,
