@@ -1,20 +1,20 @@
 from datetime import datetime, timedelta
 from typing import Union
 
-from passlib.context import CryptContext
+import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-import jwt
 from jwt.exceptions import InvalidSignatureError
+from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND, HTTP_401_UNAUTHORIZED
-from . import schema
 
 from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
 from app.database.models import User
 
+from . import schema
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")

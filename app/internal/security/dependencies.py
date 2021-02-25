@@ -1,15 +1,15 @@
 from fastapi import Depends, HTTPException
-from starlette.status import HTTP_401_UNAUTHORIZED
 from starlette.requests import Request
+from starlette.status import HTTP_401_UNAUTHORIZED
 
 from app.database.models import User
 from app.dependencies import get_db
+from app.internal.security import schema
 from app.internal.security.ouath2 import (
     Session,
-    get_jwt_token,
     get_authorization_cookie,
+    get_jwt_token,
 )
-from app.internal.security import schema
 
 
 async def is_logged_in(
