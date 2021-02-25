@@ -155,7 +155,7 @@ async def home(
         jwt = request.cookies["Authorization"]
         user = await current_user(request=request, db=db, jwt=jwt)
         user_id = user.user_id
-    is_connected = True if user_id else False
+    is_connected = bool(user_id)
     quote_of_day = daily_quotes.get_quote_of_day(db)
     if is_connected and daily_quotes.is_quote_favorite(
         db,
