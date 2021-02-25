@@ -1,20 +1,20 @@
 from datetime import datetime, timedelta
 from typing import Union
 
-from passlib.context import CryptContext
+import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-import jwt
 from jwt.exceptions import InvalidSignatureError
+from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_401_UNAUTHORIZED
-from . import schema
 
 from app.config import JWT_ALGORITHM, JWT_KEY, JWT_MIN_EXP
 from app.database.models import User
 
+from . import schema
 
 pwd_context = CryptContext(schemes=["bcrypt"])
 oauth_schema = OAuth2PasswordBearer(tokenUrl="/login")
@@ -65,16 +65,16 @@ def create_jwt_token(
 
 async def get_jwt_token(
     db: Session,
-        token: str = Depends(oauth_schema),
-        path: Union[bool, str] = None) -> User:
+    token: str = Depends(oauth_schema),
+    path: Union[bool, str] = None,
+) -> User:
     """
     Check whether JWT token is correct.
     Returns jwt payloads if correct.
     Raises HTTPException if fails to decode.
     """
     try:
-        jwt_payload = jwt.decode(
-            token, JWT_KEY, algorithms=JWT_ALGORITHM)
+        jwt_payload = jwt.decode(token, JWT_KEY, algorithms=JWT_ALGORITHM)
     except InvalidSignatureError:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
@@ -91,7 +91,8 @@ async def get_jwt_token(
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,
             headers=path,
-            detail="Your token is incorrect. Please log in again")
+            detail="Your token is incorrect. Please log in again",
+        )
     return jwt_payload
 
 

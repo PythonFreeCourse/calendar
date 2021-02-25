@@ -9,9 +9,9 @@
 {% endblock head %}
 
 {% block content %}
-  <div class = "event_view_wrapper container col col-12">
+  <div class = "event-view-wrapper container col col-12">
     <!-- Temporary nav layout based on bootstrap -->
-    <ul class="nav nav-tabs" id="event_view_nav" role="tablist">
+    <ul class="nav nav-tabs" id="event-view-nav" role="tablist">
       <li class="nav-item">
         <a class="nav-link {% if not comment %}active{% endif %}" id="eventdetails-tab" data-bs-toggle="tab" href="#eventdetails" role="tab" aria-controls="eventdetails" aria-selected="true">
           Event Details
@@ -30,7 +30,7 @@
       </li> -->
     </ul>
 
-    <div class="tab-content" id="event_view_tabs">
+    <div class="tab-content" id="event-view-tabs">
       <div class="tab-pane fade {% if not comment %}show active{% endif %}" id="eventdetails" role="tabpanel" aria-labelledby="eventdetails-tab">
         {% include "partials/calendar/event/view_event_details_tab.html" %}
       </div>

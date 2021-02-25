@@ -1,8 +1,8 @@
 import pytest
-
-from app.internal.event import get_location_coordinates
-from app.database.models import Event
 from sqlalchemy.sql import func
+
+from app.database.models import Event
+from app.internal.event import get_location_coordinates
 
 
 class TestGeolocation:
