@@ -18,6 +18,7 @@ from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.privacy import PrivacyKinds
 from app.internal.showevent import get_upcoming_events
 from app.routers.user_exercise import create_user_exercise
+from sqlalchemy.orm import Session
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 FIVE_EVENTS = 5
