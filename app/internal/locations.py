@@ -7,7 +7,7 @@ from app.database.models import Location
 
 
 def create_location_object(location_: Dict[str, str]) -> Location:
-    """Returns a Zodiac object from the dictionary data.
+    """Returns a Location object from the dictionary data.
 
     Args:
         location_: A dictionary location related information.
