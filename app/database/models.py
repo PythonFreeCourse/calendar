@@ -465,6 +465,20 @@ class WikipediaEvents(Base):
     date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
+class CoronaStats(Base):
+    __tablename__ = "corona_stats"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(DateTime, nullable=False)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
+    vaccinated = Column(Integer, nullable=False)
+    vaccinated_total = Column(Integer, nullable=False)
+    vaccinated_population_perc = Column(Integer, nullable=False)
+    vaccinated_second_dose = Column(Integer, nullable=False)
+    vaccinated_second_dose_total = Column(Integer, nullable=False)
+    vaccinated_second_dose_perc = Column(Float, nullable=False)
+
+
 class Quote(Base):
     __tablename__ = "quotes"
 

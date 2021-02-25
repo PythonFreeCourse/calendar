@@ -138,7 +138,6 @@ async def create_new_event(
     availability = data.get("availability", "True") == "True"
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
-
     vc_link = data.get("vc_link")
     category_id = data.get("category_id")
     privacy = data["privacy"]
