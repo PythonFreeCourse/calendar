@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-25 21:13+0200\n"
+"POT-Creation-Date: 2021-02-25 22:30+0200\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -22,59 +22,59 @@ msgstr ""
 msgid "No response from server."
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:10
+#: app/internal/hebrew_date_view.py:9
 msgid "Tishrei"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:11
+#: app/internal/hebrew_date_view.py:10
 msgid "Cheshvan"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:12
+#: app/internal/hebrew_date_view.py:11
 msgid "Kislev"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:13 app/internal/hebrew_date_view.py:41
+#: app/internal/hebrew_date_view.py:12
 msgid "Teves"
 msgstr "טבת"
 
-#: app/internal/hebrew_date_view.py:14
+#: app/internal/hebrew_date_view.py:13
 msgid "Shvat"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:15
+#: app/internal/hebrew_date_view.py:14
 msgid "Adar"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:16
+#: app/internal/hebrew_date_view.py:15
 msgid "Adar Rishon"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:17
+#: app/internal/hebrew_date_view.py:16
 msgid "Adar Sheni"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:18
+#: app/internal/hebrew_date_view.py:17
 msgid "Nissan"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:19
+#: app/internal/hebrew_date_view.py:18
 msgid "Iyar"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:20
+#: app/internal/hebrew_date_view.py:19
 msgid "Sivan"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:21
+#: app/internal/hebrew_date_view.py:20
 msgid "Tamuz"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:22
+#: app/internal/hebrew_date_view.py:21
 msgid "Av"
 msgstr ""
 
-#: app/internal/hebrew_date_view.py:23
+#: app/internal/hebrew_date_view.py:22
 msgid "Elul"
 msgstr ""
 
