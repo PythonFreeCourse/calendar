@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-from typing import List, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from app.routers.calendar_grid import Week, Day
-
-from datetime import datetime
-
 from collections import defaultdict
+from datetime import datetime
+from typing import TYPE_CHECKING, List
 
 import requests
+
+if TYPE_CHECKING:
+    from app.routers.calendar_grid import Day, Week
 
 
 def add_game_events_to_weeks(
@@ -32,12 +30,13 @@ def add_game_events_to_weeks(
     for week in weeks:
         for day in week.days:
             if day.set_id() in formatted_games.keys():
-                day.dailyevents.append(
-                    (
-                        f"GR!- {(formatted_games[day.set_id()][0])[:10]}",
-                        (formatted_games[day.set_id()][0]),
-                    ),
-                )
+                for game in formatted_games[day.set_id()]:
+                    day.dailyevents.append(
+                        (
+                            f"GR!- {(game)[:10]}",
+                            (game),
+                        ),
+                    )
 
     return weeks
 
@@ -51,15 +50,15 @@ def get_games_data_separated_by_days(
     current_day_games = requests.get(
         f"{API}?dates={start_date},{end_date}",
     )
-
     current_day_games = current_day_games.json()["results"]
     games_data = defaultdict(list)
     for result in current_day_games:
         current = {}
         current["name"] = result["name"]
-        current["platforms"] = []
-        for platform in result["platforms"]:
-            current["platforms"].append(platform["platform"]["name"])
+        if result["platforms"]:
+            current["platforms"] = []
+            for platform in result["platforms"]:
+                current["platforms"].append(platform["platform"]["name"])
         ybd_release_date = translate_ymd_date_to_dby(result["released"])
         games_data[ybd_release_date].append(current)
     return games_data
