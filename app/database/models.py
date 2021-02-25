@@ -9,6 +9,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
+    Date,
     DateTime,
     Enum,
     Float,
@@ -78,6 +79,8 @@ class User(Base):
         back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
+    tasks = relationship(
+        "Task", cascade="all, delete", back_populates="owner")
 
     features = relationship("Feature", secondary=UserFeature.__tablename__)
     oauth_credentials = relationship(
@@ -581,6 +584,21 @@ class InternationalDays(Base):
     day = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
     international_day = Column(String, nullable=False)
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    is_done = Column(Boolean, default=False)
+    is_important = Column(Boolean, nullable=False)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="tasks")
 
 
 # insert language data
