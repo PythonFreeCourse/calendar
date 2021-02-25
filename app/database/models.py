@@ -438,9 +438,9 @@ class Task(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    description = Column(String)
-    is_done = Column(Boolean, nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    is_done = Column(Boolean, default=False)
     is_important = Column(Boolean, nullable=False)
     date = Column(Date, nullable=False)
     time = Column(Time, nullable=False)

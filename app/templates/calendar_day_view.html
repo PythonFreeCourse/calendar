@@ -32,187 +32,17 @@
     </div>
     {% endif %}
     <button type="button" class="open-button" data-bs-toggle="modal"
-            data-bs-target="#example-modal">
+            data-bs-target="#create-modal">
         Create Task
     </button>
     <button type="button" class="open-button" data-bs-toggle="modal"
-            data-bs-target="#modal">
-        Todo-List
+            data-bs-target="#list-modal">
+        To Do List
     </button>
     <!-- Modal -->
-    <div class="todo-style">
-        <div class="modal fade" id="example-modal" tabindex="-1"
-             aria-labelledby="example-modal-Label" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header top-todo">
-                        <h1 id="example-modal-Label">
-                            Add Task</h1>
-                        <button type="button" class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <form action="/task/add" method="post">
-                        <div class="modal-body">
-                            <input type="hidden" value="{{date_str}}"
-                                   name="date_str">
-                            <label for="customer-time">Select
-                                Hour:<em>&#x2a;</em></label>
-                            <input id="customer-time" name="time_str"
-                                   required=""
-                                   type="time">
-                            <label for="customer-title">Title:<em>&#x2a;</em></label>
-                            <input id="customer-title" name="title" required=""
-                                   type="text" maxlength="10">
-                            <textarea placeholder="Description:"
-                                      id="customer-descrip" name="description"
-                                      required=""></textarea>
-                            <label>Is important?</label>
-                            <input id="is-important" name="is_important"
-                                   type="checkbox">
-                        </div>
-                        <div class="modal-footer">
-                            <button class="sub-button" type="submit"
-                                    value="Submit"
-                            >Submit
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modal" tabindex="-1"
-             aria-labelledby="modal-label" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header top-todo">
-                        <h1 id="modal-label">Todo
-                            List</h1>
-                        <button type="button" class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="table">
-                        <table id="customer-done">
-                            <thead>
-                            <tr>
-                                <th>Time</th>
-                                <th>Task</th>
-                                <th>Description</th>
-                                <th>Is Done?</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for task in tasks %}
-                            {% if task.is_important %}
-                            <tr class="important">
-                                {% else %}
-                            <tr>
-                                {% endif %}
-                                <td>{{ task.time }}</td>
-                                <td>{{ task.title }}</td>
-                                <td>{{ task.description }}</td>
-                                {% if task.is_done %}
-                                <td>
-                                    <form action="/task/undone/{{task.id}}"
-                                          method="post">
-                                        <button type="submit">Undone</button>
-                                    </form>
-                                </td>
-                                {% else %}
-                                <td>
-                                    <form action="/task/done/{{task.id}}"
-                                          method="post">
-                                        <button type="submit">Done</button>
-                                    </form>
-                                </td>
-                                {% endif %}
-                                {% if task.is_important %}
-                                <td>
-                                    <button type="button" class="edit"
-                                            data-bs-toggle="modal"
-                                            onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', true)"
-                                            data-bs-target="#edit-modal">
-                                        Edit
-                                    </button>
-                                </td>
-
-                                {% else %}
-                                <td>
-                                    <button type="button" class="edit"
-                                            data-bs-toggle="modal"
-                                            onclick="openEditModal({{task.id}}, '{{task.time}}', '{{task.title}}', '{{task.description}}', false)"
-                                            data-bs-target="#edit-modal">
-                                        Edit
-                                    </button>
-                                </td>
-
-                                {% endif %}
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="todo-style">
-        <div class="modal fade" id="edit-modal" tabindex="-1"
-             aria-labelledby="edit-modal-label" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header" style="background: #2B346A">
-                        <h1 id="edit-modal-label">
-                            Edit Task</h1>
-                        <button type="button" class="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <form action="/task/edit" method="post">
-                        <div class="modal-body">
-                            <input type="hidden" value="{{date_str}}"
-                                   name="date_str">
-                            <input type="hidden" value="" name="task_id"
-                                   id="edit-task-id">
-                            <label for="customer-time2">Select
-                                Hour:<em>&#x2a;</em></label>
-                            <input id="customer-time2" name="time_str"
-                                   required=""
-                                   type="time">
-                            <label for="customer-title2">Title:<em>&#x2a;</em></label>
-                            <input id="customer-title2" name="title"
-                                   required=""
-                                   type="text" maxlength="10">
-                            <textarea placeholder="Description:"
-                                      id="customer-descrip2" name="description"
-                                      required=""></textarea>
-                            <label>Is important?</label>
-                            <input id="is-important2" name="is_important"
-                                   type="checkbox">
-                        </div>
-                        <div class="modal-footer">
-                            <button class="sub-button" type="submit"
-                                    value="Submit"
-                            >Save
-                            </button>
-                            <button class="del-button" type="button"
-                                    onclick="deleteModal()"
-                            >Delete
-                            </button>
-                        </div>
-                    </form>
-                    <form action="/task/delete" method="post"
-                          id="delete-task-form">
-                        <input type="hidden" id="delete-task-id"
-                               name="task_id">
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+      {% include 'partials/todo_list_modals/create_task.html' %}
+      {% include 'partials/todo_list_modals/todo_list.html' %}
+      {% include 'partials/todo_list_modals/edit_task.html' %}
     <div class="all_day_events">
         {% for event in all_day_events %}
         <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
@@ -272,6 +102,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
         crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript"
         src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
+<script src="{{ url_for('static', path='/js/todo_list_modals.js') }}"></script>
 {% endblock body %}

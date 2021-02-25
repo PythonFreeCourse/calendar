@@ -7,7 +7,6 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
 from app.internal import international_days, zodiac
-from app.internal.todo_list import sort_by_time
 from app.internal.utils import get_current_user
 from app.routers.user import get_all_user_events
 
@@ -194,8 +193,8 @@ async def dayview(
     tasks = (session.query(Task)
              .filter(Task.owner_id == user.id)
              .filter(Task.date == day.date())
+             .order_by(Task.time)
              )
-    tasks = sort_by_time(list(tasks))
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
