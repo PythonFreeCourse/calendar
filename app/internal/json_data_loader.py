@@ -5,8 +5,8 @@ from typing import Any, Callable, Dict, List
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, Joke, Quote, Zodiac
-from app.internal import daily_quotes, jokes, zodiac
+from app.database.models import Base, InternationalDays, Joke, Quote, Zodiac
+from app.internal import daily_quotes, international_days, jokes, zodiac
 
 
 def load_to_database(session: Session) -> None:
@@ -23,31 +23,38 @@ def load_to_database(session: Session) -> None:
     """
     _insert_into_database(
         session,
-        'app/resources/zodiac.json',
+        "app/resources/zodiac.json",
         Zodiac,
         zodiac.get_zodiac,
     )
 
     _insert_into_database(
         session,
-        'app/resources/quotes.json',
+        "app/resources/quotes.json",
         Quote,
         daily_quotes.get_quote,
     )
 
     _insert_into_database(
         session,
-        'app/resources/jokes.json',
+        "app/resources/international_days.json",
+        InternationalDays,
+        international_days.get_international_day,
+    )
+
+    _insert_into_database(
+        session,
+        "app/resources/jokes.json",
         Joke,
         jokes.get_joke,
     )
 
 
 def _insert_into_database(
-        session: Session,
-        path: str,
-        table: Base,
-        model_creator: Callable
+    session: Session,
+    path: str,
+    table: Base,
+    model_creator: Callable,
 ) -> bool:
     """Inserts the extracted JSON data into the database.
 
@@ -64,8 +71,9 @@ def _insert_into_database(
         return False
 
     json_objects = _get_data_from_json(path)
-    model_objects = [model_creator(json_object)
-                     for json_object in json_objects]
+    model_objects = [
+        model_creator(json_object) for json_object in json_objects
+    ]
     session.add_all(model_objects)
     session.commit()
     return True
@@ -97,11 +105,12 @@ def _get_data_from_json(path: str) -> List[Dict[str, Any]]:
         A list of dictionary objects.
     """
     try:
-        with open(path, 'r') as json_file:
+        with open(path, "r") as json_file:
             json_content = json.load(json_file)
     except (IOError, ValueError):
         file_name = os.path.basename(path)
         logger.exception(
-            f"An error occurred during reading of json file: {file_name}")
+            f"An error occurred during reading of json file: {file_name}",
+        )
         return []
     return json_content

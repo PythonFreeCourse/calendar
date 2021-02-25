@@ -1,20 +1,22 @@
-from datetime import datetime, timedelta
 import json
-import pytest
+import os
+from datetime import datetime, timedelta
 
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
-from sqlalchemy.sql.elements import Null
+from PIL import Image
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
 
+from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import get_db
+from app.dependencies import UPLOAD_PATH, get_db
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
 from app.routers import event as evt
-
 from app.routers.event import event_to_show
 
 CORRECT_EVENT_FORM_DATA = {
@@ -527,6 +529,36 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_event_with_image(event_test_client, client, session):
+    img = Image.new("RGB", (60, 30), color="red")
+    img.save("pil_red.png")
+    with open("pil_red.png", "rb") as img:
+        imgstr = img.read()
+    files = {"event_img": imgstr}
+    data = {**CORRECT_EVENT_FORM_DATA}
+    response = event_test_client.post(
+        client.app.url_path_for("create_new_event"),
+        data=data,
+        files=files,
+    )
+    event_created = session.query(Event).order_by(Event.id.desc()).first()
+    event_id = event_created.id
+    is_event_image = f"{event_id}{PICTURE_EXTENSION}" == event_created.image
+    assert response.ok
+    assert (
+        client.app.url_path_for("eventview", event_id=event_id).strip(
+            f"{event_id}",
+        )
+        in response.headers["location"]
+    )
+    assert is_event_image is True
+    event_image_path = os.path.join(UPLOAD_PATH, event_created.image)
+    os.remove(event_image_path)
+    os.remove("pil_red.png")
+    session.delete(event_created)
+    session.commit()
+
+
 def test_can_show_event_public(event, session, user):
     assert event_to_show(event, session) == event
     assert event_to_show(event, session, user) == event
@@ -638,7 +670,7 @@ def test_delete_comment(
 
 class TestApp:
     client = TestClient(app)
-    date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+    date_test_data = [datetime.today() - timedelta(days=1), datetime.today()]
     event_test_data = {
         "title": "Test Title",
         "location": "Fake City",

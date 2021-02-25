@@ -1,0 +1,26 @@
+{% extends "./partials/notification/base.html" %}
+{% block page_name %}Archive{% endblock page_name %}
+
+{% block description %}
+    <div>
+        <div class="title">Archived Notifications</div>
+        <p class="s-paragraph">
+            In this page you can view all of your archived notifications.<br/>
+            Any notification you have <b>marked as read</b> or <b>declined</b>, you will see here.<br/>
+            You can use the <button class="notification-btn btn-accept"><ion-icon class="icon" name="checkmark-outline"></ion-icon></button>
+            button to accept an invitation that you already declined.
+        </p>
+    </div>
+{% endblock description %}
+
+{% block link %}
+    <div id="link"><a href="{{ url_for('view_notifications') }}">New notifications</a></div>
+{% endblock link %}
+
+{% block notifications %}
+    {% include './partials/notification/generate_archive.html' %}
+{% endblock notifications %}
+
+{% block no_notifications_msg %}
+    <span>You don't have any archived notifications.</span>
+{% endblock no_notifications_msg %}

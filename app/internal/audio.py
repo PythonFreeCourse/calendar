@@ -1,13 +1,14 @@
-from sqlalchemy.orm.session import Session
-from typing import Dict, List, Optional, Tuple, Union
 from enum import Enum
+from typing import Dict, List, Optional, Tuple, Union
+
+from sqlalchemy.orm.session import Session
+
 from app.database.models import (
     AudioTracks,
     User,
     UserAudioTracks,
     UserSettings,
 )
-
 
 DEFAULT_MUSIC = ["GASTRONOMICA.mp3"]
 DEFAULT_MUSIC_VOL = 0.5

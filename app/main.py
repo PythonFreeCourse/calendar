@@ -10,14 +10,14 @@ from starlette.templating import _TemplateResponse
 from app import config
 from app.database import engine, models
 from app.dependencies import (
-    get_db,
-    logger,
     MEDIA_PATH,
     SOUNDS_PATH,
     STATIC_PATH,
+    UPLOAD_PATH,
+    get_db,
+    logger,
     templates,
 )
-
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.restore_events import delete_events_after_optionals_num_days
@@ -42,6 +42,11 @@ create_tables(engine, config.PSQL_ENVIRONMENT)
 app = FastAPI(title="Pylander", docs_url=None)
 app.mount("/static", StaticFiles(directory=STATIC_PATH), name="static")
 app.mount("/media", StaticFiles(directory=MEDIA_PATH), name="media")
+app.mount(
+    "/event_images",
+    StaticFiles(directory=UPLOAD_PATH),
+    name="event_images",
+)
 app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
@@ -66,13 +71,16 @@ from app.routers import (  # noqa: E402
     four_o_four,
     friendview,
     google_connect,
-    invitation,
     joke,
     login,
     logout,
+    meds,
+    notification,
     profile,
     register,
+    reset_password,
     search,
+    settings,
     telegram,
     user,
     weekview,
@@ -115,14 +123,17 @@ routers_to_include = [
     four_o_four.router,
     friendview.router,
     google_connect.router,
-    invitation.router,
     joke.router,
     login.router,
     logout.router,
+    meds.router,
+    notification.router,
     profile.router,
     register.router,
+    reset_password.router,
     salary.router,
     search.router,
+    settings.router,
     telegram.router,
     user.router,
     weekview.router,

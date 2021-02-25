@@ -1,15 +1,15 @@
 <div class="card card-event mb-2 pb-0">
   <div class="card-header d-flex justify-content-between">
-    <small><i>{{ gettext("Upcoming event on (date)", date=event.start) }}</i></small>
+    <small class="main-text-color"><i>Upcoming event on {{ event.start.strftime("%d/%m/%Y %H:%M") }}</i></small>
     <!-- Event settings -->
     {% include 'partials/user_profile/middle_content/event_settings.html' %}
   </div>
 
   <div class="card-body pb-1">
     <p class="card-text">
-      The Event {{ event }} - description ...
+      {{ event.title }} - {{ event.content if event.content is not none }}
     </p>
     <hr class="mb-0">
-    <small class="event-posted-time text-muted">Last updated {{time}} ago</small>
+    <a href="{{ url_for('eventview', event_id=event.id) }}">{{ event.title }} details</a>
   </div>
 </div>

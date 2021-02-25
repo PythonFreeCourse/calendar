@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "partials/index/index_base.html" %}
 
 {% block content %}
   <div class="container col col-sm-7 col-md-5 col-lg-4 col-xl-3 mt-3">
@@ -7,7 +7,7 @@
         <h1>{{ category }}</h1>
         <h2>{{ month }} {{ salary.year}}</h2>
       </div>
-    
+
       <div class="card-body">
         <h3 class="text-center">Base Salary</h3>
         <p class="d-flex justify-content-between px-5">Hourly Wage: <span>{{ wage.wage }}</span></p>
@@ -24,13 +24,13 @@
         {% if salary.bonus %}
           <p class="d-flex justify-content-between px-5">Bonus: <span>{{ salary.bonus }}</span></p>
         {% endif %}
-        
+
         {% if salary.deduction %}
           <h3 class="text-center">Deductions</h3>
           <p class="d-flex justify-content-between px-5">Deduction: <span>{{ salary.deduction }}</span></p>
         {% endif %}
       </div>
-      
+
       <div class="card-footer text-center">
         <h4>Total Salary:</h4>
         <h5>{{ salary.salary }}</h5>

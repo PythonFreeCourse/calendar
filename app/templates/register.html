@@ -1,12 +1,12 @@
-{% extends "base.html" %}
+{% extends "partials/index/index_base.html" %}
 {% block content %}
     <div class="container">
-        <h3>Please Register</h3>
-        <form method="post">
+        <h3 class="main-text-color">Please Register</h3>
+        <form method="post" class="main-text-color">
             <div class="row">
                 <label for="username" class="col-sm-2 col-form-label">Username</label>
                 <div class="col-auto">
-                    <!-- 
+                    <!--
                         if form re-renders after validation fails, displays user's last field input
                      -->
                     {% if errors %}
@@ -20,7 +20,7 @@
                         Must be between 3 to 20 characters.
                     </span>
                 </div>
-                <!-- 
+                <!--
                     if field did not pass validation, prints validation errors for field
                  -->
                 {% if errors and "username" in errors %}

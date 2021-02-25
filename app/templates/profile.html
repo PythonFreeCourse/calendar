@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "partials/index/index_base.html" %}
 {% include "partials/calendar/event/text_editor_partial_head.html" %}
 
 {% block content %}
@@ -13,7 +13,14 @@
             <!-- Right side -->
             {% include 'partials/user_profile/sidebar_right.html' %}
 
+<<<<<<< HEAD
         </div>
     </div>
     {% include "partials/calendar/event/text_editor_partial_body.html" %}
+=======
+  </div>
+</div>
+
+{% include "partials/calendar/event/text_editor_partial_body.html" %}
+>>>>>>> develop
 {% endblock content %}

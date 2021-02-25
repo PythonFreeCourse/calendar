@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "partials/index/index_base.html" %}
 
 {% block content %}
   <div class="container col col-sm-7 col-md-5 col-lg-4 col-xl-3 mt-3">
@@ -12,7 +12,7 @@
         Salary Settings
       </h1>
     </header>
-    
+
     <form method="post">
       {% if categories %}
         <div class="input-group mb-2">
@@ -24,7 +24,7 @@
             {% endfor %}
           </select>
         </div>
-        
+
         <div>
           <p class="text-muted">Want a new category? <a href="#">Create one here</a></p>
         </div>
@@ -32,7 +32,7 @@
 
       <div class="input-group mb-2">
         <label class="font-weight-bold input-group-text" for="wage">Hourly Wage</label>
-        <input class="form-control" type="number" step=any name="wage" id="wage" value="{{ wage.wage }}"> 
+        <input class="form-control" type="number" step=any name="wage" id="wage" value="{{ wage.wage }}">
       </div>
 
       <div class="input-group mb-2">
