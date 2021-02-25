@@ -4,12 +4,12 @@ from typing import Dict, Iterator, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from app.database.models import Event, User
+from app.database.models import Event
 from app.dependencies import get_db, templates
 from app.internal import hebrew_date_view, international_days, zodiac
 from app.internal.security.dependencies import current_user
-
-# from app.internal.security.schema import CurrentUser
+from app.internal.security.schema import CurrentUser
+from app.internal.utils import get_user
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
