@@ -3,10 +3,10 @@ from loguru import logger
 from starlette.responses import RedirectResponse
 
 from app.dependencies import get_db
+from app.internal.features import feature_access_filter
 from app.internal.google_connect import fetch_save_events, get_credentials
 from app.internal.utils import get_current_user
 from app.routers.profile import router as profile
-from app.internal.features import feature_access_filter
 
 router = APIRouter(
     prefix="/google",
