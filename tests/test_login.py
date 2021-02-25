@@ -30,6 +30,7 @@ LOGIN_WRONG_DETAILS = [
 ]
 
 LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
+
 WRONG_LOGIN_DATA = {
     "username": "incorrect_user",
     "password": "correct_password",

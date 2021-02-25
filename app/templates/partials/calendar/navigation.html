@@ -15,7 +15,9 @@
         <ion-icon name="search" alt="Search icon"></ion-icon>
       </div>
       <div>
+        <a href="{{ url_for('settings') }}">
         <ion-icon name="settings-outline"></ion-icon>
+        </a>
       </div>
       <div>
         <a href="/calendar/month">
@@ -31,6 +33,9 @@
         <a title="About Us" href="{{ url_for('about') }}">
           <ion-icon name="information-circle-outline"></ion-icon>
         </a>
+      </div>
+      <div>
+        <ion-icon id="darkmode" name="moon-outline"></ion-icon>
       </div>
     </div>
     <div class="user-features">

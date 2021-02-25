@@ -119,14 +119,14 @@ async def is_access_allowd(request: Request, route: str) -> bool:
         # route that gived by to the request.
         return True
 
-    user_ptef = session.query(
+    user_feature = session.query(
         exists().where(
             (UserFeature.feature_id == feature.id)
             & (UserFeature.user_id == user.user_id),
         ),
     ).scalar()
 
-    return user_ptef
+    return user_feature
 
 
 def create_feature(

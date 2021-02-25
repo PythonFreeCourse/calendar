@@ -26,16 +26,16 @@
         <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
         {% endif %}
     </div>
+    <div id="all-day-events" class="d-flex justify-content-center text-truncate my-0 {{size}} text-light">
+        {% for event in all_day_events %}
+            <a href={{ url_for('eventview', event_id=event.id) }}  title="See full event">{{ event.title }}&nbsp;&nbsp;&nbsp;</a>
+        {% endfor %}
+      </div>
     {% if international_day %}
     <div class="international-days">
         The International days are: "{{ international_day.international_day }}"
     </div>
     {% endif %}
-    <div class="all_day_events">
-        {% for event in all_day_events %}
-        <p class="text-truncate my-0 {{size}}">{{ event.title }}</p>
-        {% endfor %}
-    </div>
     <div class="schedule">
         <div class="container times bg-primeary position">
             {% for hour in range(25)%}
@@ -50,8 +50,16 @@
             </div>
             {% endfor %}
         </div>
+        <div class="timegrid">
+          {% if current_time.is_viewed %}
+            <div class="sub-timegrid" style="grid-row: {{ current_time.grid_position }};">
+                <div id="current_time_cursor" style="grid-row: {{ current_time.sub_grid_position }};">
+                </div>
+            </div>
+          {% endif %}
+        </div>
         <div class="event-grid">
-            {% for event, attr in events %}
+            {% for event, attr in events_and_attrs %}
             <div id="event{{event.id}}"
                  class="d-flex flex-column text-truncate px-2 event"
                  style="background-color: {{attr.color}}; grid-row: {{attr.grid_position}}; max-hight:1.5rem;">
