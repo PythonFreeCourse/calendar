@@ -130,4 +130,3 @@ msgstr "בדיקת תרגום בפייתון"
 
 #~ msgid "Agenda"
 #~ msgstr ""
-

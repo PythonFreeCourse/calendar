@@ -1,18 +1,22 @@
 from fastapi import Depends, HTTPException
-from starlette.status import HTTP_401_UNAUTHORIZED
 from starlette.requests import Request
+from starlette.status import HTTP_401_UNAUTHORIZED
 
 from app.database.models import User
 from app.dependencies import get_db
-from app.internal.security.ouath2 import (
-    Session, get_jwt_token, get_authorization_cookie
-)
 from app.internal.security import schema
+from app.internal.security.ouath2 import (
+    Session,
+    get_authorization_cookie,
+    get_jwt_token,
+)
 
 
 async def is_logged_in(
-    request: Request, db: Session = Depends(get_db),
-        jwt: str = Depends(get_authorization_cookie)) -> bool:
+    request: Request,
+    db: Session = Depends(get_db),
+    jwt: str = Depends(get_authorization_cookie),
+) -> bool:
     """
     A dependency function protecting routes for only logged in user
     """
@@ -21,8 +25,10 @@ async def is_logged_in(
 
 
 async def is_manager(
-    request: Request, db: Session = Depends(get_db),
-        jwt: str = Depends(get_authorization_cookie)) -> bool:
+    request: Request,
+    db: Session = Depends(get_db),
+    jwt: str = Depends(get_authorization_cookie),
+) -> bool:
     """
     A dependency function protecting routes for only logged in manager
     """
@@ -30,9 +36,10 @@ async def is_manager(
     if jwt_payload.get("is_manager"):
         return True
     raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED,
-                headers=request.url.path,
-                detail="You don't have a permition to enter this page")
+        status_code=HTTP_401_UNAUTHORIZED,
+        headers=request.url.path,
+        detail="You don't have a permition to enter this page",
+    )
 
 
 async def current_user_from_db(
@@ -52,9 +59,10 @@ async def current_user_from_db(
         return db_user
     else:
         raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED,
-                headers=request.url.path,
-                detail="Your token is incorrect. Please log in again")
+            status_code=HTTP_401_UNAUTHORIZED,
+            headers=request.url.path,
+            detail="Your token is incorrect. Please log in again",
+        )
 
 
 async def current_user(
