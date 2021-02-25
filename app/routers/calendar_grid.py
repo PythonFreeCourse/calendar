@@ -60,10 +60,9 @@ class Day:
         day = self.date
         if day.strftime("%A") == "Sunday":
             return self.dayview_format()
-        else:
-            while day.strftime("%A") != "Sunday":
-                day -= timedelta(days=1)
-            return day.strftime("%Y-%m-%d")
+        while day.strftime("%A") != "Sunday":
+            day -= timedelta(days=1)
+        return day.strftime("%Y-%m-%d")
 
     def set_id(self) -> str:
         """Returns day date inf the format of 00-month-0000"""
