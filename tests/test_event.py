@@ -1,16 +1,18 @@
-from datetime import datetime, timedelta
 import json
-import pytest
+import os
+from datetime import datetime, timedelta
 
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
-from sqlalchemy.sql.elements import Null
+from PIL import Image
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
 
-
+from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import get_db
+from app.dependencies import UPLOAD_PATH, get_db
 from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
@@ -151,10 +153,10 @@ def new_event(session, new_user):
 def new_user(session):
     user = create_user(
         session=session,
-        username='new_test_username',
-        password='new_test_password',
-        email='new_test.email@gmail.com',
-        language_id='english'
+        username="new_test_username",
+        password="new_test_password",
+        email="new_test.email@gmail.com",
+        language_id="english",
     )
 
     return user
@@ -164,10 +166,16 @@ def test_joining_public_event(session, new_event, new_user):
     """test in order to make sure user is added the first time
     he asks to join event, yet won't join the same user twice"""
     first_join = add_user_to_event(
-        session, event_id=new_event.id, user_id=new_user.id)
+        session,
+        event_id=new_event.id,
+        user_id=new_user.id,
+    )
     assert first_join
     second_join = add_user_to_event(
-        session, event_id=new_event.id, user_id=new_user.id)
+        session,
+        event_id=new_event.id,
+        user_id=new_user.id,
+    )
     assert not second_join
 
 
@@ -195,6 +203,19 @@ def test_eventview_with_id(event_test_client, session, event):
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"Event Details" in response.content
+    assert b"View Event" in response.content
+    assert b"Some random location" in response.content
+    waze_link = b"https://waze.com/ul?q=Some%20random%20location"
+    assert waze_link in response.content
+    assert b"VC link" not in response.content
+
+
+def test_eventview_without_location(event_test_client, session, event):
+    event_id = event.id
+    event.location = None
+    session.commit()
+    response = event_test_client.get(f"/event/{event_id}")
+    assert b"https://waze.com/ul" not in response.content
 
 
 def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
@@ -558,6 +579,36 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_event_with_image(event_test_client, client, session):
+    img = Image.new("RGB", (60, 30), color="red")
+    img.save("pil_red.png")
+    with open("pil_red.png", "rb") as img:
+        imgstr = img.read()
+    files = {"event_img": imgstr}
+    data = {**CORRECT_EVENT_FORM_DATA}
+    response = event_test_client.post(
+        client.app.url_path_for("create_new_event"),
+        data=data,
+        files=files,
+    )
+    event_created = session.query(Event).order_by(Event.id.desc()).first()
+    event_id = event_created.id
+    is_event_image = f"{event_id}{PICTURE_EXTENSION}" == event_created.image
+    assert response.ok
+    assert (
+        client.app.url_path_for("eventview", event_id=event_id).strip(
+            f"{event_id}",
+        )
+        in response.headers["location"]
+    )
+    assert is_event_image is True
+    event_image_path = os.path.join(UPLOAD_PATH, event_created.image)
+    os.remove(event_image_path)
+    os.remove("pil_red.png")
+    session.delete(event_created)
+    session.commit()
+
+
 def test_can_show_event_public(event, session, user):
     assert event_to_show(event, session) == event
     assert event_to_show(event, session, user) == event
@@ -669,7 +720,7 @@ def test_delete_comment(
 
 class TestApp:
     client = TestClient(app)
-    date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+    date_test_data = [datetime.today() - timedelta(days=1), datetime.today()]
     event_test_data = {
         "title": "Test Title",
         "location": "Fake City",

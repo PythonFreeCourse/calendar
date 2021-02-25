@@ -1,49 +1,95 @@
-<div class="event_info_row title" style="border-bottom: 4px solid {{ event.color }}">
-    <div class="event_info_row_start">
+<div class="event-info-row title" style="border-bottom: 4px solid {{ event.color }}">
+    <div class="event-info-row_start">
         <h1>{{ event.title }}</h1>
     </div>
-    <div class="event_info_row_end">
+    <div class="event-info-row-end">
         <!--        <span class="icon">AVAILABILITY</span>-->
         <!--        <span class="icon">PRIVACY</span>-->
     </div>
 </div>
-<div class="event_info_row">
+
+<div class="event-image-container">
+  <img class="event-image" src="{{ '' if not event.image else url_for('media', path=event.image) }}">
+</div>
+
+<div class="event-info-row">
     <span class="icon">ICON</span>
     <time datetime="{{ event.start }}">{{ event.start.strftime(start_format )}}</time>
     {% if end_format != "" %}
-    -
-    <time datetime="{{event.end}}">{{event.end.strftime(end_format)}}</time>
+        <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
     {% endif %}
-    <div>{{ 'Busy' if event.availability == True else 'Free' }}</div>
+    <div>
+        {{ 'Free' if event.availability else 'Busy' }}
+    </div>
 </div>
 
-<!--<div class="event_info_row">-->
+<!--<div class="event-info-row">-->
 <!--    <span class="icon">ICON</span>-->
 <!--    <span>Repeats every INTERVAL</span>-->
 <!--</div>-->
 
-<div class="event_info_row">
-  <span class="icon">ICON</span>
+{% if event.location %}
+<div class="event-info-row">
+  <span class="icon"><a href="{{ waze_link }}" target="_blank"><img src="{{ url_for('static', path='images/icons/waze.svg') }}" alt="icon wase" width="30" height="30"></a></span>
   <address>{{ event.location }}</address>
+</div>
+{% endif %}
+{% if event.vc_link %}
+<div class="event-info-row">
+  <span class="icon">ICON</span>
   <address>VC link<a href="{{ event.vc_link }}">VC URL</a></address>
 </div>
+{% endif %}
+
+{% if event.latitude is not none and event.longitude is not none %}
+  <div class="google-maps-object">
+    <iframe
+      width="600"
+      height="400"
+      frameborder="0"
+      scrolling="no"
+      marginheight="0"
+      marginwidth="0"
+      src="https://maps.google.com/maps?q={{event.latitude}},{{event.longitude}}&hl=es;z=14&amp;output=embed">
+    </iframe>
+  </div>
+{% endif %}
+
 {% if event.invitees %}
 <form method="POST" action="/event/{{event.id}}/owner">
-    <div class="mb-3"></div>
-    <label for="username">{{ gettext('Choose user') }}</label>
-    <select id="username" name="username">
-        {% for username in event.invitees.split(',') %}
-      <option value="{{username}}">{{username}}</option>
-      {% endfor %}
-    </select>
-    <input type="submit" class="btn btn-primary" value="Change owner">
+  <div class="mb-3"></div>
+  <label for="username">{{ gettext('Choose user') }}</label>
+  <select id="username" name="username">
+    {% for username in event.invitees.split(',') %}
+    <option value="{{username}}">{{username}}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" class="btn btn-primary" value="Change owner">
 </form>
 {% endif %}
-<p class="event_info_row">
+<p class="event-info-row">
     {{event.owner.username}}
 </p>
 
-<div class="event_info_buttons_row event_info_row_end">
+<div class="event-info-row">
+  <span class="icon">ICON</span>
+  <p>Shared list: {{ event.shared_list.title }}</p>
+</div>
+
+{% if event.shared_list is not none %}
+  <div class="event-info-row">
+    {% for item in event.shared_list.items %}
+      <span class="icon">ICON</span>
+      <div class="list_item">
+        <p>Item {{ loop.index }}: {{ item.name }}</p>
+        <p>Amount: {{ item.amount }}</p>
+        <p>Participant: {{ item.participant }}</p>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="event-info-buttons-row event-info-row-end">
     <!-- Buttons could and should be replaced with button-like anchors if need so -->
     <button type="button">Duplicate</button>
     <button type="button">Edit</button>

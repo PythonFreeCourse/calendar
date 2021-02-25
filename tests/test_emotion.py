@@ -4,14 +4,12 @@ import pytest
 
 from app.internal.emotion import (
     Emoticon,
-    is_emotion_above_significance,
     get_dominant_emotion,
     get_emotion,
     get_html_emoticon,
+    is_emotion_above_significance,
 )
-
 from app.routers.event import create_event
-
 
 HAPPY_MESSAGE = "This is great"  # 100% happy
 SAD_MESSAGE = "I'm so lonely and feel bad"  # 100% sad
