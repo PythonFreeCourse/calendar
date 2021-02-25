@@ -1,6 +1,8 @@
-from app.database.models import User, UserSettings
-from sqlalchemy.orm.session import Session
 from typing import List, Optional, Tuple
+
+from sqlalchemy.orm.session import Session
+
+from app.database.models import User, UserSettings
 
 
 def get_cursor_settings(
@@ -48,6 +50,5 @@ def save_cursor_settings(
             user_id=cursor_settings.user_id,
         ).update(cursor_choices)
     else:
-        cursor_settings = UserSettings(user_id=user.user_id, **cursor_choices)
-        session.add(cursor_settings)
+        session.merge(UserSettings(user_id=user.user_id, **cursor_choices))
     session.commit()
