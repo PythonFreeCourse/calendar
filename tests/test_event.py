@@ -199,7 +199,12 @@ def test_get_all_countries(session):
 def test_db_returns_countries_matching_timezone(event_test_client, session):
     add_countries_to_db(session)
     country_name = "Israel, Jerusalem"
-    response = event_test_client.get(f"/event/timezone/country/{country_name}")
+    response = event_test_client.get(
+        event_test_client.app.url_path_for(
+            "check_timezone",
+            country_name=country_name,
+        ),
+    )
     assert response.ok
     assert b'{"timezone":"Asia/Jerusalem"}' in response.content
 
