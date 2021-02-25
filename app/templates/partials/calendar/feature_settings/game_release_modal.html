@@ -1,7 +1,7 @@
 <!-- upcomingGames Modal -->
 <div
   class="modal modal-lg"
-  id="upcomingGamesModal"
+  id="upcoming-games-modal"
   tabindex="-1"
   data-bs-backdrop="static"
   aria-labelledby="upcomingGamesModal"
@@ -23,30 +23,23 @@
       <div class="modal-body">
         <input
           type="date"
-          id="from_date"
+          id="from-date"
           class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-          name="from_date"
+          name="from-date"
           placeholder="From Date"
         />
         <input
           type="date"
-          id="to_date"
+          id="to-date"
           class="form-control border-top-0 border-end-0 border-start-0 mb-2"
-          name="to_date"
+          name="to-date"
           placeholder="To Date"
         />
         <form action="/game-releases/add-games-to-calendar" method="post">
-          <div id="content_div"></div>
-          <!-- <div class="d-flex flex-row-reverse mt-4"> -->
-            <button type="button" id="get_games" class="btn btn-sm btn-success">
-              {{ gettext("Get upcoming releases")}}
+          <div id="content-div"></div>
+            <button type="button" id="get-games" class="btn btn-sm btn-success">
+              {{ gettext("Get upcoming releases") }}
             </button>
-            <!-- <button
-              type="submit"
-              id="save_changes"
-              class="btn btn-sm btn-success"
-            > -->
-              <!-- {{ gettext("Save changes") }} -->
             </button>
           </div>
         </form>
@@ -55,23 +48,4 @@
   </div>
 </div>
 
-<script>
-  get_games_btn = document.getElementById("get_games");
-  get_games_btn.addEventListener("click", function (e) {
-    let formData = new FormData();
-    formData.append("from_date", document.getElementById("from_date").value);
-    formData.append("to_date", document.getElementById("to_date").value);
-    let clickedElem = e.target.id;
-    fetch("/game-releases/get_releases_by_dates", {
-      method: "post",
-      body: formData,
-    })
-      .then(function (response) {
-        return response.text();
-      })
-      .then(function (body) {
-        document.querySelector("#content_div").innerHTML = body;
-      });
-  });
-
-</script>
+<script src="{{ url_for('static', path='js/game_releases.js') }}"></script>

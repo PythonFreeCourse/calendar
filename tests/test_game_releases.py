@@ -32,7 +32,7 @@ class TestGameReleases:
     def test_get_game_releases(client):
         day_1 = "2020-12-10"
         day_2 = "2020-12-20"
-        dates = {"from_date": day_1, "to_date": day_2}
+        dates = {"from-date": day_1, "to-date": day_2}
         response = client.post(
             "/game-releases/get_releases_by_dates",
             data=dates,
@@ -46,7 +46,7 @@ class TestGameReleases:
         day_2 = "2020-12-20"
         formatted = get_games_data_separated_by_days(day_1, day_2)
         assert isinstance(formatted, dict)
-        assert "Cyberpunk 2077" in formatted["10-December-2020"]
+        assert "platforms" in formatted["10-December-2020"][0].keys()
 
     @staticmethod
     def test_ymd_to_dby():

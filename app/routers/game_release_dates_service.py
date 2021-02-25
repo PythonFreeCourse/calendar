@@ -1,13 +1,9 @@
 import datetime
-from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
-from loguru import logger
+from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
-from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
-from starlette.templating import _TemplateResponse
 
 import requests
 from app.database.models import UserSettings
@@ -16,7 +12,7 @@ from app.internal.security.dependencies import current_user
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
 
-# from typing import Dict, List, Union
+from typing import Dict, List
 
 
 router = APIRouter(
@@ -29,7 +25,7 @@ router = APIRouter(
 def is_user_signed_up_for_game_releases(
     session: Session,
     current_user_id: int,
-):
+) -> bool:
     is_signed_up = (
         session.query(UserSettings)
         .filter(UserSettings.user_id == current_user_id)
@@ -46,14 +42,6 @@ def is_user_signed_up_for_game_releases(
 # async def add_games_to_calendar(request: Request, session=Depends(get_db)):
 #     current_user = get_current_user(session)
 #     data = await request.form()
-
-#     print(data)
-#     for game in data:
-#         print(game)
-#         game_data = requests.get(
-#             f"https://api.rawg.io/api/games/{game[0]}",
-#         ).json()
-
 #         create_event(
 #             session,
 #             title=game["name"],
@@ -65,22 +53,25 @@ def is_user_signed_up_for_game_releases(
 
 
 @router.post("/get_releases_by_dates")
-async def fetch_released_games(request: Request, session=Depends(get_db)):
+async def fetch_released_games(
+    request: Request,
+    session=Depends(get_db),
+) -> Response:
     data = await request.form()
 
-    from_date = data["from_date"]
-    to_date = data["to_date"]
+    from_date = data["from-date"]
+    to_date = data["to-date"]
 
-    template = templates.get_template(
-        "partials/calendar/feature_settings/games_list.html",
-    )
     games = get_games_data(from_date, to_date)
-    content = template.render(games=games)
-    return HTMLResponse(content=content, status_code=HTTPStatus.OK)
+
+    return templates.TemplateResponse(
+        "partials/calendar/feature_settings/games_list.html",
+        {"request": request, "games": games},
+    )
 
 
 @router.get("/get_game_releases_next_month")
-def get_game_releases_month(request: Request):
+def get_game_releases_month(request: Request) -> List:
     today = datetime.datetime.today()
     delta = datetime.timedelta(days=30)
     today_str = today.strftime("%Y-%m-%d")
@@ -98,10 +89,11 @@ def get_game_releases_month(request: Request):
 # remove game from calendar
 
 
-def get_games_data(start_date, end_date):
-    logger.debug((start_date, end_date))
+def get_games_data(start_date: datetime, end_date: datetime) -> List[Dict]:
+    API = "https://api.rawg.io/api/games"
+
     current_day_games = requests.get(
-        f"https://api.rawg.io/api/games?dates={start_date},{end_date}",
+        f"{API}?dates={start_date},{end_date}",
     )
     current_day_games = current_day_games.json()["results"]
     games_data = []
@@ -118,25 +110,22 @@ def get_games_data(start_date, end_date):
     return games_data
 
 
-@router.get("/subscribe")
+@router.post("/subscribe")
 async def subscribe_game_release_service(
     request: Request,
     session: Session = Depends(get_db),
     user: CurrentUser = Depends(current_user),
-) -> _TemplateResponse:
-    current_user_id = user.user_id
-
-    if is_user_signed_up_for_game_releases(session, current_user_id):
-        logger.debug("User already signed up for games")
+) -> Response:
+    if is_user_signed_up_for_game_releases(session, user.user_id):
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
     else:
         games_setting_true = {UserSettings.video_game_releases: True}
         games_setting_true_for_model = {
-            "user_id": current_user_id,
+            "user_id": user.user_id,
             "video_game_releases": True,
         }
         current_user_settings = session.query(UserSettings).filter(
-            UserSettings.user_id == current_user_id,
+            UserSettings.user_id == user.user_id,
         )
         if current_user_settings:
             # TODO:
@@ -149,12 +138,12 @@ async def subscribe_game_release_service(
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
 
 
-@router.get("/unsubscribe")
+@router.post("/unsubscribe")
 async def unsubscribe_game_release_service(
     request: Request,
     session: Session = Depends(get_db),
     user: CurrentUser = Depends(current_user),
-) -> _TemplateResponse:
+) -> RedirectResponse:
     current_user_id = user.user_id
 
     if not is_user_signed_up_for_game_releases(session, current_user_id):

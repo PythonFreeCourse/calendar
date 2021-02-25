@@ -9,14 +9,13 @@ from datetime import datetime
 
 from collections import defaultdict
 
-from loguru import logger
-
 import requests
 
-# from app.routers.calendar_grid import Week
 
-
-def add_game_events_to_weeks(weeks: List["Week"], is_active: bool = True):
+def add_game_events_to_weeks(
+    weeks: List["Week"],
+    is_active: bool = True,
+) -> List["Week"]:
     if not is_active:
         return weeks
     first_week: Week = weeks[0]
@@ -25,25 +24,32 @@ def add_game_events_to_weeks(weeks: List["Week"], is_active: bool = True):
     last_day: Day = last_week.days[-1]
     first_day_str = datetime.strptime(first_day.set_id(), "%d-%B-%Y")
     last_day_str = datetime.strptime(last_day.set_id(), "%d-%B-%Y")
-    games_released = get_games_data_separated_by_days(
+    games_by_dates = get_games_data_separated_by_days(
         start_date=first_day_str.strftime("%Y-%m-%d"),
         end_date=last_day_str.strftime("%Y-%m-%d"),
     )
+    formatted_games = get_formatted_games_in_days(games_by_dates)
     for week in weeks:
         for day in week.days:
-            if day.set_id() in games_released.keys():
+            if day.set_id() in formatted_games.keys():
                 day.dailyevents.append(
                     (
-                        f"GR!- {(games_released[day.set_id()][0])[:10]}",
-                        (games_released[day.set_id()][0]),
+                        f"GR!- {(formatted_games[day.set_id()][0])[:10]}",
+                        (formatted_games[day.set_id()][0]),
                     ),
                 )
 
+    return weeks
 
-def get_games_data_separated_by_days(start_date, end_date):
-    logger.debug((start_date, end_date))
+
+def get_games_data_separated_by_days(
+    start_date: datetime,
+    end_date: datetime,
+) -> defaultdict[List]:
+    API = "https://api.rawg.io/api/games"
+
     current_day_games = requests.get(
-        f"https://api.rawg.io/api/games?dates={start_date},{end_date}",
+        f"{API}?dates={start_date},{end_date}",
     )
 
     current_day_games = current_day_games.json()["results"]
@@ -56,13 +62,13 @@ def get_games_data_separated_by_days(start_date, end_date):
             current["platforms"].append(platform["platform"]["name"])
         ybd_release_date = translate_ymd_date_to_dby(result["released"])
         games_data[ybd_release_date].append(current)
-    return get_formatted_games_in_days(games_data)
+    return games_data
 
 
 def get_formatted_games_in_days(
-    separated_games_dict: dict,
+    separated_games_dict: defaultdict[List],
     with_platforms: bool = False,
-):
+) -> defaultdict[List]:
     formatted_games = defaultdict(list)
 
     for date, game_data in separated_games_dict.items():
@@ -77,11 +83,11 @@ def get_formatted_games_in_days(
     return formatted_games
 
 
-def translate_ymd_date_to_dby(ymd_str: str):
+def translate_ymd_date_to_dby(ymd_str: str) -> str:
     ymd_time = datetime.strptime(ymd_str, "%Y-%m-%d")
     return ymd_time.strftime("%d-%B-%Y")
 
 
-def translate_dby_date_to_ymd(dby_str: str):
+def translate_dby_date_to_ymd(dby_str: str) -> str:
     dby_time = datetime.strptime(dby_str, "%d-%B-%Y")
     return dby_time.strftime("%Y-%m-%d")
