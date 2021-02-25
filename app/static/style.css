@@ -1,4 +1,4 @@
-:root[color-mode="regular"] {
+:root[data-color-mode="regular"] {
   --backgroundcol: #F7F7F7;
   --textcolor: #222831;
   --navcolor: rgba(0, 0, 0, 0.55);
@@ -6,7 +6,7 @@
   --cardcolor: #FFF;
 }
 
-:root[color-mode="dark"] {
+:root[data-color-mode="dark"] {
   --backgroundcol: #000000;
   --textcolor: #EEEEEE;
   --navcolor: #E9ECEF;

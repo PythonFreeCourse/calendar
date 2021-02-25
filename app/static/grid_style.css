@@ -1,4 +1,4 @@
-:root[color-mode="regular"] {
+:root[data-color-mode="regular"] {
   --backgroundcol: #F7F7F7;
   --textcolor: #222831;
   --start-of-month: #E9ECEf;
@@ -8,7 +8,7 @@
   --borders-variant: #F7F7F7;
 }
 
-:root[color-mode="dark"] {
+:root[data-color-mode="dark"] {
   --backgroundcol: #000000;
   --textcolor: #EEEEEE;
   --start-of-month: #8C28BF;
