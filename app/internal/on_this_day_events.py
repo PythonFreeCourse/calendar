@@ -43,6 +43,6 @@ def get_on_this_day_events(db: Session = Depends(get_db)) -> Dict[str, Any]:
     except NoResultFound:
         data = insert_on_this_day_data(db)
     except (SQLAlchemyError, AttributeError) as e:
-        logger.error(f"on this day failed with error: {e}")
+        logger.exception(f"on this day failed with error: {e}")
         data = {"events": [], "wikipedia": "https://en.wikipedia.org/"}
     return data

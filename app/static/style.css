@@ -1,3 +1,19 @@
+:root[data-color-mode="regular"] {
+  --backgroundcol: #F7F7F7;
+  --textcolor: #222831;
+  --navcolor: rgba(0, 0, 0, 0.55);
+  --navhovercolor: rgba(0, 0, 0, 0.7);
+  --cardcolor: #FFF;
+}
+
+:root[data-color-mode="dark"] {
+  --backgroundcol: #000000;
+  --textcolor: #EEEEEE;
+  --navcolor: #E9ECEF;
+  --navhovercolor: rgb(255 255 255);
+  --cardcolor: #230A88;
+}
+
 .profile-image {
   width: 7em;
 }
@@ -97,7 +113,12 @@ p#p-quote {
   margin: 0;
 }
 
+.card {
+  background-color: var(--cardcolor);
+}
+
 .card-body {
+  color: var(--textcolor);
   overflow: auto;
 }
 
@@ -174,6 +195,31 @@ p#p-quote {
 
 .input-upload-file {
   margin-top: 1em;
+}
+
+.relative.overflow-hidden {
+  background-color: var(--backgroundcol);
+  height: 100vh;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: var(--navcolor);
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: var(--navhovercolor);
+}
+
+.main-text-color {
+  color: var(--textcolor);
+}
+
+.cal-img {
+  text-align: center;
+}
+
+#darkmode {
+  cursor: pointer;
 }
 
 .upload-file {

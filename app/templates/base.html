@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-mode="regular">
 
 <head>
     {% block head %}
@@ -75,6 +75,11 @@
                               <ion-icon name="notifications-outline"></ion-icon>
                           </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link">
+                                <ion-icon id="darkmode" name="moon-outline"></ion-icon>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -93,6 +98,7 @@
     <script src="{{ url_for('static', path='/favorite_quotes.js') }}"></script>
     <script src="{{ url_for('static', path='/graph.js') }}"></script>
     <script type="text/javascript" src="{{ url_for( 'static', path='/audio_settings.js' ) }}"></script>
+    <script src="{{ url_for('static', path='/js/darkmode.js') }}"></script>
     <script src="{{ url_for('static', path='/joke.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <audio id="my-audio" muted="true"></audio>
