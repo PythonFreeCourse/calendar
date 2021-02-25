@@ -13,7 +13,6 @@ from starlette.status import HTTP_400_BAD_REQUEST
 
 from app.database.models import Event
 
-
 ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
 
 
