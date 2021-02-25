@@ -1,13 +1,15 @@
 import re
 from datetime import datetime, timedelta
-
-from app.database.models import User, Event, UserEvent
-from sqlalchemy.orm import Session
 from typing import List, Match
 
+from sqlalchemy.orm import Session
+
+from app.database.models import Event, User, UserEvent
+
 REGEX_EXTRACT_HOLIDAYS = re.compile(
-    r'SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})',
-    re.MULTILINE)
+    r"SUMMARY:(?P<title>.*)(\n.*){1,8}DTSTAMP:(?P<date>\w{8})",
+    re.MULTILINE,
+)
 
 
 def get_holidays_from_file(file: List[Event], session: Session) -> List[Event]:
@@ -22,24 +24,27 @@ def get_holidays_from_file(file: List[Event], session: Session) -> List[Event]:
     holidays = []
     for holiday in parsed_holidays:
         holiday_event = create_holiday_event(
-            holiday, session.query(User).filter_by(id=1).first().id)
+            holiday,
+            session.query(User).filter_by(id=1).first().id,
+        )
         holidays.append(holiday_event)
     return holidays
 
 
 def create_holiday_event(holiday: Match[str], owner_id: int) -> Event:
     valid_ascii_chars_range = 128
-    title = holiday.groupdict()['title'].strip()
-    title_to_save = ''.join(i if ord(i) < valid_ascii_chars_range
-                            else '' for i in title)
-    date = holiday.groupdict()['date'].strip()
-    format_string = '%Y%m%d'
+    title = holiday.groupdict()["title"].strip()
+    title_to_save = "".join(
+        i if ord(i) < valid_ascii_chars_range else "" for i in title
+    )
+    date = holiday.groupdict()["date"].strip()
+    format_string = "%Y%m%d"
     holiday = Event(
         title=title_to_save,
         start=datetime.strptime(date, format_string),
         end=datetime.strptime(date, format_string) + timedelta(days=1),
-        content='holiday',
-        owner_id=owner_id
+        content="holiday",
+        owner_id=owner_id,
     )
     return holiday
 
@@ -55,10 +60,7 @@ def save_holidays_to_db(holidays: List[Event], session: Session):
     session.flush(holidays)
     userevents = []
     for holiday in holidays:
-        userevent = UserEvent(
-            user_id=holiday.owner_id,
-            event_id=holiday.id
-        )
+        userevent = UserEvent(user_id=holiday.owner_id, event_id=holiday.id)
         userevents.append(userevent)
     session.add_all(userevents)
     session.commit()

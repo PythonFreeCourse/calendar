@@ -1,5 +1,6 @@
 dev.db
 test.db
+.idea
 config.py
 
 # Byte-compiled / optimized / DLL files
@@ -161,3 +162,7 @@ app/routers/stam
 .idea
 
 junit/
+
+# .DS_Store
+.DS_Store
+DS_Store
