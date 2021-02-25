@@ -1,11 +1,11 @@
-{% extends "base.html" %}
+{% extends "partials/index/index_base.html" %}
 {% block content %}
     <div class="container">
-        <h3>Login</h3>
+        <h3 class="main-text-color">Login</h3>
         {% if message %}
             <div class="alert" style="color: red;">{{ message }}</div>
         {% endif %}
-        <form method="post">
+        <form method="post" class="main-text-color">
             <div class="row">
                 <label for="username" class="col-sm-2 col-form-label">Username</label>
                 <div class="col-auto">

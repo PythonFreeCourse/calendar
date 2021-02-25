@@ -1,3 +1,22 @@
+:root[data-color-mode="regular"] {
+  --backgroundcol: #F7F7F7;
+  --textcolor: #222831;
+  --start-of-month: #E9ECEf;
+  --primary-variant: #FFDE4D;
+  --secondary: #EF5454;
+  --borders: #E7E7E7;
+  --borders-variant: #F7F7F7;
+}
+
+:root[data-color-mode="dark"] {
+  --backgroundcol: #000000;
+  --textcolor: #EEEEEE;
+  --start-of-month: #8C28BF;
+  --secondary: #EF5454;
+  --borders: #E7E7E7;
+  --borders-variant: #F7F7F7;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -24,7 +43,7 @@ nav {
   position: sticky;
   display: flex;
   flex-direction: column;
-  top:var(--space_s);
+  top: var(--space_s);
 }
 
 .fixed-features,
@@ -37,6 +56,7 @@ nav {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background: var(--backgroundcol);
 }
 
 .user-features {
@@ -84,19 +104,21 @@ nav {
 }
 
 .settings-open {
-    width: 20rem;
+  width: 20rem;
 }
 
-img {fill: var(--background);}
+img {
+  fill: var(--background);
+}
 
 header {
   z-index: 5;
   position: sticky;
   top: 0;
   display: flex;
-  grid-flow: row wrap;
   margin: 0 var(--space_s);
-  background-color: var(--background);
+  margin: 0 1rem 0 1rem;
+  background-color: var(--backgroundcol);
 }
 
 header div {
@@ -135,7 +157,8 @@ main {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   margin: var(--space_s) var(--space_s) 0 var(--space_s);
-  background-color: var(--background);
+  margin: 1rem 1rem 0 1rem;
+  background-color: var(--backgroundcol);
   align-self: stretch;
 }
 
@@ -192,9 +215,13 @@ main {
   font-weight: 400;
 }
 
-.day:hover {border: 0.1rem solid var(--primary);}
+.day:hover {
+  border: 0.1rem solid var(--primary);
+}
 
-.day:hover .day-number{color: var(--negative);}
+.day:hover .day-number {
+  color: var(--negative);
+}
 
 .day:hover .add-small {
   display: block;
@@ -288,7 +315,7 @@ main {
   height: 1.5rem;
 }
 
-.month-event div{
+.month-event div {
   height: 1.5rem;
   width: 100%;
   transition: all 0.3s ease;
@@ -334,31 +361,59 @@ main {
 }
 
 /* Text Colors */
-.text-yellow {color: var(--secondary);}
+.text-yellow {
+  color: var(--secondary);
+}
 
-.text-gray {color: var(--on-surface);}
+.text-gray {
+  color: var(--on-surface);
+}
 
-.text-lightgray {color: var(--background);}
+.text-lightgray {
+  color: var(--background);
+}
 
-.text-darkblue {color: var(--primary);}
+.text-darkblue {
+  color: var(--primary);
+}
 
 /* Borders */
-.border-dash-darkblue {border: 0.125rem dashed  var(--primary);}
+.border-dash-darkblue {
+  border: 0.125rem dashed var(--primary);
+}
 
-.border-darkblue {border: 0.125rem solid  var(--primary);}
+.border-darkblue {
+  border: 0.125rem solid var(--primary);
+}
 
-.underline-yellow {border-bottom: 0.25rem solid  var(--secondary);}
+.underline-yellow {
+  border-bottom: 0.25rem solid var(--secondary);
+}
 
 /* Background Color */
-.background-darkblue {background-color: var(--primary-variant);}
+.background-darkblue {
+  background-color: var(--primary-variant);
+}
 
-.background-red {background-color: var(--negative);}
+.background-red {
+  background-color: var(--negative);
+}
 
-.background-lightgray {background-color: var(--surface);}
+.background-yellow {
+  background-color: var(--secondary);
+}
 
-.background-yellow {background-color: var(--secondary);}
+.background-green {
+  background-color: var(--positive);
+}
 
-.background-green {background-color: var(--positive);}
+.background-lightgray {
+  background-color: var(--start-of-month);
+}
+
+.background-green {
+  background-color: var(--bold_tertiary);
+}
 
 /* Buttons */
 
@@ -371,4 +426,13 @@ main {
 
 .button:hover {
   font-weight: 700;
+}
+
+.dates-calc {
+    background-color: #222831;
+    color: white;
+}
+
+#darkmode {
+  cursor: pointer;
 }
