@@ -62,6 +62,12 @@ def test_delete_quote(session, quotes_test_client, quote1):
     assert len(daily_quotes.get_quotes(session, 1)) == 0
 
 
+def test_quote_of_day(session, quotes_test_client, quote1):
+    assert not daily_quotes.is_quote_favorite(session, 1, quote1)
+    test_save_quote(session, quotes_test_client, quote1)
+    assert daily_quotes.is_quote_favorite(session, 1, quote1)
+
+
 def test_get_favorite_quotes(session, quotes_test_client, quote1):
     test_save_quote(session, quotes_test_client, quote1)
     response = quotes_test_client.get(url=FAVORITE_QUOTES_URL)

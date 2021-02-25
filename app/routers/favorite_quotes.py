@@ -48,7 +48,7 @@ async def delete_quote(
     db.commit()
 
 
-@router.get("/favorite_quotes")
+@router.get("/favorites")
 async def favorite_quotes(
     request: Request,
     db: Session = Depends(get_db),
