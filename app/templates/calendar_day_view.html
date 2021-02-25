@@ -25,13 +25,7 @@
         {% else %}
         <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
         {% endif %}
-    </div>
-    {% if international_day %}
-    <div class="international-days">
-        The International days are: "{{ international_day.international_day }}"
-    </div>
-    {% endif %}
-    {% if user_location %}
+     {% if user_location %}
     <div class="new-location">
         {{user_location}}
     </div>
@@ -41,6 +35,12 @@
         {{ gettext(" Candle lighting time:") }}<br>
        {{ gettext(" Shabbat entry: %(enter)s", enter=shabbat['start_hour']) }}<br>
        {{ gettext(" Shabbat exit: %(exit)s", exit=shabbat['end_hour']) }}
+    </div>
+    {% endif %}
+    </div>
+    {% if international_day %}
+    <div class="international-days">
+        The International days are: "{{ international_day.international_day }}"
     </div>
     {% endif %}
     <div class="all_day_events">

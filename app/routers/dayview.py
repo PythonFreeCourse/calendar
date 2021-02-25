@@ -177,12 +177,6 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
-    location_and_shabbat = locations.get_user_location(session)
-    user_location = location_and_shabbat['location']['title']
-    shabbat_obj = shabbat.get_shabbat_if_date_friday(
-        location_and_shabbat,
-        day.date()
-    )
     events_n_attrs = get_events_and_attributes(
         day=day,
         session=session,
@@ -194,6 +188,12 @@ async def dayview(
         user_id=user.id,
     )
     inter_day = international_days.get_international_day_per_day(session, day)
+    location_and_shabbat = locations.get_user_location(session)
+    user_location = location_and_shabbat['location']['title']
+    shabbat_obj = shabbat.get_shabbat_if_date_friday(
+        location_and_shabbat,
+        day.date()
+    )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
@@ -206,7 +206,7 @@ async def dayview(
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
-            "user_location": user_location,
+        #    "user_location": user_location,
             "shabbat": shabbat_obj,
         },
     )
