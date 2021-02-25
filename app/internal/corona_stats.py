@@ -10,7 +10,6 @@ from sqlalchemy import desc, func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.sql.sqltypes import JSON
 
 from app.database.models import CoronaStats
 from app.dependencies import get_db
@@ -36,8 +35,8 @@ user_agent_list = [
 headers = {"User-Agent": random.choice(user_agent_list)}
 
 
-def create_stats_object(corona_stats_data: JSON) -> CoronaStats:
-    """ JSON -> DB Object """
+def create_stats_object(corona_stats_data: Dict[str, Any]) -> CoronaStats:
+    """Dict -> DB Object"""
     return CoronaStats(
         date_=datetime.strptime(
             corona_stats_data.get("Day_Date"),
@@ -85,7 +84,7 @@ def serialize_dict_stats(stats_dict: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def save_corona_stats(
-    corona_stats_data: JSON,
+    corona_stats_data: Dict[str, Any],
     db: Session = Depends(get_db),
 ) -> None:
     db.add(create_stats_object(corona_stats_data))
@@ -93,9 +92,9 @@ def save_corona_stats(
 
 
 def insert_to_db_if_needed(
-    corona_stats_data: JSON,
+    corona_stats_data: Dict[str, Any],
     db: Session = Depends(get_db),
-):
+) -> Dict[str, Any]:
     """ gets the latest data inserted to gov database """
     latest_date = datetime.strptime(
         corona_stats_data.get("Day_Date"),
@@ -120,7 +119,7 @@ def insert_to_db_if_needed(
             return serialize_stats(latest_saved)
 
 
-async def get_vacinated_data() -> JSON:
+async def get_vacinated_data() -> Dict[str, Any]:
     async with httpx.AsyncClient() as client:
         res = await client.get(CORONA_API_URL, headers=headers)
         return json.loads(res.text)[-1]
