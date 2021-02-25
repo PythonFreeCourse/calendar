@@ -21,7 +21,9 @@ TRANSLATION_DATES = [
 ]
 
 
-@pytest.mark.parametrize("language_id, hebrew_date, language_code", TRANSLATION_DATES)
+@pytest.mark.parametrize(
+    "language_id, hebrew_date, language_code", TRANSLATION_DATES
+)
 def test_get_hebrew_date(language_id, hebrew_date, language_code):
     set_ui_language(language_code)
     result = get_hebrew_date_in_words(DAY, language_id)
