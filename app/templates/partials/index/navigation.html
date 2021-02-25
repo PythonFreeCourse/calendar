@@ -7,47 +7,47 @@
         <div class="collapse navbar-collapse" id="navbarText">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{{ url_for("home") }}">{{ gettext("Home") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{{ url_for('profile') }}">Profile</a>
+                    <a class="nav-link active" aria-current="page" href="{{ url_for("profile") }}">{{ gettext("Profile") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sign In</a>
+                    <a class="nav-link" href="#">{{ gettext("Sign in") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Sign Up</a>
+                    <a class="nav-link" href="#">{{ gettext("Sign up") }}</a>
                 </li>
                 <li class="nav-item">
                     <!-- new button for the agenda page. should be available after login
                     place will change later according to the web design -->
-                    <a class="nav-link" href="{{ url_for('agenda') }}">Agenda</a>
+                    <a class="nav-link" href="{{ url_for("agenda") }}">{{ gettext("Agenda") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('search') }}">Search</a>
+                    <a class="nav-link" href="{{ url_for("search") }}">{{ gettext("Search") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for( 'audio_settings') }}">Audio Settings</a>
+                    <a class="nav-link" href="{{ url_for( "audio_settings") }}">{{ gettext("Audio settings")}}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('get_categories') }}">Categories</a>
+                    <a class="nav-link" href="{{ url_for("get_categories") }}">{{ gettext("Categories") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('about') }}">{{ gettext("About Us") }}</a>
+                    <a class="nav-link" href="{{ url_for("about") }}">{{ gettext("About us") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('credits') }}">Credits</a>
+                    <a class="nav-link" href="{{ url_for("credits") }}">{{ gettext("Credits") }}</a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ url_for('view_notifications') }}">
+                  <a href="{{ url_for("view_notifications") }}">
                     <ion-icon name="notifications-outline"></ion-icon>
                   </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('salary_home') }}">Salary</a>
+                    <a class="nav-link" href="{{ url_for("salary_home") }}">{{ gettext("Salary") }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('medications') }}">Medication</a>
+                    <a class="nav-link" href="{{ url_for("medications") }}">{{ gettext("Medication") }}</a>
                 </li>
             </ul>
         </div>

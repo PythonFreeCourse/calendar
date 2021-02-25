@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-07 21:31+0000\n"
+"POT-Creation-Date: 2021-02-25 14:10+0200\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -18,115 +18,468 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: app/routers/profile.py:20
+#: app/internal/astronomy.py:11
+msgid "No response from server."
+msgstr ""
+
+#: app/routers/export.py:18
 msgid "Not found"
 msgstr ""
 
-#: app/templates/agenda.html:11
+#: app/routers/search.py:53
+msgid "Invalid request."
+msgstr ""
+
+#: app/routers/search.py:58
+msgid "No matching results for '{keywords}'."
+msgstr ""
+
+#: app/templates/agenda.html:14
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:9
 msgid "From"
 msgstr ""
 
-#: app/templates/agenda.html:13
-msgid "to"
+#: app/templates/agenda.html:18
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:11
+msgid "To"
 msgstr ""
 
-#: app/templates/agenda.html:15
+#: app/templates/agenda.html:22
 msgid "Get Agenda"
 msgstr ""
 
-#: app/templates/agenda.html:20
-msgid "Today"
-msgstr ""
-
-#: app/templates/agenda.html:23
-msgid "Next week"
-msgstr ""
-
-#: app/templates/agenda.html:26
-msgid "Next month"
+#: app/templates/agenda.html:28
+msgid "Filter events by category"
 msgstr ""
 
 #: app/templates/agenda.html:33
+msgid "Filter by categories"
+msgstr ""
+
+#: app/templates/agenda.html:39
+msgid "Today"
+msgstr ""
+
+#: app/templates/agenda.html:42
+msgid "Next 7 days"
+msgstr ""
+
+#: app/templates/agenda.html:45
+msgid "Next 30 days"
+msgstr ""
+
+#: app/templates/agenda.html:49
+msgid "Week graph"
+msgstr ""
+
+#: app/templates/agenda.html:61
 msgid "Start date is greater than end date"
 msgstr ""
 
-#: app/templates/agenda.html:35
+#: app/templates/agenda.html:63
 msgid "No events found..."
 msgstr ""
 
-#: app/templates/profile.html:50
-msgid "Update name"
+#: app/templates/agenda.html:77
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:111
+#: app/templates/partials/calendar/event/view_event_details_tab.html:22
+msgid "Busy"
 msgstr ""
 
-#: app/templates/profile.html:57 app/templates/profile.html:77
-#: app/templates/profile.html:97 app/templates/profile.html:120
-#: app/templates/profile.html:140
+#: app/templates/agenda.html:77
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:110
+#: app/templates/partials/calendar/event/view_event_details_tab.html:22
+msgid "Free"
+msgstr ""
+
+#: app/templates/agenda.html:80
+#, python-format
+msgid "duration: %(duration)s"
+msgstr ""
+
+#: app/templates/archive.html:2 app/templates/archive.html:5
+msgid "Archived notifications"
+msgstr ""
+
+#: app/templates/archive.html:13
+msgid "You don't have any archived notifications."
+msgstr ""
+
+#: app/templates/base.html:41
+msgid "Sign Out"
+msgstr ""
+
+#: app/templates/base.html:68
+msgid "About Us"
+msgstr ""
+
+#: app/templates/notifications.html:2
+msgid "Notifications"
+msgstr ""
+
+#: app/templates/notifications.html:5
+msgid "New notifications"
+msgstr ""
+
+#: app/templates/notifications.html:13
+msgid "Mark all as read"
+msgstr ""
+
+#: app/templates/notifications.html:23
+msgid "You don't have any new notifications."
+msgstr ""
+
+#: app/templates/on_this_day.html:2
+msgid "On this day"
+msgstr ""
+
+#: app/templates/on_this_day.html:11
+msgid "Explore more..."
+msgstr ""
+
+#: app/templates/partials/base.html:38
+msgid "Pylendar"
+msgstr ""
+
+#: app/templates/partials/calendar/event/comments_tab.html:2
+msgid "Write your comment here..."
+msgstr ""
+
+#: app/templates/partials/calendar/event/comments_tab.html:3
+msgid "Post comment"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:8
+msgid "Voice"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:12
+msgid "Volume"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:17
+msgid "Pitch"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:22
+msgid "Rate"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:29
+msgid "Start date:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:30
+msgid "Start date"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:31
+msgid "Start time:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:32
+msgid "Start time"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:36
+msgid "End date:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:37
+msgid "End date"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:38
+msgid "End time:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:39
+msgid "End time"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:43
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:44
+msgid "Location"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:54
+msgid "Title"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:59
+msgid "Item name"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:61
+msgid "Amount"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:63
+msgid "Participant"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:70
+msgid "Add an item"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:77
+msgid "Invited emails:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:78
+msgid "Invited emails, separated by commas"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:82
+msgid "Image:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:88
+msgid "Description:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:93
+msgid "Color:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:95
+msgid "Red"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:96
+msgid "Green"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:97
+msgid "Blue"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:102
+msgid "All-day:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:104
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:135
+msgid "Yes"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:105
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:136
+msgid "No"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:108
+msgid "Availability:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:114
+msgid "Privacy:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/edit_event_details_tab.html:133
+msgid "Google event:"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:61
+msgid "Choose user"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:75
+#: app/templates/partials/calendar/event/view_event_details_tab.html:82
+msgid "ICON"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:76
+#, python-format
+msgid "Shared list: %(title)s"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:84
+#, python-format
+msgid "Item %(index)s: %(name)s"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:85
+#, python-format
+msgid "Amount: %(amount)s"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:86
+#, python-format
+msgid "Participant: %(participant)s"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:94
+msgid "Duplicate"
+msgstr ""
+
+#: app/templates/partials/calendar/event/view_event_details_tab.html:95
+msgid "Edit"
+msgstr ""
+
+#: app/templates/partials/calendar/feature_settings/example.html:1
+msgid "Feature name"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:10
+msgid "Home"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:13
+msgid "Profile"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:16
+msgid "Sign in"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:19
+msgid "Sign up"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:24
+msgid "Agenda"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:27
+msgid "Search"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:30
+msgid "Audio settings"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:33
+msgid "Categories"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:36
+msgid "About us"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:39
+msgid "Credits"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:47
+msgid "Salary"
+msgstr ""
+
+#: app/templates/partials/index/navigation.html:50
+msgid "Medication"
+msgstr ""
+
+#: app/templates/partials/notification/generate_archive.html:7
+#: app/templates/partials/notification/generate_notifications.html:7
+#, python-format
+msgid "Invitation from %(user)s"
+msgstr ""
+
+#: app/templates/partials/user_profile/middle_content.html:6
+msgid "Upcoming events"
+msgstr ""
+
+#: app/templates/partials/user_profile/middle_content/event_card.html:3
+#, python-format
+msgid "Upcoming event on %(date)s"
+msgstr ""
+
+#: app/templates/partials/user_profile/middle_content/event_card.html:13
+#, python-format
+msgid "%(title)s details"
+msgstr ""
+
+#: app/templates/partials/user_profile/middle_content/update_event_modal.html:11
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/calendar_privacy_modal.html:16
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/description_modal.html:14
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/email_modal.html:14
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/name_modal.html:14
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/telegram_modal.html:15
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/upload_photo_modal.html:15
 msgid "Save changes"
 msgstr ""
 
-#: app/templates/profile.html:70
-msgid "Update email"
+#: app/templates/partials/user_profile/sidebar_left/features_card.html:5
+msgid "Explore more features"
 msgstr ""
 
-#: app/templates/profile.html:90
+#: app/templates/partials/user_profile/sidebar_left/features_card.html:13
+msgid "Try PyLendar bot"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/features_card.html:20
+msgid "Add holidays to calendar"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/features_card.html:25
+msgid "Sync with Google"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:4
+msgid "Export my calendar"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:13
+msgid "Export"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/profile_update_menu.html:11
+msgid "Update full name"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/profile_update_menu.html:17
+msgid "Update email address"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/profile_update_menu.html:23
+msgid "Update profile photo"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/profile_update_menu.html:29
+msgid "Update profile status"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/profile_update_menu.html:35
+msgid "Register telegram ID"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/profile_update_menu.html:41
+msgid "Update calendar privacy"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/user_details.html:7
+msgid "Settings"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/calendar_privacy_modal.html:6
+msgid "Set your calendar privacy"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/description_modal.html:6
 msgid "Update description"
 msgstr ""
 
-#: app/templates/profile.html:111
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/email_modal.html:6
+msgid "Update email"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/name_modal.html:6
+msgid "Update name"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/upload_photo_modal.html:6
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:220
-msgid "Upcoming event on (date)"
-msgstr ""
-
-#: app/templates/profile.html:246
-msgid "The Event (event)"
-msgstr ""
-
-#: app/templates/profile.html:249
-msgid "Last updated (time) ago"
-msgstr ""
-
-#: app/templates/profile.html:285
+#: app/templates/partials/user_profile/sidebar_right/meetups.html:4
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:293
-msgid "Your Card"
+#: app/templates/partials/user_profile/sidebar_right/new_card.html:4
+msgid "Your card"
 msgstr ""
 
 #. i18n: String used in testing. Do not change.
 #: tests/test_language.py:32
 msgid "test python translation"
 msgstr "בדיקת תרגום בפייתון"
-
-#~ msgid "Features"
-#~ msgstr ""
-
-#~ msgid "Export my calendar"
-#~ msgstr ""
-
-#~ msgid "Settings"
-#~ msgstr ""
-
-#~ msgid "Your feature"
-#~ msgstr ""
-
-#~ msgid "Calendar"
-#~ msgstr ""
-
-#~ msgid "Home"
-#~ msgstr ""
-
-#~ msgid "Profile"
-#~ msgstr "פרופיל"
-
-#~ msgid "Sign in"
-#~ msgstr ""
-
-#~ msgid "Sign up"
-#~ msgstr ""
-
-#~ msgid "Agenda"
-#~ msgstr ""

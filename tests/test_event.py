@@ -677,7 +677,7 @@ def test_delete_comment(
     }
     response = event_test_client.post(path, data=data, allow_redirects=True)
     assert response.ok
-    assert "Post Comment" in response.text
+    assert "Post comment" in response.text
     assert session.query(Comment).first() is None
 
 

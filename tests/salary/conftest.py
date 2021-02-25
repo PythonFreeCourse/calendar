@@ -10,12 +10,12 @@ from app.routers.salary.routes import router
 from tests.conftest import get_test_db, test_engine
 
 MESSAGES = {
-    "create_settings": "Already created your settings?",
-    "pick_settings": "Edit Settings",
-    "edit_settings": "Settings don't need editing?",
-    "pick_category": "View Salary",
-    "view_salary": "Need to alter your settings?",
-    "salary_calc": "Total Salary:",
+    "create_settings": "Setting created?",
+    "pick_settings": "Edit settings",
+    "edit_settings": "View your salary",
+    "pick_category": "View salary",
+    "view_salary": "Edit settings",
+    "salary_calc": "Total salary:",
 }
 
 ROUTES = {

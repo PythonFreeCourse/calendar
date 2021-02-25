@@ -1,38 +1,24 @@
 {% extends "./partials/notification/base.html" %}
-{% block page_name %}Notifications{% endblock page_name %}
+{% block page_name %}{{ gettext("Notifications") }}{% endblock page_name %}
 
 {% block description %}
-    <div>
-        <div class="title">New Notifications</div>
-        <p class="s-paragraph">
-            In this page you can view all of your new notifications.<br/>
-            use the <button class="notification-btn btn-read"><ion-icon class="icon" name="eye-outline"></ion-icon></button>
-            button to mark as read
-            and the <button class="notification-btn btn-accept"><ion-icon class="icon" name="checkmark-outline"></ion-icon></button>
-            and <button class="notification-btn btn-decline"><ion-icon class="icon" name="close-outline"></ion-icon></button>
-            to accept and decline.
-        </p>
-    </div>
+  <div class="title">{{ gettext("New notifications") }}</div>
 {% endblock description %}
 
-{% block link %}
-    <div id="link"><a href="{{ url_for('view_archive') }}">Historical notifications</a></div>
-{% endblock link %}
-
 {% block optional %}
-    <form action="{{ url_for('mark_all_as_read') }}" method="post">
+    <form action="{{ url_for("mark_all_as_read") }}" method="post">
         <input type="hidden" name="next_url" value="/notification">
         <button type="submit" class="btn btn-light btn-outline-primary btn-sm"
         {% if not new_messages %}disabled{% endif %} id="mark-all-as-read">
-            Mark all as read
+          {{ gettext("Mark all as read") }}
         </button>
     </form>
 {% endblock optional %}
 
 {% block notifications %}
-    {% include './partials/notification/generate_notifications.html' %}
+    {% include "./partials/notification/generate_notifications.html" %}
 {% endblock notifications %}
 
 {% block no_notifications_msg %}
-    <span>You don't have any new notifications.</span>
+    <span>{{ gettext("You don't have any new notifications.") }}</span>
 {% endblock no_notifications_msg %}

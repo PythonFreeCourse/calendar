@@ -12,7 +12,7 @@
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <link href="{{ url_for('static', path='/global.css') }}" rel="stylesheet">
+    <link href="{{ url_for("static", path="/global.css") }}" rel="stylesheet">
 
     <!-- Icons -->
     <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
@@ -27,15 +27,15 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"
             integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
             crossorigin="anonymous"></script>
-    <script defer type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
+    <script defer type="text/javascript" src="{{ url_for("static", path="/popover.js") }}"></script>
 
     <!-- Audio -->
     <audio id="my-audio" muted="true"></audio>
     <audio id="sfx" muted="true"></audio>
-    
+
   {% endblock head %}
   {% block title %}
-    <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
+    <title>{{ gettext("Pylendar") }}{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
   {% endblock %}
 </head>
 <body>

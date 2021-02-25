@@ -7,15 +7,12 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm.session import Session
 
 from app.database.models import Event, User
-from app.dependencies import TEMPLATES_PATH, get_db
+from app.dependencies import get_db, templates
 from app.routers.dayview import (
     DivAttributes,
     dayview,
     get_events_and_attributes,
 )
-
-templates = Jinja2Templates(directory=TEMPLATES_PATH)
-
 
 router = APIRouter()
 

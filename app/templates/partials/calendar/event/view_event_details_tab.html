@@ -9,7 +9,7 @@
 </div>
 
 <div class="event-image-container">
-  <img class="event-image" src="{{ '' if not event.image else url_for('media', path=event.image) }}">
+  <img class="event-image" src="{{ '' if not event.image else url_for("media", path=event.image) }}">
 </div>
 
 <div class="event-info-row">
@@ -19,7 +19,7 @@
         <time datetime="{{ event.end }}">{{ event.end.strftime(end_format) }}</time>
     {% endif %}
     <div>
-        {{ 'Free' if event.availability else 'Busy' }}
+        {{ gettext("Free") if event.availability else gettext("Busy") }}
     </div>
 </div>
 
@@ -30,7 +30,7 @@
 
 {% if event.location %}
 <div class="event-info-row">
-  <span class="icon"><a href="{{ waze_link }}" target="_blank"><img src="{{ url_for('static', path='images/icons/waze.svg') }}" alt="icon wase" width="30" height="30"></a></span>
+  <span class="icon"><a href="{{ waze_link }}" target="_blank"><img src="{{ url_for("static", path="images/icons/waze.svg") }}" alt="icon wase" width="30" height="30"></a></span>
   <address>{{ event.location }}</address>
 </div>
 {% endif %}
@@ -56,11 +56,11 @@
 {% endif %}
 
 {% if event.invitees %}
-<form method="POST" action="/event/{{event.id}}/owner">
+<form method="post" action="/event/{{event.id}}/owner">
   <div class="mb-3"></div>
-  <label for="username">{{ gettext('Choose user') }}</label>
+  <label for="username">{{ gettext("Choose user") }}</label>
   <select id="username" name="username">
-    {% for username in event.invitees.split(',') %}
+    {% for username in event.invitees.split(",") %}
     <option value="{{username}}">{{username}}</option>
     {% endfor %}
   </select>
@@ -72,18 +72,18 @@
 </p>
 
 <div class="event-info-row">
-  <span class="icon">ICON</span>
-  <p>Shared list: {{ event.shared_list.title }}</p>
+  <span class="icon">{{ gettext("ICON") }}</span>
+  <p>{{ gettext("Shared list: %(title)s", title=event.shared_list.title) }}</p>
 </div>
 
 {% if event.shared_list is not none %}
   <div class="event-info-row">
     {% for item in event.shared_list.items %}
-      <span class="icon">ICON</span>
+      <span class="icon">{{ gettext("ICON") }}</span>
       <div class="list_item">
-        <p>Item {{ loop.index }}: {{ item.name }}</p>
-        <p>Amount: {{ item.amount }}</p>
-        <p>Participant: {{ item.participant }}</p>
+        <p>{{ gettext("Item %(index)s: %(name)s", index=loop.index, name=item.name) }}</p>
+        <p>{{ gettext("Amount: %(amount)s", amount=item.amount) }}</p>
+        <p>{{ gettext("Participant: %(participant)s", participant=item.participant) }}</p>
       </div>
     {% endfor %}
   </div>
@@ -91,6 +91,6 @@
 
 <div class="event-info-buttons-row event-info-row-end">
     <!-- Buttons could and should be replaced with button-like anchors if need so -->
-    <button type="button">Duplicate</button>
-    <button type="button">Edit</button>
+    <button type="button">{{ gettext("Duplicate") }}</button>
+    <button type="button">{{ gettext("Edit") }}</button>
 </div>
