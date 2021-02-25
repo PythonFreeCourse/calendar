@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-25 15:01+0200\n"
+"POT-Creation-Date: 2021-02-25 15:34+0200\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -399,6 +399,10 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
+#: app/templates/partials/user_profile/sidebar_left/daily_horoscope.html:5
+msgid "Daily horoscope"
+msgstr ""
+
 #: app/templates/partials/user_profile/sidebar_left/features_card.html:5
 msgid "Explore more features"
 msgstr ""
@@ -448,7 +452,6 @@ msgid "Update calendar privacy"
 msgstr ""
 
 #: app/templates/partials/user_profile/sidebar_left/profile_card/user_details.html:7
-#: app/templates/salary/month.j2:35
 msgid "Settings"
 msgstr ""
 
@@ -504,8 +507,8 @@ msgstr ""
 msgid "Calculate salary"
 msgstr ""
 
-#: app/templates/salary/pick.j2:7 app/templates/salary/pick.j2:24
-#: app/templates/salary/view.j2:41
+#: app/templates/salary/month.j2:35 app/templates/salary/pick.j2:7
+#: app/templates/salary/pick.j2:24 app/templates/salary/view.j2:41
 msgid "Edit settings"
 msgstr ""
 
