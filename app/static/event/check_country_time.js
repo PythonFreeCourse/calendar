@@ -31,7 +31,7 @@ function getEndTime() {
     return end_time;
 }
 
-function showErrorMsg(content) {
+function displayErrorMsg(content) {
     error_msg.classList.remove('empty-fields-error-disappear');
     error_msg.innerText = content;
     setTimeout(() => error_msg.classList.add('empty-fields-error-disappear'), ERROR_TIME_DURATION);
@@ -53,19 +53,19 @@ open_modal.addEventListener('click', (event) => {
     event.preventDefault();
     modal_container.classList.add('modal-active');
     if (getStartDate() === '' || getStartTime() === '') {
-        showErrorMsg(TIME_NOT_FILLED);
+        displayErrorMsg(TIME_NOT_FILLED);
     }
 });
 
 submit_country.addEventListener('click', (event) => {
     event.preventDefault();
     if (getStartDate() === '' || getStartTime() === '') {
-        showErrorMsg(TIME_NOT_FILLED);
+        displayErrorMsg(TIME_NOT_FILLED);
         return;
     }
     const chosen_country = document.getElementById('countries-datalist').value;
     if (chosen_country === '') {
-        showErrorMsg(COUNTRY_NOT_FILLED);
+        displayErrorMsg(COUNTRY_NOT_FILLED);
         return;
     }
     fetch(`/event/timezone/country/${chosen_country}`)
