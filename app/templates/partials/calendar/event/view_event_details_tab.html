@@ -7,6 +7,11 @@
         <!--        <span class="icon">PRIVACY</span>-->
     </div>
 </div>
+
+<div class="event-image-container">
+  <img class="event-image" src="{{ '' if not event.image else url_for('media', path=event.image) }}">
+</div>
+
 <div class="event-info-row">
     <span class="icon">ICON</span>
     <time datetime="{{ event.start }}">{{ event.start.strftime(start_format )}}</time>
