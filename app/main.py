@@ -18,8 +18,10 @@ from app.dependencies import (
     get_db,
     logger,
     templates,
+    SessionLocal,
 )
 from app.internal import daily_quotes, json_data_loader
+import app.internal.features as internal_features
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
