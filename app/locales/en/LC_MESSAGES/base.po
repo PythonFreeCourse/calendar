@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-25 14:10+0200\n"
+"POT-Creation-Date: 2021-02-25 15:01+0200\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -448,6 +448,7 @@ msgid "Update calendar privacy"
 msgstr ""
 
 #: app/templates/partials/user_profile/sidebar_left/profile_card/user_details.html:7
+#: app/templates/salary/month.j2:35
 msgid "Settings"
 msgstr ""
 
@@ -477,6 +478,172 @@ msgstr ""
 
 #: app/templates/partials/user_profile/sidebar_right/new_card.html:4
 msgid "Your card"
+msgstr ""
+
+#: app/templates/salary/month.j2:7
+msgid "Monthly salary"
+msgstr ""
+
+#: app/templates/salary/month.j2:12
+msgid "Pick month:"
+msgstr ""
+
+#: app/templates/salary/month.j2:17 app/templates/salary/view.j2:25
+msgid "Bonus:"
+msgstr ""
+
+#: app/templates/salary/month.j2:22 app/templates/salary/view.j2:30
+msgid "Deduction:"
+msgstr ""
+
+#: app/templates/salary/month.j2:28
+msgid "Include weekly overtime"
+msgstr ""
+
+#: app/templates/salary/month.j2:31
+msgid "Calculate salary"
+msgstr ""
+
+#: app/templates/salary/pick.j2:7 app/templates/salary/pick.j2:24
+#: app/templates/salary/view.j2:41
+msgid "Edit settings"
+msgstr ""
+
+#: app/templates/salary/pick.j2:9 app/templates/salary/pick.j2:26
+msgid "View salary"
+msgstr ""
+
+#: app/templates/salary/pick.j2:15 app/templates/salary/settings.j2:20
+msgid "Please choose a category"
+msgstr ""
+
+#: app/templates/salary/pick.j2:32
+msgid "Create settings for a different category"
+msgstr ""
+
+#: app/templates/salary/settings.j2:8
+#, python-format
+msgid "%(category)s salary settings"
+msgstr ""
+
+#: app/templates/salary/settings.j2:10
+msgid "New salary settings"
+msgstr ""
+
+#: app/templates/salary/settings.j2:28
+msgid "Create a new category"
+msgstr ""
+
+#: app/templates/salary/settings.j2:33
+msgid "Hourly wage"
+msgstr ""
+
+#: app/templates/salary/settings.j2:38
+msgid "Day off"
+msgstr ""
+
+#: app/templates/salary/settings.j2:40
+msgid "Friday"
+msgstr ""
+
+#: app/templates/salary/settings.j2:41
+msgid "Saturday"
+msgstr ""
+
+#: app/templates/salary/settings.j2:42
+msgid "Sunday"
+msgstr ""
+
+#: app/templates/salary/settings.j2:47
+msgid "Holiday category:"
+msgstr ""
+
+#: app/templates/salary/settings.j2:56
+msgid "Regular hour basis"
+msgstr ""
+
+#: app/templates/salary/settings.j2:61
+msgid "Night hour basis"
+msgstr ""
+
+#: app/templates/salary/settings.j2:66
+msgid "Night shift start"
+msgstr ""
+
+#: app/templates/salary/settings.j2:71
+msgid "Night shift end"
+msgstr ""
+
+#: app/templates/salary/settings.j2:76
+msgid "Night shift minimum length"
+msgstr ""
+
+#: app/templates/salary/settings.j2:81
+msgid "First overtime amount"
+msgstr ""
+
+#: app/templates/salary/settings.j2:86
+msgid "First overtime pay"
+msgstr ""
+
+#: app/templates/salary/settings.j2:91
+msgid "second overtime pay"
+msgstr ""
+
+#: app/templates/salary/settings.j2:96
+msgid "Week working hour"
+msgstr ""
+
+#: app/templates/salary/settings.j2:101
+msgid "Daily transport"
+msgstr ""
+
+#: app/templates/salary/settings.j2:107
+msgid "Create salary settings"
+msgstr ""
+
+#: app/templates/salary/settings.j2:109
+msgid "Update salary settings"
+msgstr ""
+
+#: app/templates/salary/settings.j2:116 app/templates/salary/settings.j2:118
+msgid "View your salary"
+msgstr ""
+
+#: app/templates/salary/settings.j2:118
+msgid "Setting created?"
+msgstr ""
+
+#: app/templates/salary/settings.j2:118
+msgid "or"
+msgstr ""
+
+#: app/templates/salary/settings.j2:118
+msgid "Edit your salary"
+msgstr ""
+
+#: app/templates/salary/view.j2:13
+msgid "Hourly wage:"
+msgstr ""
+
+#: app/templates/salary/view.j2:14
+msgid "Number of shifts:"
+msgstr ""
+
+#: app/templates/salary/view.j2:15
+msgid "Base salary:"
+msgstr ""
+
+#: app/templates/salary/view.j2:19
+msgid ">Weekly overtime total:"
+msgstr ""
+
+#: app/templates/salary/view.j2:22
+msgid "Transport:"
+msgstr ""
+
+#: app/templates/salary/view.j2:35
+msgid "Total salary:"
 msgstr ""
 
 #. i18n: String used in testing. Do not change.
