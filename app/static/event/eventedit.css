@@ -65,3 +65,11 @@ textarea,
 input[type="submit"] {
   width: 100%;
 }
+
+.shared-list-item-off {
+  display: none;
+}
+
+.shared-list-item-on {
+  display: flex;
+}

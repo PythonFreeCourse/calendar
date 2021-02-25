@@ -6,8 +6,7 @@ from starlette.testclient import TestClient
 
 from app.database.models import Event
 from app.routers import meds
-from tests.meds.test_internal import create_test_form, WEB_FORM
-
+from tests.meds.test_internal import WEB_FORM, create_test_form
 
 PYLENDAR = [
     (WEB_FORM, True),
