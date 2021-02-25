@@ -1,34 +1,35 @@
 from __future__ import annotations
 
+import enum
 from datetime import datetime
 from typing import Any, Dict
 
-
 from sqlalchemy import (
+    DDL,
+    JSON,
     Boolean,
     Column,
     DateTime,
-    DDL,
-    event,
+    Enum,
     Float,
     ForeignKey,
     Index,
     Integer,
-    JSON,
     String,
     Time,
     UniqueConstraint,
+    event,
 )
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.ext.declarative.api import declarative_base, DeclarativeMeta
-from sqlalchemy.orm import relationship, Session
+from sqlalchemy.ext.declarative.api import DeclarativeMeta, declarative_base
+from sqlalchemy.orm import Session, relationship
 from sqlalchemy.sql.schema import CheckConstraint
 
+import app.routers.salary.config as SalaryConfig
 from app.config import PSQL_ENVIRONMENT
 from app.dependencies import logger
 from app.internal.privacy import PrivacyKinds
-import app.routers.salary.config as SalaryConfig
 
 Base: DeclarativeMeta = declarative_base()
 
@@ -102,6 +103,7 @@ class Event(Base):
     invitees = Column(String)
     privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
+    image = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
@@ -112,6 +114,11 @@ class Event(Base):
         "UserEvent",
         cascade="all, delete",
         back_populates="events",
+    )
+    shared_list = relationship(
+        "SharedList",
+        uselist=False,
+        back_populates="event",
     )
     comments = relationship("Comment", back_populates="event")
 
@@ -204,20 +211,80 @@ if PSQL_ENVIRONMENT:
     )
 
 
+class InvitationStatusEnum(enum.Enum):
+    UNREAD = 0
+    ACCEPTED = 1
+    DECLINED = 2
+
+
+class MessageStatusEnum(enum.Enum):
+    UNREAD = 0
+    READ = 1
+
+
 class Invitation(Base):
     __tablename__ = "invitations"
 
     id = Column(Integer, primary_key=True, index=True)
-    status = Column(String, nullable=False, default="unread")
+    creation = Column(DateTime, default=datetime.now, nullable=False)
+    status = Column(
+        Enum(InvitationStatusEnum),
+        default=InvitationStatusEnum.UNREAD,
+        nullable=False,
+    )
+
     recipient_id = Column(Integer, ForeignKey("users.id"))
     event_id = Column(Integer, ForeignKey("events.id"))
-    creation = Column(DateTime, default=datetime.now)
-
     recipient = relationship("User")
     event = relationship("Event")
 
+    def decline(self, session: Session) -> None:
+        """declines the invitation."""
+        self.status = InvitationStatusEnum.DECLINED
+        session.merge(self)
+        session.commit()
+
+    def accept(self, session: Session) -> None:
+        """Accepts the invitation by creating an
+        UserEvent association that represents
+        participantship at the event."""
+
+        association = UserEvent(
+            user_id=self.recipient.id,
+            event_id=self.event.id,
+        )
+        self.status = InvitationStatusEnum.ACCEPTED
+        session.merge(self)
+        session.add(association)
+        session.commit()
+
     def __repr__(self):
-        return f"<Invitation " f"({self.event.owner}" f"to {self.recipient})>"
+        return f"<Invitation ({self.event.owner} to {self.recipient})>"
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    body = Column(String, nullable=False)
+    link = Column(String)
+    creation = Column(DateTime, default=datetime.now, nullable=False)
+    status = Column(
+        Enum(MessageStatusEnum),
+        default=MessageStatusEnum.UNREAD,
+        nullable=False,
+    )
+
+    recipient_id = Column(Integer, ForeignKey("users.id"))
+    recipient = relationship("User")
+
+    def mark_as_read(self, session):
+        self.status = MessageStatusEnum.READ
+        session.merge(self)
+        session.commit()
+
+    def __repr__(self):
+        return f"<Message {self.id}>"
 
 
 class UserSettings(Base):
@@ -432,6 +499,41 @@ class Zodiac(Base):
         )
 
 
+class SharedListItem(Base):
+    __tablename__ = "shared_list_item"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    participant = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    shared_list_id = Column(Integer, ForeignKey("shared_list.id"))
+
+    shared_list = relationship("SharedList", back_populates="items")
+
+    def __repr__(self):
+        return (
+            f"<Item {self.id}: {self.name} "
+            f"Amount: {self.amount} "
+            f"Participant: {self.participant} "
+            f"Notes: {self.notes})>"
+        )
+
+
+class SharedList(Base):
+    __tablename__ = "shared_list"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey("events.id"))
+    title = Column(String, nullable=True)
+
+    items = relationship("SharedListItem", back_populates="shared_list")
+    event = relationship("Event", back_populates="shared_list")
+
+    def __repr__(self):
+        return f"<Shared list {self.id}: " f"Items: {self.items}>"
+
+
 class Joke(Base):
     __tablename__ = "jokes"
 
@@ -450,9 +552,11 @@ class InternationalDays(Base):
 
 # insert language data
 
-# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
-# https://stackoverflow.com/questions/17461251
+
 def insert_data(target, session: Session, **kw):
+    """insert language data
+    Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+    https://stackoverflow.com/questions/17461251"""
     session.execute(
         target.insert(),
         {"id": 1, "name": "English"},

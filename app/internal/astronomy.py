@@ -1,5 +1,5 @@
-from datetime import datetime
 import functools
+from datetime import datetime
 from typing import Any, Dict
 
 import httpx
@@ -12,7 +12,8 @@ NO_API_RESPONSE = _("No response from server.")
 
 
 async def get_astronomical_data(
-        date: datetime, location: str
+    date: datetime,
+    location: str,
 ) -> Dict[str, Any]:
     """Returns astronomical data (sun and moon) for date and location.
 
@@ -30,13 +31,14 @@ async def get_astronomical_data(
                 sunrise, sunset, moonrise, moonset, moon_phase, and
                 moon_illumination.
     """
-    formatted_date = date.strftime('%Y-%m-%d')
+    formatted_date = date.strftime("%Y-%m-%d")
     return await _get_astronomical_data_from_api(formatted_date, location)
 
 
 @functools.lru_cache(maxsize=128)
 async def _get_astronomical_data_from_api(
-        date: str, location: str
+    date: str,
+    location: str,
 ) -> Dict[str, Any]:
     """Returns astronomical_data from a Weather API call.
 
@@ -48,16 +50,18 @@ async def _get_astronomical_data_from_api(
         A dictionary with the results from the API call.
     """
     input_query_string = {
-        'key': config.ASTRONOMY_API_KEY,
-        'q': location,
-        'dt': date,
+        "key": config.ASTRONOMY_API_KEY,
+        "q": location,
+        "dt": date,
     }
 
     output: Dict[str, Any] = {}
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                ASTRONOMY_URL, params=input_query_string)
+                ASTRONOMY_URL,
+                params=input_query_string,
+            )
     except httpx.HTTPError:
         output["success"] = False
         output["error"] = NO_API_RESPONSE
@@ -70,9 +74,9 @@ async def _get_astronomical_data_from_api(
 
     output["success"] = True
     try:
-        output.update(response.json()['location'])
+        output.update(response.json()["location"])
         return output
     except KeyError:
         output["success"] = False
-        output["error"] = response.json()['error']['message']
+        output["error"] = response.json()["error"]["message"]
         return output

@@ -1,10 +1,10 @@
-from datetime import date, datetime
 import json
+from datetime import date, datetime
 from typing import Any, Dict
 
+import requests
 from fastapi import Depends
 from loguru import logger
-import requests
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
