@@ -1,21 +1,32 @@
+import io
 import json
 import urllib
 from datetime import datetime as dt
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request
+from PIL import Image
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.sql.elements import Null
 from starlette import status
+from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
-from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import get_db, logger, templates
+from app.config import PICTURE_EXTENSION
+from app.database.models import (
+    Comment,
+    Event,
+    SharedList,
+    SharedListItem,
+    User,
+    UserEvent,
+)
+from app.dependencies import UPLOAD_PATH, get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.event import (
@@ -29,6 +40,7 @@ from app.internal.privacy import PrivacyKinds
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
+IMAGE_HEIGHT = 200
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
@@ -52,6 +64,12 @@ router = APIRouter(
     tags=["event"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class SharedItem(NamedTuple):
+    name: str
+    amount: float
+    participant: str
 
 
 class EventModel(BaseModel):
@@ -105,6 +123,7 @@ async def eventedit(
 @router.post("/edit", include_in_schema=False)
 async def create_new_event(
     request: Request,
+    event_img: bytes = File(None),
     session=Depends(get_db),
 ) -> Response:
     data = await request.form()
@@ -134,6 +153,7 @@ async def create_new_event(
         title,
         invited_emails,
     )
+    shared_list = extract_shared_list_from_data(event_info=data, db=session)
     latitude, longitude = None, None
 
     if vc_link:
@@ -161,8 +181,14 @@ async def create_new_event(
         category_id=category_id,
         availability=availability,
         is_google_event=is_google_event,
+        shared_list=shared_list,
         privacy=privacy,
     )
+
+    if event_img:
+        image = process_image(event_img, event.id)
+        event.image = image
+        session.commit()
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
@@ -170,6 +196,31 @@ async def create_new_event(
         + f'?messages={"---".join(messages)}',
         status_code=status.HTTP_302_FOUND,
     )
+
+
+def process_image(
+    img: bytes,
+    event_id: int,
+    img_height: int = IMAGE_HEIGHT,
+) -> str:
+    """Resized and saves picture without exif (to avoid malicious date))
+    according to required height and keep aspect ratio"""
+    try:
+        image = Image.open(io.BytesIO(img))
+    except IOError:
+        error_message = "The uploaded file is not a valid image"
+        logger.exception(error_message)
+        return
+    width, height = image.size
+    height_to_req_height = img_height / float(height)
+    new_width = int(float(width) * float(height_to_req_height))
+    resized = image.resize((new_width, img_height), Image.ANTIALIAS)
+    file_name = f"{event_id}{PICTURE_EXTENSION}"
+    image_data = list(resized.getdata())
+    image_without_exif = Image.new(resized.mode, resized.size)
+    image_without_exif.putdata(image_data)
+    image_without_exif.save(f"{UPLOAD_PATH}/{file_name}")
+    return file_name
 
 
 def get_waze_link(event: Event) -> str:
@@ -429,7 +480,9 @@ def create_event(
     category_id: Optional[int] = None,
     availability: bool = True,
     is_google_event: bool = False,
+    shared_list: Optional[SharedList] = None,
     privacy: str = PrivacyKinds.Public.name,
+    image: Optional[str] = None,
 ):
     """Creates an event and an association."""
 
@@ -453,8 +506,10 @@ def create_event(
         invitees=invitees_concatenated,
         all_day=all_day,
         category_id=category_id,
+        shared_list=shared_list,
         availability=availability,
         is_google_event=is_google_event,
+        image=image,
     )
     create_model(db, UserEvent, user_id=owner_id, event_id=event.id)
     return event
@@ -549,6 +604,60 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+def extract_shared_list_from_data(
+    event_info: ImmutableMultiDict,
+    db: Session,
+) -> Optional[SharedList]:
+    """Extract shared list items from POST data.
+    Return:
+        SharedList: SharedList object stored in the database.
+    """
+    raw_items = zip(
+        event_info.getlist("item-name"),
+        event_info.getlist("item-amount"),
+        event_info.getlist("item-participant"),
+    )
+    items = []
+    title = event_info.get("shared-list-title")
+    for name, amount, participant in raw_items:
+        item = SharedItem(name, amount, participant)
+        if _check_item_is_valid(item):
+            item_dict = item._asdict()
+            item_dict["amount"] = float(item_dict["amount"])
+            items.append(item_dict)
+    return _create_shared_list({title: items}, db)
+
+
+def _check_item_is_valid(item: SharedItem) -> bool:
+    return (
+        item is not None
+        and item.amount.isnumeric()
+        and item.participant is not None
+    )
+
+
+def _create_shared_list(
+    raw_shared_list: Dict[str, Dict[str, Any]],
+    db: Session,
+) -> Optional[SharedList]:
+    try:
+        title = list(raw_shared_list.keys())[0] or "Shared List"
+    except IndexError as e:
+        logger.exception(e)
+        return None
+    shared_list = create_model(db, SharedList, title=title)
+    try:
+        items = list(raw_shared_list.values())[0]
+        for item in items:
+            item = create_model(db, SharedListItem, **item)
+            shared_list.items.append(item)
+    except (IndexError, KeyError) as e:
+        logger.exception(e)
+        return None
+    else:
+        return shared_list
 
 
 def get_template_to_share_event(
