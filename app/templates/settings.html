@@ -34,19 +34,19 @@
             <div class="left-options-bar">
               <div class="settings-options">
                 <ul id="options">
-                  <li class="tab"><a id="tab0" class="active">
+                  <li class="tab"><a id="tab0" href="#" class="active">
                     Language and region
                   </a></li>
-                  <li class="tab"><a id="tab1">
+                  <li class="tab"><a id="tab1" href="#">
                     Audio settings
                   </a></li>
-                  <li class="tab"><a id="tab2">
+                  <li class="tab"><a id="tab2" href="#">
                     View options
                   </a></li>
-                  <li class="tab"><a id="tab3">
+                  <li class="tab"><a id="tab3" href="#">
                     Keyboard shortcuts
                   </a></li>
-                  <li class="tab"><a id="tab4">
+                  <li class="tab"><a id="tab4" href="#">
                     Event settings
                   </a></li>
                 </ul>
@@ -59,24 +59,24 @@
           <!-- Language and region -->
           <article id="tab0-content" class="tab-show">
             <h2>Language and region</h2>
-            <p>Language</p>
-            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+            <label for="form1" class="form-label">Language:</label>
+            <select class="form-select form-select-sm" id="form1">
               <option value="1">English (US)</option>
               <option value="2">Hebrew</option>
             </select>
-            <p>Country</p>
-            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+            <label for="form2" class="form-label">Country:</label>
+            <select class="form-select form-select-sm" id="from2">
               <option value="1">Israel</option>
               <option value="2">United States</option>
             </select>
-            <p>Date format</p>
-            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+            <label for="form3" class="form-label">Date format:</label>
+            <select class="form-select form-select-sm" id="from3">
               <option value="1">DD/MM/YYYY</option>
               <option value="2">MM/DD/YYYY</option>
               <option value="3">YYYY/MM/DD</option>
             </select>
-            <p>Time format</p>
-            <select class="form-select form-select-sm" id="select-form-settings" aria-label=".form-select-sm example">
+            <label for="form4" class="form-label">Time format:</label>
+            <select class="form-select form-select-sm" id="form4">
               <option value="1">24H</option>
               <option value="2">12H</option>
             </select>
@@ -85,12 +85,12 @@
           <article id="tab1-content" class="tab-hide">
             <h2>Audio settings</h2>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Music</label>
+              <input class="form-check-input" type="checkbox" id="switch1">
+              <label class="form-check-label" for="switch1">Music</label>
             </div>
             <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-              <label class="form-check-label" for="flexSwitchCheckChecked">Sound Effects</label>
+              <input class="form-check-input" type="checkbox" id="switch2" checked>
+              <label class="form-check-label" for="switch2">Sound Effects</label>
             </div>
           </article>
           <!-- View options -->
