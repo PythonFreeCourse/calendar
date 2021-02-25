@@ -143,9 +143,9 @@ p {
 }
 
 .forgot-password {
-    line-height: 0;
-    color: rgb(188, 7, 194);
-    padding-left: 8rem;
+  line-height: 0;
+  color: rgb(188, 7, 194);
+  padding-left: 8rem;
 }
 
 .red-massage {
@@ -168,4 +168,11 @@ h2.modal-title {
   width: 5rem;
   height: 2.5rem;
   margin-top: 1rem;
+}
+
+.reset-password{
+  font-size: 2rem;
+  font-style: bold;
+  margin: 2rem;
+  color:black;
 }
