@@ -26,12 +26,12 @@ from app.dependencies import get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.event import (
+    get_all_countries_names,
     get_invited_emails,
     get_location_coordinates,
     get_messages,
     get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
-    get_all_countries_names,
 )
 from app.internal.privacy import PrivacyKinds
 from app.internal.security.dependencies import current_user
@@ -693,9 +693,15 @@ async def check_timezone(
     request: Request,
     db_session: Session = Depends(get_db),
 ) -> Response:
-    country_timezone = (
-        db_session.query(Country.timezone)
-        .filter_by(name=country_name)
-        .first()[0]
-    )
+    try:
+        country_timezone = (
+            db_session.query(Country.timezone)
+            .filter_by(name=country_name)
+            .first()[0]
+        )
+    except TypeError:
+        raise HTTPException(
+            status_code=404,
+            detail="The inserted country name is not found",
+        )
     return {"timezone": country_timezone}

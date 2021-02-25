@@ -11,10 +11,10 @@
             <span class="end-result"></span>
           </div>
         </div>
-        <label for="countries">Choose country to check meeting time:</label>
+        <label for="countries-datalist">Choose country to check meeting time:</label>
         <input list="countries-list" name="countries" id="countries-datalist">
         <datalist id="countries-list">
-          {% for name in names %}
+          {% for name in countries_names %}
             <option value="{{ name[0] }}">
           {% endfor %}
         </datalist>

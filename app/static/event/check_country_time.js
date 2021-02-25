@@ -1,3 +1,6 @@
+const ERROR_TIME_DURATION = 3000;
+const TIME_NOT_FILLED = 'Please enter the meeting date and time';
+const COUNTRY_NOT_FILLED = 'Please choose country';
 const modal_container = document.querySelector('.countries-modal-container');
 const open_modal = document.querySelector('.open-countries-modal');
 const close_modal = document.querySelector('.close-countries-modal');
@@ -6,35 +9,32 @@ const upper_result = document.querySelector('.upper-result');
 const start_result = document.querySelector('.start-result');
 const end_result = document.querySelector('.end-result');
 const error_msg = document.querySelector('.empty-fields-error');
-const error_timeout_duration = 3000;
-const time_not_filled = 'Please enter meeting time';
-const country_not_filled = 'Please choose country';
 const user_timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 function getStartDate() {
-    const start_date = document.querySelector('#start_date').value;
+    const start_date = document.getElementById('start_date').value;
     return start_date;
 }
 
 function getStartTime() {
-    const start_time = document.querySelector('#start_time').value;
+    const start_time = document.getElementById('start_time').value;
     return start_time;
 }
 
 function getEndDate() {
-    const end_date = document.querySelector('#end_date').value;
+    const end_date = document.getElementById('end_date').value;
     return end_date;
 }
 
 function getEndTime() {
-    const end_time = document.querySelector('#end_time').value;
+    const end_time = document.getElementById('end_time').value;
     return end_time;
 }
 
 function showErrorMsg(content) {
     error_msg.classList.remove('empty-fields-error-disappear');
     error_msg.innerText = content;
-    setTimeout(() => error_msg.classList.add('empty-fields-error-disappear'), error_timeout_duration);
+    setTimeout(() => error_msg.classList.add('empty-fields-error-disappear'), ERROR_TIME_DURATION);
 }
 
 function convertTimes(data, chosen_country) {
@@ -53,19 +53,19 @@ open_modal.addEventListener('click', (event) => {
     event.preventDefault();
     modal_container.classList.add('modal-active');
     if (getStartDate() === '' || getStartTime() === '') {
-        showErrorMsg(time_not_filled);
+        showErrorMsg(TIME_NOT_FILLED);
     }
 });
 
 submit_country.addEventListener('click', (event) => {
     event.preventDefault();
     if (getStartDate() === '' || getStartTime() === '') {
-        showErrorMsg(time_not_filled);
+        showErrorMsg(TIME_NOT_FILLED);
         return;
     }
-    const chosen_country = document.querySelector('#countries-datalist').value;
+    const chosen_country = document.getElementById('countries-datalist').value;
     if (chosen_country === '') {
-        showErrorMsg(country_not_filled);
+        showErrorMsg(COUNTRY_NOT_FILLED);
         return;
     }
     fetch(`/event/timezone/country/${chosen_country}`)
