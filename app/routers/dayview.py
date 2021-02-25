@@ -193,16 +193,17 @@ async def dayview(
     date: str,
     view="day",
     session=Depends(get_db),
-    user: User = Depends(current_user),
+    user: CurrentUser = Depends(current_user),
 ):
     try:
         day = datetime.strptime(date, "%Y-%m-%d")
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
+    user_from_db = get_user(session, user.user_id)
     hebrew_obj = hebrew_date_view.get_hebrew_date_in_words(
         day.date(),
-        user.language_id,
+        user_from_db.language_id,
     )
     events_with_attrs = get_events_and_attributes(
         day=day,
