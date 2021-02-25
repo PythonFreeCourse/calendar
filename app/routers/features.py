@@ -106,21 +106,3 @@ async def delete_user_feature_association(
     session.commit()
 
     return True
-
-
-@router.get("/deactive")
-def deactive(
-    request: Request,
-    session: SessionLocal = Depends(get_db),
-    user: User = Depends(current_user),
-):
-    return get_user_uninstalled_features(user_id=user.user_id, session=session)
-
-
-@router.get("/active")
-def active(
-    request: Request,
-    session: SessionLocal = Depends(get_db),
-    user: User = Depends(current_user),
-):
-    return get_user_installed_features(user_id=user.user_id, session=session)
