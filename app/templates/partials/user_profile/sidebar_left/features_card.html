@@ -29,9 +29,12 @@
           <a class="text-decoration-none text-secondary" href="{{ url_for('google_sync') }}">Sync with
             Google</a> {% endif %}
       </li>
+
       <li class="list-group-item list-group-item-action no-border">
-        <a class="text-decoration-none text-secondary" href="{{ url_for('keyboard_shortcuts') }}">Keyboard Shortcuts</a>
+        <a data-bs-toggle="modal" class="text-decoration-none text-secondary"
+           href="#keyboard-shortcuts">Keyboard Shortcuts</a>
       </li>
+      {% include 'partials/user_profile/middle_content/keyboard_shortcuts_modal.html' %}
       <!-- Export Calendar -->
       <li class="list-group-item list-group-item-action no-border">
         {% include 'partials/user_profile/sidebar_left/features_card/export_calendar.html' %}
