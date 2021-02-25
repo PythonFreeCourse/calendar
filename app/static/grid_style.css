@@ -116,7 +116,6 @@ header {
   position: sticky;
   top: 0;
   display: flex;
-  grid-flow: row wrap;
   margin: 0 var(--space_s);
   margin: 0 1rem 0 1rem;
   background-color: var(--backgroundcol);
