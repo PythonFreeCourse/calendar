@@ -32,8 +32,6 @@ user_agent_list = [
     " Chrome/83.0.4103.97 Safari/537.36",
 ]
 
-headers = {"User-Agent": random.choice(user_agent_list)}
-
 
 def create_stats_object(corona_stats_data: Dict[str, Any]) -> CoronaStats:
     """Dict -> DB Object"""
@@ -121,6 +119,7 @@ def insert_to_db_if_needed(
 
 async def get_vacinated_data() -> Dict[str, Any]:
     async with httpx.AsyncClient() as client:
+        headers = {"User-Agent": random.choice(user_agent_list)}
         res = await client.get(CORONA_API_URL, headers=headers)
         return json.loads(res.text)[-1]
 
