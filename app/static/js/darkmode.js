@@ -17,11 +17,12 @@ function changeIcon(mode) {
 
 function setThemeMode(isDarkMode, button, root) {
   if (isDarkMode) {
-    root.dataset.data-color-mode = "dark";
+    console.log(root)
+    root.dataset['colorMode'] = "dark";
     button.name = "moon";
     changeIcon("moon");
   } else {
-    root.dataset.data-color-mode = "regular";
+    root.dataset['colorMode'] = "regular";
     button.name = "moon-outline";
     changeIcon("moon-outline");
   }
