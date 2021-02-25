@@ -1,14 +1,17 @@
-from fastapi import APIRouter, Request, Depends
-from sqlalchemy.sql import exists
 from typing import List
 
-from app.dependencies import get_db, SessionLocal
-from app.database.models import User, UserFeature, Feature
-from app.internal.security.dependencies import current_user
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.sql import exists
+
+from app.database.models import Feature, User, UserFeature
+from app.dependencies import SessionLocal, get_db
 from app.internal.features import (
     create_user_feature_association,
+    get_user_installed_features,
+    get_user_uninstalled_features,
     is_user_has_feature,
 )
+from app.internal.security.dependencies import current_user
 
 router = APIRouter(
     prefix="/features",
@@ -88,3 +91,21 @@ async def delete_user_feature_association(
     session.commit()
 
     return True
+
+
+@router.get("/deactive")
+def deactive(
+    request: Request,
+    session: SessionLocal = Depends(get_db),
+    user: User = Depends(current_user),
+):
+    return get_user_uninstalled_features(user_id=user.user_id, session=session)
+
+
+@router.get("/active")
+def active(
+    request: Request,
+    session: SessionLocal = Depends(get_db),
+    user: User = Depends(current_user),
+):
+    return get_user_installed_features(user_id=user.user_id, session=session)
