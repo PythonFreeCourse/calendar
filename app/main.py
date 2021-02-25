@@ -6,6 +6,7 @@ from fastapi.openapi.docs import (
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
+import app.internal.features as internal_features
 from app import config
 from app.database import engine, models
 from app.dependencies import (
@@ -13,13 +14,12 @@ from app.dependencies import (
     SOUNDS_PATH,
     STATIC_PATH,
     UPLOAD_PATH,
+    SessionLocal,
     get_db,
     logger,
     templates,
-    SessionLocal,
 )
 from app.internal import daily_quotes, json_data_loader
-import app.internal.features as internal_features
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary

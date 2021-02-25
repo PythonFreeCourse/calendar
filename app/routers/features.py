@@ -30,9 +30,9 @@ async def index(
             session=session,
             user_id=user.user_id,
         ),
-        "uninstalled": await get_user_uninstalled_features(
+        "uninstalled": get_user_uninstalled_features(
             session=session,
-            request=request,
+            user_id=user.user_id,
         ),
     }
 
