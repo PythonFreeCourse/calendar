@@ -1,24 +1,22 @@
 from app.internal.game_releases_utils import (
     get_games_data_separated_by_days,
-    translate_ymd_date_to_dby,
     translate_dby_date_to_ymd,
+    translate_ymd_date_to_dby,
 )
 
 
 class TestGameReleases:
     @staticmethod
-    def test_get_subscribe(client):
-        response = client.get("/game-releases/subscribe")
+    def test_subscribe(client):
+        response = client.post("/game-releases/subscribe")
         assert response.ok
-        assert b"Profile" in response.content
 
     @staticmethod
-    def test_get_unsubscribe(client):
-        response = client.get("/game-releases/subscribe")
+    def test_unsubscribe(client):
+        response = client.post("/game-releases/subscribe")
         assert response.ok
-        response = client.get("/game-releases/unsubscribe")
+        response = client.post("/game-releases/unsubscribe")
         assert response.ok
-        assert b"Profile" in response.content
 
     @staticmethod
     def test_get_game_releases_month(client):
