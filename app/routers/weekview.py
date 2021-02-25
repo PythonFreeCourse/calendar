@@ -8,10 +8,12 @@ from sqlalchemy.orm.session import Session
 
 from app.database.models import Event, User
 from app.dependencies import TEMPLATES_PATH, get_db
-from app.internal.security.dependencies import current_user, schema
+from app.internal.security.dependencies import current_user
 from app.routers.dayview import (
-    DivAttributes,
+    CurrentTimeAttributes,
+    EventsAttributes,
     dayview,
+    get_all_day_events,
     get_events_and_attributes,
 )
 
@@ -23,12 +25,14 @@ router = APIRouter()
 class DayEventsAndAttrs(NamedTuple):
     day: datetime
     template: Jinja2Templates.TemplateResponse
-    events_and_attrs: Tuple[Event, DivAttributes]
+    events_and_attrs: Tuple[Event, EventsAttributes]
+    current_time_and_attrs: CurrentTimeAttributes
+    all_day_events: Event
 
 
-def get_week_dates(firstday: datetime) -> Iterator[datetime]:
+def get_week_dates(first_day: datetime) -> Iterator[datetime]:
     rest_of_days = [timedelta(days=1) for _ in range(6)]
-    rest_of_days.insert(0, firstday)
+    rest_of_days.insert(0, first_day)
     return accumulate(rest_of_days)
 
 
@@ -50,18 +54,30 @@ async def get_day_events_and_attributes(
         session=session,
         user_id=user.user_id,
     )
-    return DayEventsAndAttrs(day, template, list(events_and_attrs))
+    current_time_and_attrs = CurrentTimeAttributes(date=day)
+    all_day_events = get_all_day_events(
+        day=day,
+        session=session,
+        user_id=user.user_id,
+    )
+    return DayEventsAndAttrs(
+        day,
+        template,
+        events_and_attrs,
+        current_time_and_attrs,
+        all_day_events,
+    )
 
 
-@router.get("/week/{firstday}")
+@router.get("/week/{first_day}")
 async def weekview(
     request: Request,
-    firstday: str,
-    session: Session = Depends(get_db),
-    user: schema.CurrentUser = Depends(current_user),
+    first_day: str,
+    session=Depends(get_db),
+    user: User = Depends(current_user),
 ):
-    firstday = datetime.strptime(firstday, "%Y-%m-%d")
-    week_days = get_week_dates(firstday)
+    first_day = datetime.strptime(first_day, "%Y-%m-%d")
+    week_days = get_week_dates(first_day)
     week = [
         await get_day_events_and_attributes(request, day, session, user)
         for day in week_days
