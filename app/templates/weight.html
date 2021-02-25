@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<form method="POST" action="/weight/">
+    <div class="mb-3 weight target_weight"><br>
+        <label for="target">Target</label><br>
+        <input class="target_weight" type="text" id="target" name="target" value={{ target }}><br>
+        <label for="current_weight"> Current Weight</label><br>
+        <input class="target_weight" type="text" id="current_weight" name="current_weight" value={{ current_weight }}>
+        <input class="target_weight" type="submit" value="calculate">
+    </div>
+</form>
+<div>
+    <div class="weight-message">
+    {% if way_message %}
+        <a> {{ way_message }} </a>
+    {% endif %}
+    </div>
+</div>
+<link href="{{ url_for('static', path='/weight.css') }}" rel="stylesheet">
+{% endblock %}

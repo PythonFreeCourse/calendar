@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm.session import Session
 
-from app.database.models import Event
-from app.dependencies import get_db, TEMPLATES_PATH
+from app.database.models import Event, User
+from app.dependencies import TEMPLATES_PATH, get_db
 from app.internal.security.dependancies import current_user, schema
 from app.routers.dayview import (
     DivAttributes,
@@ -36,7 +36,7 @@ async def get_day_events_and_attributes(
     request: Request,
     day: datetime,
     session: Session,
-    user: schema.CurrentUser,
+    user: User,
 ) -> DayEventsAndAttrs:
     template = await dayview(
         request=request,

@@ -1,7 +1,7 @@
 import calendar
-from datetime import date, datetime, timedelta
 import itertools
 import locale
+from datetime import date, datetime, timedelta
 from typing import Dict, Iterator, List, Tuple
 
 import pytz
@@ -191,8 +191,7 @@ def create_weeks(
     """Return lists of Weeks objects."""
     ndays: List[Day] = list(days)
     num_days: int = len(ndays)
-
-    return [Week(ndays[i: length + i]) for i in range(0, num_days, length)]
+    return [Week(ndays[i : i + length]) for i in range(0, num_days, length)]
 
 
 def get_month_block(day: Day, n: int = MONTH_BLOCK) -> List[Week]:

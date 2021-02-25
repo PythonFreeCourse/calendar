@@ -1,20 +1,23 @@
-from datetime import datetime, timedelta
 import json
-import pytest
+import os
+from datetime import datetime, timedelta
 
+import pytest
 from fastapi import HTTPException, Request
 from fastapi.testclient import TestClient
+from PIL import Image
 from sqlalchemy.orm.session import Session
+from sqlalchemy.sql.elements import Null
 from starlette import status
 
-
+from app.config import PICTURE_EXTENSION
 from app.database.models import Comment, Event
-from app.dependencies import get_db
+from app.dependencies import UPLOAD_PATH, get_db
+from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
-
 from app.routers import event as evt
-
+from app.routers.event import event_to_show
 
 CORRECT_EVENT_FORM_DATA = {
     "title": "test title",
@@ -27,7 +30,7 @@ CORRECT_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "True",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
 }
@@ -43,7 +46,7 @@ CORRECT_EVENT_FORM_DATA_WITHOUT_EVENT_TYPE = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "event_type": "on",
     "is_google_event": "False",
 }
@@ -59,7 +62,7 @@ WRONG_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "True",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
     "is_google_event": "False",
@@ -76,7 +79,7 @@ BAD_EMAILS_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com,ccc",
     "event_type": "on",
     "is_google_event": "False",
@@ -93,7 +96,7 @@ WEEK_LATER_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "event_type": "on",
     "invited": "a@a.com,b@b.com",
     "is_google_event": "False",
@@ -110,7 +113,7 @@ TWO_WEEKS_LATER_EVENT_FORM_DATA = {
     "description": "content",
     "color": "red",
     "availability": "busy",
-    "privacy": "public",
+    "privacy": PrivacyKinds.Public.name,
     "invited": "a@a.com,b@b.com",
     "event_type": "on",
     "is_google_event": "False",
@@ -163,6 +166,19 @@ def test_eventview_with_id(event_test_client, session, event):
     response = event_test_client.get(f"/event/{event_id}")
     assert response.ok
     assert b"Event Details" in response.content
+    assert b"View Event" in response.content
+    assert b"Some random location" in response.content
+    waze_link = b"https://waze.com/ul?q=Some%20random%20location"
+    assert waze_link in response.content
+    assert b"VC link" not in response.content
+
+
+def test_eventview_without_location(event_test_client, session, event):
+    event_id = event.id
+    event.location = None
+    session.commit()
+    response = event_test_client.get(f"/event/{event_id}")
+    assert b"https://waze.com/ul" not in response.content
 
 
 def test_all_day_eventview_with_id(event_test_client, session, all_day_event):
@@ -526,6 +542,68 @@ def test_deleting_an_event_does_not_exist(event_test_client, event):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
+def test_event_with_image(event_test_client, client, session):
+    img = Image.new("RGB", (60, 30), color="red")
+    img.save("pil_red.png")
+    with open("pil_red.png", "rb") as img:
+        imgstr = img.read()
+    files = {"event_img": imgstr}
+    data = {**CORRECT_EVENT_FORM_DATA}
+    response = event_test_client.post(
+        client.app.url_path_for("create_new_event"),
+        data=data,
+        files=files,
+    )
+    event_created = session.query(Event).order_by(Event.id.desc()).first()
+    event_id = event_created.id
+    is_event_image = f"{event_id}{PICTURE_EXTENSION}" == event_created.image
+    assert response.ok
+    assert (
+        client.app.url_path_for("eventview", event_id=event_id).strip(
+            f"{event_id}",
+        )
+        in response.headers["location"]
+    )
+    assert is_event_image is True
+    event_image_path = os.path.join(UPLOAD_PATH, event_created.image)
+    os.remove(event_image_path)
+    os.remove("pil_red.png")
+    session.delete(event_created)
+    session.commit()
+
+
+def test_can_show_event_public(event, session, user):
+    assert event_to_show(event, session) == event
+    assert event_to_show(event, session, user) == event
+
+
+def test_can_show_event_hidden(event, session, user):
+    event.privacy = PrivacyKinds.Hidden.name
+    assert event_to_show(event, session, user) is None
+    assert event_to_show(event, session) == event
+
+
+def test_can_show_event_private(event, session, user):
+    event.privacy = PrivacyKinds.Private.name
+    private_event = event_to_show(event, session, user)
+    private_attributes = [
+        private_event.title,
+        private_event.location,
+        private_event.content,
+        private_event.invitees,
+    ]
+    null_attributes = [
+        private_event.color,
+        private_event.emotion,
+        private_event.category_id,
+    ]
+    is_private_attributes = [
+        attr == event.privacy for attr in private_attributes
+    ]
+    is_null_attributes = [attr is Null for attr in null_attributes]
+    assert all(is_private_attributes) and all(is_null_attributes)
+
+
 def test_get_tamplate_to_share_event(event, session):
     html_template = evt.get_template_to_share_event(
         event_id=1,
@@ -605,7 +683,7 @@ def test_delete_comment(
 
 class TestApp:
     client = TestClient(app)
-    date_test_data = [datetime.today() - timedelta(1), datetime.today()]
+    date_test_data = [datetime.today() - timedelta(days=1), datetime.today()]
     event_test_data = {
         "title": "Test Title",
         "location": "Fake City",

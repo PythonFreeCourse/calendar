@@ -1,0 +1,21 @@
+<div class="modal modal-sm" id="update-photo-modal" tabindex="-1" data-bs-backdrop="static"
+     aria-labelledby="update-photo-modal-label" aria-hidden="true">
+  <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
+    <div class="modal-content">
+      <div class="modal-header profile-modal-header">
+        <h2 class="modal-title">{{ gettext("Update photo") }}</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="upload_user_photo" method="post" enctype="multipart/form-data">
+          <div class="input-group">
+            <input type="file" class="form-control-sm" accept="image/png, image/jpeg" name="file">
+          </div>
+          <div class="d-flex flex-row-reverse mt-4">
+            <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

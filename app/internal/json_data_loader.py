@@ -5,8 +5,8 @@ from typing import Any, Callable, Dict, List
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, Quote, Zodiac
-from app.internal import daily_quotes, zodiac
+from app.database.models import Base, InternationalDays, Joke, Quote, Zodiac
+from app.internal import daily_quotes, international_days, jokes, zodiac
 
 
 def load_to_database(session: Session) -> None:
@@ -33,6 +33,20 @@ def load_to_database(session: Session) -> None:
         'app/resources/quotes.json',
         Quote,
         daily_quotes.get_quote,
+    )
+
+    _insert_into_database(
+        session,
+        'app/resources/international_days.json',
+        InternationalDays,
+        international_days.get_international_day,
+    )
+
+    _insert_into_database(
+        session,
+        'app/resources/jokes.json',
+        Joke,
+        jokes.get_joke,
     )
 
 

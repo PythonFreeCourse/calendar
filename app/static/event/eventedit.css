@@ -29,12 +29,14 @@ form {
 
 .form_row,
 .form_row_start,
-.form_row_end {
+.form_row_end,
+.user_categories {
   display: flex
 }
 
 .form_row_start,
-.form_row_end {
+.form_row_end,
+.user_categories {
   flex: 1;
 }
 
@@ -62,4 +64,12 @@ textarea,
 
 input[type="submit"] {
   width: 100%;
+}
+
+.shared-list-item-off {
+  display: none;
+}
+
+.shared-list-item-on {
+  display: flex;
 }

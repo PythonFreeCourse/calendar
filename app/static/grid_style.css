@@ -380,6 +380,11 @@ main {
   font-weight: 700;
 }
 
+.dates-calc {
+  background-color: #222831;
+  color: white;
+}
+
 /*toggle views*/
 .btn-group-sm>.btn, .btn-sm {
   padding: .1rem .3rem !important;
