@@ -4,12 +4,11 @@ from typing import Dict, Iterator, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from app.database.models import Event, User
+from app.database.models import Event
 from app.dependencies import get_db, templates
 from app.internal import international_days, weekly_parasha, zodiac
 from app.internal.security.dependencies import current_user
-
-# from app.internal.security.schema import CurrentUser
+from app.internal.security.schema import CurrentUser
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -193,7 +192,7 @@ async def dayview(
     date: str,
     view="day",
     session=Depends(get_db),
-    user: User = Depends(current_user),
+    user: CurrentUser = Depends(current_user),
 ):
     try:
         day = datetime.strptime(date, "%Y-%m-%d")

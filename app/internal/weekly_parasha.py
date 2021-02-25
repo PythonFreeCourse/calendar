@@ -1,19 +1,19 @@
 from datetime import datetime
 from typing import Dict, Optional
+
 from pyluach import dates, parshios
+from sqlalchemy.orm import Session
 
 from app.database.models import Parasha
-
-from sqlalchemy.orm import Session
 
 
 def create_parasha_object(parashot_fields: Dict[str, str]) -> Parasha:
     """This function create a parasha object from given fields dictionary.
     It is used for adding the data from the json into the db"""
     return Parasha(
-        name=parashot_fields['name'],
-        hebrew_name=parashot_fields['hebrew'],
-        link=parashot_fields['link'],
+        name=parashot_fields["name"],
+        hebrew_name=parashot_fields["hebrew"],
+        link=parashot_fields["link"],
     )
 
 
@@ -27,14 +27,14 @@ def get_parasha_only_to_saturday(date: datetime) -> Optional[str]:
          If the date is Saturday, return the parasha name,
          else return None.
     """
-    date_split = str(date).split('-')
+    date_split = str(date).split("-")
     new_date_format = [int(x) for x in date_split]
     gregorian_date = dates.GregorianDate(*new_date_format)
     if gregorian_date == gregorian_date.shabbos():
         return parshios.getparsha_string(gregorian_date)
 
 
-def get_parasha_object(session: Session, date: datetime) -> Parasha:
+def get_parasha_object(session: Session, date: datetime) -> Optional[Parasha]:
     """Returns the parasha object for the specific day.
 
     Args:
