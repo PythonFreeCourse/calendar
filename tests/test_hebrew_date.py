@@ -33,11 +33,11 @@ def test_get_hebrew_date(language_id, hebrew_date, language_code):
 def test_from_gregorian_to_hebrew_date_and_find_month_name():
     result = from_gregorian_to_hebrew_date(ADAR)
     assert result == dates.HebrewDate(5781, 12, 3)
-    assert get_month_name_by_num(result) == 'אדר'
+    assert get_month_name_by_num(result) == "Adar"
 
 
 def test_if_leap_year():
     result_a = from_gregorian_to_hebrew_date(ADAR_A)
     result_b = from_gregorian_to_hebrew_date(ADAR_B)
-    assert get_month_name_by_num(result_a) == "אדר(א')"
-    assert get_month_name_by_num(result_b) == "אדר(ב')"
+    assert get_month_name_by_num(result_a) == "Adar Rishon"
+    assert get_month_name_by_num(result_b) == "Adar Sheni"
