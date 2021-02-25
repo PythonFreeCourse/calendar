@@ -1,11 +1,11 @@
 {% extends "partials/index/index_base.html" %}
 {% block content %}
     <div class="container">
-        <h3>Login</h3>
+        <h3 class="main-text-color">Login</h3>
         {% if message %}
             <div class="alert" style="color: red;">{{ message }}</div>
         {% endif %}
-        <form method="post">
+        <form method="post" class="main-text-color">
             <div class="row">
                 <label for="username" class="col-sm-2 col-form-label">Username</label>
                 <div class="col-auto">
@@ -19,6 +19,9 @@
                 </div>
             </div>
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Log In">
+            <small class="text-muted ml-5">
+                <a class="forgot-password" aria-current="page" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+            </small>
         </form>
     </div>
 {% endblock %}
