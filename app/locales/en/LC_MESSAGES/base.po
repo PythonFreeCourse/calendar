@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-02-07 21:31+0000\n"
+"POT-Creation-Date: 2021-02-25 17:46+0200\n"
 "PO-Revision-Date: 2021-01-26 21:31+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,81 +18,161 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 
-#: app/routers/profile.py:20
+#: app/internal/astronomy.py:11
+msgid "No response from server."
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:10
+msgid "Tishrei"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:11
+msgid "Cheshvan"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:12
+msgid "Kislev"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:13
+msgid "Teves"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:14
+msgid "Shvat"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:15
+msgid "Adar"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:16
+msgid "Adar Rishon"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:17
+msgid "Adar Sheni"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:18
+msgid "Nissan"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:19
+msgid "Iyar"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:20
+msgid "Sivan"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:21
+msgid "Tamuz"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:22
+msgid "Av"
+msgstr ""
+
+#: app/internal/hebrew_date_view.py:23
+msgid "Elul"
+msgstr ""
+
+#: app/routers/export.py:18
 msgid "Not found"
 msgstr ""
 
-#: app/templates/agenda.html:11
+#: app/routers/search.py:53
+msgid "Invalid request."
+msgstr ""
+
+#: app/routers/search.py:58
+msgid "No matching results for '{keywords}'."
+msgstr ""
+
+#: app/templates/agenda.html:14
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:9
 msgid "From"
 msgstr ""
 
-#: app/templates/agenda.html:13
-msgid "to"
+#: app/templates/agenda.html:18
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:11
+msgid "To"
 msgstr ""
 
-#: app/templates/agenda.html:15
+#: app/templates/agenda.html:22
 msgid "Get Agenda"
 msgstr ""
 
-#: app/templates/agenda.html:20
+#: app/templates/agenda.html:39
 msgid "Today"
 msgstr ""
 
-#: app/templates/agenda.html:23
-msgid "Next week"
+#: app/templates/agenda.html:42
+msgid "Next 7 days"
 msgstr ""
 
-#: app/templates/agenda.html:26
-msgid "Next month"
+#: app/templates/agenda.html:45
+msgid "Next 30 days"
 msgstr ""
 
-#: app/templates/agenda.html:33
+#: app/templates/agenda.html:49
+msgid "Week graph"
+msgstr ""
+
+#: app/templates/agenda.html:61
 msgid "Start date is greater than end date"
 msgstr ""
 
-#: app/templates/agenda.html:35
+#: app/templates/agenda.html:63
 msgid "No events found..."
 msgstr ""
 
-#: app/templates/profile.html:50
-msgid "Update name"
+#: app/templates/base.html:41
+msgid "Sign Out"
 msgstr ""
 
-#: app/templates/profile.html:57 app/templates/profile.html:77
-#: app/templates/profile.html:97 app/templates/profile.html:120
-#: app/templates/profile.html:140
-msgid "Save changes"
+#: app/templates/base.html:68 app/templates/partials/index/navigation.html:36
+msgid "About Us"
 msgstr ""
 
-#: app/templates/profile.html:70
-msgid "Update email"
+#: app/templates/partials/calendar/event/view_event_details_tab.html:61
+msgid "Choose user"
 msgstr ""
 
-#: app/templates/profile.html:90
+#: app/templates/partials/user_profile/sidebar_left/features_card/export_calendar.html:13
+msgid "Export"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/description_modal.html:6
 msgid "Update description"
 msgstr ""
 
-#: app/templates/profile.html:111
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/description_modal.html:14
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/email_modal.html:14
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/name_modal.html:14
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/telegram_modal.html:15
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/upload_photo_modal.html:15
+msgid "Save changes"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/email_modal.html:6
+msgid "Update email"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/name_modal.html:6
+msgid "Update name"
+msgstr ""
+
+#: app/templates/partials/user_profile/sidebar_left/profile_card/modals/upload_photo_modal.html:6
 msgid "Update photo"
 msgstr ""
 
-#: app/templates/profile.html:220
-msgid "Upcoming event on (date)"
-msgstr ""
-
-#: app/templates/profile.html:246
-msgid "The Event (event)"
-msgstr ""
-
-#: app/templates/profile.html:249
-msgid "Last updated (time) ago"
-msgstr ""
-
-#: app/templates/profile.html:285
+#: app/templates/partials/user_profile/sidebar_right/meetups.html:4
 msgid "Explore MeetUps near you"
 msgstr ""
 
-#: app/templates/profile.html:293
+#: app/templates/partials/user_profile/sidebar_right/new_card.html:4
 msgid "Your Card"
 msgstr ""
 
@@ -130,3 +210,28 @@ msgstr ""
 
 #~ msgid "Agenda"
 #~ msgstr ""
+
+#~ msgid "to"
+#~ msgstr ""
+
+#~ msgid "Next week"
+#~ msgstr ""
+
+#~ msgid "Next month"
+#~ msgstr ""
+
+#~ msgid "Upcoming event on (date)"
+#~ msgstr ""
+
+#~ msgid "The Event (event)"
+#~ msgstr ""
+
+#~ msgid "Last updated (time) ago"
+#~ msgstr ""
+
+#~ msgid "Teves"
+#~ msgstr ""
+
+#~ msgid "Tevet"
+#~ msgstr ""
+
