@@ -128,6 +128,7 @@ class Event(Base):
     invitees = Column(String)
     privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
+    image = Column(String, nullable=True)
     availability = Column(Boolean, default=True, nullable=False)
 
     owner_id = Column(Integer, ForeignKey("users.id"))
@@ -138,6 +139,11 @@ class Event(Base):
         "UserEvent",
         cascade="all, delete",
         back_populates="events",
+    )
+    shared_list = relationship(
+        "SharedList",
+        uselist=False,
+        back_populates="event",
     )
     comments = relationship("Comment", back_populates="event")
 
@@ -504,6 +510,41 @@ class Zodiac(Base):
         )
 
 
+class SharedListItem(Base):
+    __tablename__ = "shared_list_item"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    participant = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    shared_list_id = Column(Integer, ForeignKey("shared_list.id"))
+
+    shared_list = relationship("SharedList", back_populates="items")
+
+    def __repr__(self):
+        return (
+            f"<Item {self.id}: {self.name} "
+            f"Amount: {self.amount} "
+            f"Participant: {self.participant} "
+            f"Notes: {self.notes})>"
+        )
+
+
+class SharedList(Base):
+    __tablename__ = "shared_list"
+
+    id = Column(Integer, primary_key=True, index=True)
+    event_id = Column(String, ForeignKey("events.id"))
+    title = Column(String, nullable=True)
+
+    items = relationship("SharedListItem", back_populates="shared_list")
+    event = relationship("Event", back_populates="shared_list")
+
+    def __repr__(self):
+        return f"<Shared list {self.id}: " f"Items: {self.items}>"
+
+
 class Joke(Base):
     __tablename__ = "jokes"
 
@@ -522,9 +563,11 @@ class InternationalDays(Base):
 
 # insert language data
 
-# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
-# https://stackoverflow.com/questions/17461251
+
 def insert_data(target, session: Session, **kw):
+    """insert language data
+    Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+    https://stackoverflow.com/questions/17461251"""
     session.execute(
         target.insert(),
         {"id": 1, "name": "English"},

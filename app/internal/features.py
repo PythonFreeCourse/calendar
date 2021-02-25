@@ -1,15 +1,16 @@
-from fastapi import Depends, Request
 from functools import wraps
-from starlette.responses import RedirectResponse
 from typing import Dict, List
-from sqlalchemy.sql import exists
-from sqlalchemy.orm import Session
 
-from app.database.models import UserFeature, Feature
-from app.dependencies import get_db, SessionLocal
+from fastapi import Depends, Request
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import exists
+from starlette.responses import RedirectResponse
+
+from app.database.models import Feature, UserFeature
+from app.dependencies import SessionLocal, get_db
+from app.internal.features_index import features, icons
 from app.internal.security.dependencies import current_user
 from app.internal.security.ouath2 import get_authorization_cookie
-from app.internal.features_index import features, icons
 from app.internal.utils import create_model
 
 
@@ -120,20 +121,19 @@ async def is_access_allowd(request: Request, route: str) -> bool:
 
     user_ptef = session.query(
         exists().where(
-            UserFeature.feature_id == feature.id
-        ).where(
-            UserFeature.user_id == user.user_id
-        )
+            (UserFeature.feature_id == feature.id)
+            & (UserFeature.user_id == user.user_id),
+        ),
     ).scalar()
 
     return user_ptef
 
 
 def create_feature(
+    db: Session,
     name: str,
     route: str,
     description: str,
-    db: Session,
     creator: str = None,
     icon: str = None,
 ) -> Feature:
@@ -183,30 +183,21 @@ def get_user_installed_features(
     )
 
 
-async def get_user_uninstalled_features(
-    request: Request,
+def get_user_uninstalled_features(
+    user_id: int,
     session: Session = Depends(get_db),
 ) -> List[Feature]:
-    uninstalled = []
-    all_features = session.query(Feature).all()
-
-    # Get current user.
-    # Note: can't use dependency beacause its designed for routes only.
-    # current_user return schema not an db model.
-    jwt = await get_authorization_cookie(request=request)
-    user = await current_user(request=request, jwt=jwt, db=session)
-
-    for feat in all_features:
-        in_enabled = is_user_has_feature(
-            session=session,
-            feature_id=feat.id,
-            user_id=user.user_id,
+    return (
+        session.query(Feature)
+        .filter(
+            Feature.id.notin_(
+                session.query(UserFeature.feature_id).filter(
+                    UserFeature.user_id == user_id,
+                ),
+            ),
         )
-
-        if not in_enabled:
-            uninstalled.append(feat)
-
-    return uninstalled
+        .all()
+    )
 
 
 def remove_follower(feature_id: int, session: SessionLocal) -> None:
