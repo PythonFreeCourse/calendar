@@ -2,6 +2,7 @@ from app.routers.user_exercise import create_user_exercise,\
     does_user_exercise_exist, get_user_exercise
 from app.routers.register import _create_user
 
+
 class TestUserExercise:
 
     def test_create_user_exercise(self, session):
