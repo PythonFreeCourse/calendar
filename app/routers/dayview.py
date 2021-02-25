@@ -206,7 +206,7 @@ async def dayview(
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
-        #    "user_location": user_location,
+            "user_location": user_location,
             "shabbat": shabbat_obj,
         },
     )
