@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 from app.database.models import Note
 from app.database.schemas import NoteSchema
-from app.internal import utils
 
 
 async def create(session: Session, payload: NoteSchema) -> int:
