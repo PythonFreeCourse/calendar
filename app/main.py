@@ -21,6 +21,7 @@ from app.dependencies import (
 )
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
+from app.internal.security.dependencies import current_user
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
 from app.utils.extending_openapi import custom_openapi
@@ -68,6 +69,7 @@ from app.routers import (  # noqa: E402
     email,
     event,
     export,
+    favorite_quotes,
     features,
     four_o_four,
     friendview,
@@ -88,8 +90,6 @@ from app.routers import (  # noqa: E402
     weight,
     whatsapp,
 )
-
-json_data_loader.load_to_database(next(get_db()))
 
 
 @app.get("/docs", include_in_schema=False)
@@ -121,6 +121,7 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
+    favorite_quotes.router,
     features.router,
     four_o_four.router,
     friendview.router,
@@ -146,6 +147,8 @@ routers_to_include = [
 for router in routers_to_include:
     app.include_router(router)
 
+json_data_loader.load_to_database(next(get_db()))
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -154,17 +157,32 @@ async def startup_event():
     session.close()
 
 
-# TODO: I add the quote day to the home page
-# until the relevant calendar view will be developed.
+# trying to solve a weird bug, will delete later
 @app.get("/", include_in_schema=False)
 @logger.catch()
-async def home(request: Request, db: Session = Depends(get_db)):
-    quote = daily_quotes.get_quote_of_day(db)
+async def home(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> templates.TemplateResponse:
+    """Home page for the website."""
+    user_id = False
+    if "Authorization" in request.cookies:
+        jwt = request.cookies["Authorization"]
+        user = await current_user(request=request, db=db, jwt=jwt)
+        user_id = user.user_id
+    is_connected = bool(user_id)
+    quote_of_day = daily_quotes.get_quote_of_day(db)
+    quote = daily_quotes.is_quote_favorite(db, user_id, quote_of_day)
+    if is_connected and quote:
+        quote_of_day.is_favorite = True
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
-            "quote": quote,
+            "is_connected": is_connected,
+            "quote": quote_of_day,
+            "empty_heart": daily_quotes.EMPTY_HEART_PATH,
+            "full_heart": daily_quotes.FULL_HEART_PATH,
         },
     )
 
