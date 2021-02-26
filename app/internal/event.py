@@ -142,7 +142,7 @@ def add_countries_to_db(session: Session) -> None:
     session.commit()
 
 
-@functools.lru_cache
+@functools.lru_cache()
 def get_all_countries_names(session: Session) -> List[str]:
     """
     Returns a cached list of the countries names.
