@@ -1,8 +1,8 @@
 import pytest
 
-from app.database.models import Feature, UserFeature
 import app.internal.features as internal
 import app.routers.features as route
+from app.database.models import Feature, UserFeature
 from tests.test_login import LOGIN_DATA, REGISTER_DETAIL
 
 
@@ -128,10 +128,10 @@ def test_delete_feature(session, feature):
 
 
 def test_is_feature_exist_in_db(session, feature):
-    assert internal.is_feature_exists({
-        'name': 'test',
-        'route': '/test'
-    }, session)
+    assert internal.is_feature_exists(
+        {"name": "test", "route": "/test"},
+        session,
+    )
 
 
 def test_update_feature(session, feature, update_dict):
@@ -167,14 +167,14 @@ def test_create_feature(session):
     assert feat.name == "test1"
 
 
-def test_index(security_test_client):
+def test_index(session, security_test_client):
     url = route.router.url_path_for("index")
 
     resp = security_test_client.get(url)
     assert resp.ok
 
 
-def test_add_feature_to_user(form_mock, security_test_client):
+def test_add_feature_to_user(session, form_mock, security_test_client):
     url = route.router.url_path_for("add_feature_to_user")
 
     security_test_client.post(
