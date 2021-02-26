@@ -3,31 +3,35 @@ from app.internal.game_releases_utils import (
     translate_dby_date_to_ymd,
     translate_ymd_date_to_dby,
 )
-from app.routers.game_release_dates_service import router
+from app.routers.game_release_dates_service import game_release_router
 
 
 class TestGameReleases:
     @staticmethod
     def test_subscribe(client):
         response = client.post(
-            router.url_path_for("subscribe_game_release_service"),
+            game_release_router.url_path_for("subscribe_game_release_service"),
         )
         assert response.ok
 
     @staticmethod
     def test_unsubscribe(client):
         response = client.post(
-            router.url_path_for("subscribe_game_release_service"),
+            game_release_router.url_path_for("subscribe_game_release_service"),
         )
         assert response.ok
         response = client.post(
-            router.url_path_for("unsubscribe_game_release_service"),
+            game_release_router.url_path_for(
+                "unsubscribe_game_release_service",
+            ),
         )
         assert response.ok
 
     @staticmethod
     def test_get_game_releases_month(client):
-        response = client.get(router.url_path_for("get_game_releases_month"))
+        response = client.get(
+            game_release_router.url_path_for("get_game_releases_month"),
+        )
         assert response.ok
         assert b"Prince" in response.content
 
@@ -37,7 +41,7 @@ class TestGameReleases:
         day_2 = "2020-12-20"
         dates = {"from-date": day_1, "to-date": day_2}
         response = client.post(
-            router.url_path_for("fetch_released_games"),
+            game_release_router.url_path_for("fetch_released_games"),
             data=dates,
         )
         assert response.ok

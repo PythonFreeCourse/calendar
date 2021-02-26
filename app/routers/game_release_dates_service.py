@@ -15,6 +15,7 @@ from app.internal.game_releases_utils import (
 from app.internal.security.dependencies import current_user
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
+from app.routers.profile import router as profile_router
 
 router = APIRouter(
     prefix="/game-releases",
@@ -81,7 +82,10 @@ async def subscribe_game_release_service(
     user: CurrentUser = Depends(current_user),
 ) -> Response:
     if is_user_signed_up_for_game_releases(session, user.user_id):
-        return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
+        return RedirectResponse(
+            profile_router.url_path_for("profile"),
+            status_code=HTTP_302_FOUND,
+        )
     games_setting_true_for_model = {
         "user_id": user.user_id,
         "video_game_releases": True,
@@ -97,7 +101,10 @@ async def subscribe_game_release_service(
         session.commit()
     else:
         create_model(session, UserSettings, **games_setting_true_for_model)
-    return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
+    return RedirectResponse(
+        profile_router.url_path_for("profile"),
+        status_code=HTTP_302_FOUND,
+    )
 
 
 @router.post("/unsubscribe")
@@ -109,7 +116,10 @@ async def unsubscribe_game_release_service(
     current_user_id = user.user_id
 
     if not is_user_signed_up_for_game_releases(session, current_user_id):
-        return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
+        return RedirectResponse(
+            profile_router.url_path_for("profile"),
+            status_code=HTTP_302_FOUND,
+        )
     else:
         games_setting_false_for_model = {
             "user_id": str(current_user_id),
@@ -128,4 +138,7 @@ async def unsubscribe_game_release_service(
             create_model(
                 session, UserSettings, **games_setting_false_for_model
             )
-        return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
+        return RedirectResponse(
+            profile_router.url_path_for("profile"),
+            status_code=HTTP_302_FOUND,
+        )

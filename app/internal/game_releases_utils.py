@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import datetime
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, DefaultDict, Dict, List
 
 import requests
 from sqlalchemy.orm import Session
@@ -46,6 +46,14 @@ def add_game_events_to_weeks(
         end_date=last_day_str.strftime("%Y-%m-%d"),
     )
     formatted_games = get_formatted_games_in_days(games_by_dates)
+
+    return insert_formatted_games_to_weeks(weeks, formatted_games)
+
+
+def insert_formatted_games_to_weeks(
+    weeks: List["Week"],
+    formatted_games: DefaultDict[List[str]],
+) -> List["Week"]:
     for week in weeks:
         for day in week.days:
             if day.set_id() in formatted_games.keys():
@@ -56,14 +64,13 @@ def add_game_events_to_weeks(
                             (game),
                         ),
                     )
-
     return weeks
 
 
 def get_games_data_separated_by_days(
     start_date: datetime,
     end_date: datetime,
-) -> defaultdict[List]:
+) -> DefaultDict[List[Dict]]:
     API = "https://api.rawg.io/api/games"
 
     current_day_games = requests.get(
@@ -72,10 +79,11 @@ def get_games_data_separated_by_days(
     current_day_games = current_day_games.json()["results"]
     games_data = defaultdict(list)
     for result in current_day_games:
-        current = {}
-        current["name"] = result["name"]
+        current = {
+            "name": result["name"],
+            "platforms": [],
+        }
         if result["platforms"]:
-            current["platforms"] = []
             for platform in result["platforms"]:
                 current["platforms"].append(platform["platform"]["name"])
         ybd_release_date = translate_ymd_date_to_dby(result["released"])
@@ -86,19 +94,22 @@ def get_games_data_separated_by_days(
 def get_formatted_games_in_days(
     separated_games_dict: defaultdict[List],
     with_platforms: bool = False,
-) -> defaultdict[List]:
+) -> DefaultDict[List[str]]:
     formatted_games = defaultdict(list)
 
     for date, game_data in separated_games_dict.items():
-        for game in game_data:
-            formatted_game_str = ""
-            formatted_game_str += game["name"]
-            if with_platforms:
-                formatted_game_str += "-Platforms-<br>"
-                for platform in game["platforms"]:
-                    formatted_game_str += f"{platform},"
-            formatted_games[date].append(formatted_game_str)
+        formatted_game_str = format_single_game(game_data, with_platforms)
+        formatted_games[date].append(formatted_game_str)
     return formatted_games
+
+
+def format_single_game(raw_game, with_platforms=False):
+    formatted_game_str = ""
+    formatted_game_str += raw_game["name"]
+    if with_platforms:
+        formatted_game_str += "-Platforms-<br>"
+        for platform in raw_game["platforms"]:
+            formatted_game_str += f"{platform},"
 
 
 def translate_ymd_date_to_dby(ymd_str: str) -> str:
