@@ -36,6 +36,18 @@
         The International days are: "{{ international_day.international_day }}"
     </div>
     {% endif %}
+    <button type="button" class="open-button" data-bs-toggle="modal"
+            data-bs-target="#create-modal">
+        Create Task
+    </button>
+    <button type="button" class="open-button" data-bs-toggle="modal"
+            data-bs-target="#list-modal">
+        To Do List
+    </button>
+    <!-- Modal -->
+      {% include 'partials/todo_list_modals/create_task.html' %}
+      {% include 'partials/todo_list_modals/todo_list.html' %}
+      {% include 'partials/todo_list_modals/edit_task.html' %}
     <div class="schedule">
         <div class="container times bg-primeary position">
             {% for hour in range(25)%}
@@ -100,4 +112,5 @@
         crossorigin="anonymous"></script>
 <script type="text/javascript"
         src="{{ url_for('static', path='/eventdisplay.js') }}"></script>
+<script src="{{ url_for('static', path='/js/todo_list_modals.js') }}"></script>
 {% endblock body %}
