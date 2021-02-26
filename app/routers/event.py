@@ -625,14 +625,16 @@ def add_user_to_event(session: Session, user_id: int, event_id: int):
         .filter_by(event_id=event_id, user_id=user_id)
         .all()
     )
-    if not user_already_connected:
-        """if user is not registered to the event, the system will add him"""
-        association = UserEvent(user_id=user_id, event_id=event_id)
-        save(session, association)
-        return True
+
     # if the user has a connection to the event,
     # the function will recognize the duplicate and return false.
-    return False
+
+    if user_already_connected:
+        return False
+    # if user is not registered to the event, the system will add him
+    association = UserEvent(user_id=user_id, event_id=event_id)
+    save(session, association)
+    return True
 
 
 def extract_shared_list_from_data(

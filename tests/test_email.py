@@ -13,8 +13,6 @@ from app.internal.email import (
 )
 from app.internal.utils import create_model, delete_instance, save
 
-# from starlette.status import HTTP_302_FOUND
-
 
 def test_email_send(client, user, event, smtpd):
     mail.config.SUPPRESS_SEND = 1
