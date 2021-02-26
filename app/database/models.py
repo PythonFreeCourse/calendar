@@ -4,27 +4,13 @@ import enum
 from datetime import datetime
 from typing import Any, Dict
 
-from sqlalchemy import (
-    DDL,
-    JSON,
-    Boolean,
-    Column,
-    Date,
-    DateTime,
-    Enum,
-    Float,
-    ForeignKey,
-    Index,
-    Integer,
-    String,
-    Time,
-    UniqueConstraint,
-    event,
-)
+from sqlalchemy import (Boolean, Column, Date, DateTime, DDL, Enum, event,
+                        Float, ForeignKey, Index, Integer, JSON, String, Time,
+                        UniqueConstraint)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy.ext.declarative.api import DeclarativeMeta, declarative_base
-from sqlalchemy.orm import Session, relationship
+from sqlalchemy.ext.declarative.api import declarative_base, DeclarativeMeta
+from sqlalchemy.orm import relationship, Session
 from sqlalchemy.sql.schema import CheckConstraint
 
 import app.routers.salary.config as SalaryConfig
@@ -191,10 +177,10 @@ class Category(Base):
 
     @staticmethod
     def create(
-        db_session: Session,
-        name: str,
-        color: str,
-        user_id: int,
+            db_session: Session,
+            name: str,
+            color: str,
+            user_id: int,
     ) -> Category:
         try:
             category = Category(name=name, color=color, user_id=user_id)
