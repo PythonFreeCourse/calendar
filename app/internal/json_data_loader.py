@@ -49,13 +49,6 @@ def load_to_database(session: Session) -> None:
 
     _insert_into_database(
         session,
-        RESOURCES_DIR / "locations.json",
-        Location,
-        locations.create_location_object,
-    )
-
-    _insert_into_database(
-        session,
         RESOURCES_DIR / "jokes.json",
         Joke,
         jokes.get_joke,

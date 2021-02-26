@@ -160,3 +160,5 @@ wsproto==1.0.0
 yapf==0.30.0
 yarl==1.6.3
 zipp==3.4.0
+
+django-os-geocoder~=0.1.6

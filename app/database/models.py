@@ -599,15 +599,6 @@ class Task(Base):
     owner = relationship("User", back_populates="tasks")
 
 
-class Location(Base):
-    __tablename__ = "locations"
-
-    id = Column(Integer, primary_key=True, index=True)
-    country = Column(String, nullable=False)
-    city = Column(String, nullable=False)
-    zip_number = Column(String, nullable=False)
-
-
 # insert language data
 
 

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
-from app.internal import international_days, locations, shabbat, zodiac
+from app.internal import international_days, shabbat, zodiac
 from app.internal.security.dependencies import current_user
 from app.routers.user import get_all_user_events
 
@@ -211,21 +211,11 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     tasks = (
-        session.query(Task)
-        .filter(Task.owner_id == user.user_id)
-        .filter(Task.date == day.date())
-        .order_by(Task.time)
+        session.query(Task).filter(Task.owner_id == user.user_id).filter(
+            Task.date == day.date()).order_by(Task.time)
     )
-    location_and_shabbat = locations.get_user_location(session)
-    if location_and_shabbat:
-        location = location_and_shabbat["location"]["title"]
-        shabbat_obj = shabbat.get_shabbat_if_date_friday(
-            location_and_shabbat,
-            day.date(),
-        )
-    else:
-        location = None
-        shabbat_obj = None
+    shabbat_obj, location_by_ip = shabbat.get_shabbat_if_date_friday(
+        day.date())
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
@@ -241,7 +231,7 @@ async def dayview(
             "view": view,
             "current_time": current_time_with_attrs,
             "tasks": tasks,
-            "user_location": location,
+            "user_location": location_by_ip,
             "shabbat": shabbat_obj,
         },
     )
