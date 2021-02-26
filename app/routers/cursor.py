@@ -9,7 +9,7 @@ from starlette.status import HTTP_302_FOUND
 from app.database.models import User
 from app.dependencies import CURSORS_PATH, get_db, templates
 from app.internal.cursor import get_cursor_settings, save_cursor_settings
-from app.routers.profile import get_placeholder_user
+from app.internal.security.dependencies import current_user
 
 router = APIRouter(
     prefix="/cursor",
@@ -21,7 +21,7 @@ router = APIRouter(
 @router.get("/settings")
 def cursor_settings(
     request: Request,
-    user: User = Depends(get_placeholder_user),
+    user: User = Depends(current_user),
     session: Session = Depends(get_db),
 ) -> templates.TemplateResponse:
     """A route to the cursor settings.
@@ -50,7 +50,7 @@ def cursor_settings(
 @router.post("/settings")
 async def get_cursor_choices(
     session: Session = Depends(get_db),
-    user: User = Depends(get_placeholder_user),
+    user: User = Depends(current_user),
     primary_cursor: str = Form(...),
     secondary_cursor: str = Form(...),
 ) -> RedirectResponse:
@@ -79,7 +79,7 @@ async def get_cursor_choices(
 @router.get("/load")
 async def load_cursor(
     session: Session = Depends(get_db),
-    user: User = Depends(get_placeholder_user),
+    user: User = Depends(current_user),
 ) -> RedirectResponse:
     """loads cursors according to cursor settings.
 
