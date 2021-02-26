@@ -6,6 +6,7 @@ from fastapi.openapi.docs import (
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
+import app.internal.features as internal_features
 from app import config
 from app.database import engine, models
 from app.dependencies import (
@@ -13,6 +14,7 @@ from app.dependencies import (
     SOUNDS_PATH,
     STATIC_PATH,
     UPLOAD_PATH,
+    SessionLocal,
     get_db,
     logger,
     templates,
@@ -67,6 +69,7 @@ from app.routers import (  # noqa: E402
     event,
     export,
     favorite_quotes,
+    features,
     four_o_four,
     friendview,
     google_connect,
@@ -77,6 +80,7 @@ from app.routers import (  # noqa: E402
     notification,
     profile,
     register,
+    reset_password,
     search,
     settings,
     telegram,
@@ -117,6 +121,7 @@ routers_to_include = [
     event.router,
     export.router,
     favorite_quotes.router,
+    features.router,
     four_o_four.router,
     friendview.router,
     google_connect.router,
@@ -127,6 +132,7 @@ routers_to_include = [
     notification.router,
     profile.router,
     register.router,
+    reset_password.router,
     salary.router,
     search.router,
     settings.router,
@@ -141,6 +147,13 @@ for router in routers_to_include:
     app.include_router(router)
 
 json_data_loader.load_to_database(next(get_db()))
+
+
+@app.on_event("startup")
+async def startup_event():
+    session = SessionLocal()
+    internal_features.create_features_at_startup(session=session)
+    session.close()
 
 
 @app.get("/", include_in_schema=False)

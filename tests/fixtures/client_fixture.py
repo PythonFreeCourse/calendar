@@ -10,12 +10,14 @@ from app.routers import (
     agenda,
     audio,
     categories,
+    dayview,
     event,
     friendview,
     google_connect,
     meds,
     notification,
     profile,
+    weekview,
     weight,
 )
 from app.routers.salary import routes as salary
@@ -143,3 +145,13 @@ def google_connect_test_client():
 
     main.app.dependency_overrides = {}
     Base.metadata.drop_all(bind=test_engine)
+
+
+@pytest.fixture(scope="session")
+def dayview_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(dayview.get_db)
+
+
+@pytest.fixture(scope="session")
+def weekview_test_client() -> Iterator[TestClient]:
+    yield from create_test_client(weekview.get_db)
