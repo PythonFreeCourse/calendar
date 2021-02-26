@@ -156,6 +156,7 @@ async def startup_event():
     session.close()
 
 
+# trying to solve a weird bug, will delete later
 @app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(
