@@ -50,7 +50,7 @@ def shabbat_time_by_user_location() -> Dict[str, Union[str, date]]:
 
 
 def get_shabbat_if_date_friday(calendar_date: date) \
-        -> Optional[Dict[str, Union[str, date]], Any]:
+        -> Optional[Any]:
     """Returns shabbat start end ending time if specific date
      is Saturday, else None.
 
