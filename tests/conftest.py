@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 from app.config import PSQL_ENVIRONMENT
 from app.database.models import Base
 from app.routers.event import create_event
-from app.routers.register import _create_user
 
 pytest_plugins = [
     "tests.fixtures.user_fixture",
@@ -100,58 +99,6 @@ def Calendar():
 # name, so after the feature freeze ill make sure to replace them completely.
 # did not delete user1, user2 and user3 since some people
 # use them in testing now.
-
-
-@pytest.fixture
-def no_event_user(session):
-    """a user made for testing who doesn't own any event."""
-    user = _create_user(
-        session=session,
-        username="new_test_username",
-        password="new_test_password",
-        email="new2_test.email@gmail.com",
-        language_id="english",
-    )
-
-    return user
-
-
-@pytest.fixture
-def event_owning_user(session):
-    """a user made for testing who already owns an event."""
-    user = _create_user(
-        session=session,
-        username="new_test_username2",
-        password="new_test_password2",
-        email="new_test_love231.email@gmail.com",
-        language_id="english",
-    )
-
-    data = {
-        "title": "event_owning_user event",
-        "start": datetime.strptime("2021-05-05 14:59", "%Y-%m-%d %H:%M"),
-        "end": datetime.strptime("2021-05-05 15:01", "%Y-%m-%d %H:%M"),
-        "location": "https://us02web.zoom.us/j/875384596",
-        "content": "content",
-        "owner_id": user.id,
-    }
-
-    create_event(session, **data)
-
-    return user
-
-
-@pytest.fixture
-def user1(session):
-    """another user made for testing"""
-    user = _create_user(
-        session=session,
-        username="user2user2",
-        password="verynicepass",
-        email="trulyyours1.email@gmail.com",
-        language_id="english",
-    )
-    return user
 
 
 @pytest.fixture
