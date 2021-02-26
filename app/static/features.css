@@ -75,3 +75,7 @@
   grid-column: 2/6;
   width: 30rem;
 }
+
+.info-box {
+  display: block !important;
+}

@@ -67,6 +67,8 @@ function callLoadWeek(daysToLoad, end) {
 }
 
 function weekScroll() {
+    const daysToLoad = 42;
+
     grid = document.getElementById("calender-grid");
     grid.addEventListener(
         'scroll', function () {
@@ -74,12 +76,14 @@ function weekScroll() {
             if (grid.scrollY + grid.innerHeight + tolerance < grid.scrollHeight) {
                 return false;
             }
-            callLoadWeek(42, true);
+            const end = true;
+            callLoadWeek(daysToLoad, end);
         }
     )
     grid.addEventListener('wheel', function (event) {
         if (event.deltaY < 0 && this.scrollTop === 0) {
-            callLoadWeek(42, false);
+            const end = false;
+            callLoadWeek(daysToLoad, end);
         }
     })
 }

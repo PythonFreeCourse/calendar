@@ -101,10 +101,10 @@ function setInformation() {
         const parent = element.parentElement;
         const infoBox = parent.getElementsByClassName("information")[0];
         element.addEventListener("click", function () {
-            if (infoBox.style.display === "block") {
-                infoBox.style.display = "none";
+            if (!infoBox.classList.contains('info-box')) {
+                infoBox.classList.add('info-box');
             } else {
-                infoBox.style.display = "block";
+                infoBox.classList.remove('info-box');
             }
         })
     });
@@ -117,4 +117,3 @@ document.addEventListener(
         setInformation();
     }
 )
-

@@ -31,6 +31,7 @@
     integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
     crossorigin="anonymous"></script>
   <script defer type="text/javascript" src="{{ url_for('static', path='/popover.js') }}"></script>
+  <script src="{{ url_for('static', path='/js/darkmode.js') }}"></script>
 
   <!-- Audio -->
   <audio id="my-audio" muted="true"></audio>
@@ -43,8 +44,8 @@
 </head>
 
 <body>
-{% block body %}
-{% endblock %}
-<script src="{{ url_for('static', path='/js/darkmode.js') }}"></script>
+  {% block body %}
+  {% endblock %}
 </body>
+
 </html>
