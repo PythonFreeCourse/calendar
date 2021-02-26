@@ -187,6 +187,103 @@ body {
   word-spacing: 0.25em;
 }
 
+
+.todo-style {
+	background: #F7F7F7;
+}
+
+#table {
+    max-width: 31.25em;
+}
+
+.open-button {
+    background-color: var(--primary);
+    max-width: 10%;
+    color: #fff;
+    margin-top: 0.75em;
+    margin-left: 45.5%;
+    font-size: 1.25em;
+    border-radius: 20px;
+    transition-duration: 0.4s;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+.open-button:hover {
+  background-color: #ccddff;
+  color: #00001a;
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.top-todo {
+    background: #2B346A;
+}
+
+.todo-style h1 {
+    color: #fff;
+    text-align: center;
+}
+
+.important {
+    border-bottom: 5px solid blue;
+    margin-left: 3em;
+}
+
+.todo-style input[type="text"],
+.todo-style input[type="date"],
+.todo-style input[type="time"],
+.todo-style textarea {
+	-webkit-transition: all 0.30s ease-in-out;
+	-moz-transition: all 0.30s ease-in-out;
+	-ms-transition: all 0.30s ease-in-out;
+	-o-transition: all 0.30s ease-in-out;
+	outline: none;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	width: 100%;
+	background: #fff;
+	margin-bottom: 4%;
+	border: 1px solid #ccc;
+	padding: 3%;
+	color: #555;
+}
+
+.todo-style input[type="text"]:focus,
+.todo-style input[type="date"]:focus,
+.todo-style input[type="time"]:focus,
+.todo-style textarea:focus {
+	box-shadow: 0 0 5px #43D1AF;
+	padding: 3%;
+	border: 1px solid #43D1AF;
+}
+
+.todo-style th, .todo-style td {
+  padding-right: 3em;
+  padding-top: 2em;
+  text-align: left;
+}
+
+.todo-style button {
+    border-radius: 20px;
+    padding: 2%;
+    text-align: right;
+    background-color: #80bfff;
+}
+
+
+.edit {
+  text-decoration: none;
+  background-color: #eafaf6;
+   border-style: solid;
+   border-color: #004d99;
+   border-radius: 10px;
+}
+
+.todo-style button:hover {
+    background-color: var(--primary);
+    color: white;
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
 .parashot {
     position: absolute;
     right: 1.2rem;
