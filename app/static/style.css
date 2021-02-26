@@ -179,7 +179,6 @@ p {
 
 .relative.overflow-hidden {
   background-color: var(--backgroundcol);
-  height: 100vh;
 }
 
 .navbar-light .navbar-nav .nav-link {
