@@ -20,17 +20,8 @@ async def save_quote(
     db: Session = Depends(get_db),
 ) -> None:
     """Saves a quote in the database."""
-    record = (
-        db.query(models.UserQuotes)
-        .filter(
-            models.UserQuotes.user_id == user.user_id,
-            models.UserQuotes.quote_id == quote_id,
-        )
-        .first()
-    )
-    if not record:
-        db.merge(models.UserQuotes(user_id=user.user_id, quote_id=quote_id))
-        db.commit()
+    db.merge(models.UserQuotes(user_id=user.user_id, quote_id=quote_id))
+    db.commit()
 
 
 @router.delete("/delete")
