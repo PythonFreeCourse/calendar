@@ -1,16 +1,20 @@
 import json
 from datetime import date, datetime
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 import geocoder
 
 
-def return_zip_to_ip_location() -> Optional[str]:
-    """Returns the zip number of the user IP location that match location
-     object.
+def return_shabbat_details_and_user_location() -> tuple[Any, Any]:
+    """Returns times details which match to ip location,
+    and the location itself.
+    Used the shabbat_time_by_location JSON file, that his content is copied
+    from the free API:
+    'https://www.hebcal.com/shabbat?cfg=json&geonameid=295277'.
+    This Json need to be update once in year.
 
     Returns:
-        A zip number for the user location.
+        A zip number for the user location and user location by name.
     """
 
     location_by_ip = geocoder.ip('me')
@@ -23,13 +27,13 @@ def return_zip_to_ip_location() -> Optional[str]:
             return location["items"], location_by_ip
 
 
-def shabbat_time_by_user_location() -> Dict[str, Union[str, date]]:
+def shabbat_time_by_user_location() -> tuple[dict[str, Union[date, Any]], Any]:
     """Returns the shabbat time of the user location.
 
         Returns:
-            Shabbat start end ending time.
+            Shabbat start end ending time and user location by ip.
         """
-    shabat_items, location_by_ip = return_zip_to_ip_location()
+    shabat_items, location_by_ip = return_shabbat_details_and_user_location()
     for item in shabat_items:
         if "Candle lighting" in item["title"]:
             shabbat_entry = item
@@ -55,12 +59,11 @@ def get_shabbat_if_date_friday(calendar_date: date) \
      is Saturday, else None.
 
         Args:
-            shabbat_time: Shabbat details.
             calendar_date: date.
 
         Returns:
             Shabbat start end ending time if specific date
-             is Saturday, else None
+             is Saturday and user location by ip, else None
         """
     shabbat_obj, location_by_ip = shabbat_time_by_user_location()
     if calendar_date == shabbat_obj["start_date"]:
