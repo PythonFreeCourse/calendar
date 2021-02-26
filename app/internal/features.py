@@ -100,8 +100,8 @@ async def is_access_allowd(request: Request, route: str) -> bool:
     # Get current user.
     # Note: can't use dependency beacause its designed for routes only.
     # current_user return schema not an db model.
-    jwt = await get_authorization_cookie(request=request)
-    user = await current_user(request=request, jwt=jwt, db=session)
+    jwt = get_authorization_cookie(request=request)
+    user = current_user(request=request, jwt=jwt, db=session)
 
     feature = session.query(Feature).filter_by(route=route).first()
 
