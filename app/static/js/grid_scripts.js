@@ -76,13 +76,13 @@ function weekScroll() {
             if (grid.scrollY + grid.innerHeight + tolerance < grid.scrollHeight) {
                 return false;
             }
-            const end = true;
+            const addAfter = true;
             callLoadWeek(daysToLoad, end);
         }
     )
     grid.addEventListener('wheel', function (event) {
         if (event.deltaY < 0 && this.scrollTop === 0) {
-            const end = false;
+            const addAfter = false;
             callLoadWeek(daysToLoad, end);
         }
     })
