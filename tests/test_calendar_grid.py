@@ -5,6 +5,7 @@ import app.routers.calendar_grid as cg
 DATE = datetime.date(1988, 5, 3)
 DAY = cg.Day(datetime.date(1988, 5, 3))
 WEEKEND = cg.DayWeekend(datetime.date(2021, 1, 23))
+SUNDAY = cg.Day(datetime.date(2021, 1, 3))
 N_DAYS = 3
 N_DAYS_BEFORE = datetime.date(1988, 4, 30)
 NEXT_N_DAYS = [
@@ -127,3 +128,7 @@ class TestCalendarGrid:
     @staticmethod
     def test_weekview_format():
         assert DAY.weekview_format() == "1988-05-01"
+
+    @staticmethod
+    def test_weekview_format_on_sunday():
+        assert SUNDAY.weekview_format() == "2021-01-03"

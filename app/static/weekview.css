@@ -14,7 +14,7 @@
 
 #week-view::-webkit-scrollbar {
     display: none;
-  }
+}
 
 #week-schedule {
     grid-row: 1;
