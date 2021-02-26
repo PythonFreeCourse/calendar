@@ -34,14 +34,14 @@
                             <td>{{ task.description }}</td>
                             {% if task.is_done %}
                             <td>
-                                <form action="/task/undone/{{task.id}}"
+                                <form action='{{ url_for("set_task_undone", task_id=task.id) }}'
                                       method="post">
                                     <button type="submit">Undone</button>
                                 </form>
                             </td>
                             {% else %}
                             <td>
-                                <form action="/task/done/{{task.id}}"
+                                <form action='{{ url_for("set_task_done", task_id=task.id) }}'
                                       method="post">
                                     <button type="submit">Done</button>
                                 </form>

@@ -8,7 +8,6 @@ from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
 from app.internal import international_days, zodiac
 from app.internal.security.dependencies import current_user
-
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -64,7 +63,8 @@ class CurrentTimeAttributes(DivAttributes):
         self.is_viewed = self._date_is_today()
         self.grid_position = self._get_position(current) - 1
         self.sub_grid_position = self._minutes_position(current.minute)
-        self.sub_grid_position = self.sub_grid_position["min_deviation"]
+        # self.sub_grid_position = self.sub_grid_position["min_deviation"]
+        self.is_viewed = False
 
     def _date_is_today(self) -> bool:
         today = datetime.today().date()
@@ -73,9 +73,9 @@ class CurrentTimeAttributes(DivAttributes):
 
 class EventsAttributes(DivAttributes):
     def __init__(
-        self,
-        event: Event,
-        day: Union[bool, datetime] = False,
+            self,
+            event: Event,
+            day: Union[bool, datetime] = False,
     ) -> None:
         self.start_time = event.start
         self.end_time = event.end
@@ -135,9 +135,9 @@ class EventsAttributes(DivAttributes):
 
 
 def is_specific_time_event_in_day(
-    event: Event,
-    day: datetime,
-    day_end: datetime,
+        event: Event,
+        day: datetime,
+        day_end: datetime,
 ) -> bool:
     if event.all_day:
         return False
@@ -149,9 +149,9 @@ def is_specific_time_event_in_day(
 
 
 def is_all_day_event_in_day(
-    event: Event,
-    day: datetime,
-    day_end: datetime,
+        event: Event,
+        day: datetime,
+        day_end: datetime,
 ) -> bool:
     if not event.all_day:
         return False
@@ -163,9 +163,9 @@ def is_all_day_event_in_day(
 
 
 def get_events_and_attributes(
-    day: datetime,
-    session,
-    user_id: int,
+        day: datetime,
+        session,
+        user_id: int,
 ) -> Iterator[Tuple[Event, EventsAttributes]]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
@@ -175,9 +175,9 @@ def get_events_and_attributes(
 
 
 def get_all_day_events(
-    day: datetime,
-    session,
-    user_id: int,
+        day: datetime,
+        session,
+        user_id: int,
 ) -> Iterator[Event]:
     events = get_all_user_events(session, user_id)
     day_end = day + timedelta(hours=24)
@@ -188,11 +188,11 @@ def get_all_day_events(
 
 @router.get("/day/{date}", include_in_schema=False)
 async def dayview(
-    request: Request,
-    date: str,
-    view="day",
-    session=Depends(get_db),
-    user: User = Depends(current_user),
+        request: Request,
+        date: str,
+        view="day",
+        session=Depends(get_db),
+        user: User = Depends(current_user),
 ):
     try:
         day = datetime.strptime(date, "%Y-%m-%d")
@@ -211,11 +211,12 @@ async def dayview(
     )
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
-    tasks = (session.query(Task)
-             .filter(Task.owner_id == user.user_id)
-             .filter(Task.date == day.date())
-             .order_by(Task.time)
-             )
+    tasks = (
+        session.query(Task)
+        .filter(Task.owner_id == user.user_id)
+        .filter(Task.date == day.date())
+        .order_by(Task.time)
+    )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",

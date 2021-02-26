@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+from starlette.requests import Request
 
 from app.config import templates
 from app.dependencies import get_db
@@ -20,6 +21,7 @@ router = APIRouter(
 
 @router.post("/delete")
 def delete_task(
+        request: Request,
         task_id: int = Form(...),
         db: Session = Depends(get_db),
 ) -> RedirectResponse:
@@ -46,13 +48,14 @@ def delete_task(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
     return RedirectResponse(
-        url=f"/day/{date_str}",
+        request.url_for("dayview", date=date_str),
         status_code=status.HTTP_302_FOUND,
     )
 
 
 @router.post("/add")
 async def add_task(
+        request: Request,
         title: str = Form(...),
         description: str = Form(...),
         date_str: str = Form(...),
@@ -71,13 +74,14 @@ async def add_task(
         is_important,
     )
     return RedirectResponse(
-        f"/day/{date_str}",
+        request.url_for("dayview", date=date_str),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
 @router.post("/edit")
 async def edit_task(
+        request: Request,
         task_id: int = Form(...),
         title: str = Form(...),
         description: str = Form(...),
@@ -94,13 +98,14 @@ async def edit_task(
     task.is_important = is_important
     session.commit()
     return RedirectResponse(
-        f"/day/{date_str}",
+        request.url_for("dayview", date=date_str),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
 @router.post("/done/{task_id}")
 async def set_task_done(
+        request: Request,
         task_id: int,
         session: Session = Depends(get_db),
 ) -> RedirectResponse:
@@ -108,13 +113,14 @@ async def set_task_done(
     task.is_done = True
     session.commit()
     return RedirectResponse(
-        f"/day/{task.date.strftime('%Y-%m-%d')}",
+        request.url_for("dayview", date=task.date.strftime('%Y-%m-%d')),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 
 
 @router.post("/undone/{task_id}")
 async def set_task_undone(
+        request: Request,
         task_id: int,
         session: Session = Depends(get_db),
 ) -> RedirectResponse:
@@ -122,7 +128,7 @@ async def set_task_undone(
     task.is_done = False
     session.commit()
     return RedirectResponse(
-        f"/day/{task.date.strftime('%Y-%m-%d')}",
+        request.url_for("dayview", date=task.date.strftime('%Y-%m-%d')),
         status_code=status.HTTP_303_SEE_OTHER,
     )
 

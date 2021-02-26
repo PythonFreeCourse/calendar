@@ -8,6 +8,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from app.database.models import Task
 from app.internal.todo_list import by_id
 from app.internal.utils import create_model, delete_instance
+from app.routers.todo_list import router
 
 DATE = date(2021, 2, 2)
 TIME = time(20, 0)
@@ -52,7 +53,7 @@ def task2(session, user):
 
 def test_if_task_deleted(home_test_client, task1: Task, session):
     response = home_test_client.post(
-        "/task/delete",
+        router.url_path_for('delete_task'),
         data={"task_id": task1.id},
     )
     assert response.status_code == status.HTTP_302_FOUND
@@ -62,7 +63,7 @@ def test_if_task_deleted(home_test_client, task1: Task, session):
 
 def test_if_task_created(home_test_client, session, task1: Task, user):
     response = home_test_client.post(
-        "/task/add",
+        router.url_path_for('add_task'),
         data={
             "title": task1.title,
             "description": task1.description,
@@ -79,7 +80,7 @@ def test_if_task_created(home_test_client, session, task1: Task, user):
 
 def test_if_task_edited(home_test_client, session, task1: Task, task2):
     response = home_test_client.post(
-        "/task/edit",
+        router.url_path_for('edit_task'),
         data={
             "task_id": task1.id,
             "title": task2.title,
@@ -100,11 +101,13 @@ def test_if_task_edited(home_test_client, session, task1: Task, task2):
 
 def test_if_task_has_done(home_test_client, session, task1: Task):
     response = home_test_client.post(
-        f"/task/done/{task1.id}",
+        router.url_path_for('set_task_done', task_id=task1.id),
         data={"task_id": task1.id},
     )
     assert response.status_code == status.HTTP_303_SEE_OTHER
-    response = home_test_client.get(f"/task/{task1.id}")
+    response = home_test_client.get(
+        router.url_path_for('get_task', task_id=task1.id),
+    )
     content = response.content.decode('utf-8')
     content = json.loads(content)
     assert content['is_done'] is True
@@ -112,14 +115,16 @@ def test_if_task_has_done(home_test_client, session, task1: Task):
 
 def test_if_task_has_not_done(home_test_client, session, task1: Task):
     response = home_test_client.post(
-        f"/task/undone/{task1.id}",
+        router.url_path_for('set_task_undone', task_id=task1.id),
         data={
             "task_id": task1.id,
             "session": session
         },
     )
     assert response.status_code == status.HTTP_303_SEE_OTHER
-    response = home_test_client.get(f"/task/{task1.id}")
+    response = home_test_client.get(
+        router.url_path_for('get_task', task_id=task1.id),
+    )
     content = response.content.decode('utf-8')
     content = json.loads(content)
     assert content['is_done'] is False

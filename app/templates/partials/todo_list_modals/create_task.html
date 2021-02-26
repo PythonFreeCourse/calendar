@@ -10,7 +10,7 @@
                             data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
-                <form action="/task/add" method="post">
+                <form action='{{ url_for("add_task") }}' method="post">
                     <div class="modal-body">
                         <input type="hidden" value="{{date_str}}"
                                name="date_str">
