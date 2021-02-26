@@ -16,8 +16,10 @@ from app.dependencies import (
     get_db,
     logger,
     templates,
+    SessionLocal,
 )
 from app.internal import daily_quotes, json_data_loader
+import app.internal.features as internal_features
 from app.internal.languages import set_ui_language
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
@@ -67,6 +69,7 @@ from app.routers import (  # noqa: E402
     email,
     event,
     export,
+    features,
     four_o_four,
     friendview,
     google_connect,
@@ -120,6 +123,7 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
+    features.router,
     four_o_four.router,
     friendview.router,
     google_connect.router,
@@ -143,6 +147,13 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
+
+
+@app.on_event("startup")
+async def startup_event():
+    session = SessionLocal()
+    internal_features.create_features_at_startup(session=session)
+    session.close()
 
 
 # TODO: I add the quote day to the home page
