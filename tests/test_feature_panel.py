@@ -167,14 +167,14 @@ def test_create_feature(session):
     assert feat.name == "test1"
 
 
-def test_index(security_test_client):
+def test_index(session, security_test_client):
     url = route.router.url_path_for("index")
 
     resp = security_test_client.get(url)
     assert resp.ok
 
 
-def test_add_feature_to_user(form_mock, security_test_client):
+def test_add_feature_to_user(session, form_mock, security_test_client):
     url = route.router.url_path_for("add_feature_to_user")
 
     security_test_client.post(
