@@ -24,8 +24,6 @@ router = APIRouter(
     dependencies=[Depends(get_db)],
 )
 
-MENSTRUAL_PERIOD_CATEGORY_ID = 111
-
 
 @router.get("/")
 def join_menstrual_predictor(
@@ -75,7 +73,7 @@ async def submit_join_form(
 ) -> RedirectResponse:
 
     data = await request.form()
-
+    print(data)
     user_menstrual_period_length = {
         "user_id": user.user_id,
         "period_length": data["avg-period-length"],

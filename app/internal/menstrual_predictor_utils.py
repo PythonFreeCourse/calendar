@@ -15,11 +15,11 @@ from app.internal.security.schema import CurrentUser
 from app.routers.event import create_event
 
 MENSTRUAL_PERIOD_CATEGORY_ID = 111
+N_MONTHS_GENERATED = 3
+GAP_IN_CASE_NO_PERIODS = 30
 
 
 def get_avg_period_gap(db: Session, user_id: int) -> int:
-    GAP_IN_CASE_NO_PERIODS = 30
-
     period_days = get_all_period_days(db, user_id)
     gaps_list = []
 
@@ -77,7 +77,6 @@ def add_n_month_predictions(
     period_start_date: datetime,
     user_id: int,
 ) -> List[Event]:
-    N_MONTHS_GENERATED = 3
     avg_gap = get_avg_period_gap(db, user_id)
     avg_gap_delta = datetime.timedelta(avg_gap)
     generated_months = []
