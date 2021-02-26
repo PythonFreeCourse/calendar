@@ -48,6 +48,4 @@ def get_parasha_object(session: Session, date: datetime) -> Optional[Parasha]:
     parasha_name = get_parasha_only_to_saturday(date)
     if parasha_name is None:
         return None
-    for parasha in session.query(Parasha).all():
-        if parasha_name in parasha.name:
-            return parasha
+    return session.query(Parasha).filter_by(name=parasha_name).first()
