@@ -77,13 +77,13 @@ function weekScroll() {
                 return false;
             }
             const addAfter = true;
-            callLoadWeek(daysToLoad, end);
+            callLoadWeek(daysToLoad, addAfter);
         }
     )
     grid.addEventListener('wheel', function (event) {
         if (event.deltaY < 0 && this.scrollTop === 0) {
             const addAfter = false;
-            callLoadWeek(daysToLoad, end);
+            callLoadWeek(daysToLoad, addAfter);
         }
     })
 }
