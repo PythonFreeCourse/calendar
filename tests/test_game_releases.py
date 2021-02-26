@@ -3,7 +3,9 @@ from app.internal.game_releases_utils import (
     translate_dby_date_to_ymd,
     translate_ymd_date_to_dby,
 )
-from app.routers.game_release_dates_service import game_release_router
+from app.routers.game_release_dates_service import (
+    router as game_release_router,
+)
 
 
 class TestGameReleases:
