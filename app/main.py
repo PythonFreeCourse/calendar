@@ -159,8 +159,6 @@ async def startup_event():
     session.close()
 
 
-# TODO: I add the quote day to the home page
-# until the relevant calendar view will be developed.
 @app.get("/", include_in_schema=False)
 @logger.catch()
 async def home(
@@ -184,8 +182,6 @@ async def home(
             "request": request,
             "is_connected": is_connected,
             "quote": quote_of_day,
-            "empty_heart": daily_quotes.EMPTY_HEART_PATH,
-            "full_heart": daily_quotes.FULL_HEART_PATH,
         },
     )
 

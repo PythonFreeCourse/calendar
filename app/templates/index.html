@@ -22,9 +22,9 @@
                         <span >&nbsp;
                     {% endif %}
                     {% if quote.is_favorite %}
-                    <img src="{{full_heart}}" data-heart="on" data-qid="{{quote.id}}" class="heart full-heart">
+                    <img src="{{ url_for('media', path='/full_heart.png') }}" data-heart="on" data-qid="{{quote.id}}" class="heart full-heart">
                     {% else %}
-                    <img src="{{empty_heart}}" data-heart="off" data-qid="{{quote.id}}" class="heart empty-heart">
+                    <img src="{{ url_for('media', path='/empty_heart.png') }}" data-heart="off" data-qid="{{quote.id}}" class="heart empty-heart">
                     {% endif %}
                     </span>
                     </p>

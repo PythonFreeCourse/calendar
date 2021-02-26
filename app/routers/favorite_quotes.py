@@ -51,6 +51,5 @@ async def favorite_quotes(
         {
             "request": request,
             "quotes": quotes,
-            "full_heart": daily_quotes.FAVORITES_PATH,
         },
     )
