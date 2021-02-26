@@ -3,7 +3,6 @@ import pytest
 import app.internal.features as internal
 import app.routers.features as route
 from app.database.models import Feature, UserFeature
-from app.main import app
 from tests.test_login import LOGIN_DATA, REGISTER_DETAIL
 
 
@@ -169,7 +168,7 @@ def test_create_feature(session):
 
 
 def test_index(security_test_client):
-    url = app.url_path_for("index")
+    url = route.router.url_path_for("index")
 
     resp = security_test_client.get(url)
     assert resp.ok
