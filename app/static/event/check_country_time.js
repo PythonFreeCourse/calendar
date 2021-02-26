@@ -80,8 +80,5 @@ function checkCountryTime() {
     });
 }
 
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", checkCountryTime);
-} else {
-    checkCountryTime();
-}
+
+document.addEventListener("DOMContentLoaded", checkCountryTime);
