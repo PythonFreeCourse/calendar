@@ -212,10 +212,8 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     tasks = (
-        session.query(Task)
-            .filter(Task.owner_id == user.user_id)
-            .filter(Task.date == day.date())
-            .order_by(Task.time)
+        session.query(Task).filter(Task.owner_id == user.user_id).filter(
+            Task.date == day.date()).order_by(Task.time)
     )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
