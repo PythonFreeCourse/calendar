@@ -11,10 +11,12 @@ from app.config import (
     CALENDAR_HOME_PAGE,
     CALENDAR_REGISTRATION_PAGE,
     CALENDAR_SITE_NAME,
+    DOMAIN,
     email_conf,
-    templates,
 )
 from app.database.models import Event, User, UserEvent
+from app.dependencies import templates
+from app.internal.security.schema import ForgotPassword
 from app.internal.utils import get_current_user
 
 mail = FastMail(email_conf)
@@ -241,3 +243,32 @@ def verify_email_pattern(email: str) -> bool:
         return True
     except EmailError:
         return False
+
+
+async def send_reset_password_mail(
+    user: ForgotPassword,
+    background_tasks: BackgroundTasks,
+) -> bool:
+    """
+    This function sends a reset password email to user.
+    :param user: ForgotPassword schema.
+        Contains user's email address, jwt verifying token.
+    :param background_tasks: (BackgroundTasks): Function from fastapi that lets
+            you apply tasks in the background.
+    returns True
+    """
+    params = f"?email_verification_token={user.email_verification_token}"
+    template = templates.get_template("reset_password_mail.html")
+    html = template.render(
+        recipient=user.username.lstrip("@"),
+        link=f"{DOMAIN}/reset-password{params}",
+        email=user.email,
+    )
+    background_tasks.add_task(
+        send_internal,
+        subject="Calendar reset password",
+        recipients=[user.email],
+        body=html,
+        subtype="html",
+    )
+    return True

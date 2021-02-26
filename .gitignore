@@ -1,5 +1,6 @@
 dev.db
 test.db
+.idea
 config.py
 
 # Byte-compiled / optimized / DLL files
@@ -146,6 +147,7 @@ dmypy.json
 .pyre/
 
 # mac env
+.DS_Store
 bin
 
 # register stuff
@@ -161,3 +163,7 @@ app/routers/stam
 .idea
 
 junit/
+
+# .DS_Store
+.DS_Store
+DS_Store

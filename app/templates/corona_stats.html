@@ -1,0 +1,16 @@
+
+{% if corona_stats_data.get("error") is none %}
+<div class="card card-profile">
+  <div class="card-body">
+    <div class="container">
+      <p class="card-title">
+        <img class="pb-1" src="{{ url_for('static', path='/images/icons/israel.svg')}}" width="20em" height="20em">
+        COVID 19 Vaccinated</p>
+      <p>
+        {{ corona_stats_data["vaccinated_second_dose_perc"] }}%
+        ({{ corona_stats_data["vaccinated_second_dose_total"] }})
+      </p>
+    </div>
+  </div>
+</div>
+{% endif %}

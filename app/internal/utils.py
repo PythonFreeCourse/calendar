@@ -1,6 +1,9 @@
-from typing import Any, List, Optional
+from datetime import date, datetime, time
+from typing import Any, List, Optional, Union
 
 from sqlalchemy.orm import Session
+from starlette.responses import RedirectResponse
+from starlette.status import HTTP_302_FOUND
 
 from app.database.models import Base, User
 
@@ -18,6 +21,7 @@ def save(session: Session, instance: Base) -> bool:
 def create_model(session: Session, model_class: Base, **kwargs: Any) -> Base:
     """Creates and saves a db model."""
     instance = model_class(**kwargs)
+
     save(session, instance)
     return instance
 
@@ -41,7 +45,7 @@ def get_current_user(session: Session) -> User:
 
 
 def get_available_users(session: Session) -> List[User]:
-    """this function return all availible users."""
+    """this function return all available users."""
     return session.query(User).filter(not User.disabled).all()
 
 
@@ -58,6 +62,26 @@ def get_user(session: Session, user_id: int) -> Optional[User]:
     return session.query(User).filter_by(id=user_id).first()
 
 
+def get_time_from_string(string: str) -> Optional[Union[date, time]]:
+    """Converts time string to a date or time object.
+
+    Args:
+        string (str): Time string.
+
+    Returns:
+        datetime.time | datetime.date | None: Date or Time object if valid,
+                                              None otherwise.
+    """
+    formats = {"%Y-%m-%d": "date", "%H:%M": "time", "%H:%M:%S": "time"}
+    for time_format, method in formats.items():
+        try:
+            time_obj = getattr(datetime.strptime(string, time_format), method)
+        except ValueError:
+            pass
+        else:
+            return time_obj()
+
+
 def get_placeholder_user() -> User:
     """Creates a mock user.
 
@@ -68,10 +92,31 @@ def get_placeholder_user() -> User:
         A User object.
     """
     return User(
-        username='new_user',
-        email='my@email.po',
-        password='1a2s3d4f5g6',
-        full_name='My Name',
+        username="new_user",
+        email="my@email.po",
+        password="1a2s3d4f5g6",
+        full_name="My Name",
         language_id=1,
-        telegram_id='',
+        telegram_id="",
     )
+
+
+def safe_redirect_response(
+    url: str,
+    default: str = "/",
+    status_code: int = HTTP_302_FOUND,
+):
+    """Returns a safe redirect response.
+
+    Args:
+        url: the url to redirect to.
+        default: where to redirect if url isn't safe.
+        status_code: the response status code.
+
+    Returns:
+        The Notifications HTML page.
+    """
+    if not url.startswith("/"):
+        url = default
+
+    return RedirectResponse(url=url, status_code=status_code)

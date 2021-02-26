@@ -1,35 +1,54 @@
-from datetime import datetime as dt
+import io
 import json
+import urllib
+from datetime import datetime as dt
 from operator import attrgetter
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Request
+from PIL import Image
 from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.sql.elements import Null
 from starlette import status
+from starlette.datastructures import ImmutableMultiDict
 from starlette.responses import RedirectResponse, Response
 from starlette.templating import _TemplateResponse
 
-from app.database.models import Comment, Event, User, UserEvent
-from app.dependencies import get_db, logger, templates
+from app.config import PICTURE_EXTENSION
+from app.database.models import (
+    Category,
+    Comment,
+    Country,
+    Event,
+    SharedList,
+    SharedListItem,
+    User,
+    UserEvent,
+)
+from app.dependencies import UPLOAD_PATH, get_db, logger, templates
+from app.internal import comment as cmt
+from app.internal.emotion import get_emotion
 from app.internal.event import (
+    get_all_countries_names,
     get_invited_emails,
+    get_location_coordinates,
     get_messages,
     get_uninvited_regular_emails,
     raise_if_zoom_link_invalid,
 )
-from app.internal import comment as cmt
-from app.internal.emotion import get_emotion
 from app.internal.privacy import PrivacyKinds
-from app.internal.utils import create_model, save, get_current_user
+from app.internal.security.dependencies import current_user
+from app.internal.utils import create_model, get_current_user, save
 from app.routers.categories import get_user_categories
 
+IMAGE_HEIGHT = 200
 EVENT_DATA = Tuple[Event, List[Dict[str, str]], str]
 TIME_FORMAT = "%Y-%m-%d %H:%M"
 START_FORMAT = "%A, %d/%m/%Y %H:%M"
+
 UPDATE_EVENTS_FIELDS = {
     "title": str,
     "start": dt,
@@ -49,6 +68,12 @@ router = APIRouter(
     tags=["event"],
     responses={404: {"description": "Not found"}},
 )
+
+
+class SharedItem(NamedTuple):
+    name: str
+    amount: float
+    participant: str
 
 
 class EventModel(BaseModel):
@@ -72,7 +97,7 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
         db=session,
         title=event.title,
         start=event.start,
-        end=event.start,
+        end=event.end,
         content=event.content,
         owner_id=event.owner_id,
         location=event.location,
@@ -81,20 +106,28 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
     return {"success": True}
 
 
+def get_categories_list(
+    user: User,
+    db_session: Session = Depends(get_db),
+) -> List[Category]:
+    return get_user_categories(db_session, user.user_id)
+
+
 @router.get("/edit", include_in_schema=False)
-@router.get("/edit")
 async def eventedit(
     request: Request,
     db_session: Session = Depends(get_db),
+    user: User = Depends(current_user),
 ) -> Response:
-    user_id = 1  # until issue#29 will get current user_id from session
-    categories_list = get_user_categories(db_session, user_id)
+    countries_names = get_all_countries_names(db_session)
+    categories_list = get_categories_list(user, db_session)
     return templates.TemplateResponse(
         "eventedit.html",
         {
             "request": request,
             "categories_list": categories_list,
             "privacy": PrivacyKinds,
+            "countries_names": countries_names,
         },
     )
 
@@ -102,6 +135,7 @@ async def eventedit(
 @router.post("/edit", include_in_schema=False)
 async def create_new_event(
     request: Request,
+    event_img: bytes = File(None),
     session=Depends(get_db),
 ) -> Response:
     data = await request.form()
@@ -116,8 +150,7 @@ async def create_new_event(
     availability = data.get("availability", "True") == "True"
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
-
-    vc_link = data["vc_link"]
+    vc_link = data.get("vc_link")
     category_id = data.get("category_id")
     privacy = data["privacy"]
     privacy_kinds = [kind.name for kind in PrivacyKinds]
@@ -131,9 +164,17 @@ async def create_new_event(
         title,
         invited_emails,
     )
+    shared_list = extract_shared_list_from_data(event_info=data, db=session)
+    latitude, longitude = None, None
 
-    if vc_link is not None:
+    if vc_link:
         raise_if_zoom_link_invalid(vc_link)
+    else:
+        location_details = await get_location_coordinates(location)
+        if not isinstance(location_details, str):
+            location = location_details.name
+            latitude = location_details.latitude
+            longitude = location_details.longitude
 
     event = create_event(
         db=session,
@@ -144,13 +185,21 @@ async def create_new_event(
         owner_id=owner_id,
         content=content,
         location=location,
+        latitude=latitude,
+        longitude=longitude,
         vc_link=vc_link,
         invitees=invited_emails,
         category_id=category_id,
         availability=availability,
         is_google_event=is_google_event,
+        shared_list=shared_list,
         privacy=privacy,
     )
+
+    if event_img:
+        image = process_image(event_img, event.id)
+        event.image = image
+        session.commit()
 
     messages = get_messages(session, event, uninvited_contacts)
     return RedirectResponse(
@@ -158,6 +207,48 @@ async def create_new_event(
         + f'?messages={"---".join(messages)}',
         status_code=status.HTTP_302_FOUND,
     )
+
+
+def process_image(
+    img: bytes,
+    event_id: int,
+    img_height: int = IMAGE_HEIGHT,
+) -> str:
+    """Resized and saves picture without exif (to avoid malicious date))
+    according to required height and keep aspect ratio"""
+    try:
+        image = Image.open(io.BytesIO(img))
+    except IOError:
+        error_message = "The uploaded file is not a valid image"
+        logger.exception(error_message)
+        return
+    width, height = image.size
+    height_to_req_height = img_height / float(height)
+    new_width = int(float(width) * float(height_to_req_height))
+    resized = image.resize((new_width, img_height), Image.ANTIALIAS)
+    file_name = f"{event_id}{PICTURE_EXTENSION}"
+    image_data = list(resized.getdata())
+    image_without_exif = Image.new(resized.mode, resized.size)
+    image_without_exif.putdata(image_data)
+    image_without_exif.save(f"{UPLOAD_PATH}/{file_name}")
+    return file_name
+
+
+def get_waze_link(event: Event) -> str:
+    """Get a waze navigation link to the event location.
+
+    Returns:
+        If there are coordinates, waze will navigate to the exact location.
+        Otherwise, waze will look for the address that appears in the location.
+        If there is no address, an empty string will be returned."""
+
+    if not event.location:
+        return ""
+    # if event.latitude and event.longitude:
+    #     coordinates = f"{event.latitude},{event.longitude}"
+    #     return f"https://waze.com/ul?ll={coordinates}&navigate=yes"
+    url_location = urllib.parse.quote(event.location)
+    return f"https://waze.com/ul?q={url_location}&navigate=yes"
 
 
 def raise_for_nonexisting_event(event_id: int) -> None:
@@ -180,6 +271,7 @@ async def eventview(
     if event.all_day:
         start_format = "%A, %d/%m/%Y"
         end_format = ""
+    waze_link = get_waze_link(event)
     event_considering_privacy = event_to_show(event, db)
     if not event_considering_privacy:
         raise_for_nonexisting_event(event.id)
@@ -188,6 +280,7 @@ async def eventview(
         "eventview.html",
         {
             "request": request,
+            "waze_link": waze_link,
             "event": event_considering_privacy,
             "comments": comments,
             "start_format": start_format,
@@ -391,13 +484,17 @@ def create_event(
     content: Optional[str] = None,
     location: Optional[str] = None,
     vc_link: str = None,
+    latitude: Optional[str] = None,
+    longitude: Optional[str] = None,
     color: Optional[str] = None,
     invitees: List[str] = None,
     is_public: bool = False,
     category_id: Optional[int] = None,
     availability: bool = True,
     is_google_event: bool = False,
+    shared_list: Optional[SharedList] = None,
     privacy: str = PrivacyKinds.Public.name,
+    image: Optional[str] = None,
 ):
     """Creates an event and an association."""
 
@@ -413,6 +510,8 @@ def create_event(
         content=content,
         owner_id=owner_id,
         location=location,
+        latitude=latitude,
+        longitude=longitude,
         vc_link=vc_link,
         color=color,
         emotion=get_emotion(title, content),
@@ -420,8 +519,10 @@ def create_event(
         is_public=is_public,
         all_day=all_day,
         category_id=category_id,
+        shared_list=shared_list,
         availability=availability,
         is_google_event=is_google_event,
+        image=image,
     )
     create_model(db, UserEvent, user_id=owner_id, event_id=event.id)
     return event
@@ -534,6 +635,60 @@ def add_user_to_event(session: Session, user_id: int, event_id: int):
     return False
 
 
+def extract_shared_list_from_data(
+    event_info: ImmutableMultiDict,
+    db: Session,
+) -> Optional[SharedList]:
+    """Extract shared list items from POST data.
+    Return:
+        SharedList: SharedList object stored in the database.
+    """
+    raw_items = zip(
+        event_info.getlist("item-name"),
+        event_info.getlist("item-amount"),
+        event_info.getlist("item-participant"),
+    )
+    items = []
+    title = event_info.get("shared-list-title")
+    for name, amount, participant in raw_items:
+        item = SharedItem(name, amount, participant)
+        if _check_item_is_valid(item):
+            item_dict = item._asdict()
+            item_dict["amount"] = float(item_dict["amount"])
+            items.append(item_dict)
+    return _create_shared_list({title: items}, db)
+
+
+def _check_item_is_valid(item: SharedItem) -> bool:
+    return (
+        item is not None
+        and item.amount.isnumeric()
+        and item.participant is not None
+    )
+
+
+def _create_shared_list(
+    raw_shared_list: Dict[str, Dict[str, Any]],
+    db: Session,
+) -> Optional[SharedList]:
+    try:
+        title = list(raw_shared_list.keys())[0] or "Shared List"
+    except IndexError as e:
+        logger.exception(e)
+        return None
+    shared_list = create_model(db, SharedList, title=title)
+    try:
+        items = list(raw_shared_list.values())[0]
+        for item in items:
+            item = create_model(db, SharedListItem, **item)
+            shared_list.items.append(item)
+    except (IndexError, KeyError) as e:
+        logger.exception(e)
+        return None
+    else:
+        return shared_list
+
+
 def get_template_to_share_event(
     event_id: int,
     user_name: str,
@@ -615,11 +770,13 @@ async def view_comments(
     This essentially the same as `eventedit`, only with comments tab auto
     showed."""
     event, comments, end_format = get_event_data(db, event_id)
+    waze_link = get_waze_link(event)
     return templates.TemplateResponse(
         "eventview.html",
         {
             "request": request,
             "event": event,
+            "waze_link": waze_link,
             "comments": comments,
             "comment": True,
             "start_format": START_FORMAT,
@@ -649,3 +806,23 @@ async def delete_comment(
     cmt.delete_comment(db, comment_id)
     path = router.url_path_for("view_comments", event_id=str(event_id))
     return RedirectResponse(path, status_code=303)
+
+
+@router.get("/timezone/country/{country_name}", include_in_schema=False)
+async def check_timezone(
+    country_name,
+    request: Request,
+    db_session: Session = Depends(get_db),
+) -> Response:
+    try:
+        country_timezone = (
+            db_session.query(Country.timezone)
+            .filter_by(name=country_name)
+            .first()[0]
+        )
+    except TypeError:
+        raise HTTPException(
+            status_code=404,
+            detail="The inserted country name is not found",
+        )
+    return {"timezone": country_timezone}
