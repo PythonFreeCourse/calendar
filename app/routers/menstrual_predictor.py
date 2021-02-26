@@ -89,7 +89,7 @@ async def submit_join_form(
             **user_menstrual_period_length,
         )
     except SQLAlchemyError:
-        logger.info("Current user already signed up to the service, hurray!")
+        logger.info("Current user already signed up to the service, hurray!!")
         db.rollback()
     url = "/"
     generate_predicted_period_dates(
