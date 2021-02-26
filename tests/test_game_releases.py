@@ -6,23 +6,56 @@ from app.internal.game_releases_utils import (
 from app.routers.game_release_dates_service import (
     router as game_release_router,
 )
+from tests.test_login import test_login_successfull
+
+REGISTER_DETAIL = {
+    "username": "correct_user",
+    "full_name": "full_name",
+    "password": "correct_password",
+    "confirm_password": "correct_password",
+    "email": "example@email.com",
+    "description": "",
+}
 
 
 class TestGameReleases:
     @staticmethod
-    def test_subscribe(client):
+    def test_subscribe_not_logged(client):
         response = client.post(
             game_release_router.url_path_for("subscribe_game_release_service"),
         )
         assert response.ok
 
     @staticmethod
-    def test_unsubscribe(client):
+    def test_subscribe_logged(session, security_test_client):
+        test_login_successfull(session, security_test_client)
+        response = security_test_client.post(
+            game_release_router.url_path_for("subscribe_game_release_service"),
+        )
+        assert response.ok
+
+    @staticmethod
+    def test_unsubscribe_not_logged(client):
         response = client.post(
             game_release_router.url_path_for("subscribe_game_release_service"),
         )
         assert response.ok
         response = client.post(
+            game_release_router.url_path_for(
+                "unsubscribe_game_release_service",
+            ),
+        )
+        assert response.ok
+
+    @staticmethod
+    def test_unsubscribe_logged(session, security_test_client):
+        test_login_successfull(session, security_test_client)
+
+        response = security_test_client.post(
+            game_release_router.url_path_for("subscribe_game_release_service"),
+        )
+        assert response.ok
+        response = security_test_client.post(
             game_release_router.url_path_for(
                 "unsubscribe_game_release_service",
             ),
