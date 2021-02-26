@@ -1,55 +1,26 @@
 import datetime
+from typing import Dict, List
 
+import requests
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_302_FOUND
 
-import requests
 from app.database.models import UserSettings
 from app.dependencies import get_db, templates
+from app.internal.game_releases_utils import (
+    is_user_signed_up_for_game_releases,
+)
 from app.internal.security.dependencies import current_user
 from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
-
-from typing import Dict, List
-
 
 router = APIRouter(
     prefix="/game-releases",
     tags=["game-releases"],
     responses={404: {"description": "Not found"}},
 )
-
-
-def is_user_signed_up_for_game_releases(
-    session: Session,
-    current_user_id: int,
-) -> bool:
-    is_signed_up = (
-        session.query(UserSettings)
-        .filter(UserSettings.user_id == current_user_id)
-        .filter(UserSettings.video_game_releases.is_(True))
-        .first()
-    )
-
-    if is_signed_up:
-        return True
-    return False
-
-
-# @router.post("/add-games-to-calendar")
-# async def add_games_to_calendar(request: Request, session=Depends(get_db)):
-#     current_user = get_current_user(session)
-#     data = await request.form()
-#         create_event(
-#             session,
-#             title=game["name"],
-#             start=game["release_date"],
-#             end=game["release_date"],
-#             owner_id=current_user.id,
-#         )
-#         print(game_data)
 
 
 @router.post("/get_releases_by_dates")
@@ -70,23 +41,14 @@ async def fetch_released_games(
     )
 
 
-@router.get("/get_game_releases_next_month")
+@router.get("/next-month")
 def get_game_releases_month(request: Request) -> List:
     today = datetime.datetime.today()
     delta = datetime.timedelta(days=30)
     today_str = today.strftime("%Y-%m-%d")
     in_month_str = (today + delta).strftime("%Y-%m-%d")
 
-    games = get_games_data(today_str, in_month_str)
-
-    return games
-
-
-# @router.post
-# TODO
-# add game to calendar
-# @router.post
-# remove game from calendar
+    return get_games_data(today_str, in_month_str)
 
 
 def get_games_data(start_date: datetime, end_date: datetime) -> List[Dict]:
@@ -98,10 +60,12 @@ def get_games_data(start_date: datetime, end_date: datetime) -> List[Dict]:
     current_day_games = current_day_games.json()["results"]
     games_data = []
     for result in current_day_games:
-        current = {}
-        current["name"] = result["name"]
-        current["slug"] = result["slug"]
-        current["platforms"] = []
+        current = {
+            "name": result["name"],
+            "slug": result["slug"],
+            "platforms": [],
+        }
+
         for platform in result["platforms"]:
             current["platforms"].append(platform["platform"]["name"])
         current["release_date"] = result["released"]
@@ -118,24 +82,22 @@ async def subscribe_game_release_service(
 ) -> Response:
     if is_user_signed_up_for_game_releases(session, user.user_id):
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
+    games_setting_true_for_model = {
+        "user_id": user.user_id,
+        "video_game_releases": True,
+    }
+    current_user_settings = session.query(UserSettings).filter(
+        UserSettings.user_id == user.user_id,
+    )
+    if current_user_settings:
+        # TODO:
+        # If all users are created with a UserSettings entry -
+        # unnecessary check
+        current_user_settings.update(games_setting_true_for_model)
+        session.commit()
     else:
-        games_setting_true = {UserSettings.video_game_releases: True}
-        games_setting_true_for_model = {
-            "user_id": user.user_id,
-            "video_game_releases": True,
-        }
-        current_user_settings = session.query(UserSettings).filter(
-            UserSettings.user_id == user.user_id,
-        )
-        if current_user_settings:
-            # TODO:
-            # If all users are created with a UserSettings entry -
-            # unnecessary check
-            current_user_settings.update(games_setting_true)
-            session.commit()
-        else:
-            create_model(session, UserSettings, **games_setting_true_for_model)
-        return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
+        create_model(session, UserSettings, **games_setting_true_for_model)
+    return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
 
 
 @router.post("/unsubscribe")
@@ -149,9 +111,8 @@ async def unsubscribe_game_release_service(
     if not is_user_signed_up_for_game_releases(session, current_user_id):
         return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
     else:
-        games_setting_false = {UserSettings.video_game_releases: False}
         games_setting_false_for_model = {
-            "user_id": current_user_id,
+            "user_id": str(current_user_id),
             "video_game_releases": False,
         }
         current_user_settings = session.query(UserSettings).filter(
@@ -161,7 +122,7 @@ async def unsubscribe_game_release_service(
             # TODO:
             # If all users are created with a UserSettings entry -
             # unnecessary check
-            current_user_settings.update(games_setting_false)
+            current_user_settings.update(games_setting_false_for_model)
             session.commit()
         else:
             create_model(

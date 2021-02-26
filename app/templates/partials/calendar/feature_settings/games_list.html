@@ -1,10 +1,10 @@
 {% for game in games %}
-<div><b for={{ game['slug'] }} class="game">{{ game['name'] }}</b></div>
-<div><b>Platforms</b></div>
+<div class="game-title">"{{ game['name'] }}"</div>
+<div class="secondary-title">Platforms</div>
 {% for platform in game['platforms']%}
 <div>{{ platform }}</div>
 {% endfor %}
-<div><b>Release date</b></div>
+<div class="secondary-title">Release date</div>
 <div>{{ game['release_date'] }}</div>
 <br>
 {% endfor %}

@@ -5,9 +5,28 @@ from datetime import datetime
 from typing import TYPE_CHECKING, List
 
 import requests
+from sqlalchemy.orm import Session
+
+from app.database.models import UserSettings
 
 if TYPE_CHECKING:
     from app.routers.calendar_grid import Day, Week
+
+
+def is_user_signed_up_for_game_releases(
+    session: Session,
+    current_user_id: int,
+) -> bool:
+    is_signed_up = (
+        session.query(UserSettings)
+        .filter(UserSettings.user_id == current_user_id)
+        .filter(UserSettings.video_game_releases.is_(True))
+        .first()
+    )
+
+    if is_signed_up:
+        return True
+    return False
 
 
 def add_game_events_to_weeks(
