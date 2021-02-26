@@ -9,7 +9,7 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/dayview.css') }}">
   <div id="top-tab" class="d-flex justify-content-around align-items-center sticky-top">
     {% if view == 'day' %}
-    <a href="#" title="close day view" onclick="close_the_view()"><img class="pb-1"
+    <a href="#" title="close day view" id="close-day-view"><img class="pb-1"
                                                            src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
                                                            width="15em" height="15em"></a>
     <span id="month-num" class="month-title fw-bold text-white">{{month}}</span>
