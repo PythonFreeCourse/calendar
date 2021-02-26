@@ -1,7 +1,7 @@
 import os
 from typing import List, Optional
 
-from fastapi import BackgroundTasks, UploadFile
+from fastapi import BackgroundTasks, Depends, UploadFile
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import EmailStr
 from pydantic.errors import EmailError
@@ -16,8 +16,8 @@ from app.config import (
 )
 from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
+from app.internal.security.dependencies import current_user
 from app.internal.security.schema import ForgotPassword
-from app.internal.utils import get_current_user
 
 mail = FastMail(email_conf)
 
@@ -69,6 +69,7 @@ def send_email_to_event_participants(
     event_id: int,
     title: str,
     content: str,
+    user_logged: User = Depends(current_user),
 ) -> int:
     """This function sends emails to a mailing list of all event participants.
     it uses the function send above to do this and avoid double codes..
@@ -82,7 +83,7 @@ def send_email_to_event_participants(
         (number of valid emails in event's participants)
     """
     event_owner = session.query(Event.owner).filter(id == event_id).first()
-    if event_owner != get_current_user(session):
+    if event_owner != user_logged:
         return 0
     # makes sure only event owner can send an email via this func.
     mailing_list = (
