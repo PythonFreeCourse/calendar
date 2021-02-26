@@ -488,6 +488,14 @@ class Quote(Base):
     is_favorite = Column(Boolean, default=False, nullable=False)
 
 
+class Country(Base):
+    __tablename__ = "countries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+    timezone = Column(String, nullable=False)
+
+
 class Comment(Base):
     __tablename__ = "comments"
 
