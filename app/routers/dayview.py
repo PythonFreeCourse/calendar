@@ -63,8 +63,7 @@ class CurrentTimeAttributes(DivAttributes):
         self.is_viewed = self._date_is_today()
         self.grid_position = self._get_position(current) - 1
         self.sub_grid_position = self._minutes_position(current.minute)
-        # self.sub_grid_position = self.sub_grid_position["min_deviation"]
-        self.is_viewed = False
+        self.sub_grid_position = self.sub_grid_position["min_deviation"]
 
     def _date_is_today(self) -> bool:
         today = datetime.today().date()
