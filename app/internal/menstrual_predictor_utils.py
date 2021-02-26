@@ -71,26 +71,27 @@ def generate_predicted_period_dates(
     return period_event
 
 
-def add_3_month_predictions(
+def add_n_month_predictions(
     db: Session,
     period_length: str,
     period_start_date: datetime,
     user_id: int,
 ) -> List[Event]:
+    N_MONTHS_GENERATED = 3
     avg_gap = get_avg_period_gap(db, user_id)
     avg_gap_delta = datetime.timedelta(avg_gap)
-    generated_3_months = []
-    for _ in range(4):
+    generated_months = []
+    for _ in range(N_MONTHS_GENERATED + 1):
         generated_period = generate_predicted_period_dates(
             db,
             period_length,
             period_start_date,
             user_id,
         )
-        generated_3_months.append(generated_period)
+        generated_months.append(generated_period)
         period_start_date += avg_gap_delta
-    logger.info(f"Generated predictions: {generated_3_months}")
-    return generated_3_months
+    logger.info(f"Generated predictions: {generated_months}")
+    return generated_months
 
 
 def add_prediction_events_if_valid(
@@ -106,7 +107,7 @@ def add_prediction_events_if_valid(
 
     remove_existing_period_dates(db, current_user_id)
     if user_period_length:
-        add_3_month_predictions(
+        add_n_month_predictions(
             db,
             user_period_length,
             period_start_date,

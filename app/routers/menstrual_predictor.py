@@ -19,8 +19,8 @@ from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
 
 router = APIRouter(
-    prefix="/menstrual_predictor",
-    tags=["menstrual_predictor"],
+    prefix="/menstrual-predictor",
+    tags=["menstrual-predictor"],
     dependencies=[Depends(get_db)],
 )
 
@@ -35,17 +35,18 @@ def join_menstrual_predictor(
 ) -> Response:
     current_user_id = user.user_id
 
-    if not is_user_signed_up_to_menstrual_predictor(db, current_user_id):
-        return templates.TemplateResponse(
-            "join_menstrual_predictor.html",
-            {
-                "request": request,
-            },
-        )
-    return RedirectResponse(url="/", status_code=HTTP_302_FOUND)
+    if is_user_signed_up_to_menstrual_predictor(db, current_user_id):
+        return RedirectResponse(url="/", status_code=HTTP_302_FOUND)
+
+    return templates.TemplateResponse(
+        "join_menstrual_predictor.html",
+        {
+            "request": request,
+        },
+    )
 
 
-@router.get("/add-period-start/{start_date}")
+@router.get("/add/{start_date}")
 def add_period_start(
     request: Request,
     start_date: str,

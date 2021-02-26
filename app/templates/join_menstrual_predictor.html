@@ -24,16 +24,5 @@
             <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
         </form>
     </div>
-    <script>
-        function change_max_to_today_date(el){
-            today = new Date();
-            today_str = today.toISOString().substring(0,10);
-            el.max = today_str;
-        }
-        function validate_date_older_than_today(received_date){
-            return received_date < new Date();
-        }
-        let last_period_date_element = document.getElementById("last-period-date");
-        change_max_to_today_date(last_period_date_element);
-    </script>
+    <script src={{ url_for('static', path='/js/menstrual_predictor.js')}}></script>
 {% endblock %}

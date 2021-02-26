@@ -1,32 +1,27 @@
-class TestMenstrualPredictor:
-    PREDICTOR_PREFIX = "/menstrual_predictor"
-    ADD_PERIOD_START = "/add-period-start"
+from app.routers.menstrual_predictor import router
 
+
+class TestMenstrualPredictor:
     @staticmethod
     def test_menstrual_predictor_page_not_signed_up(client, session):
-        resp = client.get(TestMenstrualPredictor.PREDICTOR_PREFIX)
+        resp = client.get(router.url_path_for("join_menstrual_predictor"))
         assert resp.ok
 
     @staticmethod
     def test_menstrual_predictor_sign_up(client, session):
         resp = client.post(
-            TestMenstrualPredictor.PREDICTOR_PREFIX,
+            router.url_path_for("join_menstrual_predictor"),
             json={"avg-period-length": 8, "last-period-date": "2020-11-07"},
         )
         assert resp.ok
 
-        resp = client.get(
-            TestMenstrualPredictor.PREDICTOR_PREFIX
-            + TestMenstrualPredictor.ADD_PERIOD_START
-            + "/2020-12-11",
-        )
+        url = router.url_path_for("add_period_start", start_date="2020-12-11")
+        resp = client.get(url)
+
         assert resp.ok
 
     @staticmethod
     def test_add_period_date(client, session):
-        resp = client.get(
-            TestMenstrualPredictor.PREDICTOR_PREFIX
-            + TestMenstrualPredictor.ADD_PERIOD_START
-            + "/2020-12-11",
-        )
+        url = router.url_path_for("add_period_start", start_date="2020-12-11")
+        resp = client.get(url)
         assert resp.ok
