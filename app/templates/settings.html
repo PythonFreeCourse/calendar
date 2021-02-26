@@ -49,6 +49,9 @@
                     <li class="tab"><a id="tab4" href="#">
                       Event settings
                     </a></li>
+                    <li class="tab"><a id="tab5" href="#">
+                      Menstrual Predictor
+                    </a></li>
                   </ul>
                 </div>
               </div>
@@ -115,8 +118,23 @@
                 </label>
               </div>
             </article>
+            <!-- Menstrual Predictor Settings -->
+            <article id="tab5-content" class="tab-hide">
+              <h2>Menstrual Predictor settings</h2>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="switch3">
+                <label class="form-check-label" for="switch1">Service Status</label>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="switch4" checked>
+                <label class="form-check-label" for="switch2">Sound Effects</label>
+              </div>
+              <div class="menstrual-prediction-container" id="menstrual-prediction-container"></div>
+            </article>
+
             <article id="tab3-content" class="tab-hide"></article>
             <article id="tab4-content" class="tab-hide"></article>
+            <article id="tab5-content" class="tab-hide"></article>
           </div>
         </main>
       {% endblock content %}
