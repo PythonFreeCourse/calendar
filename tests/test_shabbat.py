@@ -32,10 +32,10 @@ FRIDAY = date(2021, 2, 26)
 
 
 def test_return_none_if_date_no_friday():
-    result = shabbat.get_shabbat_if_date_friday(SHABBAT_TIME, BAD_DAY)
+    result = shabbat.get_shabbat_if_date_friday(BAD_DAY)
     assert result is None
 
 
 def test_return_if_date_is_friday():
-    result = shabbat.get_shabbat_if_date_friday(SHABBAT_TIME, FRIDAY)
+    result = shabbat.get_shabbat_if_date_friday(FRIDAY)
     assert result

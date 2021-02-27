@@ -4,6 +4,8 @@ from typing import Any, Optional, Union
 
 import geocoder
 
+from app.config import RESOURCES_DIR
+
 
 def return_shabbat_details_and_user_location() -> tuple[Any, Any]:
     """Returns times details which match to ip location,
@@ -18,8 +20,8 @@ def return_shabbat_details_and_user_location() -> tuple[Any, Any]:
     """
 
     location_by_ip = geocoder.ip('me')
-    path = r'../app/resources/shabbat_time_by_location.json'
-    with open(path, 'r') as json_file:
+    path = RESOURCES_DIR / "shabbat_time_by_location.json"
+    with open(path, 'r', encoding="utf8") as json_file:
         shabat_details = json.load(json_file)
     for location in shabat_details:
         if (location["location"]["city"] == location_by_ip.city
