@@ -216,6 +216,7 @@ async def dayview(
     )
     shabbat_obj, location_by_ip = shabbat.get_shabbat_if_date_friday(
         day.date())
+    print(shabbat_obj)
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
