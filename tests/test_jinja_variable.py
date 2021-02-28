@@ -10,13 +10,15 @@ REGISTER_DETAIL = {
 LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
 
 
-def test_user_not_logged_in(security_test_client):
+def test_user_not_logged_in(session, security_test_client):
+    security_test_client.get(security_test_client.app.url_path_for("logout"))
     response = security_test_client.get("/about")
     assert b"Sign Out" not in response.content
     assert b"Sign In" in response.content
 
 
-def test_user_is_logged_in(security_test_client):
+def test_user_is_logged_in(session, security_test_client):
+    security_test_client.get(security_test_client.app.url_path_for("logout"))
     security_test_client.post(
         security_test_client.app.url_path_for("register"),
         data=REGISTER_DETAIL,

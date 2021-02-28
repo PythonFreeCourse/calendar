@@ -1,0 +1,54 @@
+<div class="todo-style">
+    <div class="modal fade" id="edit-modal" tabindex="-1"
+         aria-labelledby="edit-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header top-todo">
+                    <h1 id="edit-modal-label">
+                        Edit Task</h1>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <form action='{{ url_for("edit_task") }}' method="post">
+                    <div class="modal-body">
+                        <input type="hidden" value="{{date_str}}"
+                               name="date_str">
+                        <input type="hidden" value="" name="task_id"
+                               id="edit-task-id">
+                        <label for="customer-time2">Select
+                            Hour:<em>&#x2a;</em></label>
+                        <input id="customer-time2" name="time_str"
+                               required=""
+                               type="time">
+                        <label for="customer-title2">Title:<em>&#x2a;</em></label>
+                        <input id="customer-title2" name="title"
+                               required=""
+                               type="text" maxlength="10">
+                        <textarea placeholder="Description:"
+                                  id="customer-descrip2" name="description"
+                                  required=""></textarea>
+                        <label>Is important?</label>
+                        <input id="is-important2" name="is_important"
+                               type="checkbox">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="sub-button" type="submit"
+                                value="Submit"
+                        >Save
+                        </button>
+                        <button class="del-button" type="button"
+                                id="edit-modal-delete"
+                        >Delete
+                        </button>
+                    </div>
+                </form>
+                <form action='{{ url_for("delete_task") }}' method="post"
+                      id="delete-task-form">
+                    <input type="hidden" id="delete-task-id"
+                           name="task_id">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

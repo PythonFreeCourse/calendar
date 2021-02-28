@@ -104,4 +104,9 @@ def get_jinja_current_user(request: Request) -> Optional[schema.CurrentUser]:
     jwt_payload = get_jwt_token(request.cookies["Authorization"])
     username = jwt_payload.get("sub")
     user_id = jwt_payload.get("user_id")
+    if not user_id:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Your token is not valid. Please log in again",
+        )
     return schema.CurrentUser(user_id=user_id, username=username)

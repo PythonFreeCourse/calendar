@@ -6,6 +6,7 @@ from fastapi.openapi.docs import (
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
+import app.internal.features as internal_features
 from app import config
 from app.database import engine, models
 from app.dependencies import (
@@ -13,6 +14,7 @@ from app.dependencies import (
     SOUNDS_PATH,
     STATIC_PATH,
     UPLOAD_PATH,
+    SessionLocal,
     get_db,
     logger,
     templates,
@@ -68,6 +70,7 @@ from app.routers import (  # noqa: E402
     email,
     event,
     export,
+    features,
     four_o_four,
     friendview,
     google_connect,
@@ -80,7 +83,9 @@ from app.routers import (  # noqa: E402
     register,
     reset_password,
     search,
+    settings,
     telegram,
+    todo_list,
     user,
     weekview,
     weight,
@@ -119,6 +124,7 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
+    features.router,
     four_o_four.router,
     friendview.router,
     google_connect.router,
@@ -132,7 +138,9 @@ routers_to_include = [
     reset_password.router,
     salary.router,
     search.router,
+    settings.router,
     telegram.router,
+    todo_list.router,
     user.router,
     weekview.router,
     weight.router,
@@ -141,6 +149,13 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
+
+
+@app.on_event("startup")
+async def startup_event():
+    session = SessionLocal()
+    internal_features.create_features_at_startup(session=session)
+    session.close()
 
 
 # TODO: I add the quote day to the home page
