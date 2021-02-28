@@ -49,6 +49,15 @@ p {
   justify-content: space-around;
 }
 
+p#p-quote {
+  align-items: center;
+  justify-content: center;
+}
+
+#author {
+  font-size: small;
+}
+
 #inner:hover {
   cursor: pointer;
   padding: 50px;
@@ -154,6 +163,27 @@ p {
 
 .subtitle {
   font-size: 1.25rem;
+}
+
+.subtitle {
+    font-size: 1.25rem;
+}
+
+.heart {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.full-heart {
+  display: none;
+}
+
+.empty-heart {
+  display: none;
+}
+
+.favorite-quotes {
+  margin-bottom: 1.5em;
 }
 
 .error-message {

@@ -1,10 +1,10 @@
 from datetime import date
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
-from app.database.models import Quote
+from app.database.models import Quote, UserQuotes
 
 TOTAL_DAYS = 366
 
@@ -19,13 +19,15 @@ def get_quote(quote_: Dict[str, Optional[str]]) -> Quote:
         A new Quote object.
     """
     return Quote(
-        text=quote_['text'],
-        author=quote_['author'],
+        text=quote_["text"],
+        author=quote_["author"],
+        is_favorite=False,
     )
 
 
 def get_quote_of_day(
-        session: Session, requested_date: date = date.today()
+    session: Session,
+    requested_date: date = date.today(),
 ) -> Optional[Quote]:
     """Returns the Quote object for the specific day.
 
@@ -39,9 +41,32 @@ def get_quote_of_day(
         A Quote object.
     """
     day_number = requested_date.timetuple().tm_yday
-    quote = (session.query(Quote)
-             .filter(Quote.id % TOTAL_DAYS == day_number)
-             .order_by(func.random())
-             .first()
-             )
+    quote = (
+        session.query(Quote)
+        .filter(Quote.id % TOTAL_DAYS == day_number)
+        .order_by(func.random())
+        .first()
+    )
     return quote
+
+
+def get_quotes(session: Session, user_id: int) -> List[Quote]:
+    """Retrieves the users' favorite quotes from the database."""
+    return session.query(Quote).filter_by(id=UserQuotes.quote_id).all()
+
+
+def is_quote_favorite(
+    session: Session,
+    user_id: int,
+    quote_of_day: Quote,
+) -> bool:
+    """Checks if the daily quote is in favorites list."""
+    if not quote_of_day:
+        return False
+
+    exists = (
+        session.query(UserQuotes)
+        .filter(user_id == user_id, UserQuotes.quote_id == quote_of_day.id)
+        .scalar()
+    )
+    return bool(exists)

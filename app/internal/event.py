@@ -174,4 +174,4 @@ async def get_location_coordinates(
                 name=geolocation.raw["display_name"],
             )
             return location
-    return address
+    return address  # delete db test to make sure

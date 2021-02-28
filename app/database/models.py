@@ -39,8 +39,8 @@ class UserFeature(Base):
     __tablename__ = "user_feature"
 
     id = Column(Integer, primary_key=True, index=True)
-    feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
-    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+    feature_id = Column("feature_id", Integer, ForeignKey("features.id"))
+    user_id = Column("user_id", Integer, ForeignKey("users.id"))
 
     is_enable = Column(Boolean, default=False)
 
@@ -488,6 +488,7 @@ class Quote(Base):
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+    is_favorite = Column(Boolean, default=False, nullable=False)
 
 
 class Country(Base):
@@ -614,3 +615,11 @@ def insert_data(target, session: Session, **kw):
 
 
 event.listen(Language.__table__, "after_create", insert_data)
+
+
+class UserQuotes(Base):
+    __tablename__ = "user_quotes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    quote_id = Column(Integer, ForeignKey("quotes.id"), nullable=False)

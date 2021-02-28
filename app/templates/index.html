@@ -12,18 +12,23 @@
             <p>
                 Open Source Calendar built with Python
             </p>
-            <div class="d-flex position-relative">
+            <div class="d-flex position-relative" id="quote-container" data-connected={{is_connected}}>
                 <div class="container mx-auto gap-3">
-
-                    {% if quote %}
-                    {% if not quote.author%}
-                    <p><i>"{{ quote.text }}"</i></p>
+                {% if quote %}
+                    <p><cite><q id="quote">{{ quote.text }}</q></cite>
+                    {% if quote.author %}
+                        <span id="author">&nbsp; \ {{ quote.author }}
                     {% else %}
-                    <p><i>"{{ quote.text }}"</i> <span
-                            style="font-size: small;">&nbsp; \ {{quote.author}}</span>
+                        <span >&nbsp;
+                    {% endif %}
+                    {% if quote.is_favorite %}
+                    <img src="{{ url_for('media', path='/full_heart.png') }}" data-heart="on" data-qid="{{quote.id}}" class="heart full-heart">
+                    {% else %}
+                    <img src="{{ url_for('media', path='/empty_heart.png') }}" data-heart="off" data-qid="{{quote.id}}" class="heart empty-heart">
+                    {% endif %}
+                    </span>
                     </p>
-                    {% endif %}
-                    {% endif %}
+                  {% endif %}
                 </div>
             </div>
             <div class="d-flex justify-content-center audio-section">
