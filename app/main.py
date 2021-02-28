@@ -19,6 +19,7 @@ from app.dependencies import (
 )
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
+from app.internal.security.dependencies import get_jinja_current_user
 from app.internal.security.ouath2 import auth_exception_handler
 from app.routers.salary import routes as salary
 from app.utils.extending_openapi import custom_openapi
@@ -49,6 +50,7 @@ app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
 app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
+templates.env.globals["jinja_current_user"] = get_jinja_current_user
 
 # This MUST come before the app.routers imports.
 set_ui_language()
