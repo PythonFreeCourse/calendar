@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import Depends, HTTPException
 from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED
@@ -82,6 +84,24 @@ async def current_user(
     A dependency function protecting routes for only logged in user.
     """
     jwt_payload = get_jwt_token(jwt)
+    username = jwt_payload.get("sub")
+    user_id = jwt_payload.get("user_id")
+    if not user_id:
+        raise HTTPException(
+            status_code=HTTP_401_UNAUTHORIZED,
+            detail="Your token is not valid. Please log in again",
+        )
+    return schema.CurrentUser(user_id=user_id, username=username)
+
+
+def get_jinja_current_user(request: Request) -> Optional[schema.CurrentUser]:
+    """Return the currently logged in user.
+    Returns logged in User object if exists, None if not.
+    Set as a jinja global parameter.
+    """
+    if "Authorization" not in request.cookies:
+        return None
+    jwt_payload = get_jwt_token(request.cookies["Authorization"])
     username = jwt_payload.get("sub")
     user_id = jwt_payload.get("user_id")
     if not user_id:
