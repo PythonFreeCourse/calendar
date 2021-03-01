@@ -209,6 +209,13 @@ h2.modal-title {
   font-size: 1.25rem;
 }
 
+#primary-cursor,
+#secondary-cursor {
+  width: 10em;
+  height: 2.5em;
+  margin-top: 0.5em;
+}
+
 #sfx {
   width: 5rem;
   height: 2.5rem;
