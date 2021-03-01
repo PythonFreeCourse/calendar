@@ -7,11 +7,11 @@ from sqlalchemy.orm import Session
 
 
 from app.database.models import (
-    Base, InternationalDays, Joke, Quote, Parasha, Zodiac
+    Base, InternationalDays, Joke, Quote, Parasha, Zodiac,
 )
 from app.config import RESOURCES_DIR
 from app.internal import (
-    daily_quotes, international_days, jokes, weekly_parasha, zodiac
+    daily_quotes, international_days, jokes, weekly_parasha, zodiac,
 )
 
 
