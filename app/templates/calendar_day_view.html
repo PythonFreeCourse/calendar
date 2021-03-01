@@ -21,15 +21,24 @@
                               alt="zodiac sign" width="14em" height="13em"></a>
         </div>
         {% endif %}
+        {% if parasha %}
+        <div class="parashot">
+            {{ gettext(" Weekly Torah Portion: %(hebrew)s", hebrew=parasha.name) }}<br>{{ gettext("%(name)s",
+            name=parasha.hebrew_name) }}
+            <a href={{parasha.link}} target="_blank">{{ gettext("Detailing in a separate link on %(parashah)s",
+                parashah=parasha.hebrew_name) }}</a>
+        </div>
+        {% endif %}
         {% else %}
         <span class="fw-bold text-white date-nums">{{day}} / {{month}}</span>
         {% endif %}
     </div>
     <div id="all-day-events" class="d-flex justify-content-center text-truncate my-0 {{size}} text-light">
         {% for event in all_day_events %}
-            <a href={{ url_for('eventview', event_id=event.id) }}  title="See full event">{{ event.title }}&nbsp;&nbsp;&nbsp;</a>
+        <a href={{ url_for('eventview', event_id=event.id) }} title="See full event">{{ event.title
+        }}&nbsp;&nbsp;&nbsp;</a>
         {% endfor %}
-      </div>
+    </div>
     {% if international_day %}
     <div class="international-days">
         The International days are: "{{ international_day.international_day }}"
@@ -62,12 +71,12 @@
             {% endfor %}
         </div>
         <div class="timegrid">
-          {% if current_time.is_viewed %}
+            {% if current_time.is_viewed %}
             <div class="sub-timegrid" style="grid-row: {{ current_time.grid_position }};">
                 <div id="current_time_cursor" style="grid-row: {{ current_time.sub_grid_position }};">
                 </div>
             </div>
-          {% endif %}
+            {% endif %}
         </div>
         <div class="event-grid">
             {% for event, attr in events_and_attrs %}

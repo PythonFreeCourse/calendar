@@ -92,6 +92,7 @@ from app.routers import (  # noqa: E402
     whatsapp,
 )
 
+
 json_data_loader.load_to_database(next(get_db()))
 
 

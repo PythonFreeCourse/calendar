@@ -191,17 +191,17 @@ class Category(Base):
 
     @staticmethod
     def create(
-        db_session: Session,
+        session: Session,
         name: str,
         color: str,
         user_id: int,
     ) -> Category:
         try:
             category = Category(name=name, color=color, user_id=user_id)
-            db_session.add(category)
-            db_session.flush()
-            db_session.commit()
-            db_session.refresh(category)
+            session.add(category)
+            session.flush()
+            session.commit()
+            session.refresh(category)
         except (SQLAlchemyError, IntegrityError) as e:
             logger.error(f"Failed to create category: {e}")
             raise e
@@ -533,6 +533,15 @@ class Zodiac(Base):
         )
 
 
+class Parasha(Base):
+    __tablename__ = "parashot"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    hebrew_name = Column(String, nullable=False)
+    link = Column(String, nullable=False)
+
+
 class SharedListItem(Base):
     __tablename__ = "shared_list_item"
 
@@ -600,8 +609,8 @@ class Task(Base):
 
 
 # insert language data
-
-
+# Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu
+# https://stackoverflow.com/questions/17461251
 def insert_data(target, session: Session, **kw):
     """insert language data
     Credit to adrihanu   https://stackoverflow.com/users/9127249/adrihanu

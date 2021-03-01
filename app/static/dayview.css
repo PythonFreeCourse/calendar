@@ -287,3 +287,26 @@ body {
     color: white;
     box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 }
+.parashot {
+    position: absolute;
+    right: 1.2rem;
+    top: 10rem;
+    padding-right: var(--space_xs);
+    padding-left: var(--space_xs);
+    padding-bottom: var(--space_xxs);
+    border: solid 0.1px var(--primary);
+    background-color: var(--surface-variant);
+    box-shadow: 1px 1px 2px #999;
+    line-height: 1.2;
+    height: 6rem;
+    width: 5.2rem;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.65rem;
+}
+
+.parashot a {
+    background-color: powderblue;
+    font-size: 0.55rem;
+}
