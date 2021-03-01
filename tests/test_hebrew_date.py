@@ -4,9 +4,9 @@ import pytest
 from pyluach import dates
 
 from app.internal.hebrew_date_view import (
-    get_hebrew_date_in_words,
     from_gregorian_to_hebrew_date,
-    get_month_name_by_num,
+    get_hebrew_date_in_words,
+    get_month_name_by_num
 )
 from app.internal.languages import set_ui_language
 
@@ -16,18 +16,18 @@ ADAR_A = datetime.strptime("2019-02-15", "%Y-%m-%d").date()
 ADAR_B = datetime.strptime("2019-03-08", "%Y-%m-%d").date()
 
 TRANSLATION_DATES = [
-    (1, "17 Teves 5781", "en"),
-    (2, "י״ז טבת תשפ״א", "he"),
+    (1, "en", "17 Teves 5781"),
+    (2, "he", "י״ז טבת תשפ״א"),
 ]
 
 
 @pytest.mark.parametrize(
-    "language_id, hebrew_date, language_code", TRANSLATION_DATES
+    "language_id, language_code, expected_translation", TRANSLATION_DATES
 )
-def test_get_hebrew_date(language_id, hebrew_date, language_code):
+def test_get_hebrew_date(language_id, language_code, expected_translation):
     set_ui_language(language_code)
     result = get_hebrew_date_in_words(DAY, language_id)
-    assert result == hebrew_date
+    assert result == expected_translation
 
 
 def test_from_gregorian_to_hebrew_date_and_find_month_name():
