@@ -5,7 +5,7 @@ from pyluach import dates, hebrewcal
 from pyluach.dates import HebrewDate
 
 HEBREW_LANGUAGE_ID = 2
-HEB_MONTH_NAMES = {
+_HEB_MONTH_NAMES = {
     'Tishrei': _("Tishrei"),
     'Cheshvan': _("Cheshvan"),
     'Kislev': _("Kislev"),
@@ -51,10 +51,11 @@ def get_month_name_by_num(calendar_date: HebrewDate) -> str:
 
         Returns:
             A Hebrew name date.
+            Using "_" sign for function for using gettext translate .
     """
     for month in hebrewcal.Year(calendar_date.year).itermonths():
         if calendar_date.month == month.month:
-            return HEB_MONTH_NAMES[month.name]
+            return _(month.name)
 
 
 def from_gregorian_to_hebrew_date(calendar_date: date) -> HebrewDate:
