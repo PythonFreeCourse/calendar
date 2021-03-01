@@ -4,12 +4,11 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
-#day-view {
+.day-view-class {
   display: flex;
   flex: 1;
   flex-direction: column;
   position: relative;
-  overflow-y: hidden;
 }
 
 #top-tab {
@@ -24,6 +23,8 @@ body {
   margin-bottom: var(--space_xs);
   line-height: 1;
   overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .schedule::-webkit-scrollbar {

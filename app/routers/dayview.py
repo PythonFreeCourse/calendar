@@ -8,7 +8,7 @@ from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
 from app.internal import hebrew_date_view, international_days, zodiac
 from app.internal.security.dependencies import current_user
-from app.routers.user import get_all_user_events
+from app.routers.user import get_all_user_events, get_user
 
 router = APIRouter()
 
@@ -217,9 +217,9 @@ async def dayview(
     inter_day = international_days.get_international_day_per_day(session, day)
     tasks = (
         session.query(Task)
-        .filter(Task.owner_id == user.user_id)
-        .filter(Task.date == day.date())
-        .order_by(Task.time)
+            .filter(Task.owner_id == user.user_id)
+            .filter(Task.date == day.date())
+            .order_by(Task.time)
     )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
