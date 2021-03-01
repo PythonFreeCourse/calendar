@@ -1,25 +1,24 @@
 {% extends "partials/calendar/calendar_base.html" %}
 {% block body %}
-<div id="day-view">
-    <link rel="stylesheet" type="text/css"
-          href="{{ url_for('static', path='/dayview.css') }}">
-    <div id="top-tab"
-         class="d-flex justify-content-around align-items-center sticky-top">
-        {% if view == 'day' %}
-        <a href="/closethedayview" title="close day view"><img class="pb-1"
-                                                               src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
-                                                               width="15em"
-                                                               height="15em"></a>
-        <span id="month-num"
-              class="month-title fw-bold text-white">{{month}}</span>
-        <span id="day-num" class="day-title fw-bold text-white">{{day}}</span>
-        {% if zodiac %}
-        <div class="zodiac-sign">
-            <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}"
-               title="Zodiac-sign: {{zodiac.name}}"
-               target="_blank"><img
-                    src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
-                    alt="zodiac sign" width="14em" height="13em"></a>
+{% if view != 'week' %}
+   {% set scrollclass = "day-view-scrollbar" %}
+{% else %}
+   {% set idmodify = day %}
+{% endif %}
+<div id="day-view{{ idmodify }}" class="day-view-class {{ scrollclass }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/dayview.css') }}">
+  <div id="top-tab" class="d-flex justify-content-around align-items-center sticky-top">
+    {% if view == 'day' %}
+    <a href="#" title="close day view" id="close-day-view"><img class="pb-1"
+                                                           src="{{ url_for('static', path='/images/icons/close_sidebar.svg')}}"
+                                                           width="15em" height="15em"></a>
+    <span id="month-num" class="month-title fw-bold text-white">{{month}}</span>
+    <span id="day-num" class="day-title fw-bold text-white">{{day}}</span>
+    {% if zodiac %}
+    <div class="zodiac-sign">
+      <a href="https://www.horoscope.com/zodiac-signs/{{zodiac.name}}" title="Zodiac-sign: {{zodiac.name}}"
+         target="_blank"><img src="{{ url_for('static', path='/images/zodiac/' + zodiac.name + '.svg') }}"
+                              alt="zodiac sign" width="14em" height="13em"></a>
         </div>
         {% endif %}
         {% if parasha %}

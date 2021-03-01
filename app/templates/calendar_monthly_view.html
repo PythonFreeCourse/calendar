@@ -4,7 +4,16 @@
     <div>
         <div class="title">{{ day.display() }}</div>
         <div class="sec-title">Location 0<sup>o</sup>c 00:00</div>
+        <div class="toggle_view btn-group mt-1 mb-1 me-2 btn-group-sm" role="group" aria-label="Toggle View Mode" id="toggle-view-mode">
+          <input type="radio" class="btn-check btn-sm" name="{{ day.dayview_format() }}" id="day-view-button" autocomplete="off">
+          <label class="btn btn-outline-primary" for="day-view-button">DAY</label>
+          <input type="radio" class="btn-check btn-sm" name="{{ day.weekview_format() }}" id="week-view-button" autocomplete="off">
+          <label class="btn btn-outline-primary" for="week-view-button">WEEK</label>
+          <input type="radio" class="btn-check btn-sm" name="month" id="month-view-button" autocomplete="on" checked>
+          <label class="btn btn-outline-primary" for="month-view-button">MONTH</label>
+        </div>
     </div>
+    <!-- TODO: replace in another page
     <div>
         <h3>Time calculator:</h3>
         <form>
@@ -18,13 +27,15 @@
         </button>
         <strong><p id="demo"></p></strong>
     </div>
+    -->
+
     <div id="logo-div">
-        <a href="/calendar/month">
-            <h1 class="title">PYLENDAR</h1>
-        </a>
-    </div>
-</header>
-<main>
+      <div class="logo-container">
+      <a href="{{ url_for('calendar') }}">
+        <img class="logo-pic mt-2 ms-3" src="{{ url_for('static', path='/images/logo/mainlogo.svg')}}">
+      </a>
+  </header>
+  <main>
     {% include 'partials/calendar/monthly_view/monthly_grid.html' %}
-</main>
+  </main>
 {% endblock content %}
