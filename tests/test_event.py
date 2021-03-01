@@ -18,7 +18,8 @@ from app.internal.privacy import PrivacyKinds
 from app.internal.utils import delete_instance
 from app.main import app
 from app.routers import event as evt
-from app.routers.event import event_to_show
+from app.routers.event import add_new_event, add_user_to_event, event_to_show
+from app.routers.register import _create_user
 
 CORRECT_EVENT_FORM_DATA = {
     "title": "test title",
@@ -160,6 +161,42 @@ REGISTER_DETAIL = {
 }
 
 LOGIN_DATA = {"username": "correct_user", "password": "correct_password"}
+
+
+@pytest.fixture
+def new_event(session, new_user):
+    event = add_new_event(TestApp.event_test_data, session)
+    return event
+
+
+@pytest.fixture
+def new_user(session):
+    user = _create_user(
+        session=session,
+        username="new_test_username",
+        password="new_test_password",
+        email="new_test.email@gmail.com",
+        language_id="english",
+    )
+
+    return user
+
+
+def test_joining_public_event(session, new_event, new_user):
+    """test in order to make sure user is added the first time
+    he asks to join event, yet won't join the same user twice"""
+    first_join = add_user_to_event(
+        session,
+        event_id=new_event.id,
+        user_id=new_user.id,
+    )
+    assert first_join
+    second_join = add_user_to_event(
+        session,
+        event_id=new_event.id,
+        user_id=new_user.id,
+    )
+    assert not second_join
 
 
 def test_get_events(event_test_client, session, event):

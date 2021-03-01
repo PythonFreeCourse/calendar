@@ -68,10 +68,10 @@ def event1(session, user2):
     return event
 
 
-def test_disabling_no_event_user(session, user1):
+def test_disabling_no_event_user(session, no_event_user):
     # users without any future event can disable themselves
-    disable(session, user1.id)
-    assert user1.disabled
+    disable(session, no_event_user.id)
+    assert no_event_user.disabled
     future_events = list(
         session.query(Event.id)
         .join(UserEvent)
@@ -110,10 +110,10 @@ def test_disabling_user_participating_event(session, user1, event1):
     session.delete(deleted_user_event_connection)
 
 
-def test_disabling_event_owning_user(session, user2):
+def test_disabling_event_owning_user(session, event_owning_user):
     # making sure user owning events can't disable itself
-    disable(session, user2.id)
-    assert not user2.disabled
+    disable(session, event_owning_user.id)
+    assert not event_owning_user.disabled
 
 
 class TestUser:

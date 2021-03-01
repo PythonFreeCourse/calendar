@@ -39,8 +39,8 @@ class UserFeature(Base):
     __tablename__ = "user_feature"
 
     id = Column(Integer, primary_key=True, index=True)
-    feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
-    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+    feature_id = Column("feature_id", Integer, ForeignKey("features.id"))
+    user_id = Column("user_id", Integer, ForeignKey("users.id"))
 
     is_enable = Column(Boolean, default=False)
 
@@ -61,6 +61,7 @@ class User(Base):
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    availability = Column(Boolean, default=True, nullable=False)
     target_weight = Column(Float, nullable=True)
 
     owned_events = relationship(
@@ -127,6 +128,7 @@ class Event(Base):
     color = Column(String, nullable=True)
     all_day = Column(Boolean, default=False)
     invitees = Column(String)
+    is_public = Column(Boolean, default=False)
     privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
     image = Column(String, nullable=True)
