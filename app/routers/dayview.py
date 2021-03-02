@@ -2,6 +2,7 @@ from bisect import bisect_left
 from datetime import datetime, timedelta
 from typing import Dict, Iterator, Optional, Tuple, Union
 
+import geocoder
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.database.models import Event, Task, User
@@ -214,8 +215,11 @@ async def dayview(
         session.query(Task).filter(Task.owner_id == user.user_id).filter(
             Task.date == day.date()).order_by(Task.time)
     )
-    shabbat_obj, location_by_ip = shabbat.get_shabbat_if_date_friday(
-        day.date())
+    location_by_ip = geocoder.ip('me')
+    shabbat_obj = shabbat.get_shabbat_if_date_friday(
+        day.date(),
+        location_by_ip,
+    )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",

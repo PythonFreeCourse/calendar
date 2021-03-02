@@ -1,5 +1,7 @@
 from datetime import date
 
+import geocoder
+
 from app.internal import shabbat
 
 SHABBAT_TIME = {
@@ -32,10 +34,12 @@ FRIDAY = date(2021, 2, 26)
 
 
 def test_return_none_if_date_no_friday():
-    result = shabbat.get_shabbat_if_date_friday(BAD_DAY)
+    location_by_ip = geocoder.ip('me')
+    result = shabbat.get_shabbat_if_date_friday(BAD_DAY, location_by_ip)
     assert result is None
 
 
 def test_return_if_date_is_friday():
-    result = shabbat.get_shabbat_if_date_friday(FRIDAY)
+    location_by_ip = geocoder.ip('me')
+    result = shabbat.get_shabbat_if_date_friday(FRIDAY, location_by_ip)
     assert result
