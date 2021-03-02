@@ -8,7 +8,8 @@ from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
 from app.internal import hebrew_date_view, international_days, zodiac
 from app.internal.security.dependencies import current_user
-from app.routers.user import get_all_user_events, get_user
+from app.internal.utils import get_user
+from app.routers.user import get_all_user_events
 
 router = APIRouter()
 
@@ -198,7 +199,7 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
-    user_from_db = get_user(user.user_id, session)
+    user_from_db = get_user(session, user.user_id)
     hebrew_obj = hebrew_date_view.get_hebrew_date_in_words(
         day.date(),
         user_from_db.language_id,
