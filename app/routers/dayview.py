@@ -6,8 +6,9 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
-from app.internal import international_days, zodiac
+from app.internal import hebrew_date_view, international_days, zodiac
 from app.internal.security.dependencies import current_user
+from app.internal.utils import get_user
 from app.routers.user import get_all_user_events
 
 router = APIRouter()
@@ -198,6 +199,11 @@ async def dayview(
     except ValueError as err:
         raise HTTPException(status_code=404, detail=f"{err}")
     zodiac_obj = zodiac.get_zodiac_of_day(session, day)
+    user_from_db = get_user(session, user.user_id)
+    hebrew_obj = hebrew_date_view.get_hebrew_date_in_words(
+        day.date(),
+        user_from_db.language_id,
+    )
     events_with_attrs = get_events_and_attributes(
         day=day,
         session=session,
@@ -211,10 +217,8 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     tasks = (
-        session.query(Task)
-        .filter(Task.owner_id == user.user_id)
-        .filter(Task.date == day.date())
-        .order_by(Task.time)
+        session.query(Task).filter(Task.owner_id == user.user_id).filter(
+            Task.date == day.date()).order_by(Task.time)
     )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
@@ -229,6 +233,7 @@ async def dayview(
             "international_day": inter_day,
             "zodiac": zodiac_obj,
             "view": view,
+            "hebrew_view": hebrew_obj,
             "current_time": current_time_with_attrs,
             "tasks": tasks,
         },
