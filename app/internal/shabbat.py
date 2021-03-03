@@ -42,9 +42,9 @@ def shabbat_time_by_user_location(location_by_ip) \
     shabat_items = return_shabbat_details_by_user_location(location_by_ip)
     for item in shabat_items:
         if "Candle lighting" in item["title"]:
-            shabbat_entry = item
+            shabbat_entry = item["date"]
         if "Havdalah" in item["title"]:
-            shabbat_exit = item
+            shabbat_exit = item["date"]
 
     shabbat_entry_date = shabbat_entry.split("T")[0]
     shabbat_entry_hour = shabbat_entry.split("T")[1]
