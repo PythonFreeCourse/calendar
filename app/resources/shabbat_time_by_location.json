@@ -33538,88 +33538,1054 @@
       ]
    },
    {
-      "error":"Sorry, can't find geonameid: PA",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: PA"
-      }
+      "title":"Hebcal Pittsburgh March 2021",
+      "date":"2021-03-03T10:45:55.119Z",
+      "location":{
+         "title":"Pittsburgh, Pennsylvania, USA",
+         "city":"Pittsburgh",
+         "tzid":"America/New_York",
+         "latitude":40.44062,
+         "longitude":-79.99589,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Pennsylvania",
+         "geo":"geoname",
+         "geonameid":5206379
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:58pm",
+            "date":"2021-03-05T17:58:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:58pm",
+            "date":"2021-03-06T18:58:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: OR",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: OR"
-      }
+      "title":"Hebcal Portland March 2021",
+      "date":"2021-03-03T10:50:48.532Z",
+      "location":{
+         "title":"Portland, Oregon, USA",
+         "city":"Portland",
+         "tzid":"America/Los_Angeles",
+         "latitude":45.52345,
+         "longitude":-122.67621,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Oregon",
+         "geo":"geoname",
+         "geonameid":5746545
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:45pm",
+            "date":"2021-03-05T17:45:00-08:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:49pm",
+            "date":"2021-03-06T18:49:00-08:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: RI",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: RI"
-      }
+      "title":"Hebcal Providence March 2021",
+      "date":"2021-03-03T10:51:25.314Z",
+      "location":{
+         "title":"Providence, Rhode Island, USA",
+         "city":"Providence",
+         "tzid":"America/New_York",
+         "latitude":41.82399,
+         "longitude":-71.41283,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Rhode Island",
+         "geo":"geoname",
+         "geonameid":5224151
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:23pm",
+            "date":"2021-03-05T17:23:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:23pm",
+            "date":"2021-03-06T18:23:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: VA",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: VA"
-      }
+      "title":"Hebcal Richmond March 2021",
+      "date":"2021-03-03T10:51:54.719Z",
+      "location":{
+         "title":"Richmond, Virginia, USA",
+         "city":"Richmond",
+         "tzid":"America/New_York",
+         "latitude":37.55376,
+         "longitude":-77.46026,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Virginia",
+         "geo":"geoname",
+         "geonameid":4781708
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:49pm",
+            "date":"2021-03-05T17:49:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:48pm",
+            "date":"2021-03-06T18:48:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: NY",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: NY"
-      }
+      "title":"Hebcal Rochester March 2021",
+      "date":"2021-03-03T10:52:31.483Z",
+      "location":{
+         "title":"Rochester, New York, USA",
+         "city":"Rochester",
+         "tzid":"America/New_York",
+         "latitude":43.15478,
+         "longitude":-77.61556,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"New York",
+         "geo":"geoname",
+         "geonameid":5134086
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:46pm",
+            "date":"2021-03-05T17:46:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:48pm",
+            "date":"2021-03-06T18:48:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: MO",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: MO"
-      }
+      "title":"Hebcal St. Louis March 2021",
+      "date":"2021-03-03T10:53:01.132Z",
+      "location":{
+         "title":"St. Louis, Missouri, USA",
+         "city":"St. Louis",
+         "tzid":"America/Chicago",
+         "latitude":38.62727,
+         "longitude":-90.19789,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Missouri",
+         "geo":"geoname",
+         "geonameid":4407066
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:40pm",
+            "date":"2021-03-05T17:40:00-06:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:39pm",
+            "date":"2021-03-06T18:39:00-06:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: MN",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: MN"
-      }
+      "title":"Hebcal Saint Paul March 2021",
+      "date":"2021-03-03T10:53:32.291Z",
+      "location":{
+         "title":"Saint Paul, Minnesota, USA",
+         "city":"Saint Paul",
+         "tzid":"America/Chicago",
+         "latitude":44.94441,
+         "longitude":-93.09327,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Minnesota",
+         "geo":"geoname",
+         "geonameid":5045360
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:47pm",
+            "date":"2021-03-05T17:47:00-06:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:50pm",
+            "date":"2021-03-06T18:50:00-06:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: CA",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: CA"
-      }
+      "title":"Hebcal San Diego March 2021",
+      "date":"2021-03-03T10:54:06.911Z",
+      "location":{
+         "title":"San Diego, California, USA",
+         "city":"San Diego",
+         "tzid":"America/Los_Angeles",
+         "latitude":32.71571,
+         "longitude":-117.16472,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"California",
+         "geo":"geoname",
+         "geonameid":5391811
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:31pm",
+            "date":"2021-03-05T17:31:00-08:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:27pm",
+            "date":"2021-03-06T18:27:00-08:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: CA",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: CA"
-      }
+      "title":"Hebcal San Francisco March 2021",
+      "date":"2021-03-03T10:54:44.360Z",
+      "location":{
+         "title":"San Francisco, California, USA",
+         "city":"San Francisco",
+         "tzid":"America/Los_Angeles",
+         "latitude":37.77493,
+         "longitude":-122.41942,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"California",
+         "geo":"geoname",
+         "geonameid":5391959
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:49pm",
+            "date":"2021-03-05T17:49:00-08:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:48pm",
+            "date":"2021-03-06T18:48:00-08:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: WA",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: WA"
-      }
+      "title":"Hebcal Seattle March 2021",
+      "date":"2021-03-03T10:55:15.064Z",
+      "location":{
+         "title":"Seattle, Washington, USA",
+         "city":"Seattle",
+         "tzid":"America/Los_Angeles",
+         "latitude":47.60621,
+         "longitude":-122.33207,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Washington",
+         "geo":"geoname",
+         "geonameid":5809844
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:42pm",
+            "date":"2021-03-05T17:42:00-08:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:48pm",
+            "date":"2021-03-06T18:48:00-08:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: MD",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: MD"
-      }
+      "title":"Hebcal Silver Spring March 2021",
+      "date":"2021-03-03T10:55:43.007Z",
+      "location":{
+         "title":"Silver Spring, Maryland, USA",
+         "city":"Silver Spring",
+         "tzid":"America/New_York",
+         "latitude":38.99067,
+         "longitude":-77.02609,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Maryland",
+         "geo":"geoname",
+         "geonameid":4369596
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:47pm",
+            "date":"2021-03-05T17:47:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:46pm",
+            "date":"2021-03-06T18:46:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: NJ",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: NJ"
-      }
+      "title":"Hebcal Teaneck March 2021",
+      "date":"2021-03-03T10:56:11.770Z",
+      "location":{
+         "title":"Teaneck, New Jersey, USA",
+         "city":"Teaneck",
+         "tzid":"America/New_York",
+         "latitude":40.8976,
+         "longitude":-74.01597,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"New Jersey",
+         "geo":"geoname",
+         "geonameid":5105262
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:34pm",
+            "date":"2021-03-05T17:34:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:34pm",
+            "date":"2021-03-06T18:34:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: DC",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: DC"
-      }
+      "title":"Hebcal Washington March 2021",
+      "date":"2021-03-03T10:56:40.756Z",
+      "location":{
+         "title":"Washington, D.C., USA",
+         "city":"Washington",
+         "tzid":"America/New_York",
+         "latitude":38.89511,
+         "longitude":-77.03637,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"Washington, D.C.",
+         "geo":"geoname",
+         "geonameid":4140963
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:47pm",
+            "date":"2021-03-05T17:47:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:46pm",
+            "date":"2021-03-06T18:46:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
-      "error":"Sorry, can't find geonameid: NY",
-      "originalError":{
-         "message":"Sorry, can't find geonameid: NY"
-      }
+      "title":"Hebcal White Plains March 2021",
+      "date":"2021-03-03T10:57:20.178Z",
+      "location":{
+         "title":"White Plains, New York, USA",
+         "city":"White Plains",
+         "tzid":"America/New_York",
+         "latitude":41.03399,
+         "longitude":-73.76291,
+         "cc":"US",
+         "country":"United States",
+         "admin1":"New York",
+         "geo":"geoname",
+         "geonameid":5144336
+      },
+      "items":[
+         {
+            "title":"Candle lighting: 5:32pm",
+            "date":"2021-03-05T17:32:00-05:00",
+            "category":"candles",
+            "title_orig":"Candle lighting",
+            "hebrew":"הדלקת נרות"
+         },
+         {
+            "title":"Shabbat Parah",
+            "date":"2021-03-06",
+            "category":"holiday",
+            "subcat":"shabbat",
+            "hebrew":"שבת פרה",
+            "leyning":{
+               "haftarah":"Ezekiel 36:16 - 36:38",
+               "maftir":"Numbers 19:1 - 19:22"
+            },
+            "link":"https://www.hebcal.com/holidays/shabbat-parah-2021?utm_source=js&utm_medium=api",
+            "memo":"Shabbat of the Red Heifer"
+         },
+         {
+            "title":"Parashat Ki Tisa",
+            "date":"2021-03-06",
+            "category":"parashat",
+            "hebrew":"פרשת כי תשא",
+            "leyning":{
+               "1":"Exodus 30:11 - 31:17",
+               "2":"Exodus 31:18 - 33:11",
+               "3":"Exodus 33:12 - 33:16",
+               "4":"Exodus 33:17 - 33:23",
+               "5":"Exodus 34:1 - 34:9",
+               "6":"Exodus 34:10 - 34:26",
+               "7":"Exodus 34:27 - 34:35",
+               "torah":"Exodus 30:11-34:35",
+               "haftarah":"Ezekiel 36:16 - 36:38 | Shabbat Parah",
+               "haftarah_sephardic":"I Kings 18:20 - 18:39",
+               "maftir":"Numbers 19:1 - 19:22 | Shabbat Parah",
+               "triennial":{
+                  "1":"Exodus 31:18 - 32:6",
+                  "2":"Exodus 32:7 - 32:11",
+                  "3":"Exodus 32:12 - 32:14",
+                  "4":"Exodus 32:15 - 32:24",
+                  "5":"Exodus 32:25 - 32:29",
+                  "6":"Exodus 32:30 - 33:6",
+                  "7":"Exodus 33:7 - 33:11",
+                  "maftir":"Numbers 19:1 - 19:22"
+               }
+            },
+            "link":"https://www.hebcal.com/sedrot/ki-tisa-20210306?utm_source=js&utm_medium=api"
+         },
+         {
+            "title":"Havdalah: 6:33pm",
+            "date":"2021-03-06T18:33:00-05:00",
+            "category":"havdalah",
+            "title_orig":"Havdalah",
+            "hebrew":"הבדלה"
+         }
+      ]
    },
    {
       "title":"Hebcal Montevideo February 2021",
