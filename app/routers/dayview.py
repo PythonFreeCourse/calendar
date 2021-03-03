@@ -216,10 +216,11 @@ async def dayview(
             Task.date == day.date()).order_by(Task.time)
     )
     location_by_ip = geocoder.ip('me')
-    shabbat_obj = shabbat.get_shabbat_if_date_friday(
-        day.date(),
-        location_by_ip,
-    )
+    if location_by_ip:
+        shabbat_obj = shabbat.get_shabbat_if_date_friday(
+            day.date(),
+            location_by_ip,
+        )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
