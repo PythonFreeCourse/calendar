@@ -19,7 +19,6 @@ from app.routers.dayview import (
 
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 
-
 router = APIRouter()
 
 
@@ -88,5 +87,6 @@ async def weekview(
         {
             "request": request,
             "week": week,
+            "view": "week",
         },
     )
