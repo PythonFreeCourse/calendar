@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h1>Friends View </h1>
+    <h1 class="main-text-color">Friends View </h1>
 </div>
 <form method="GET" action="/friendview/">
     <div class="mb-3 friend-view">
@@ -16,7 +16,7 @@
 </form>
 <div class="container mt-4">
     {% if events | length == 0 %}
-      <h2>No mutual events found...</h2>
+      <h2 class="main-text-color">No mutual events found...</h2>
     {% else %}
       <h2>Mutual events with {{ my_friend }} </h2>
         {% for event in events %}

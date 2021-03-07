@@ -9,6 +9,7 @@ from sqlalchemy import (
     JSON,
     Boolean,
     Column,
+    Date,
     DateTime,
     Enum,
     Float,
@@ -32,6 +33,16 @@ from app.dependencies import logger
 from app.internal.privacy import PrivacyKinds
 
 Base: DeclarativeMeta = declarative_base()
+
+
+class UserFeature(Base):
+    __tablename__ = "user_feature"
+
+    id = Column(Integer, primary_key=True, index=True)
+    feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
+    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+
+    is_enable = Column(Boolean, default=False)
 
 
 class User(Base):
@@ -69,7 +80,10 @@ class User(Base):
         back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
+    tasks = relationship(
+        "Task", cascade="all, delete", back_populates="owner")
 
+    features = relationship("Feature", secondary=UserFeature.__tablename__)
     oauth_credentials = relationship(
         "OAuthCredentials",
         cascade="all, delete",
@@ -86,6 +100,7 @@ class User(Base):
         return db.query(User).filter(User.username == username).first()
 
 
+
 class UserExercise(Base):
     """
     Table name user exercise
@@ -96,6 +111,18 @@ class UserExercise(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     start_date = Column(DateTime, nullable=False)
+
+class Feature(Base):
+    __tablename__ = "features"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    route = Column(String, nullable=False)
+    creator = Column(String, nullable=True)
+    description = Column(String, nullable=False)
+
+    users = relationship("User", secondary=UserFeature.__tablename__)
+
 
 
 class Event(Base):
@@ -455,12 +482,34 @@ class WikipediaEvents(Base):
     date_inserted = Column(DateTime, default=datetime.utcnow)
 
 
+class CoronaStats(Base):
+    __tablename__ = "corona_stats"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date_ = Column(DateTime, nullable=False)
+    date_inserted = Column(DateTime, default=datetime.utcnow)
+    vaccinated = Column(Integer, nullable=False)
+    vaccinated_total = Column(Integer, nullable=False)
+    vaccinated_population_perc = Column(Integer, nullable=False)
+    vaccinated_second_dose = Column(Integer, nullable=False)
+    vaccinated_second_dose_total = Column(Integer, nullable=False)
+    vaccinated_second_dose_perc = Column(Float, nullable=False)
+
+
 class Quote(Base):
     __tablename__ = "quotes"
 
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, nullable=False)
     author = Column(String)
+
+
+class Country(Base):
+    __tablename__ = "countries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True)
+    timezone = Column(String, nullable=False)
 
 
 class Comment(Base):
@@ -547,6 +596,21 @@ class InternationalDays(Base):
     day = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
     international_day = Column(String, nullable=False)
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=False)
+    is_done = Column(Boolean, default=False)
+    is_important = Column(Boolean, nullable=False)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+
+    owner = relationship("User", back_populates="tasks")
 
 
 # insert language data

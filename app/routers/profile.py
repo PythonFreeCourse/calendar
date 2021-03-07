@@ -10,6 +10,7 @@ from starlette.status import HTTP_302_FOUND
 from app import config
 from app.database.models import User
 from app.dependencies import GOOGLE_ERROR, MEDIA_PATH, get_db, templates
+from app.internal.corona_stats import get_corona_stats
 from app.internal.import_holidays import (
     get_holidays_from_file,
     save_holidays_to_db,
@@ -72,6 +73,7 @@ async def profile(
     ]
 
     on_this_day_data = get_on_this_day_events(session)
+    corona_stats_data = await get_corona_stats(session)
 
     return templates.TemplateResponse(
         "profile.html",
@@ -82,6 +84,7 @@ async def profile(
             "signs": signs,
             "google_error": GOOGLE_ERROR,
             "on_this_day_data": on_this_day_data,
+            "corona_stats_data": corona_stats_data,
             "privacy": PrivacyKinds,
         },
     )
