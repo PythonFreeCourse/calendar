@@ -64,3 +64,33 @@ a {
     color: inherit;
 }
 
+/* Features Settings Panel */
+.feature-settings-closed {
+    display: none;
+    width: 0.1rem;
+}
+
+.feature-settings-open {
+    display: block;
+    background-color: var(--surface);
+    width: 20rem;
+}
+
+.feature-settings-panel {
+    padding: 0 var(--space_s);
+}
+
+.flex-row {
+    display: flex;
+    flex-flow: row wrap;
+    margin-bottom: var(--space_s);
+}
+
+.flex-row div {
+    flex: 1;
+}
+
+#feature-toggle {
+    flex: 0 0 2rem;
+    text-align: right;
+}

@@ -1,4 +1,7 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
 from sqlalchemy.sql import exists
 
 from app.database.models import Feature, User, UserFeature
@@ -106,3 +109,27 @@ async def delete_user_feature_association(
     session.commit()
 
     return True
+
+
+@router.get("/installed")
+async def get_user_feature(
+    request: Request,
+    session: SessionLocal = Depends(get_db),
+    user: User = Depends(current_user),
+) -> List[Feature]:
+    return get_user_installed_features(user_id=user.user_id, session=session)
+
+
+@router.post("/settings/{feature_name}")
+async def render_settings(
+    request: Request,
+    feature_name: str,
+) -> HTMLResponse:
+    form = await request.form()
+    feature_name = "".join(feature_name.split())
+    template = templates.get_template(
+        "partials/features_panels/" + feature_name + "_panel.html",
+    )
+    if template is not None:
+        content = template.render()
+        return HTMLResponse(content=content)

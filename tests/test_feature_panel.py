@@ -1,8 +1,9 @@
 import pytest
 
-from app.database.models import Feature, UserFeature
 import app.internal.features as internal
 import app.routers.features as route
+from app.database.models import Feature, UserFeature
+from app.internal.security.schema import CurrentUser
 from tests.test_login import LOGIN_DATA, REGISTER_DETAIL
 
 
@@ -22,12 +23,12 @@ def mock_features():
 @pytest.mark.usefixtures("session")
 def feature(session):
     test = Feature(
-        name='test',
-        route='/test',
-        description='testing',
-        creator='test',
-        icon='test',
-        followers=0
+        name="test",
+        route="/test",
+        description="testing",
+        creator="test",
+        icon="test",
+        followers=0,
     )
 
     session.add(test)
@@ -105,8 +106,9 @@ def test_create_association(mocker, session, user, feature):
 
 def test_get_user_enabled_features(session, feature, association_on, user):
     assert (
-        internal.get_user_installed_features(
-            session=session, user_id=user.id)[0]
+        internal.get_user_installed_features(session=session, user_id=user.id)[
+            0
+        ]
         is not None
     )
 
@@ -127,10 +129,9 @@ def test_delete_feature(session, feature):
 
 
 def test_is_feature_exist_in_db(session, feature):
-    assert internal.is_feature_exists({
-        'name': 'test',
-        'route': '/test'
-    }, session)
+    assert internal.is_feature_exists(
+        {"name": "test", "route": "/test"}, session,
+    )
 
 
 def test_update_feature(session, feature, update_dict):
@@ -139,7 +140,7 @@ def test_update_feature(session, feature, update_dict):
 
 
 @pytest.mark.asyncio
-async def test_is_feature_enabled(mocker, session, association_on, user):
+async def test_is_feature_enabled(mocker, session, association_on, feature):
     mocker.patch("app.internal.features.SessionLocal", return_value=session)
     mocker.patch(
         "app.internal.features.get_authorization_cookie",
@@ -147,12 +148,10 @@ async def test_is_feature_enabled(mocker, session, association_on, user):
     )
     mocker.patch(
         "app.internal.features.current_user",
-        return_value=user,
+        return_value=CurrentUser(user_id=1, username="test"),
     )
 
-    assert (
-        await internal.is_access_allowd(route="/route", request=None) is True
-    )
+    assert await internal.is_access_allowd(route="/test", request=None) is True
 
 
 def test_create_feature(session):

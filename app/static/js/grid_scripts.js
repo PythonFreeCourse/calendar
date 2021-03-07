@@ -1,6 +1,6 @@
 function setToggle(
     elementClass, targetElement, classToAdd,
-    index, elementsToLoad
+    index, elementsToLoad,
 ) {
     const allElements = document.getElementsByClassName(elementClass);
     const target = document.getElementById(targetElement);

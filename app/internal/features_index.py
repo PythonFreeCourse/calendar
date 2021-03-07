@@ -1,4 +1,4 @@
-'''
+"""
     This file purpose is for developers to add their features to the database
     in one convenient place, every time the system loads up it's adding and
     updating the features in the features table in the database.
@@ -12,9 +12,9 @@
     *   Please see the example below.                                         *
 
     Enjoy and good luck :)
-'''
+"""
 
-'''
+"""
 All icons come from https://ionicons.com/.
 
 If you want your feature to have an icon Go To: https://ionicons.com/
@@ -40,16 +40,13 @@ Example to feature icon stracture:
     .
     .
 }
-'''
+"""
 
 # Add to last!
-icons = {
-    "feature-panel": "albums-outline",
-    "Google Sync": "sync-outline"
-    }
+icons = {"feature-panel": "albums-outline", "Google Sync": "sync-outline"}
 
 
-'''
+"""
 Example to feature stracture:
 
 {
@@ -58,9 +55,9 @@ Example to feature stracture:
     "description": "<description - str>",
     "creator": "<creator name or nickname - str>"
 }
-'''
+"""
 
-'''
+"""
 *   IMPORTANT   *
 
 Example to decorator placement:
@@ -74,13 +71,19 @@ Example to decorator placement:
         ..
         .
 
-'''
+"""
 
 features = [
     {
         "name": "Google Sync",
         "route": "/google/sync",
         "description": "Sync Google Calendar events with Pylender",
-        "creator": "Liran Caduri"
+        "creator": "Liran Caduri",
+    },
+    {
+        "name": "example",
+        "route": "/example",
+        "description": "example",
+        "creator": "example",
     },
 ]

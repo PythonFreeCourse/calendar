@@ -11,6 +11,7 @@ from app.dependencies import SessionLocal, get_db
 from app.internal.features_index import features, icons
 from app.internal.security.dependencies import current_user
 from app.internal.security.ouath2 import get_authorization_cookie
+from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
 
 
@@ -125,7 +126,7 @@ async def is_access_allowd(request: Request, route: str) -> bool:
             & (UserFeature.user_id == user.user_id),
         ),
     ).scalar()
-
+    print(user_feature)
     return user_feature
 
 
