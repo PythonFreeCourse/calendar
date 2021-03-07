@@ -124,7 +124,6 @@ class Feature(Base):
     users = relationship("User", secondary=UserFeature.__tablename__)
 
 
-
 class Event(Base):
     __tablename__ = "events"
 
