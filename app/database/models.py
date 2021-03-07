@@ -100,7 +100,6 @@ class User(Base):
         return db.query(User).filter(User.username == username).first()
 
 
-
 class UserExercise(Base):
     """
     Table name user exercise
@@ -111,6 +110,7 @@ class UserExercise(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     start_date = Column(DateTime, nullable=False)
+
 
 class Feature(Base):
     __tablename__ = "features"
