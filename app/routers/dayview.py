@@ -2,11 +2,12 @@ from bisect import bisect_left
 from datetime import datetime, timedelta
 from typing import Dict, Iterator, Optional, Tuple, Union
 
+import geocoder
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.database.models import Event, Task, User
 from app.dependencies import get_db, templates
-from app.internal import international_days, zodiac
+from app.internal import international_days, shabbat, zodiac
 from app.internal.security.dependencies import current_user
 from app.routers.user import get_all_user_events
 
@@ -211,11 +212,15 @@ async def dayview(
     current_time_with_attrs = CurrentTimeAttributes(date=day)
     inter_day = international_days.get_international_day_per_day(session, day)
     tasks = (
-        session.query(Task)
-        .filter(Task.owner_id == user.user_id)
-        .filter(Task.date == day.date())
-        .order_by(Task.time)
+        session.query(Task).filter(Task.owner_id == user.user_id).filter(
+            Task.date == day.date()).order_by(Task.time)
     )
+    location_by_ip = geocoder.ip('me')
+    if location_by_ip:
+        shabbat_obj = shabbat.get_shabbat_if_date_friday(
+            day.date(),
+            location_by_ip,
+        )
     month = day.strftime("%B").upper()
     return templates.TemplateResponse(
         "calendar_day_view.html",
@@ -231,5 +236,7 @@ async def dayview(
             "view": view,
             "current_time": current_time_with_attrs,
             "tasks": tasks,
+            "user_location": location_by_ip,
+            "shabbat": shabbat_obj,
         },
     )
