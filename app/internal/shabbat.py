@@ -1,6 +1,6 @@
 import json
 from datetime import date, datetime
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import httpx
 
@@ -28,7 +28,9 @@ def return_zip_code_of_user_location(location_by_ip) -> str:
             return location["zip_number"]
 
 
-def return_shabbat_times(shabat_items) -> Dict[str, Union[date, Any]]:
+def return_shabbat_times(
+        shabat_items: Dict[Any, List[Dict[str, str]]]
+) -> Dict[str, Union[date, Any]]:
     """Returns the shabbat time which match to ip(of the user) location.
     Used the content of this is free API:
     'https://www.hebcal.com/shabbat?cfg=json&geonameid=295277'.

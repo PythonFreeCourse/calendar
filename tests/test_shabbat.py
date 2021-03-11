@@ -1,10 +1,12 @@
+import json
 from datetime import date
 
 import geocoder
+import pytest
 
 from app.internal import shabbat
 
-SHABBAT_TIME = {
+FAKE_SHABBAT_DATA = {
     "items":
         [
             {"title": "Fast begins"},
@@ -30,9 +32,34 @@ SHABBAT_TIME = {
         ]
 }
 FRIDAY = date(2021, 2, 26)
+BAD_DAY = date(2021, 2, 27)
 
 
-def test_return_if_date_is_friday():
+@pytest.mark.asyncio
+async def test_return_if_date_is_friday(httpx_mock):
     location_by_ip = geocoder.ip('me')
-    result = shabbat.get_shabbat_if_date_friday(FRIDAY, location_by_ip)
+    test_data = json.dumps(FAKE_SHABBAT_DATA)
+    httpx_mock.add_response(method="GET", json=test_data)
+    result = await shabbat.get_shabbat_if_date_friday(FRIDAY, location_by_ip)
+    assert result
+
+
+@pytest.mark.asyncio
+async def test_return_if_date_is_not_friday(httpx_mock):
+    location_by_ip = geocoder.ip('me')
+    test_data = json.dumps(FAKE_SHABBAT_DATA)
+    httpx_mock.add_response(method="GET", json=test_data)
+    result = await shabbat.get_shabbat_if_date_friday(BAD_DAY, location_by_ip)
+    assert result is None
+
+
+def test_return_shabbat_times():
+    result = shabbat.return_shabbat_times(FAKE_SHABBAT_DATA)
+    assert result["start_hour"] == "17:15"
+    assert result["end_hour"] == "18:11"
+
+
+def test_return_zip_code_of_user_location():
+    location_by_ip = geocoder.ip('me')
+    result = shabbat.return_zip_code_of_user_location(location_by_ip)
     assert result
