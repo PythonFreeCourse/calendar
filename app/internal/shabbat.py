@@ -6,7 +6,6 @@ import httpx
 
 from app.config import RESOURCES_DIR
 
-
 SHABBAT_API = 'https://www.hebcal.com/shabbat?cfg=json&geonameid='
 
 
