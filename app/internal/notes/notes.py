@@ -20,28 +20,30 @@ async def create(session: Session, payload: NoteSchema) -> int:
     return note.id
 
 
-async def view(session: Session, id: int) -> Note:
-    note = session.query(Note).filter_by(id=id).first()
+async def view(session: Session, note_id: int) -> Note:
+    note = session.query(Note).filter_by(id=note_id).first()
     if not note:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Note with id {id} not found",
+            detail=f"Note with id {note_id} not found",
         )
     return note
 
 
 async def get_all(
-    session: Session, skip: int = 0, limit: int = 100
+    session: Session,
+    skip: int = 0,
+    limit: int = 100,
 ) -> List[Note]:
     return session.query(Note).offset(skip).limit(limit).all()
 
 
-async def update(request: NoteSchema, session: Session, id: int) -> str:
-    note = session.query(Note).filter_by(id=id)
+async def update(request: NoteSchema, session: Session, note_id: int) -> str:
+    note = session.query(Note).filter_by(id=note_id)
     if not note.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Note with id {id} not found",
+            detail=f"Note with id {note_id} not found",
         )
     if request.timestamp is None:
         request.timestamp = datetime.utcnow()
@@ -50,12 +52,12 @@ async def update(request: NoteSchema, session: Session, id: int) -> str:
     return "updated"
 
 
-async def delete(session: Session, id: int) -> str:
-    note = session.query(Note).filter_by(id=id)
+async def delete(session: Session, note_id: int) -> str:
+    note = session.query(Note).filter_by(id=note_id)
     if not note.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Note with id {id} not found",
+            detail=f"Note with id {note_id} not found",
         )
     note.delete(synchronize_session=False)
     session.commit()
