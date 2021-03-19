@@ -109,6 +109,7 @@ class Feature(Base):
     description = Column(String, nullable=False)
     icon = Column(String, nullable=False)
     followers = Column(Integer, default=0)
+    template = Column(String, nullable=True)
 
     users = relationship("User", secondary=UserFeature.__tablename__)
 

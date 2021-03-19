@@ -11,7 +11,6 @@ from app.dependencies import SessionLocal, get_db
 from app.internal.features_index import features, icons
 from app.internal.security.dependencies import current_user
 from app.internal.security.ouath2 import get_authorization_cookie
-from app.internal.security.schema import CurrentUser
 from app.internal.utils import create_model
 
 
@@ -93,6 +92,7 @@ def update_feature(
     feature.route = feature_dict["route"]
     feature.description = feature_dict["description"]
     feature.creator = feature_dict["creator"]
+    feature.template = feature_dict["template"]
 
     icon = icons.get(feature.name)
     if icon is None:
@@ -137,6 +137,7 @@ def create_feature(
     description: str,
     creator: str = None,
     icon: str = None,
+    template: str = None,
 ) -> Feature:
     """Creates a feature."""
     db = SessionLocal()
@@ -152,6 +153,7 @@ def create_feature(
         creator=creator,
         description=description,
         icon=icon,
+        template=template,
     )
 
 

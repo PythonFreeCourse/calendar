@@ -53,7 +53,9 @@ Example to feature stracture:
     "name": "<feature name - str>",
     "route": "/<the route like: /features - str>",
     "description": "<description - str>",
-    "creator": "<creator name or nickname - str>"
+    "creator": "<creator name or nickname - str>",
+    "template": "<settings template - str (it's optional,
+                  the system will show a correct message)>"
 }
 """
 
@@ -79,6 +81,7 @@ features = [
         "route": "/google/sync",
         "description": "Sync Google Calendar events with Pylender",
         "creator": "Liran Caduri",
+        "template": "example_panel",
     },
     {
         "name": "example",

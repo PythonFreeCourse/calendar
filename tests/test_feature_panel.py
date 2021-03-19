@@ -75,6 +75,7 @@ def update_dict():
         "route": "/test",
         "description": "update",
         "creator": "test",
+        "template": 'test'
     }
 
     return update

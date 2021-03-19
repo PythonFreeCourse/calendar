@@ -13,8 +13,7 @@ function setFeatureInformation(element) {
     for (const key in panel) {
         document.getElementById(key).innerHTML = panel[key];
     }
-    console.log('make a call')
-    renderTemplate(panel["feature-name"]);
+    renderTemplate(element.dataset.template);
 }
 
 function setFeaturesSettings() {
@@ -41,16 +40,16 @@ function appandFeatures(){
                 const iconStrip = document.getElementById('icon-strip');
                 for (let i = 0; i < data.length; ++i) {
                     const fData = data[i]
-                    console.log(fData)
                     let feature = document.createElement('div');
+
                     feature.classList.add('feature');
                     feature.id = 'feature-' + fData.id;
+
                     feature.dataset.name = fData.name;
                     feature.dataset.creator = fData.creator;
                     feature.dataset.description = fData.description;
                     feature.dataset.followers = fData.followers;
-
-                    console.log(feature)
+                    feature.dataset.template = fData.template;
 
                     let icon = document.createElement('ion-icon');
                     icon.setAttribute('name', fData.icon);
@@ -60,17 +59,11 @@ function appandFeatures(){
             });
 }
 
-function renderTemplate(featureName){
+function renderTemplate(featureTemplate){
     const baseURL = window.location.origin;
-    const route = new URL('/features/settings/' + featureName, baseURL);
-    const formData = new FormData();
-    formData.append('feature_name', featureName);
+    const route = new URL('/features/settings/' + featureTemplate, baseURL);
 
-    fetch(route,
-        {
-            body: formData,
-            method: "post"
-        }
+    fetch(route, { method: "post" }
     ).then(function (response) {
         return response.text();
     }).then(function (html) {

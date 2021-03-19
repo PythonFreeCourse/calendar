@@ -3,6 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy.sql import exists
+from starlette.responses import PlainTextResponse
 
 from app.database.models import Feature, User, UserFeature
 from app.dependencies import SessionLocal, get_db, templates
@@ -120,16 +121,16 @@ async def get_user_feature(
     return get_user_installed_features(user_id=user.user_id, session=session)
 
 
-@router.post("/settings/{feature_name}")
+@router.post("/settings/{template}")
 async def render_settings(
     request: Request,
-    feature_name: str,
+    template: str,
 ) -> HTMLResponse:
-    form = await request.form()
-    feature_name = "".join(feature_name.split())
+    if template == 'null':
+        return PlainTextResponse(content='No additional settings for this one :)')
+
     template = templates.get_template(
-        "partials/features_panels/" + feature_name + "_panel.html",
+        "partials/features_panels/" + template + '.html'
     )
-    if template is not None:
-        content = template.render()
-        return HTMLResponse(content=content)
+    content = template.render()
+    return HTMLResponse(content=content)
