@@ -127,7 +127,8 @@ async def render_settings(
     template: str,
 ) -> HTMLResponse:
     if template == 'null':
-        return PlainTextResponse(content='No additional settings for this one :)')
+        return PlainTextResponse(
+            content='No additional settings for this one :)')
 
     template = templates.get_template(
         "partials/features_panels/" + template + '.html'
