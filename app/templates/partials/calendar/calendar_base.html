@@ -5,6 +5,9 @@
 <!-- CSS -->
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid_style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='/weekview.css') }}">
+{% block css %}
+{% endblock css %}
+
 {% endblock head %}
 {% block page_name %}Month View{% endblock page_name %}
 {% block body %}
@@ -23,4 +26,7 @@
 <script src="{{ url_for('static', path='/js/view_toggle.js') }}"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{ url_for('static', path='/js/global.js') }}"></script>
+{% block scripts %}
+{% endblock scripts %}
+
 {% endblock body %}
