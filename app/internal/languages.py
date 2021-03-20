@@ -4,10 +4,8 @@ from pathlib import Path
 from typing import Iterator
 
 from app import config
-from app.dependencies import templates
+from app.dependencies import LOCALES_PATH, templates
 
-LANGUAGE_DIR = "app/locales"
-LANGUAGE_DIR_TEST = "../app/locales"
 TRANSLATION_FILE = "base"
 
 
@@ -34,14 +32,12 @@ def set_ui_language(language: str = None) -> None:
     # if not language:
     #     language = _get_display_language(user_id: int)
 
-    language_dir = _get_language_directory()
-
-    if language not in list(_get_supported_languages(language_dir)):
+    if language not in list(_get_supported_languages()):
         language = config.WEBSITE_LANGUAGE
 
     translations = gettext.translation(
         TRANSLATION_FILE,
-        localedir=language_dir,
+        localedir=LOCALES_PATH,
         languages=[language],
     )
     translations.install()
@@ -59,27 +55,7 @@ def set_ui_language(language: str = None) -> None:
 #     return config.WEBSITE_LANGUAGE
 
 
-def _get_language_directory() -> str:
-    """Returns the language directory relative path."""
-    language_dir = LANGUAGE_DIR
-    if Path(LANGUAGE_DIR_TEST).is_dir():
-        # If running from test, change dir path.
-        language_dir = LANGUAGE_DIR_TEST
-    return language_dir
-
-
-def _get_supported_languages(
-        language_dir: str = _get_language_directory()
-) -> Iterator[str]:
-    """Returns a generator of supported translation languages codes.
-
-    Args:
-        language_dir: Optional; The path of the language directory.
-            Defaults to the return value of _get_language_directory().
-
-    Returns:
-        A generator expression of the supported translation languages codes.
-    """
-
-    paths = [Path(f.path) for f in os.scandir(language_dir) if f.is_dir()]
+def _get_supported_languages() -> Iterator[str]:
+    """Returns a generator of supported translation languages codes."""
+    paths = [Path(f.path) for f in os.scandir(LOCALES_PATH) if f.is_dir()]
     return (language.name for language in paths)
