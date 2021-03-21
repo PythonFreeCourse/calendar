@@ -152,12 +152,6 @@ class Event(Base):
         nullable=False,
         doc=PRIMARY_KEY_DOC,
     )
-    # category_id = Column(
-    #     Integer,
-    #     ForeignKey("categories.id"),
-    #     nullable=False,
-    #     doc="",  # TODO: doc
-    # )
     color = Column(
         String,
         nullable=True,

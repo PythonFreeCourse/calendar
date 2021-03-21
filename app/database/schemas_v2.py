@@ -58,13 +58,6 @@ class EventCreate(EventBase):
     Extends :class:`EventBase` with event creation information.
     """
 
-    # category_id: Annotated[
-    #     int,
-    #     Field(
-    #     description=models_v2.Event.category_id.__doc__,
-    #     example=1,
-    #     ),
-    # ]
     color: Annotated[
         str,
         Field(
