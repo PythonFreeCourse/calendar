@@ -370,9 +370,10 @@ def change_owner(session: Session, event: Event, user_id: int) -> bool:
     ):
         return False
 
-    current_owner = event_orm.owner
-    event_orm.owner_id = new_owner.id
-    event_orm.members.remove(current_owner)
+    event_orm.owner = new_owner
+
+    # TODO: The flow of changing owners isn't clear.
+    #  If the owner must be a member of a group than this might not be needed.
     event_orm.members.append(new_owner)
     session.commit()
     return True
