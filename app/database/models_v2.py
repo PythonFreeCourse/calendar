@@ -135,8 +135,8 @@ class User(Base):
 user_event = Table(
     "user_event",
     Base.metadata,
-    Column("user.id", Integer, ForeignKey("user.id")),
-    Column("event.id", Integer, ForeignKey("event.id")),
+    Column("user.id", Integer, ForeignKey("user.id"), primary_key=True),
+    Column("event.id", Integer, ForeignKey("event.id"), primary_key=True),
 )
 
 
@@ -269,7 +269,7 @@ class Event(Base):
 
 
 class Language(Base):
-    """A database model of a language entity.
+    """A database model of a Language entity.
 
     Languages in the database are the ones which are supported by the website.
     """
