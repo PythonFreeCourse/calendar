@@ -1,7 +1,25 @@
 """Shared code for CRUD tests."""
 from collections import Callable
 from types import ModuleType
-from typing import Optional
+from typing import Any, Optional
+
+from pydantic import BaseModel
+
+
+def get_attribute_value(model: BaseModel, attribute: str) -> Any:
+    """Returns the value for a model's attribute.
+
+    Args:
+        model: The model to get the value from.
+        attribute: The attribute to get the value for.
+
+    Returns:
+        The attribute value.
+    """
+    try:
+        return getattr(model, attribute)
+    except AttributeError:
+        return None
 
 
 def get_getter_function(
