@@ -31,8 +31,8 @@ def event_create(user_v2: User) -> EventCreate:
         An EventCreate object.
     """
     return EventCreate(
-        date_start=datetime.today(),
-        date_end=datetime.today(),
+        datetime_start=datetime.today(),
+        datetime_end=datetime.today(),
         color="red",
         content="content",
         emotion="emotion",
@@ -73,8 +73,8 @@ def event_v2(
     """
     event = create_events(
         event_create.owner_id,
-        event_create.date_start,
-        event_create.date_end,
+        event_create.datetime_start,
+        event_create.datetime_end,
     )
     yield event
 
@@ -101,22 +101,22 @@ def create_events(
 
     def _create_events(
         owner_id: int,
-        start_date: datetime,
-        end_date: datetime,
+        start_datetime: datetime,
+        end_datetime: datetime,
     ) -> Optional[Event]:
         """Returns an Event which was saved in the database.
 
         Args:
             owner_id: The ID of the User who created the Event.
-            start_date: The start date of the Event.
-            end_date: The end date of the Event.
+            start_datetime: The start date of the Event.
+            end_datetime: The end date of the Event.
 
         Returns:
             An Event entity.
         """
         event_create.owner_id = owner_id
-        event_create.date_start = start_date
-        event_create.date_end = end_date
+        event_create.datetime_start = start_datetime
+        event_create.datetime_end = end_datetime
 
         event = event_crud.create(session_v2, event_create)
         created_events.append(event)

@@ -45,12 +45,12 @@ class Event(Base):
         String,
         doc="",  # TODO: doc
     )
-    date_end = Column(
+    datetime_end = Column(
         DateTime,
         nullable=False,
         doc="The event's end datetime.",
     )
-    date_start = Column(
+    datetime_start = Column(
         DateTime,
         nullable=False,
         doc="The event's start datetime.",

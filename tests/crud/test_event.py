@@ -31,7 +31,7 @@ def test_get_by_id(session_v2: Session, event_v2: Event):
     database_event = crud.get_by_id(session_v2, event_v2.id)
     assert database_event
     assert database_event.owner_id == event_v2.owner_id
-    assert database_event.date_end == event_v2.date_end
+    assert database_event.datetime_end == event_v2.datetime_end
     assert crud.get_by_id(session_v2, 2) is None
 
 
@@ -77,8 +77,8 @@ def test_update_event(
 COLUMNS_BASE_TESTS = [
     "title",
     "owner_id",
-    "date_start",
-    "date_end",
+    "datetime_start",
+    "datetime_end",
     "is_all_day",
 ]
 

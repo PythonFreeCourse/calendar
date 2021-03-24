@@ -21,13 +21,13 @@ class EventBase(BaseModel):
         example=1,
     )
 
-    date_start: datetime = Field(
-        description=models_v2.Event.date_start.__doc__,
+    datetime_start: datetime = Field(
+        description=models_v2.Event.datetime_start.__doc__,
         example="2021-03-18 13:00:00",
     )
 
-    date_end: datetime = Field(
-        description=models_v2.Event.date_end.__doc__,
+    datetime_end: datetime = Field(
+        description=models_v2.Event.datetime_end.__doc__,
         example="2021-03-18 14:00:00",
     )
 
