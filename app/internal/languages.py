@@ -18,8 +18,8 @@ def set_ui_language(language: str = None) -> None:
     Args:
         language: Optional; A valid language code that follows RFC 1766.
             Defaults to None.
-            See also the Language Code Identifier (LCID) Reference for a list of
-            valid language codes.
+            See also the Language Code Identifier (LCID) Reference for a list
+            of valid language codes.
 
     .. _RFC 1766:
         https://tools.ietf.org/html/rfc1766.html
@@ -32,7 +32,10 @@ def set_ui_language(language: str = None) -> None:
     # if not language:
     #     language = _get_display_language(user_id: int)
 
-    if language not in list(_get_supported_languages()):
+    try:
+        if language not in set(_get_supported_languages()):
+            language = config.WEBSITE_LANGUAGE
+    except TypeError:
         language = config.WEBSITE_LANGUAGE
 
     translations = gettext.translation(
@@ -57,5 +60,5 @@ def set_ui_language(language: str = None) -> None:
 
 def _get_supported_languages() -> Iterator[str]:
     """Returns a generator of supported translation languages codes."""
-    paths = [Path(f.path) for f in os.scandir(LOCALES_PATH) if f.is_dir()]
+    paths = (Path(f.path) for f in os.scandir(LOCALES_PATH) if f.is_dir())
     return (language.name for language in paths)
