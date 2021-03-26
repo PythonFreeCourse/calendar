@@ -1,8 +1,9 @@
 import pytest
 
-from app.database.models import Feature, UserFeature
 import app.internal.features as internal
 import app.routers.features as route
+from app.database.models import Feature, UserFeature
+from app.internal.security.schema import CurrentUser
 from tests.test_login import LOGIN_DATA, REGISTER_DETAIL
 
 
@@ -26,6 +27,8 @@ def feature(session):
         route="/test",
         description="testing",
         creator="test",
+        icon="test",
+        followers=0,
     )
 
     session.add(test)
@@ -69,9 +72,10 @@ def association_on(session, user):
 def update_dict():
     update = {
         "name": "test",
-        "route": "/route-test",
+        "route": "/test",
         "description": "update",
         "creator": "test",
+        "template": 'test'
     }
 
     return update
@@ -79,9 +83,7 @@ def update_dict():
 
 @pytest.fixture
 def form_mock():
-    form = {"feature_id": 1, "user_id": 1}
-
-    return form
+    return {"feature_id": 1, "user_id": 1}
 
 
 def test_create_features_at_startup(mocker, session, mock_features):
@@ -128,10 +130,9 @@ def test_delete_feature(session, feature):
 
 
 def test_is_feature_exist_in_db(session, feature):
-    assert internal.is_feature_exists({
-        'name': 'test',
-        'route': '/test'
-    }, session)
+    assert internal.is_feature_exists(
+        {"name": "test", "route": "/test"}, session,
+    )
 
 
 def test_update_feature(session, feature, update_dict):
@@ -140,7 +141,7 @@ def test_update_feature(session, feature, update_dict):
 
 
 @pytest.mark.asyncio
-async def test_is_feature_enabled(mocker, session, association_on, user):
+async def test_is_feature_enabled(mocker, session, association_on, feature):
     mocker.patch("app.internal.features.SessionLocal", return_value=session)
     mocker.patch(
         "app.internal.features.get_authorization_cookie",
@@ -148,12 +149,10 @@ async def test_is_feature_enabled(mocker, session, association_on, user):
     )
     mocker.patch(
         "app.internal.features.current_user",
-        return_value=user,
+        return_value=CurrentUser(user_id=1, username="test"),
     )
 
-    assert (
-        await internal.is_access_allowd(route="/route", request=None) is True
-    )
+    assert await internal.is_access_allowd(route="/test", request=None) is True
 
 
 def test_create_feature(session):
@@ -165,6 +164,19 @@ def test_create_feature(session):
         db=session,
     )
     assert feat.name == "test1"
+
+
+def test_remove_follower(session, feature):
+    feature.followers = 1
+    session.commit()
+
+    internal.remove_follower(feature_id=feature.id, session=session)
+    assert feature.followers == 0
+
+
+def test_add_follower(session, feature):
+    internal.add_follower(feature_id=feature.id, session=session)
+    assert feature.followers == 1
 
 
 def test_index(security_test_client):

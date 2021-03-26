@@ -39,3 +39,9 @@
     {% include 'partials/calendar/monthly_view/monthly_grid.html' %}
   </main>
 {% endblock content %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
+<script src="{{ url_for('static', path='/js/grid_navigation.js') }}"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+{% endblock scripts %}

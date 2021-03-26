@@ -3,18 +3,18 @@
   --text_xxs: 0.5rem;  /* 8px */
   --text_xs: 0.75rem;  /* 12px */
   --text_s: 1rem;      /* 16px */
-  --text_m: 1.2rem;   /* 19px */
-  --text_l: 1.5rem;   /* 24px */
+  --text_m: 1.2rem;    /* 19px */
+  --text_l: 1.5rem;    /* 24px */
   --text_xl: 1.75rem;  /* 28px */
   --text_xxl: 2rem;    /* 32px */
 
   /* Spaces */
   --space_xxs: 0.25rem; /* 4px */
-  --space_xs: 0.5rem; /* 8px */
-  --space_s: 0.75rem; /* 12px */
-  --space_m: 1.25rem; /* 20px */
-  --space_l: 2rem;    /* 32px */
-  --space_xl: 4rem;   /* 64px */
+  --space_xs: 0.5rem;   /* 8px */
+  --space_s: 0.75rem;   /* 12px */
+  --space_m: 1.25rem;   /* 20px */
+  --space_l: 2rem;      /* 32px */
+  --space_xl: 4rem;     /* 64px */
 
   /* colors */
   --primary: #24396a;
@@ -62,4 +62,35 @@ body {
 a {
     text-decoration: none;
     color: inherit;
+}
+
+/* Features Settings Panel */
+.feature-settings-closed {
+    display: none;
+    width: 0.1rem;
+}
+
+.feature-settings-open {
+    display: block;
+    background-color: var(--surface);
+    width: 20rem;
+}
+
+.feature-settings-panel {
+    padding: 0 var(--space_s);
+}
+
+.flex-row {
+    display: flex;
+    flex-flow: row wrap;
+    margin-bottom: var(--space_s);
+}
+
+.flex-row div {
+    flex: 1;
+}
+
+#feature-toggle {
+    flex: 0 0 2rem;
+    text-align: right;
 }

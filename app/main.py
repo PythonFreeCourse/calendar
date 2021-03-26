@@ -123,6 +123,7 @@ routers_to_include = [
     dayview.router,
     email.router,
     event.router,
+    features.router,
     export.router,
     features.router,
     four_o_four.router,

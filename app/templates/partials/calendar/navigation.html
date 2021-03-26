@@ -20,10 +20,14 @@
         </a>
       </div>
       <div>
-        <ion-icon name="calendar-outline"></ion-icon>
+        <a href="/calendar/month">
+          <ion-icon name="calendar-outline"></ion-icon>
+        </a>
       </div>
       <div>
-        <ion-icon name="cube-outline"></ion-icon>
+        <a href="/features">
+          <ion-icon name="cube-outline"></ion-icon>
+        </a>
       </div>
       <div>
         <a title="About Us" href="{{ url_for('about') }}">
@@ -34,14 +38,7 @@
         <ion-icon id="darkmode" name="moon-outline"></ion-icon>
       </div>
     </div>
-
-    <div class="user-features">
-      <div class="feature" name="feather01">
-        <ion-icon name="chatbox"></ion-icon>
-      </div>
-    </div>
-    <div id="open-features">
-      <ion-icon name="ellipsis-vertical"></ion-icon>
+    <div class="user-features" id='icon-strip'>
     </div>
   </div>
 </nav>

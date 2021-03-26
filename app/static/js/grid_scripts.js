@@ -1,6 +1,6 @@
 function setToggle(
     elementClass, targetElement, classToAdd,
-    index, elementsToLoad
+    index, elementsToLoad,
 ) {
     const allElements = document.getElementsByClassName(elementClass);
     const target = document.getElementById(targetElement);
@@ -20,14 +20,6 @@ function isMonthLoaded(monthId) {
     }
     return false;
 }
-
-document.addEventListener(
-    'DOMContentLoaded', function () {
-        const allDays = document.getElementsByClassName('day');
-        setToggle("day", "day-view", "day-view-visible", 0, allDays.length);
-        weekScroll();
-    }
-)
 
 function loadWeekAfter(baseUrl, day, index, daysToLoad) {
     if (day.dataset.last === "false") {
@@ -60,7 +52,7 @@ function loadWeekBefore(baseUrl, day, daysToLoad) {
     });
 }
 
-function callLoadWeek(daysToLoad = 42, end = true) {
+function callLoadWeek(daysToLoad, end) {
     let day = null;
     const url = window.location.origin;
     const allDays = document.getElementsByClassName('day');
@@ -75,6 +67,8 @@ function callLoadWeek(daysToLoad = 42, end = true) {
 }
 
 function weekScroll() {
+    const daysToLoad = 42;
+
     grid = document.getElementById("calender-grid");
     grid.addEventListener(
         'scroll', function () {
@@ -82,12 +76,22 @@ function weekScroll() {
             if (grid.scrollY + grid.innerHeight + tolerance < grid.scrollHeight) {
                 return false;
             }
-            callLoadWeek();
+            const addAfter = true;
+            callLoadWeek(daysToLoad, addAfter);
         }
     )
-    grid.addEventListener('wheel', function () {
-        if (this.scrollTop === 0) {
-            callLoadWeek(42, end = false);
+    grid.addEventListener('wheel', function (event) {
+        if (event.deltaY < 0 && this.scrollTop === 0) {
+            const addAfter = false;
+            callLoadWeek(daysToLoad, addAfter);
         }
     })
 }
+
+document.addEventListener(
+    'DOMContentLoaded', function () {
+        const allDays = document.getElementsByClassName('day');
+        setToggle("day", "day-view", "day-view-visible", 0, allDays.length);
+        weekScroll();
+    }
+)

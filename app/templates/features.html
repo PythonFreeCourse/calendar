@@ -1,0 +1,84 @@
+{% extends "./partials/calendar/calendar_base.html" %}
+{% block css %}
+<link href="{{ url_for('static', path='/features.css') }}" rel="stylesheet" type="text/css">
+{% endblock css %}
+
+{% block page_name %}Features Panel{% endblock page_name %}
+
+{% block content %}
+<header>
+    <div>
+        <div class="title">FEATURES PANEL</div>
+        <p class="s-paragraph">This panel allows you to view optional addons.<br>Add, remove or customize
+            features
+            to your liking by clicking on the features icon in the navigation bar.
+        </p>
+        <div class="search-box">
+            <ion-icon name="search" alt="Search icon"></ion-icon>
+            <input class="search-input" type="text" placeholder="Search Feature" autofocus="true" maxlength="80">
+        </div>
+    </div>
+    <div id="logo-div">
+        <a href="/calendar/month">
+            <span class="title">PYLENDAR</span>
+        </a>
+    </div>
+</header>
+
+<main>
+    <div id="features">
+        <div class="m-title underline-yellow"> Available Features </div>
+        <div class="m-title underline-yellow"> Your Features </div>
+        <div id="available-features">
+            {% for feature in features['uninstalled'] %}
+            <div class="feature-row" data-state="available" id="{{feature.id}}">
+                <div>
+                    <ion-icon class="feature-icon" name="{{feature.icon}}"></ion-icon>
+                </div>
+                <div class="info-icon">
+                    <span class="row-feature-name">{{feature.name.upper()}}</span>
+                    <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
+                </div>
+                <div><b>Creator:</b> {{feature.creator.title()}}</div>
+                <div>
+                    <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
+                    <span><b>Followers:</b></span>
+                    <span class="followers">{{feature.followers}}</span>
+                </div>
+                <div class="button add-button">
+                    ADD
+                </div>
+                <div class="information">{{feature.description}}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div id="installed-features">
+            {% for feature in features['installed'] %}
+            <div class="feature-row" data-state="installed" id="{{feature.id}}">
+                <div>
+                    <ion-icon class="feature-icon" name="{{feature.icon}}"></ion-icon>
+                </div>
+                <div class="info-icon">
+                    <span class="row-feature-name">{{feature.name.upper()}}</span>
+                    <ion-icon class="feature-icon" name="information-circle-outline"></ion-icon>
+                </div>
+                <div><b>Creator:</b> {{feature.creator.title()}}</div>
+                <div>
+                    <ion-icon class="feature-icon text-red" name="heart"></ion-icon>
+                    <span><b>Followers:</b></span>
+                    <span class="followers">{{feature.followers}}</span>
+                </div>
+                <div class="button remove-button" id="remove">
+                    REMOVE
+                </div>
+                <div class="information">{{feature.description}}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock content %}
+
+{% block scripts %}
+<script src="{{ url_for('static', path='/js/features.js') }}"></script>
+{% endblock scripts %}

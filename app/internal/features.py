@@ -8,7 +8,7 @@ from starlette.responses import RedirectResponse
 
 from app.database.models import Feature, UserFeature
 from app.dependencies import SessionLocal, get_db
-from app.internal.features_index import features
+from app.internal.features_index import features, icons
 from app.internal.security.dependencies import current_user
 from app.internal.security.ouath2 import get_authorization_cookie
 from app.internal.utils import create_model
@@ -46,7 +46,9 @@ def feature_access_filter(call_next):
 def create_features_at_startup(session: Session) -> bool:
     for feat in features:
         if not is_feature_exists(feature=feat, session=session):
-            create_feature(**feat, db=session)
+            icon = icons.get(feat["name"])
+            create_feature(**feat, icon=icon, db=session)
+
     return True
 
 
@@ -90,6 +92,14 @@ def update_feature(
     feature.route = feature_dict["route"]
     feature.description = feature_dict["description"]
     feature.creator = feature_dict["creator"]
+    feature.template = feature_dict["template"]
+
+    icon = icons.get(feature.name)
+    if icon is None:
+        icon = "extension-puzzle"
+
+    feature.icon = icon
+
     session.commit()
     return feature
 
@@ -116,7 +126,7 @@ async def is_access_allowd(request: Request, route: str) -> bool:
             & (UserFeature.user_id == user.user_id),
         ),
     ).scalar()
-
+    print(user_feature)
     return user_feature
 
 
@@ -126,8 +136,15 @@ def create_feature(
     route: str,
     description: str,
     creator: str = None,
+    icon: str = None,
+    template: str = None,
 ) -> Feature:
     """Creates a feature."""
+    db = SessionLocal()
+
+    if icon is None:
+        icon = "extension-puzzle"
+
     return create_model(
         db,
         Feature,
@@ -135,6 +152,8 @@ def create_feature(
         route=route,
         creator=creator,
         description=description,
+        icon=icon,
+        template=template,
     )
 
 
@@ -145,6 +164,7 @@ def create_user_feature_association(
     is_enable: bool,
 ) -> UserFeature:
     """Creates an association."""
+    add_follower(feature_id=feature_id, session=db)
     return create_model(
         db,
         UserFeature,
@@ -181,3 +201,17 @@ def get_user_uninstalled_features(
         )
         .all()
     )
+
+
+def remove_follower(feature_id: int, session: SessionLocal) -> None:
+    feat = session.query(Feature).filter_by(id=feature_id).first()
+    feat.followers -= 1
+    if feat.followers < 0:
+        feat.followers = 0
+    session.commit()
+
+
+def add_follower(feature_id: int, session: SessionLocal) -> None:
+    feat = session.query(Feature).filter_by(id=feature_id).first()
+    feat.followers += 1
+    session.commit()

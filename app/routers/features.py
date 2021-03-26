@@ -1,15 +1,18 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
 from sqlalchemy.sql import exists
+from starlette.responses import PlainTextResponse
 
 from app.database.models import Feature, User, UserFeature
-from app.dependencies import SessionLocal, get_db
+from app.dependencies import SessionLocal, get_db, templates
 from app.internal.features import (
     create_user_feature_association,
     get_user_installed_features,
     get_user_uninstalled_features,
     is_user_has_feature,
+    remove_follower,
 )
 from app.internal.security.dependencies import current_user
 
@@ -24,9 +27,23 @@ router = APIRouter(
 async def index(
     request: Request,
     session: SessionLocal = Depends(get_db),
-) -> List[Feature]:
-    features = session.query(Feature).all()
-    return features
+    user: User = Depends(current_user),
+) -> templates:
+    features = {
+        "installed": get_user_installed_features(
+            session=session,
+            user_id=user.user_id,
+        ),
+        "uninstalled": get_user_uninstalled_features(
+            session=session,
+            user_id=user.user_id,
+        ),
+    }
+
+    return templates.TemplateResponse(
+        "features.html",
+        {"request": request, "features": features},
+    )
 
 
 @router.post("/add")
@@ -84,6 +101,8 @@ async def delete_user_feature_association(
     if not is_exist:
         return False
 
+    remove_follower(feature_id=feature_id, session=session)
+
     session.query(UserFeature).filter_by(
         feature_id=feature_id,
         user_id=user.user_id,
@@ -93,19 +112,26 @@ async def delete_user_feature_association(
     return True
 
 
-@router.get("/deactive")
-def deactive(
+@router.get("/installed")
+async def get_user_feature(
     request: Request,
     session: SessionLocal = Depends(get_db),
     user: User = Depends(current_user),
-):
-    return get_user_uninstalled_features(user_id=user.user_id, session=session)
-
-
-@router.get("/active")
-def active(
-    request: Request,
-    session: SessionLocal = Depends(get_db),
-    user: User = Depends(current_user),
-):
+) -> List[Feature]:
     return get_user_installed_features(user_id=user.user_id, session=session)
+
+
+@router.post("/settings/{template}")
+async def render_settings(
+    request: Request,
+    template: str,
+) -> HTMLResponse:
+    if template == 'null':
+        return PlainTextResponse(
+            content='No additional settings for this one :)')
+
+    template = templates.get_template(
+        "partials/features_panels/" + template + '.html'
+    )
+    content = template.render()
+    return HTMLResponse(content=content)
