@@ -23,6 +23,7 @@ from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
 from app.internal.security.dependencies import get_jinja_current_user
 from app.internal.security.ouath2 import auth_exception_handler
+from app.routers.notes import notes
 from app.routers.salary import routes as salary
 from app.utils.extending_openapi import custom_openapi
 
@@ -132,6 +133,7 @@ routers_to_include = [
     login.router,
     logout.router,
     meds.router,
+    notes.router,
     notification.router,
     profile.router,
     register.router,
