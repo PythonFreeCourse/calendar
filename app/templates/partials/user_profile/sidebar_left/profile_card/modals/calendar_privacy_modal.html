@@ -3,7 +3,7 @@
   <div class="modal-dialog profile-modal-dialog profile-modal-fadeIn">
     <div class="modal-content">
       <div class="modal-header profile-modal-header">
-        <h2 class="modal-title">Set your calendar privacy</h2>
+        <h2 class="modal-title">{{ gettext("Set your calendar privacy") }}</h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -13,7 +13,7 @@
             <option value="{{ privacy.Public.name }}">{{ privacy.Public.name }}</option>
           </select>
           <div class="d-flex flex-row-reverse mt-4">
-            <button type="submit" class="btn btn-sm btn-success">Save changes</button>
+            <button type="submit" class="btn btn-sm btn-success">{{ gettext("Save changes") }}</button>
           </div>
         </form>
       </div>

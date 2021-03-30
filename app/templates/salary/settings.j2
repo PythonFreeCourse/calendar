@@ -5,47 +5,46 @@
     <header class="text-center">
       <h1>
         {% if category %}
-          {{ category }}<br>
+          {{ gettext("%(category)s salary settings", category=category) }}
         {% else %}
-          New
+          {{ gettext("New salary settings") }}
         {% endif %}
-        Salary Settings
       </h1>
     </header>
-    
+
     <form method="post">
       {% if categories %}
         <div class="input-group mb-2">
           <label class="font-weight-bold input-group-text" for="category-select">Category</label>
           <select class="form-control" name="category_id" id="category-select" required>
-            <option value="">--Please choose a category--</option>
+            <option value="">--{{ gettext("Please choose a category") }}--</option>
             {% for id, category in categories.items() %}
               <option value="{{ id }}">{{ category }}</option>
             {% endfor %}
           </select>
         </div>
-        
+
         <div>
-          <p class="text-muted">Want a new category? <a href="#">Create one here</a></p>
+          <p class="text-muted"><a href="#">{{ gettext("Create a new category") }}</a></p>
         </div>
       {% endif %}
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="wage">Hourly Wage</label>
-        <input class="form-control" type="number" step=any name="wage" id="wage" value="{{ wage.wage }}"> 
+        <label class="font-weight-bold input-group-text" for="wage">{{ gettext("Hourly wage") }}</label>
+        <input class="form-control" type="number" step=any name="wage" id="wage" value="{{ wage.wage }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="off-day">Off Day</label>
+        <label class="font-weight-bold input-group-text" for="off-day">{{ gettext("Day off") }}</label>
         <select class="form-control" name="off_day" id-="off-day">
-          <option value="4">Friday</option>
-          <option value="5" selected>Saturday</option>
-          <option value="6">Sunday</option>
+          <option value="4">{{ gettext("Friday") }}</option>
+          <option value="5" selected>{{ gettext("Saturday") }}</option>
+          <option value="6">{{ gettext("Sunday") }}</option>
         </select>
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="holiday-category-select">Holiday Category:</label>
+        <label class="font-weight-bold input-group-text" for="holiday-category-select">{{ gettext("Holiday category:") }}</label>
         <select class="form-control" name="holiday_category_id" id="holiday-category-select" required>
           {% for id, category in holidays.items() %}
             <option value="{{ id }}">{{ category }}</option>
@@ -54,70 +53,69 @@
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="regular-hour-basis">Regular Hour Basis</label>
+        <label class="font-weight-bold input-group-text" for="regular-hour-basis">{{ gettext("Regular hour basis") }}</label>
         <input class="form-control" type="number" step=any name="regular_hour_basis" id="regular-hour-basis" value="{{ wage.regular_hour_basis }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="night-hour-basis">Night Hour Basis</label>
+        <label class="font-weight-bold input-group-text" for="night-hour-basis">{{ gettext("Night hour basis") }}</label>
         <input class="form-control" type="number" step=any name="night_hour_basis" id="night-hour-basis" value="{{ wage.night_hour_basis }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="night-start">Night Shift Start</label>
+        <label class="font-weight-bold input-group-text" for="night-start">{{ gettext("Night shift start") }}</label>
         <input class="form-control" type="time" step=any name="night_start" id="night-start" value="{{ wage.night_start }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="night-end">Night Shift End</label>
+        <label class="font-weight-bold input-group-text" for="night-end">{{ gettext("Night shift end") }}</label>
         <input class="form-control" type="time" step=any name="night_end" id="night-end" value="{{ wage.night_end }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="night-min-len">Night Shift Minimum Length</label>
+        <label class="font-weight-bold input-group-text" for="night-min-len">{{ gettext("Night shift minimum length") }}</label>
         <input class="form-control" type="time" step=any name="night_min_len" id="night-min-len" value="{{ wage.night_min_len }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="first-overtime-amount">First Overtime Amount</label>
+        <label class="font-weight-bold input-group-text" for="first-overtime-amount">{{ gettext("First overtime amount") }}</label>
         <input class="form-control" type="number" step=any name="first_overtime_amount" id="first-overtime-amount" value="{{ wage.first_overtime_amount }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="first-overtime-pay">First Overtime Pay</label>
+        <label class="font-weight-bold input-group-text" for="first-overtime-pay">{{ gettext("First overtime pay") }}</label>
         <input class="form-control" type="number" step=any name="first_overtime_pay" id="first-overtime-pay" value="{{ wage.first_overtime_pay }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="second-overtime-pay">Second Overtime Pay</label>
+        <label class="font-weight-bold input-group-text" for="second-overtime-pay">{{ gettext("second overtime pay") }}</label>
         <input class="form-control" type="number" step=any name="second_overtime_pay" id="second-overtime-pay" value="{{ wage.second_overtime_pay }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="week-working-hours">Week Working Hour</label>
+        <label class="font-weight-bold input-group-text" for="week-working-hours">{{ gettext("Week working hour") }}</label>
         <input class="form-control" type="number" step=any name="week_working_hours" id="week-working-hours" value="{{ wage.week_working_hours }}">
       </div>
 
       <div class="input-group mb-2">
-        <label class="font-weight-bold input-group-text" for="daily-transport">Daily Transport</label>
+        <label class="font-weight-bold input-group-text" for="daily-transport">{{ gettext("Daily transport") }}</label>
         <input class="form-control" type="number" step=any name="daily_transport" id="daily-transport" value="{{ wage.daily_transport }}">
       </div>
 
       <button type="submit" class="btn btn-sm btn-primary">
         {% if categories %}
-          Create
+          {{ gettext("Create salary settings") }}
         {% else %}
-          Update
+          {{ gettext("Update salary settings") }}
         {% endif %}
-        salary settings
       </button>
     </form>
 
     <div>
       {% if category %}
-        <p class="text-muted">Settings don't need editing? <a href="{{ url_for('view_salary', category_id=category_id) }}">View your salary here</a></p>
+        <p class="text-muted"><a href="{{ url_for("view_salary", category_id=category_id) }}">{{ gettext("View your salary") }}</a></p>
       {% else %}
-        <p class="text-muted">Already created your settings? <a href="{{ url_for('pick_category') }}">View your salary</a> or <a href="{{ url_for('pick_settings') }}">Edit your salary</a></p>
+        <p class="text-muted">{{ gettext("Setting created?") }} <a href="{{ url_for("pick_category") }}">{{ gettext("View your salary") }}</a> {{ gettext("or") }} <a href="{{ url_for("pick_settings") }}">{{ gettext("Edit your salary") }}</a></p>
       {% endif %}
     </div>
   </div>

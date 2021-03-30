@@ -8,7 +8,7 @@ START_AUDIO_URL = router.url_path_for("start_audio")
 def test_get_settings(audio_test_client):
     response = audio_test_client.get(url=AUDIO_SETTINGS_URL)
     assert response.ok
-    assert b"Audio Settings" in response.content
+    assert b"Audio settings" in response.content
 
 
 def test_start_audio_default(audio_test_client):

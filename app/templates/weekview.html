@@ -12,15 +12,12 @@
     <body>
         <div id="week-view">
             <div id="week-schedule" class="d-flex justify-content-between">
-                {% for day, dayview, events_and_attrs, current_time, all_day_events in week %}
+                {% for day, dayview, events_and_attr in week %}
                 <div class="day-weekview m-0 flex-fill border-start" style="width: 100%;">
-                    <div class="day-name sticky-top">{{ day.strftime('%a').upper()}}
-                        {% for event in all_day_events %}
-                        <a href={{ url_for('eventview', event_id=event.id) }} title="See full event" class="text-danger">{{ event.title }}</a>
-                        {% endfor %}
-                    </div>
+                        <div class="day-name sticky-top">{{ day.strftime('%A').upper()[:3] }}</div>
                         {% set month = day.month %}
                         {% set day = day.day %}
+                        {% set events = events_and_attr%}
                         {% include dayview.template %}
                     </div>
                 {% endfor %}

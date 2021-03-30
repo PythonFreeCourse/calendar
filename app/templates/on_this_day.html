@@ -1,5 +1,5 @@
 <div class="container">
-  <p class="card-title">On This Day</p>
+  <p class="card-title">{{ gettext("On this day") }}</p>
   <ul>
     {% for event in on_this_day_data.events[1::-1] %}
       <li>
@@ -8,5 +8,5 @@
       </li>
     {% endfor %}
   </ul>
-  <a href="{{ on_this_day_data.wikipedia }}" target="_blank">Explore More ...</a>
+  <a href="{{ on_this_day_data.wikipedia }}" target="_blank">{{ gettext("Explore more...") }}</a>
 </div>

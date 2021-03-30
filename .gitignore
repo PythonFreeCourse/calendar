@@ -147,7 +147,6 @@ dmypy.json
 .pyre/
 
 # mac env
-.DS_Store
 bin
 
 # register stuff

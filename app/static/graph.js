@@ -1,6 +1,6 @@
 function busiestDayOfTheWeekGraph(events) {
     events = JSON.parse(events);
-
+    
     const data = Object.values(events);
     const labels = Object.keys(events);
     const ctx = document.getElementById("myChart");
@@ -40,12 +40,10 @@ function busiestDayOfTheWeekGraph(events) {
 
 function addEventsAfterPageLoaded() {
     const element = document.getElementsByClassName("graph")[0];
-    if (element) {
-        element.addEventListener("click", function () {
-            let eventsPerDateData = element.name;
-            busiestDayOfTheWeekGraph(eventsPerDateData);
-        }, false);
-    }
+    element.addEventListener("click", function() {
+        let eventsPerDateData = element.name;
+        busiestDayOfTheWeekGraph(eventsPerDateData);
+    }, false);
 }
 
 document.addEventListener("DOMContentLoaded", addEventsAfterPageLoaded);

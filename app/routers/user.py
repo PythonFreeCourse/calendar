@@ -1,34 +1,74 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from typing import List
+
+from fastapi import APIRouter, Depends, Request
+from pydantic import BaseModel, Field
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_200_OK
 
-from app.database.models import User
+from app.database.models import Event, User, UserEvent
 from app.dependencies import get_db
 from app.internal.user.availability import disable, enable
 from app.internal.utils import get_current_user
 
 router = APIRouter(
-    prefix="/users",
-    tags=["users"],
+    prefix="/user",
+    tags=["user"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/{id}", status_code=status.HTTP_200_OK)
-async def get_user(id: int, session=Depends(get_db)):
-    user = session.query(User).filter_by(id=id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User with id {id} not found",
-        )
-    return user
+class UserModel(BaseModel):
+    username: str
+    password: str
+    email: str = Field(regex="^\\S+@\\S+\\.\\S+$")
+    language: str
+    language_id: int
+
+
+@router.get("/list")
+async def get_all_users(session=Depends(get_db)):
+    return session.query(User).all()
 
 
 @router.get("/")
-async def get_all_users(session=Depends(get_db)):
-    return session.query(User).all()
+async def get_user(id: int, session=Depends(get_db)):
+    return session.query(User).filter_by(id=id).first()
+
+
+def get_users(session: Session, **param):
+    """Returns all users filtered by param."""
+    try:
+        users = list(session.query(User).filter_by(**param))
+    except SQLAlchemyError:
+        return []
+    else:
+        return users
+
+
+def does_user_exist(
+    session: Session, *, user_id=None, username=None, email=None
+):
+    """Returns True if user exists, False otherwise.
+    function can receive one of the there parameters"""
+    if user_id:
+        return len(get_users(session=session, id=user_id)) == 1
+    if username:
+        return len(get_users(session=session, username=username)) == 1
+    if email:
+        return len(get_users(session=session, email=email)) == 1
+    return False
+
+
+def get_all_user_events(session: Session, user_id: int) -> List[Event]:
+    """Returns all events that the user participants in."""
+    return (
+        session.query(Event)
+        .join(UserEvent)
+        .filter(UserEvent.user_id == user_id)
+        .all()
+    )
 
 
 @router.post("/disable")

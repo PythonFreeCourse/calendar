@@ -3,12 +3,12 @@
   </div>
   <!-- Upcoming events -->
   <div class="mb-3">
-    <h1>Upcoming events</h1>
+    <h1>{{ gettext("Upcoming events") }}</h1>
     {% for event in events %}
       <!-- Event card -->
-      {% include 'partials/user_profile/middle_content/event_card.html' %}
+      {% include "partials/user_profile/middle_content/event_card.html" %}
 
-      {% include 'partials/user_profile/middle_content/update_event_modal.html' %}
+      {% include "partials/user_profile/middle_content/update_event_modal.html" %}
     {% endfor %}
   </div>
 </div>

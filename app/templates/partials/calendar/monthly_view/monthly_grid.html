@@ -1,4 +1,4 @@
-<div class="calendar" id="calendarview">
+<div class="calendar">
   <div class="calender-days-titles">
     {% for d in week_days %}
     {% if d == day.sday %}
@@ -9,7 +9,7 @@
     {% endfor %}
   </div>
   <div id="calender-grid">
-    {% include 'partials/calendar/monthly_view/add_week.html' %}
+    {% include "partials/calendar/monthly_view/add_week.html" %}
   </div>
 </div>
 <div>

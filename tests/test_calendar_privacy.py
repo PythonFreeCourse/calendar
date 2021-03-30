@@ -2,7 +2,7 @@ from app.internal.calendar_privacy import can_show_calendar
 
 # TODO after user system is merged:
 # from app.internal.security.dependancies import CurrentUser
-from app.internal.user.user import _create_user
+from app.routers.register import _create_user
 
 
 def test_can_show_calendar_public(session, user):

@@ -79,8 +79,7 @@ class User(Base):
         back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
-    tasks = relationship(
-        "Task", cascade="all, delete", back_populates="owner")
+    tasks = relationship("Task", cascade="all, delete", back_populates="owner")
 
     features = relationship("Feature", secondary=UserFeature.__tablename__)
     oauth_credentials = relationship(

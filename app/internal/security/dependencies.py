@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import Depends, HTTPException
 from starlette.requests import Request
 from starlette.status import HTTP_401_UNAUTHORIZED
@@ -22,13 +20,7 @@ async def is_logged_in(
     """
     A dependency function protecting routes for only logged in user
     """
-    jwt_payload = get_jwt_token(jwt)
-    user_id = jwt_payload.get("user_id")
-    if not user_id:
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail="Your token is not valid. Please log in again",
-        )
+    await get_jwt_token(db, jwt)
     return True
 
 
@@ -40,9 +32,8 @@ async def is_manager(
     """
     A dependency function protecting routes for only logged in manager
     """
-    jwt_payload = get_jwt_token(jwt)
-    user_id = jwt_payload.get("user_id")
-    if jwt_payload.get("is_manager") and user_id:
+    jwt_payload = await get_jwt_token(db, jwt)
+    if jwt_payload.get("is_manager"):
         return True
     raise HTTPException(
         status_code=HTTP_401_UNAUTHORIZED,
@@ -60,7 +51,7 @@ async def current_user_from_db(
     Returns logged in User object.
     A dependency function protecting routes for only logged in user.
     """
-    jwt_payload = get_jwt_token(jwt)
+    jwt_payload = await get_jwt_token(db, jwt)
     username = jwt_payload.get("sub")
     user_id = jwt_payload.get("user_id")
     db_user = await User.get_by_username(db, username=username)
@@ -83,30 +74,7 @@ async def current_user(
     Returns logged in User object.
     A dependency function protecting routes for only logged in user.
     """
-    jwt_payload = get_jwt_token(jwt)
+    jwt_payload = await get_jwt_token(db, jwt)
     username = jwt_payload.get("sub")
     user_id = jwt_payload.get("user_id")
-    if not user_id:
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail="Your token is not valid. Please log in again",
-        )
-    return schema.CurrentUser(user_id=user_id, username=username)
-
-
-def get_jinja_current_user(request: Request) -> Optional[schema.CurrentUser]:
-    """Return the currently logged in user.
-    Returns logged in User object if exists, None if not.
-    Set as a jinja global parameter.
-    """
-    if "Authorization" not in request.cookies:
-        return None
-    jwt_payload = get_jwt_token(request.cookies["Authorization"])
-    username = jwt_payload.get("sub")
-    user_id = jwt_payload.get("user_id")
-    if not user_id:
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail="Your token is not valid. Please log in again",
-        )
     return schema.CurrentUser(user_id=user_id, username=username)

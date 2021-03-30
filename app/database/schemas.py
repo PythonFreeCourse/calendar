@@ -1,26 +1,17 @@
-from datetime import datetime
 from typing import Optional, Union
 
-from pydantic import BaseModel, EmailError, EmailStr, Field, validator
+from pydantic import BaseModel, EmailError, EmailStr, validator
 
 EMPTY_FIELD_STRING = "field is required"
 MIN_FIELD_LENGTH = 3
 MAX_FIELD_LENGTH = 20
 
 
-def fields_not_empty(field: Optional[str]) -> str:
+def fields_not_empty(field: Optional[str]) -> Union[ValueError, str]:
     """Global function to validate fields are not empty."""
     if not field:
         raise ValueError(EMPTY_FIELD_STRING)
     return field
-
-
-class UserModel(BaseModel):
-    username: str
-    password: str
-    email: str = Field(regex="^\\S+@\\S+\\.\\S+$")
-    language: str
-    language_id: int
 
 
 class UserBase(BaseModel):
@@ -69,30 +60,32 @@ class UserCreate(UserBase):
     )
 
     @validator("confirm_password")
-    def passwords_match(cls, confirm_password: str, values: UserBase) -> str:
+    def passwords_match(
+        cls,
+        confirm_password: str,
+        values: UserBase,
+    ) -> Union[ValueError, str]:
         """Validating passwords fields identical."""
         if "password" in values and confirm_password != values["password"]:
             raise ValueError("doesn't match to password")
         return confirm_password
 
     @validator("username")
-    def username_length(cls, username: str) -> str:
+    def username_length(cls, username: str) -> Union[ValueError, str]:
         """Validating username length is legal"""
         if not (MIN_FIELD_LENGTH < len(username) < MAX_FIELD_LENGTH):
             raise ValueError("must contain between 3 to 20 charactars")
-        if username.startswith("@"):
-            raise ValueError("username can not start with '@'")
         return username
 
     @validator("password")
-    def password_length(cls, password: str) -> str:
+    def password_length(cls, password: str) -> Union[ValueError, str]:
         """Validating username length is legal"""
         if not (MIN_FIELD_LENGTH < len(password) < MAX_FIELD_LENGTH):
             raise ValueError("must contain between 3 to 20 charactars")
         return password
 
     @validator("email")
-    def confirm_mail(cls, email: str) -> str:
+    def confirm_mail(cls, email: str) -> Union[ValueError, str]:
         """Validating email is valid mail address."""
         try:
             EmailStr.validate(email)
@@ -109,23 +102,3 @@ class User(UserBase):
 
     id: int
     is_active: bool
-
-
-class NoteSchema(BaseModel):
-    title: str
-    description: Optional[str] = None
-    timestamp: Optional[datetime]
-    creator: Optional[User]
-
-    class Config:
-        orm_mode = True
-        schema_extra = {
-            "example": {
-                "title": "Foo",
-                "description": "Bar",
-            },
-        }
-
-
-class NoteDB(NoteSchema):
-    id: int

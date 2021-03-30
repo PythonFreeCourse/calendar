@@ -4,12 +4,12 @@
     <div class="notification" id="{{ loop.index }}">
         {% if type == "invitations" %}
             <div class="description">
-                <span>Invitation from {{ n.event.owner.username }} - </span>
+                <span>{{ gettext("Invitation from %(user)s", user=n.event.owner.username) }} -  </span>
                 <a href="#">{{ n.event.title }}</a>
                 <span>(declined)</span>
             </div>
             <div class="action">
-                <form action="{{ url_for('accept_invitations') }}" method="post"
+                <form action="{{ url_for("accept_invitations") }}" method="post"
                   class="notification-form">
                     <input type="hidden" name="next_url" value="/notification/history">
                     <button type="submit" name="invite_id" value="{{ n.id }}" class="notification-btn btn-accept">

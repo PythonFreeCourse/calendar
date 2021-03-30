@@ -7,15 +7,73 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_302_FOUND
 from starlette.templating import _TemplateResponse
 
-from app.database import schemas
+from app.database import models, schemas
 from app.dependencies import get_db, templates
-from app.internal.user.user import check_unique_fields, create_user
+from app.internal.security.ouath2 import get_hashed_password
+from app.internal.utils import save
 
 router = APIRouter(
     prefix="",
     tags=["register"],
     responses={404: {"description": "Not found"}},
 )
+
+
+def _create_user(session, **kw) -> models.User:
+    """Creates and saves a new user."""
+    user = models.User(**kw)
+    save(session, user)
+    return user
+
+
+async def create_user(db: Session, user: schemas.UserCreate) -> models.User:
+    """
+    creating a new User object in the database, with hashed password
+    """
+    unhashed_password = user.password.encode("utf-8")
+    hashed_password = get_hashed_password(unhashed_password)
+    user_details = {
+        "username": user.username,
+        "full_name": user.full_name,
+        "email": user.email,
+        "password": hashed_password,
+        "description": user.description,
+        "language_id": user.language_id,
+        "target_weight": user.target_weight,
+    }
+    return _create_user(**user_details, session=db)
+
+
+async def check_unique_fields(
+    db: Session,
+    new_user: schemas.UserCreate,
+) -> dict:
+    """Verifying new user details are unique. Return relevant errors"""
+    errors = {}
+    if db.query(
+        db.query(models.User)
+        .filter(models.User.username == new_user.username)
+        .exists(),
+    ).scalar():
+        errors["username"] = "That username is already taken"
+    if db.query(
+        db.query(models.User)
+        .filter(models.User.email == new_user.email)
+        .exists(),
+    ).scalar():
+        errors["email"] = "Email already registered"
+    return errors
+
+
+def get_error_messages_by_fields(
+    errors: List[Dict[str, Any]],
+) -> Dict[str, str]:
+    """Getting validation errors by fields from pydantic ValidationError"""
+    errors_by_fields = {error["loc"][0]: error["msg"] for error in errors}
+    return {
+        field_name: f"{field_name.capitalize()} {error_message}"
+        for field_name, error_message in errors_by_fields.items()
+    }
 
 
 @router.get("/register")
@@ -54,14 +112,3 @@ async def register(
         )
     await create_user(db=db, user=new_user)
     return RedirectResponse("/profile", status_code=HTTP_302_FOUND)
-
-
-def get_error_messages_by_fields(
-    errors: List[Dict[str, Any]],
-) -> Dict[str, str]:
-    """Getting validation errors by fields from pydantic ValidationError"""
-    errors_by_fields = {error["loc"][0]: error["msg"] for error in errors}
-    return {
-        field_name: f"{field_name.capitalize()} {error_message}"
-        for field_name, error_message in errors_by_fields.items()
-    }

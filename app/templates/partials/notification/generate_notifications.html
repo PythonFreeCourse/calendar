@@ -4,12 +4,12 @@
     <div class="notification" id="{{ loop.index }}">
         {% if type == "invitations" %}
             <div class="description">
-                <span>Invitation from {{ n.event.owner.username }} - </span>
+                <span>{{ gettext("Invitation from %(user)s", user=n.event.owner.username) }} - </span>
                 <a href="#">{{ n.event.title }}</a>
-                <span>({{ n.event.start.strftime('%H:%M %m/%d/%Y') }})</span>
+                <span>({{ n.event.start.strftime("%H:%M %m/%d/%Y") }})</span>
             </div>
             <div class="action">
-                <form action="{{ url_for('accept_invitations') }}" method="post"
+                <form action="{{ url_for("accept_invitations") }}" method="post"
                   class="notification-form">
                     <input type="hidden" name="next_url" value="/notification">
                     <button type="submit" name="invite_id" value="{{ n.id }}"
@@ -17,7 +17,7 @@
                         <ion-icon class="icon" name="checkmark-outline"></ion-icon>
                     </button>
                 </form>
-                <form action="{{ url_for('decline_invitations') }}" method="post"
+                <form action="{{ url_for("decline_invitations") }}" method="post"
                       class="notification-form">
                      <input type="hidden" name="next_url" value="/notification">
                     <button type="submit" name="invite_id" value="{{ n.id }}"
@@ -33,7 +33,7 @@
                 {% else %}<span>{{ n.body }}</span>{% endif %}
             </div>
             <div class="action">
-                <form action="{{ url_for('mark_message_as_read') }}" method="post"
+                <form action="{{ url_for("mark_message_as_read") }}" method="post"
                   class="notification-form mark_as_read">
                     <input type="hidden" name="next_url" value="/notification">
                     <button type="submit" name="message_id" value="{{ n.id }}"

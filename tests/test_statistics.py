@@ -7,8 +7,8 @@ from app.internal.statistics import (
     SUCCESS_STATUS,
     get_statistics,
 )
-from app.internal.user.user import _create_user
 from app.routers.event import create_event
+from app.routers.register import _create_user
 from app.routers.share import send_in_app_invitation
 
 

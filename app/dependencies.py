@@ -17,7 +17,6 @@ SOUNDS_PATH = os.path.join(STATIC_PATH, "tracks")
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 templates.env.add_extension("jinja2.ext.i18n")
 
-
 # Configure logger
 logger = LoggerCustomizer.make_logger(
     config.LOG_PATH,
