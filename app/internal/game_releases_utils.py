@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import datetime
-from typing import TYPE_CHECKING, DefaultDict, Dict, List
+from functools import lru_cache
+from typing import TYPE_CHECKING, Any, DefaultDict, Dict, List
 
-import requests
+import httpx
+from loguru import logger
 from sqlalchemy.orm import Session
 
+from app import config
 from app.database.models import UserSettings
 
 if TYPE_CHECKING:
@@ -17,16 +20,14 @@ def is_user_signed_up_for_game_releases(
     session: Session,
     current_user_id: int,
 ) -> bool:
-    is_signed_up = (
+    is_signed_up = bool(
         session.query(UserSettings)
         .filter(UserSettings.user_id == current_user_id)
         .filter(UserSettings.video_game_releases.is_(True))
-        .first()
+        .first(),
     )
 
-    if is_signed_up:
-        return True
-    return False
+    return is_signed_up
 
 
 def add_game_events_to_weeks(
@@ -41,11 +42,20 @@ def add_game_events_to_weeks(
     last_day: Day = last_week.days[-1]
     first_day_str = datetime.strptime(first_day.set_id(), "%d-%B-%Y")
     last_day_str = datetime.strptime(last_day.set_id(), "%d-%B-%Y")
-    games_by_dates = get_games_data_separated_by_days(
+
+    output = get_games_data_by_dates_from_api(
         start_date=first_day_str.strftime("%Y-%m-%d"),
         end_date=last_day_str.strftime("%Y-%m-%d"),
     )
-    formatted_games = get_formatted_games_in_days(games_by_dates)
+    if not output["success"]:
+        logger.exception("Unsuccessful RAWG API call")
+        return weeks
+    games_by_dates = output["results"]
+
+    unformatted_games_by_dates = get_games_data_separated_by_dates(
+        games_by_dates,
+    )
+    formatted_games = get_formatted_games_in_days(unformatted_games_by_dates)
 
     return insert_formatted_games_to_weeks(weeks, formatted_games)
 
@@ -67,18 +77,49 @@ def insert_formatted_games_to_weeks(
     return weeks
 
 
-def get_games_data_separated_by_days(
-    start_date: datetime,
-    end_date: datetime,
-) -> DefaultDict[List[Dict]]:
+@lru_cache(maxsize=128)
+def get_games_data_by_dates_from_api(
+    start_date: str,
+    end_date: str,
+) -> Dict[str, Any]:
     API = "https://api.rawg.io/api/games"
+    NO_API_RESPONSE = "The RAWG server did not response"
+    input_query_string = {
+        "dates": f"{start_date},{end_date}",
+        "key": config.RAWG_API_KEY,
+    }
 
-    current_day_games = requests.get(
-        f"{API}?dates={start_date},{end_date}",
-    )
-    current_day_games = current_day_games.json()["results"]
+    output: Dict[str, Any] = {}
+    try:
+        response = httpx.get(
+            API,
+            params=input_query_string,
+        )
+    except httpx.HTTPError:
+        output["success"] = False
+        output["error"] = NO_API_RESPONSE
+        return output
+
+    if response.status_code != httpx.codes.OK:
+        output["success"] = False
+        output["error"] = NO_API_RESPONSE
+        return output
+
+    output["success"] = True
+    try:
+        output.update(response.json())
+        return output
+    except KeyError:
+        output["success"] = False
+        output["error"] = response.json()["error"]["message"]
+        return output
+
+
+def get_games_data_separated_by_dates(
+    api_data: Dict[str, Any],
+) -> DefaultDict[List]:
     games_data = defaultdict(list)
-    for result in current_day_games:
+    for result in api_data:
         current = {
             "name": result["name"],
             "platforms": [],
@@ -92,24 +133,26 @@ def get_games_data_separated_by_days(
 
 
 def get_formatted_games_in_days(
-    separated_games_dict: defaultdict[List],
+    separated_games_dict: DefaultDict[List],
     with_platforms: bool = False,
 ) -> DefaultDict[List[str]]:
     formatted_games = defaultdict(list)
 
     for date, game_data in separated_games_dict.items():
-        formatted_game_str = format_single_game(game_data, with_platforms)
-        formatted_games[date].append(formatted_game_str)
+        for game in game_data:
+            formatted_game_str = format_single_game(game, with_platforms)
+            formatted_games[date].append(formatted_game_str)
     return formatted_games
 
 
-def format_single_game(raw_game, with_platforms=False):
+def format_single_game(raw_game: Dict, with_platforms: bool = False) -> str:
     formatted_game_str = ""
     formatted_game_str += raw_game["name"]
     if with_platforms:
         formatted_game_str += "-Platforms-<br>"
         for platform in raw_game["platforms"]:
             formatted_game_str += f"{platform},"
+    return formatted_game_str
 
 
 def translate_ymd_date_to_dby(ymd_str: str) -> str:

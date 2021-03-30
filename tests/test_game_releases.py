@@ -1,5 +1,9 @@
+from collections import defaultdict
+
 from app.internal.game_releases_utils import (
-    get_games_data_separated_by_days,
+    get_formatted_games_in_days,
+    get_games_data_by_dates_from_api,
+    get_games_data_separated_by_dates,
     translate_dby_date_to_ymd,
     translate_ymd_date_to_dby,
 )
@@ -68,7 +72,7 @@ class TestGameReleases:
             game_release_router.url_path_for("get_game_releases_month"),
         )
         assert response.ok
-        assert b"Prince" in response.content
+        assert b"name" in response.content
 
     @staticmethod
     def test_get_game_releases(client):
@@ -86,9 +90,24 @@ class TestGameReleases:
     def test_get_games_data_separated_by_days():
         day_1 = "2020-12-10"
         day_2 = "2020-12-20"
-        formatted = get_games_data_separated_by_days(day_1, day_2)
-        assert isinstance(formatted, dict)
-        assert "platforms" in formatted["10-December-2020"][0].keys()
+        output = get_games_data_by_dates_from_api(
+            start_date=day_1,
+            end_date=day_2,
+        )
+        games_by_dates = output["results"]
+        unformatted_games_by_dates = get_games_data_separated_by_dates(
+            games_by_dates,
+        )
+        formatted_games = get_formatted_games_in_days(
+            unformatted_games_by_dates,
+        )
+
+        assert isinstance(unformatted_games_by_dates, defaultdict)
+        assert isinstance(formatted_games, defaultdict)
+        assert (
+            "platforms"
+            in unformatted_games_by_dates["10-December-2020"][0].keys()
+        )
 
     @staticmethod
     def test_ymd_to_dby():
@@ -99,3 +118,15 @@ class TestGameReleases:
     def test_dby_to_ymd():
         dby_date = "12-December-2020"
         assert translate_dby_date_to_ymd(dby_date) == "2020-12-12"
+
+    @staticmethod
+    def test_get_game_releases_async(client):
+        day_1 = "2020-12-10"
+        day_2 = "2020-12-20"
+        dates = {"from-date": day_1, "to-date": day_2}
+        response = client.post(
+            game_release_router.url_path_for("fetch_released_games"),
+            data=dates,
+        )
+        assert response.ok
+        assert b"Xbox" in response.content

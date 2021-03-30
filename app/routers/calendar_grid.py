@@ -194,7 +194,7 @@ def create_weeks(
     num_days: int = len(ndays)
     _weeks = [Week(ndays[i : i + length]) for i in range(0, num_days, length)]
 
-    return add_game_events_to_weeks(_weeks, is_active=False)
+    return add_game_events_to_weeks(_weeks, is_active=True)
 
 
 def get_month_block(day: Day, n: int = MONTH_BLOCK) -> List[Week]:
