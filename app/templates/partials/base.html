@@ -16,8 +16,18 @@
     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
   <link href="{{ url_for("static", path="/global.css") }}" rel="stylesheet">
 
+  {% endblock head %}
+  {% block title %}
+  <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
+  {% endblock %}
+</head>
+
+<body>
+  {% block body %}
+  {% endblock %}
   <!-- Icons -->
-  <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.js"></script>
   <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"
     integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ"
     crossorigin="anonymous"></script>
@@ -37,16 +47,6 @@
   <!-- Audio -->
   <audio id="my-audio" muted="true"></audio>
   <audio id="sfx" muted="true"></audio>
-
-  {% endblock head %}
-  {% block title %}
-  <title>Pylendar{% if self.page_name() %} - {% endif %}{% block page_name %}{% endblock %}</title>
-  {% endblock %}
-</head>
-
-<body>
-  {% block body %}
-  {% endblock %}
   <script src="{{ url_for("static", path="/js/darkmode.js") }}"></script>
 </body>
 
