@@ -14,7 +14,7 @@
   <!-- CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-  <link href="{{ url_for('static', path='/global.css') }}" rel="stylesheet">
+  <link href="{{ url_for("static", path="/global.css") }}" rel="stylesheet">
 
   {% endblock head %}
   {% block title %}
@@ -47,7 +47,7 @@
   <!-- Audio -->
   <audio id="my-audio" muted="true"></audio>
   <audio id="sfx" muted="true"></audio>
-  <script src="{{ url_for('static', path='/js/darkmode.js') }}"></script>
+  <script src="{{ url_for("static", path="/js/darkmode.js") }}"></script>
 </body>
 
 </html>

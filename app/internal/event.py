@@ -1,4 +1,3 @@
-import functools
 import logging
 import re
 from typing import List, NamedTuple, Set, Union
@@ -12,8 +11,7 @@ from loguru import logger
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
-from app.database.models import Country, Event
-from app.resources.countries import countries
+from app.database.models import Event
 
 ZOOM_REGEX = re.compile(r"https://.*?\.zoom.us/[a-z]/.[^.,\b\s]+")
 
@@ -114,43 +112,6 @@ def get_messages(
             f"Want to create another one {weeks_diff} after too?",
         )
     return messages
-
-
-def add_countries_to_db(session: Session) -> None:
-    """
-    Adding all new countries to the "Country" table in the database.
-    Information is based on the "countries" list.
-    (The list is located in app/resources/countries.py)
-    Names are described either as:
-    "Country Name, City Name" or
-    "Country Name" solely.
-    Timezones are described as "Continent/ City Name"
-    for example:
-        name: Israel, Jerusalem
-        timezone: Asia/Jerusalem
-    """
-    for country in countries:
-        partial_name = country["name"]
-        for capital_city in country["timezones"]:
-            capital_city_name = capital_city.split("/")[-1]
-            if partial_name != capital_city_name:
-                name = partial_name + ", " + capital_city_name
-            else:
-                name = capital_city_name
-            new_country = Country(name=name, timezone=str(capital_city))
-            session.merge(new_country)
-    session.commit()
-
-
-@functools.lru_cache(maxsize=None)
-def get_all_countries_names(session: Session) -> List[str]:
-    """
-    Returns a cached list of the countries names.
-    """
-    db_entity = session.query(Country).first()
-    if not db_entity:
-        add_countries_to_db(session=session)
-    return session.query(Country.name).all()
 
 
 async def get_location_coordinates(

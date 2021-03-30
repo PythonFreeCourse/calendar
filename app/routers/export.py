@@ -27,11 +27,13 @@ def export(
     user: CurrentUser = Depends(current_user),
 ) -> StreamingResponse:
     """Returns the Export page route.
+
     Args:
         start_date: A date or an empty string.
         end_date: A date or an empty string.
         db: Optional; The database connection.
         user: user schema object.
+
     Returns:
         A StreamingResponse that contains an .ics file.
     """

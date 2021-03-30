@@ -19,9 +19,7 @@ from starlette.templating import _TemplateResponse
 
 from app.config import PICTURE_EXTENSION
 from app.database.models import (
-    Category,
     Comment,
-    Country,
     Event,
     SharedList,
     SharedListItem,
@@ -32,7 +30,6 @@ from app.dependencies import UPLOAD_PATH, get_db, logger, templates
 from app.internal import comment as cmt
 from app.internal.emotion import get_emotion
 from app.internal.event import (
-    get_all_countries_names,
     get_invited_emails,
     get_location_coordinates,
     get_messages,
@@ -40,7 +37,6 @@ from app.internal.event import (
     raise_if_zoom_link_invalid,
 )
 from app.internal.privacy import PrivacyKinds
-from app.internal.security.dependencies import current_user
 from app.internal.utils import create_model, get_current_user
 from app.routers.categories import get_user_categories
 
@@ -106,28 +102,20 @@ async def create_event_api(event: EventModel, session=Depends(get_db)):
     return {"success": True}
 
 
-def get_categories_list(
-    user: User,
-    db_session: Session = Depends(get_db),
-) -> List[Category]:
-    return get_user_categories(db_session, user.user_id)
-
-
 @router.get("/edit", include_in_schema=False)
+@router.get("/edit")
 async def eventedit(
     request: Request,
     db_session: Session = Depends(get_db),
-    user: User = Depends(current_user),
 ) -> Response:
-    countries_names = get_all_countries_names(db_session)
-    categories_list = get_categories_list(user, db_session)
+    user_id = 1  # until issue#29 will get current user_id from session
+    categories_list = get_user_categories(db_session, user_id)
     return templates.TemplateResponse(
         "eventedit.html",
         {
             "request": request,
             "categories_list": categories_list,
             "privacy": PrivacyKinds,
-            "countries_names": countries_names,
         },
     )
 
@@ -150,6 +138,7 @@ async def create_new_event(
     availability = data.get("availability", "True") == "True"
     location = data["location"]
     all_day = data["event_type"] and data["event_type"] == "on"
+
     vc_link = data.get("vc_link")
     category_id = data.get("category_id")
     privacy = data["privacy"]
@@ -788,23 +777,3 @@ async def delete_comment(
     cmt.delete_comment(db, comment_id)
     path = router.url_path_for("view_comments", event_id=str(event_id))
     return RedirectResponse(path, status_code=303)
-
-
-@router.get("/timezone/country/{country_name}", include_in_schema=False)
-async def check_timezone(
-    country_name,
-    request: Request,
-    db_session: Session = Depends(get_db),
-) -> Response:
-    try:
-        country_timezone = (
-            db_session.query(Country.timezone)
-            .filter_by(name=country_name)
-            .first()[0]
-        )
-    except TypeError:
-        raise HTTPException(
-            status_code=404,
-            detail="The inserted country name is not found",
-        )
-    return {"timezone": country_timezone}

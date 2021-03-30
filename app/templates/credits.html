@@ -2,42 +2,22 @@
 
 {% block head %}
 {{ super() }}
-<link href="{{ url_for('static', path='/credits_style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/credits_style.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-
-<section>
-    <div class="container">
-        <h2 class="heading main-text-color">Meet The Team</h2>
-        <div class="card-wrapper">
-            <div id="creditsCarousel" class="carousel slide" data-bs-pause="false" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item card gallery active" data-bs-interval="2000">
-                        <img src="{{ url_for('static', path='/event_flairs/plan.jpg') }}" class="d-block w-100"
-                            alt="Team">
-                    </div>
-                    {% for credit in credit_list %}
-                    <div class="carousel-item card gallery">
-                        <img class="card-img-top"
-                            src="{{ url_for('static', path='/credits_pictures/' + credit.picture + '.PNG') }}"
-                            alt="{{credit.name}}">
-                        <div class="card-body">
-                            <div class="card-text credit-details">{{credit.name}}</div>
-                            <div class="card-text credit-details">
-                                {% if credit.linkedin %}
-                                <a class="card-text contact" href={{credit.linkedin}}>LinkedIn</a>
-                                {% else %}
-                                <p>{{credit.mail}}</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
+    <h1 class="main-text-color">Say hello to our developers:</h1>
+    {% for credit in credit_list %}
+        <div class="gallery">
+            <img src="{{ url_for('static', path='/credits_pictures/' + credit.picture + '.PNG') }}" alt="{{credit.name}}">
+            <div class="credit-details">{{credit.name}}</div>
+            <div class="credit-details">
+                {% if credit.linkedin  %}
+                    <a class="contact" href={{credit.linkedin}}>LinkedIn</a>
+                {% else %}
+                    <p>{{credit.mail}}</p>
+                {% endif %}
             </div>
         </div>
-    </div>
-</section>
-
+    {% endfor %}
 {% endblock %}

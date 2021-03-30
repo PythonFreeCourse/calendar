@@ -7,26 +7,16 @@ from pydantic import EmailStr
 from pydantic.errors import EmailError
 from sqlalchemy.orm.session import Session
 
-from app.config import (
-    CALENDAR_HOME_PAGE,
-    CALENDAR_REGISTRATION_PAGE,
-    CALENDAR_SITE_NAME,
-    DOMAIN,
-    email_conf,
-)
+from app.config import (CALENDAR_HOME_PAGE, CALENDAR_REGISTRATION_PAGE,
+                        CALENDAR_SITE_NAME, email_conf, templates)
 from app.database.models import Event, User
-from app.dependencies import templates
-from app.internal.security.schema import ForgotPassword
 
 mail = FastMail(email_conf)
 
 
 def send(
-    session: Session,
-    event_used: int,
-    user_to_send: int,
-    title: str,
-    background_tasks: BackgroundTasks = BackgroundTasks,
+        session: Session, event_used: int, user_to_send: int,
+        title: str, background_tasks: BackgroundTasks = BackgroundTasks
 ) -> bool:
     """This function is being used to send emails in the background.
     It takes an event and a user and it sends the event to the user.
@@ -42,8 +32,10 @@ def send(
     Returns:
         bool: Returns True if the email was sent, else returns False.
     """
-    event_used = session.query(Event).filter(Event.id == event_used).first()
-    user_to_send = session.query(User).filter(User.id == user_to_send).first()
+    event_used = session.query(Event).filter(
+        Event.id == event_used).first()
+    user_to_send = session.query(User).filter(
+        User.id == user_to_send).first()
     if not user_to_send or not event_used:
         return False
     if not verify_email_pattern(user_to_send.email):
@@ -53,21 +45,18 @@ def send(
     recipients = {"email": [user_to_send.email]}.get("email")
     body = f"begins at:{event_used.start} : {event_used.content}"
 
-    background_tasks.add_task(
-        send_internal,
-        subject=subject,
-        recipients=recipients,
-        body=body,
-    )
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body)
     return True
 
 
-def send_email_invitation(
-    sender_name: str,
-    recipient_name: str,
-    recipient_mail: str,
-    background_tasks: BackgroundTasks = BackgroundTasks,
-) -> bool:
+def send_email_invitation(sender_name: str,
+                          recipient_name: str,
+                          recipient_mail: str,
+                          background_tasks: BackgroundTasks = BackgroundTasks
+                          ) -> bool:
     """
     This function takes as parameters the sender's name,
     the recipient's name and his email address, configuration, and
@@ -92,35 +81,28 @@ def send_email_invitation(
         return False
 
     template = templates.get_template("invite_mail.html")
-    html = template.render(
-        recipient=recipient_name,
-        sender=sender_name,
-        site_name=CALENDAR_SITE_NAME,
-        registration_link=CALENDAR_REGISTRATION_PAGE,
-        home_link=CALENDAR_HOME_PAGE,
-        addr_to=recipient_mail,
-    )
+    html = template.render(recipient=recipient_name, sender=sender_name,
+                           site_name=CALENDAR_SITE_NAME,
+                           registration_link=CALENDAR_REGISTRATION_PAGE,
+                           home_link=CALENDAR_HOME_PAGE,
+                           addr_to=recipient_mail)
 
     subject = "Invitation"
     recipients = [recipient_mail]
     body = html
     subtype = "html"
 
-    background_tasks.add_task(
-        send_internal,
-        subject=subject,
-        recipients=recipients,
-        body=body,
-        subtype=subtype,
-    )
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body,
+                              subtype=subtype)
     return True
 
 
-def send_email_file(
-    file_path: str,
-    recipient_mail: str,
-    background_tasks: BackgroundTasks = BackgroundTasks,
-):
+def send_email_file(file_path: str,
+                    recipient_mail: str,
+                    background_tasks: BackgroundTasks = BackgroundTasks):
     """
     his function takes as parameters the file's path,
     the recipient's email address, configuration, and
@@ -144,23 +126,19 @@ def send_email_file(
     body = "file"
     file_attachments = [file_path]
 
-    background_tasks.add_task(
-        send_internal,
-        subject=subject,
-        recipients=recipients,
-        body=body,
-        file_attachments=file_attachments,
-    )
+    background_tasks.add_task(send_internal,
+                              subject=subject,
+                              recipients=recipients,
+                              body=body,
+                              file_attachments=file_attachments)
     return True
 
 
-async def send_internal(
-    subject: str,
-    recipients: List[str],
-    body: str,
-    subtype: Optional[str] = None,
-    file_attachments: Optional[List[str]] = None,
-):
+async def send_internal(subject: str,
+                        recipients: List[str],
+                        body: str,
+                        subtype: Optional[str] = None,
+                        file_attachments: Optional[List[str]] = None):
     if file_attachments is None:
         file_attachments = []
 
@@ -169,10 +147,8 @@ async def send_internal(
         recipients=[EmailStr(recipient) for recipient in recipients],
         body=body,
         subtype=subtype,
-        attachments=[
-            UploadFile(file_attachment) for file_attachment in file_attachments
-        ],
-    )
+        attachments=[UploadFile(file_attachment)
+                     for file_attachment in file_attachments])
 
     return await send_internal_internal(message)
 
@@ -201,32 +177,3 @@ def verify_email_pattern(email: str) -> bool:
         return True
     except EmailError:
         return False
-
-
-async def send_reset_password_mail(
-    user: ForgotPassword,
-    background_tasks: BackgroundTasks,
-) -> bool:
-    """
-    This function sends a reset password email to user.
-    :param user: ForgotPassword schema.
-        Contains user's email address, jwt verifying token.
-    :param background_tasks: (BackgroundTasks): Function from fastapi that lets
-            you apply tasks in the background.
-    returns True
-    """
-    params = f"?email_verification_token={user.email_verification_token}"
-    template = templates.get_template("reset_password_mail.html")
-    html = template.render(
-        recipient=user.username.lstrip("@"),
-        link=f"{DOMAIN}/reset-password{params}",
-        email=user.email,
-    )
-    background_tasks.add_task(
-        send_internal,
-        subject="Calendar reset password",
-        recipients=[user.email],
-        body=html,
-        subtype="html",
-    )
-    return True

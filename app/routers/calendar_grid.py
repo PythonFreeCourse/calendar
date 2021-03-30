@@ -51,19 +51,6 @@ class Day:
         """Returns day date inf the format of 00 MONTH 00"""
         return self.date.strftime("%d %B %y").upper()
 
-    def dayview_format(self) -> str:
-        """Returns day date in the format of yyyy-mm-dd"""
-        return self.date.strftime("%Y-%m-%d")
-
-    def weekview_format(self) -> str:
-        """Returns the first day of week in the format of yyyy-mm-dd"""
-        day = self.date
-        if day.strftime("%A") == "Sunday":
-            return self.dayview_format()
-        while day.strftime("%A") != "Sunday":
-            day -= timedelta(days=1)
-        return day.strftime("%Y-%m-%d")
-
     def set_id(self) -> str:
         """Returns day date inf the format of 00-month-0000"""
         return self.date.strftime("%d-%B-%Y")

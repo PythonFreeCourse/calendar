@@ -8,8 +8,8 @@ from loguru import logger
 
 import app.internal.google_connect as google_connect
 from app.database.models import OAuthCredentials
-from app.internal.user.user import _create_user
 from app.routers.event import create_event
+from app.routers.register import _create_user
 
 
 @pytest.fixture

@@ -129,13 +129,6 @@ header div {
   text-align: end;
 }
 
-.logo-container {
-  max-width: 5em;
-  height: auto;
-  margin-left: auto;
-  margin-top: 0.5em;
-}
-
 /* Main Element Grid */
 main {
   display: flex;
@@ -436,61 +429,8 @@ main {
 }
 
 .dates-calc {
-  background-color: #222831;
-  color: white;
-}
-
-/*toggle views*/
-.btn-group-sm>.btn, .btn-sm {
-  padding: .1rem .3rem !important;
-  font-size: .7rem !important;
-}
-
-.btn-outline-primary {
-  border-color: var(--primary) !important;
-  color: var(--primary) !important;
-}
-
-.btn-outline-primary:hover {
-  background-color: var(--primary) !important;
-  color: white !important;
-}
-
-.btn-group>.btn-check:checked+.btn {
-  background-color: var(--primary) !important;
-  color: white !important;
-}
-
-.btn-group>.btn-check:focus+.btn {
-  box-shadow: var(--primary) !important;
-}
-
-#calendarview {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-#calendarview::-webkit-scrollbar {
-  display: none;
-}
-
-.day-view-scrollbar {
-  overflow-y: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.day-view-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.day-view-limitions {
-  max-width: 30vw;
-  max-height: 90vh
-}
-
-.transition {
-  transition-duration: 0.4s;
+    background-color: #222831;
+    color: white;
 }
 
 #darkmode {

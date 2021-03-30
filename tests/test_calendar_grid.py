@@ -5,13 +5,12 @@ import app.routers.calendar_grid as cg
 DATE = datetime.date(1988, 5, 3)
 DAY = cg.Day(datetime.date(1988, 5, 3))
 WEEKEND = cg.DayWeekend(datetime.date(2021, 1, 23))
-SUNDAY = cg.Day(datetime.date(2021, 1, 3))
 N_DAYS = 3
 N_DAYS_BEFORE = datetime.date(1988, 4, 30)
 NEXT_N_DAYS = [
     cg.Day(datetime.date(1988, 5, 4)),
     cg.Day(datetime.date(1988, 5, 5)),
-    cg.Day(datetime.date(1988, 5, 6)),
+    cg.Day(datetime.date(1988, 5, 6))
 ]
 DAY_TYPES = [cg.Day, cg.DayWeekend, cg.Today, cg.FirstDayMonth]
 WEEK_DAYS = cg.Week.WEEK_DAYS
@@ -28,7 +27,7 @@ class TestCalendarGrid:
     def test_get_calendar_extends(client):
         days = 42
         response = client.get(
-            f"/calendar/month/add/{DAY.set_id()}?days={days}",
+            f"/calendar/month/add/{DAY.set_id()}?days={days}"
         )
         assert response.ok
         assert b"08-May" in response.content
@@ -36,10 +35,10 @@ class TestCalendarGrid:
     @staticmethod
     def test_create_day():
         dates_to_check = {
-            "normal_day": datetime.date(2021, 1, 20),
-            "weekend": datetime.date(2021, 1, 23),
-            "today": datetime.date.today(),
-            "first_month": datetime.date(2021, 1, 1),
+            'normal_day': datetime.date(2021, 1, 20),
+            'weekend': datetime.date(2021, 1, 23),
+            'today': datetime.date.today(),
+            'first_month': datetime.date(2021, 1, 1)
         }
 
         for i, value in enumerate(dates_to_check.values()):
@@ -60,8 +59,9 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_first_day_month_block(Calendar):
-        assert cg.get_first_day_month_block(DATE) == next(
-            Calendar.itermonthdates(DATE.year, DATE.month),
+        assert (
+            cg.get_first_day_month_block(DATE)
+            == next(Calendar.itermonthdates(DATE.year, DATE.month))
         )
 
     @staticmethod
@@ -81,9 +81,7 @@ class TestCalendarGrid:
     @staticmethod
     def test_get_month_block(Calendar):
         month_weeks = cg.create_weeks(
-            Calendar.itermonthdates(1988, 5),
-            WEEK_DAYS,
-        )
+            Calendar.itermonthdates(1988, 5), WEEK_DAYS)
         get_block = cg.get_month_block(cg.Day(DATE), n=len(month_weeks))
 
         for i in range(len(month_weeks)):
@@ -96,9 +94,8 @@ class TestCalendarGrid:
         server_time = cg.Day.get_user_local_time()
         server_time_check = datetime.datetime.today()
         assert server_time
-        assert server_time.strftime(time_string) == server_time_check.strftime(
-            time_string,
-        )
+        assert server_time.strftime(
+            time_string) == server_time_check.strftime(time_string)
 
     @staticmethod
     def test_is_weekend():
@@ -107,28 +104,16 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_display_day():
-        assert DAY.display() == "03 MAY 88"
+        assert DAY.display() == '03 MAY 88'
 
     @staticmethod
     def test_set_id():
-        assert DAY.set_id() == "03-May-1988"
+        assert DAY.set_id() == '03-May-1988'
 
     @staticmethod
     def test_display_str():
-        assert str(DAY) == "03"
+        assert str(DAY) == '03'
 
     @staticmethod
     def test_create_week_object():
         assert cg.Week(NEXT_N_DAYS)
-
-    @staticmethod
-    def test_dayview_format():
-        assert DAY.dayview_format() == "1988-05-03"
-
-    @staticmethod
-    def test_weekview_format():
-        assert DAY.weekview_format() == "1988-05-01"
-
-    @staticmethod
-    def test_weekview_format_on_sunday():
-        assert SUNDAY.weekview_format() == "2021-01-03"

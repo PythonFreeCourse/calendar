@@ -6,7 +6,6 @@ from fastapi.openapi.docs import (
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
-import app.internal.features as internal_features
 from app import config
 from app.database import engine, models
 from app.dependencies import (
@@ -14,16 +13,13 @@ from app.dependencies import (
     SOUNDS_PATH,
     STATIC_PATH,
     UPLOAD_PATH,
-    SessionLocal,
     get_db,
     logger,
     templates,
 )
 from app.internal import daily_quotes, json_data_loader
 from app.internal.languages import set_ui_language
-from app.internal.security.dependencies import get_jinja_current_user
 from app.internal.security.ouath2 import auth_exception_handler
-from app.routers.notes import notes
 from app.routers.salary import routes as salary
 from app.utils.extending_openapi import custom_openapi
 
@@ -53,7 +49,6 @@ app.mount("/static/tracks", StaticFiles(directory=SOUNDS_PATH), name="sounds")
 app.logger = logger
 
 app.add_exception_handler(status.HTTP_401_UNAUTHORIZED, auth_exception_handler)
-templates.env.globals["jinja_current_user"] = get_jinja_current_user
 
 # This MUST come before the app.routers imports.
 set_ui_language()
@@ -71,7 +66,6 @@ from app.routers import (  # noqa: E402
     email,
     event,
     export,
-    features,
     four_o_four,
     friendview,
     google_connect,
@@ -82,11 +76,9 @@ from app.routers import (  # noqa: E402
     notification,
     profile,
     register,
-    reset_password,
     search,
     settings,
     telegram,
-    todo_list,
     user,
     weekview,
     weight,
@@ -125,7 +117,6 @@ routers_to_include = [
     email.router,
     event.router,
     export.router,
-    features.router,
     four_o_four.router,
     friendview.router,
     google_connect.router,
@@ -133,16 +124,13 @@ routers_to_include = [
     login.router,
     logout.router,
     meds.router,
-    notes.router,
     notification.router,
     profile.router,
     register.router,
-    reset_password.router,
     salary.router,
     search.router,
     settings.router,
     telegram.router,
-    todo_list.router,
     user.router,
     weekview.router,
     weight.router,
@@ -151,13 +139,6 @@ routers_to_include = [
 
 for router in routers_to_include:
     app.include_router(router)
-
-
-@app.on_event("startup")
-async def startup_event():
-    session = SessionLocal()
-    internal_features.create_features_at_startup(session=session)
-    session.close()
 
 
 # TODO: I add the quote day to the home page
