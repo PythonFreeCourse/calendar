@@ -1,5 +1,5 @@
 class TestCredits:
-    CREDITS_OPENING = b"Say hello to our developers"
+    CREDITS_OPENING = b"Meet The Team"
 
     @staticmethod
     def test_get_credits_ok_request(client):

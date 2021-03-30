@@ -163,13 +163,22 @@ p {
   margin-bottom: 1em;
 }
 
+.forgot-password {
+  line-height: 0;
+  color: rgb(188, 7, 194);
+  padding-left: 8rem;
+}
+
+.red-massage {
+  color: red;
+}
+
 .input-upload-file {
   margin-top: 1em;
 }
 
 .relative.overflow-hidden {
   background-color: var(--backgroundcol);
-  height: 100vh;
 }
 
 .navbar-light .navbar-nav .nav-link {
@@ -204,4 +213,11 @@ h2.modal-title {
   width: 5rem;
   height: 2.5rem;
   margin-top: 1rem;
+}
+
+.reset-password{
+  font-size: 2rem;
+  font-style: bold;
+  margin: 2rem;
+  color:black;
 }

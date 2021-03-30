@@ -1,15 +1,17 @@
 {% extends "./partials/base.html" %}
 {% block head %}
-{{super()}}
-<!-- CSS -->
-<link rel="stylesheet" type="text/css" href="{{ url_for("static", path="/grid_style.css") }}">
+  {{super()}}
+
+  <!-- CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/grid_style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/weekview.css') }}">
 {% endblock head %}
 {% block page_name %}Month View{% endblock page_name %}
 {% block body %}
 <div class="pyldr-container">
-  {% include "partials/calendar/navigation.html" %}
+  {% include 'partials/calendar/navigation.html' %}
   <div id="feature-settings" class="background-lightgray">
-    {% include "partials/calendar/feature_settings/example.html" %}
+    {% include 'partials/calendar/feature_settings/example.html' %}
   </div>
   <div class="content">
     {% block content %}
@@ -17,8 +19,9 @@
   </div>
 </div>
 <!-- Scripts -->
-<script src="{{ url_for("static", path="/js/grid_scripts.js") }}"></script>
-<script src="{{ url_for("static", path="/js/grid_navigation.js") }}"></script>
+<script src="{{ url_for('static', path='/js/grid_scripts.js') }}"></script>
+<script src="{{ url_for('static', path='/js/grid_navigation.js') }}"></script>
+<script src="{{ url_for('static', path='/js/view_toggle.js') }}"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script src="{{ url_for("static", path="/js/dates_calculator.js") }}"></script>
+<script src="{{ url_for('static', path='/js/dates_calculator.js') }}"></script>
 {% endblock body %}

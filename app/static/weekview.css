@@ -1,13 +1,5 @@
-:root {
-    --primary:#30465D;
-    --primary-variant:#FFDE4D;
-    --secondary:#EF5454;
-    --borders:#E7E7E7;
-    --borders-variant:#F7F7F7;
-}
-
 .day-weekview {
-    border-left: 1px solid var(--borders);
+    border: 1px solid var(--borders);
     width: 100%;
 }
 
@@ -15,8 +7,14 @@
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: 2.3em 1fr;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
+#week-view::-webkit-scrollbar {
+    display: none;
+}
 
 #week-schedule {
     grid-row: 1;
@@ -38,4 +36,8 @@
     width: 2.4em;
     margin-left: -2;
     overflow: hidden;
+}
+
+#all_day_event_in_week {
+    color: #EF5454;
 }
