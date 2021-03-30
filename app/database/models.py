@@ -79,8 +79,7 @@ class User(Base):
         back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
-    tasks = relationship(
-        "Task", cascade="all, delete", back_populates="owner")
+    tasks = relationship("Task", cascade="all, delete", back_populates="owner")
 
     features = relationship("Feature", secondary=UserFeature.__tablename__)
     oauth_credentials = relationship(
@@ -533,6 +532,19 @@ class Zodiac(Base):
             f"{self.start_day_in_month}/{self.start_month}-"
             f"{self.end_day_in_month}/{self.end_month}>"
         )
+
+
+class UserMenstrualPeriodLength(Base):
+    __tablename__ = "user_menstrual_period_length"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False,
+        unique=True,
+    )
+    period_length = Column(Integer, nullable=False)
 
 
 class SharedListItem(Base):

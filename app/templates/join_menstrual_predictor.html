@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h3>Please fill in your details</h3>
+        <form method="post">
+            <div class="row">
+                <label for="avg-period-length" class="col-sm-2 col-form-label">Average period length</label>
+                <div class="col-auto">
+                    <input type="number" class="form-control" name="avg-period-length" id="avg-period-length" min=1 placeholder="Required" autofocus required><br>
+                </div>
+                <div class="col-auto">
+                    <span id="PeriodLengthHelpInline" class="form-text">
+                        Must be above 1 day.
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <label for="last-period-date" class="col-sm-2 col-form-label">Last period date</label>
+                <div class="col-auto">
+                    <input type="date" class="form-control" name="last-period-date" id="last-period-date" placeholder="Required" required><br>
+                </div>
+            </div>
+
+            <input type="submit" class="btn-sm btn btn-outline-primary" value="Sign Up">
+        </form>
+    </div>
+    <script src={{ url_for('static', path='/js/menstrual_predictor.js')}}></script>
+{% endblock %}
