@@ -73,6 +73,7 @@ from app.routers import (  # noqa: E402
     features,
     four_o_four,
     friendview,
+    game_release_dates_service,
     google_connect,
     joke,
     login,
@@ -145,6 +146,7 @@ routers_to_include = [
     weekview.router,
     weight.router,
     whatsapp.router,
+    game_release_dates_service.router,
 ]
 
 for router in routers_to_include:

@@ -1,0 +1,55 @@
+<!-- upcomingGames Modal -->
+<link href="{{ url_for('static', path='/game_releases.css') }}" rel="stylesheet">
+
+<div
+  class="modal modal-lg"
+  id="upcoming-games-modal"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  aria-labelledby="upcomingGamesModal"
+  aria-hidden="true"
+>
+  <div
+    class="modal-dialog modal-dialog-scrollable profile-modal-dialog profile-modal-fadeIn"
+  >
+    <div class="modal-content">
+      <div class="modal-header profile-modal-header">
+        <h2 class="modal-title">{{ gettext("Upcoming Games") }}</h2>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <label for="from-date">From:</label>
+        <input
+          type="date"
+          id="from-date"
+          class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+          name="from-date"
+          placeholder="From Date"
+        />
+        <label for="to-date">To:</label>
+        <input
+          type="date"
+          id="to-date"
+          class="form-control border-top-0 border-end-0 border-start-0 mb-2"
+          name="to-date"
+          placeholder="To Date"
+        />
+        <form action="/game-releases/add-games-to-calendar" method="post">
+          <div id="content-div"></div>
+            <button type="button" id="get-games" class="btn btn-sm btn-success">
+              {{ gettext("Get upcoming releases") }}
+            </button>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', path='js/game_releases.js') }}"></script>

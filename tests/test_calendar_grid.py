@@ -80,15 +80,19 @@ class TestCalendarGrid:
 
     @staticmethod
     def test_get_month_block(Calendar):
+        dates_iterator = Calendar.itermonthdates(1988, 5)
         month_weeks = cg.create_weeks(
-            Calendar.itermonthdates(1988, 5),
+            (cg.Day(date) for date in dates_iterator),
             WEEK_DAYS,
         )
         get_block = cg.get_month_block(cg.Day(DATE), n=len(month_weeks))
 
         for i in range(len(month_weeks)):
             for j in range(cg.Week.WEEK_DAYS):
-                assert get_block[i].days[j].date == month_weeks[i].days[j]
+                assert (
+                    get_block[i].days[j].set_id()
+                    == month_weeks[i].days[j].set_id()
+                )
 
     @staticmethod
     def test_get_user_local_time():

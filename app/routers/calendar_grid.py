@@ -6,6 +6,8 @@ from typing import Dict, Iterator, List, Tuple
 
 import pytz
 
+from app.internal.game_releases_utils import add_game_events_to_weeks
+
 MONTH_BLOCK: int = 6
 
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
@@ -190,7 +192,9 @@ def create_weeks(
     """Return lists of Weeks objects."""
     ndays: List[Day] = list(days)
     num_days: int = len(ndays)
-    return [Week(ndays[i : i + length]) for i in range(0, num_days, length)]
+    _weeks = [Week(ndays[i : i + length]) for i in range(0, num_days, length)]
+
+    return add_game_events_to_weeks(_weeks, is_active=True)
 
 
 def get_month_block(day: Day, n: int = MONTH_BLOCK) -> List[Week]:
