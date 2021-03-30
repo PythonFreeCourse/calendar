@@ -9,7 +9,7 @@ from textblob import TextBlob, download_corpora
 from textblob.exceptions import NotTranslated
 
 from app.database.models import Language
-from app.routers.user import get_users
+from app.internal.user.user import get_users
 
 download_corpora.download_all()
 

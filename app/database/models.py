@@ -39,8 +39,8 @@ class UserFeature(Base):
     __tablename__ = "user_feature"
 
     id = Column(Integer, primary_key=True, index=True)
-    feature_id = Column('feature_id', Integer, ForeignKey('features.id'))
-    user_id = Column('user_id', Integer, ForeignKey('users.id'))
+    feature_id = Column("feature_id", Integer, ForeignKey("features.id"))
+    user_id = Column("user_id", Integer, ForeignKey("users.id"))
 
     is_enable = Column(Boolean, default=False)
 
@@ -79,8 +79,7 @@ class User(Base):
         back_populates="user",
     )
     comments = relationship("Comment", back_populates="user")
-    tasks = relationship(
-        "Task", cascade="all, delete", back_populates="owner")
+    tasks = relationship("Task", cascade="all, delete", back_populates="owner")
 
     features = relationship("Feature", secondary=UserFeature.__tablename__)
     oauth_credentials = relationship(
@@ -89,6 +88,8 @@ class User(Base):
         back_populates="owner",
         uselist=False,
     )
+
+    notes = relationship("Note", back_populates="creator")
 
     def __repr__(self):
         return f"<User {self.id}>"
@@ -627,3 +628,18 @@ def insert_data(target, session: Session, **kw):
 
 
 event.listen(Language.__table__, "after_create", insert_data)
+
+
+class Note(Base):
+    __tablename__ = "notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    creator = relationship("User", back_populates="notes")
+
+    def __repr__(self) -> str:
+        return f"<Note {self.id} {self.title}>"

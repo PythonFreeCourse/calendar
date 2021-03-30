@@ -7,32 +7,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  var menstrualSubscriptionSwitch = document.getElementById("switch3");
+  const menstrualSubscriptionSwitch = document.getElementById("switch3");
   menstrualSubscriptionSwitch.addEventListener("click", () => {
-    btnState = menstrualSubscriptionSwitch.checked;
+    const btnState = menstrualSubscriptionSwitch.checked;
     if (btnState) {
     fetch('/menstrual-predictor/')
     .then(response => {
-
-        text = response;
         let subscriptionContainer = document.getElementById('menstrual-prediction-container');
-        subscriptionContainer.innerHTML = text;
-
+        subscriptionContainer.innerHTML = response;
     })
-    //.then(body => {
-    //     console.log(body, 'body')
-    //     subscriptionContainer.innerHTML= body;
-    // });
-    // window.location = '/menstrual-predictor/'
+
       console.log(menstrualSubscriptionSwitch.checked);
     }
   });
 });
 async function loadSubscriptionPage(response){
-    data = await response.text();
+    const data = await response.text();
     return data;
 }
-function toggleMenstrualPredictor() {}
 function tabClick(tab_id, tabBtn) {
   let shownTab = document.querySelector(".tab-show");
   let selectedTabContent = document.querySelector(`#${tab_id}-content`);
