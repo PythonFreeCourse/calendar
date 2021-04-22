@@ -18,7 +18,8 @@ from app.internal.import_holidays import (
 from app.internal.on_this_day_events import get_on_this_day_events
 from app.internal.privacy import PrivacyKinds
 from app.internal.showevent import get_upcoming_events
-
+from app.routers.user_exercise import create_user_exercise
+from sqlalchemy.orm import Session
 PICTURE_EXTENSION = config.PICTURE_EXTENSION
 PICTURE_SIZE = config.AVATAR_SIZE
 FIVE_EVENTS = 5
@@ -39,6 +40,7 @@ def get_placeholder_user():
         full_name="My Name",
         language_id=1,
         telegram_id="",
+        is_active_exercise=False,
     )
 
 
@@ -86,6 +88,32 @@ async def profile(
             "privacy": PrivacyKinds,
         },
     )
+
+
+@router.get("/exercise/start")
+async def start_exercise(session: Session = Depends(get_db)):
+    user = session.query(User).filter_by(id=1).first()
+
+    # Update database
+    user.is_active_exercise = True
+    session.commit()
+
+    # create user exercise
+    create_user_exercise(session, user)
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
+
+
+@router.get("/exercise/stop")
+async def stop_exercise(session=Depends(get_db)):
+    user = session.query(User).filter_by(id=1).first()
+
+    # Update database
+    user.is_active_exercise = False
+    session.commit()
+
+    url = router.url_path_for("profile")
+    return RedirectResponse(url=url, status_code=HTTP_302_FOUND)
 
 
 @router.post("/update_user_fullname")

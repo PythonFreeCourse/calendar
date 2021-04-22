@@ -1,9 +1,10 @@
+from datetime import datetime
 from typing import Generator
 
 import pytest
 from sqlalchemy.orm import Session
 
-from app.database.models import User
+from app.database.models import User, UserExercise
 from app.database.schemas import UserCreate
 from app.internal.utils import create_model, delete_instance
 from app.routers.register import create_user
@@ -24,6 +25,17 @@ async def user(session: Session) -> Generator[User, None, None]:
     mock_user = await create_user(session, schema)
     yield mock_user
     delete_instance(session, mock_user)
+
+
+@pytest.fixture
+def user_exercise(session: Session, user: User) -> UserExercise:
+    test_user_exercise = create_model(
+        session, UserExercise,
+        user_id=11,
+        start_date=datetime.now()
+    )
+    yield test_user_exercise
+    delete_instance(session, test_user_exercise)
 
 
 @pytest.fixture

@@ -114,8 +114,13 @@ p {
 }
 
 .profile-modal-header {
-  border: none;
-  background-color: whitesmoke;
+    border: none;
+    background-color: whitesmoke;
+}
+
+.exercise {
+    font-family: 'Assistant', sans-serif;
+    text-align: center;
 }
 
 #on,

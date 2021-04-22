@@ -114,5 +114,8 @@ LOG_FORMAT = ("<level>{level: <8}</level>"
               " - <cyan>{name}</cyan>:<cyan>{function}</cyan>"
               " - <level>{message}</level>")
 
+# EXERCISE_FILE_PATH
+EXERCISE_FILE = "web_page/exercises/Exercise_{num}.htm"
+
 # RESOURCES
 RESOURCES_DIR = pathlib.Path(__file__).parent / 'resources'
