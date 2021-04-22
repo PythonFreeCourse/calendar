@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.util import symbol
 
 from app.database.models import Event, UserEvent
-from app.routers.user import does_user_exist, get_users
+from app.internal.user import user
 
 SUCCESS_STATUS = True
 ERROR_STATUS = False
@@ -42,10 +42,10 @@ EventsDurationStatistics = NamedTuple(
 
 
 def validate_input(
-        db: Session,
-        userid: int,
-        start: datetime.datetime = None,
-        end: datetime.datetime = None,
+    db: Session,
+    userid: int,
+    start: datetime.datetime = None,
+    end: datetime.datetime = None,
 ) -> ValidationResult:
     """1. input validations:
             valid userid.
@@ -67,7 +67,7 @@ def validate_input(
         start: start of date range.
         end: end of date range.
     """
-    if not does_user_exist(session=db, user_id=userid):
+    if not user.does_user_exist(session=db, user_id=userid):
         return ValidationResult(
             valid_input=False,
             error_text=INVALID_USER,
@@ -87,12 +87,16 @@ def validate_input(
             end=end,
         )
     return ValidationResult(
-        valid_input=True, error_text="", start=start, end=end
+        valid_input=True,
+        error_text="",
+        start=start,
+        end=end,
     )
 
 
 def get_date_filter_between_dates(
-    start: datetime.datetime, end: datetime.datetime
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> symbol:
     """
     Prepare the filter by dates using declarative SQLAlchemy.
@@ -109,10 +113,10 @@ def get_date_filter_between_dates(
 
 
 def get_events_count_stats(
-        db: Session,
-        userid: int,
-        start: datetime.datetime,
-        end: datetime.datetime,
+    db: Session,
+    userid: int,
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> Dict[str, Dict[str, int]]:
     """calculate statistics and events relevant for the requested user
         and the requested date range.
@@ -133,16 +137,14 @@ def get_events_count_stats(
     by_user_id = UserEvent.user_id == userid
     by_owner_id = Event.owner_id == userid
     meetings_for_user = (
-        db
-        .query(Event.id)
+        db.query(Event.id)
         .join(user_to_event)
         .filter(by_user_id)
         .filter(get_date_filter_between_dates(start, end))
         .count()
     )
     created_by_user = (
-        db
-        .query(Event.id)
+        db.query(Event.id)
         .filter(by_owner_id)
         .filter(get_date_filter_between_dates(start, end))
         .count()
@@ -151,15 +153,15 @@ def get_events_count_stats(
         "events_count_stats": {
             "meetings_for_user": meetings_for_user,
             "created_by_user": created_by_user,
-        }
+        },
     }
 
 
 def get_events_by_date(
-        db: Session,
-        userid: int,
-        start: datetime.datetime,
-        end: datetime.datetime,
+    db: Session,
+    userid: int,
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> List[Tuple[datetime.datetime, int]]:
     """get date + number of events on it
 
@@ -177,8 +179,7 @@ def get_events_by_date(
     by_user_id = UserEvent.user_id == userid
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
     return (
-        db
-        .query(start_date, events_count)
+        db.query(start_date, events_count)
         .join(user_to_event)
         .filter(by_user_id)
         .filter(get_date_filter_between_dates(start, end))
@@ -210,18 +211,21 @@ def calc_daily_events_statistics(
     if num_of_days_in_period > len(events_by_date):
         min_events_in_day = 0
     avg_events_per_day = round(
-        sum_events_per_period / num_of_days_in_period, 2
+        sum_events_per_period / num_of_days_in_period,
+        2,
     )
     return DailyEventsStatistics(
-        min_events_in_day, max_events_in_day, avg_events_per_day
+        min_events_in_day,
+        max_events_in_day,
+        avg_events_per_day,
     )
 
 
 def get_daily_events_statistics(
-        db: Session,
-        userid: int,
-        start: datetime.datetime,
-        end: datetime.datetime,
+    db: Session,
+    userid: int,
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> Dict[str, Dict[str, int]]:
     """calculate statistics for daily events relevant for the requested user
         and the requested date range. logic is performed in:
@@ -242,22 +246,24 @@ def get_daily_events_statistics(
     """
     events_by_date = get_events_by_date(db, userid, start, end)
     daily_events_statistics = calc_daily_events_statistics(
-        events_by_date, start, end
+        events_by_date,
+        start,
+        end,
     )
     return {
         "day_events_stats": {
             "min_events_in_day": daily_events_statistics.min_events_in_day,
             "max_events_in_day": daily_events_statistics.max_events_in_day,
             "avg_events_per_day": daily_events_statistics.avg_events_per_day,
-        }
+        },
     }
 
 
 def get_events_duration_statistics_from_db(
-        db: Session,
-        userid: int,
-        start: datetime.datetime,
-        end: datetime.datetime,
+    db: Session,
+    userid: int,
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> EventsDurationStatistics:
     """get data of shortest, longest and average event duration from the db
 
@@ -274,8 +280,7 @@ def get_events_duration_statistics_from_db(
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
     by_user_id = UserEvent.user_id == userid
     events_duration_statistics = (
-        db
-        .query(
+        db.query(
             (func.min(event_duration) * NIN_IN_DAY),
             (func.max(event_duration) * NIN_IN_DAY),
             (func.avg(event_duration) * NIN_IN_DAY),
@@ -292,15 +297,17 @@ def get_events_duration_statistics_from_db(
             average_event=round(events_duration_statistics[0][2]),
         )
     return EventsDurationStatistics(
-        shortest_event=0, longest_event=0, average_event=0
+        shortest_event=0,
+        longest_event=0,
+        average_event=0,
     )
 
 
 def get_events_duration_statistics(
-        db: Session,
-        userid: int,
-        start: datetime.datetime,
-        end: datetime.datetime,
+    db: Session,
+    userid: int,
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> Dict[str, Dict[str, float]]:
     """calculate statistics for events durations relevant for
         the requested user and the requested date range.
@@ -319,22 +326,25 @@ def get_events_duration_statistics(
             average_event: average event the user has.
     """
     events_duration_statistics = get_events_duration_statistics_from_db(
-        db, userid, start, end,
+        db,
+        userid,
+        start,
+        end,
     )
     return {
         "events_duration_statistics": {
             "shortest_event": events_duration_statistics.shortest_event,
             "longest_event": events_duration_statistics.longest_event,
             "average_event": events_duration_statistics.average_event,
-        }
+        },
     }
 
 
 def get_participants_statistics(
-        db: Session,
-        userid: int,
-        start: datetime.datetime,
-        end: datetime.datetime,
+    db: Session,
+    userid: int,
+    start: datetime.datetime,
+    end: datetime.datetime,
 ) -> Dict[str, Dict[str, Union[str, int]]]:
     """calculate statistics for events participants relevant for
         the requested user and the requested date range.
@@ -357,16 +367,14 @@ def get_participants_statistics(
     user_to_event = (UserEvent, UserEvent.event_id == Event.id)
     participant_count = func.count(UserEvent.user_id)
     subquery = (
-        db
-        .query(Event.id)
+        db.query(Event.id)
         .join(user_to_event)
         .filter(by_user_id)
         .filter(get_date_filter_between_dates(start, end))
         .subquery()
     )
     event_participants = (
-        db
-        .query(UserEvent.user_id, participant_count)
+        db.query(UserEvent.user_id, participant_count)
         .filter(by_not_user_id)
         .filter(UserEvent.event_id.in_(subquery))
         .group_by(UserEvent.user_id)
@@ -377,13 +385,14 @@ def get_participants_statistics(
         return {
             "participants_statistics": {
                 "max_events": event_participants[1],
-                "participant_name": get_users(
-                    db, id=event_participants[0]
+                "participant_name": user.get_users(
+                    db,
+                    id=event_participants[0],
                 )[0].username,
-            }
+            },
         }
     return {
-        "participants_statistics": {"max_events": 0, "participant_name": ""}
+        "participants_statistics": {"max_events": 0, "participant_name": ""},
     }
 
 
@@ -426,7 +435,7 @@ def prepare_display_text(
             "stat_4": f"Max events with the same person ("
             f"{output['participants_statistics']['participant_name']}) "
             f"is {output['participants_statistics']['max_events']}",
-        }
+        },
     }
     return display_text
 
@@ -455,11 +464,13 @@ def update_output(output, *params) -> Dict[str, Union[str, bool]]:
     ]
     for call_function in call_functions:
         output.update(call_function(*params))
-    output.update(prepare_display_text(
-        output,
-        start=params[2],
-        end=params[3],
-    ))
+    output.update(
+        prepare_display_text(
+            output,
+            start=params[2],
+            end=params[3],
+        ),
+    )
     return output
 
 
