@@ -14,6 +14,7 @@ MEDIA_PATH = os.path.join(APP_PATH, config.MEDIA_DIRECTORY)
 STATIC_PATH = os.path.join(APP_PATH, "static")
 TEMPLATES_PATH = os.path.join(APP_PATH, "templates")
 SOUNDS_PATH = os.path.join(STATIC_PATH, "tracks")
+LOCALES_PATH = os.path.join(APP_PATH, "locales")
 templates = Jinja2Templates(directory=TEMPLATES_PATH)
 templates.env.add_extension("jinja2.ext.i18n")
 

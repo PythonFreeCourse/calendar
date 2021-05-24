@@ -44,6 +44,6 @@ repos:
     -   id: add-trailing-comma
   # Flake8 to check style is OK
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
+    rev: 3.9.0
     hooks:
     - id: flake8
