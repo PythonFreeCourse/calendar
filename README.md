@@ -45,7 +45,7 @@ uvicorn app.main:app --reload
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp app/config.py.example app/config.py
+cp app/config.py.example app/configuration.py
 # Edit the variables' values.
 # Rendering JWT_KEY:
 python -c "import secrets; from pathlib import Path; f = Path('app/config.py'); f.write_text(f.read_text().replace('JWT_KEY_PLACEHOLDER', secrets.token_hex(32), 1));"
