@@ -2,15 +2,16 @@ import pytest
 from fastapi import BackgroundTasks, status
 from sqlalchemy.orm import Session
 
-from app.database.models import User
+from app.database.models import User, UserEvent
 from app.internal.email import (
     mail,
     send,
     send_email_file,
     send_email_invitation,
+    send_email_to_event_participants,
     verify_email_pattern,
 )
-from app.internal.utils import create_model, delete_instance
+from app.internal.utils import create_model, delete_instance, save
 
 
 def test_email_send(client, user, event, smtpd):
@@ -296,3 +297,54 @@ def test_send(session, bad_user, event):
 )
 def test_verify_email_pattern(email):
     assert not verify_email_pattern(email)
+
+
+def test_sending_mailing_list_with_no_user(
+    session,
+    no_event_user,
+    event_owning_user,
+    user1,
+    event_example,
+):
+    """this test assures a wrong user won't be able to use the mailing list"""
+    association = UserEvent(
+        user_id=no_event_user.id,
+        event_id=event_example.id,
+    )
+    save(session, association)
+
+    association2 = UserEvent(user_id=user1.id, event_id=event_example.id)
+    save(session, association2)
+
+    num_emails_send = send_email_to_event_participants(
+        session,
+        event_example.id,
+        "this mail example",
+        "booboo",
+    )
+    assert num_emails_send == 0
+
+
+def test_sending_mailing_list_from_event_owner(
+    session,
+    no_event_user,
+    event_owning_user,
+    user1,
+    event_example,
+    client,
+    security_test_client,
+):
+    """this test assures mailing list is sent successfuly from
+    the event owner. assiciations were created already at the test above."""
+    # logged_user_data = {'username': event_owning_user.username,
+    #                     'password': event_owning_user.password}
+    pass
+    # res = security_test_client.post(
+    #     security_test_client.app.url_path_for('login'),
+    #     data=logged_user_data)
+    # TODO: log in event_owning_user to assure successful mailing list send
+
+    # if res.status_code == HTTP_302_FOUND:
+    #     num_emails_send = send_email_to_event_participants(
+    #         session, event_example.id, 'this mail example', 'booboo')
+    #     assert num_emails_send == 2

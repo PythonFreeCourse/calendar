@@ -1,7 +1,7 @@
 import os
 from typing import List, Optional
 
-from fastapi import BackgroundTasks, UploadFile
+from fastapi import BackgroundTasks, Depends, UploadFile
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import EmailStr
 from pydantic.errors import EmailError
@@ -14,8 +14,9 @@ from app.config import (
     DOMAIN,
     email_conf,
 )
-from app.database.models import Event, User
+from app.database.models import Event, User, UserEvent
 from app.dependencies import templates
+from app.internal.security.dependencies import current_user
 from app.internal.security.schema import ForgotPassword
 
 mail = FastMail(email_conf)
@@ -26,6 +27,7 @@ def send(
     event_used: int,
     user_to_send: int,
     title: str,
+    content: str = "",
     background_tasks: BackgroundTasks = BackgroundTasks,
 ) -> bool:
     """This function is being used to send emails in the background.
@@ -57,9 +59,50 @@ def send(
         send_internal,
         subject=subject,
         recipients=recipients,
-        body=body,
+        body=body + content,
     )
     return True
+
+
+def send_email_to_event_participants(
+    session: Session,
+    event_id: int,
+    title: str,
+    content: str,
+    user_logged: User = Depends(current_user),
+) -> int:
+    """This function sends emails to a mailing list of all event participants.
+    it uses the function send above to do this and avoid double codes..
+    Args:
+        session(Session): The session to redirect to the database.
+        event_id (int): Id number of the event that is used.
+        title (str): Title of the email that is being sent.
+        content (str): body of email sent.
+    Returns:
+        int: Returns the number of emails sent
+        (number of valid emails in event's participants)
+    """
+    event_owner = session.query(Event.owner).filter(id == event_id).first()
+    if event_owner != user_logged:
+        return 0
+    # makes sure only event owner can send an email via this func.
+    mailing_list = (
+        session.query(User.id, User.email)
+        .join(UserEvent, User.id == UserEvent.user_id)
+        .filter(event_id == event_id)
+        .all()
+    )
+    valid_mailing_list = list(filter(verify_email_pattern, mailing_list.email))
+    if not valid_mailing_list:
+        return 0
+    # making sure app doesn't crash if emails are invalid
+
+    event = session.query(Event).get(event_id)
+    subject = f"{event.title}: {title}"
+    for r in valid_mailing_list:
+        send(session, event, r.id, subject, content)
+    # sends the send email function parameters to send on the mailing list
+    return len(valid_mailing_list)
 
 
 def send_email_invitation(

@@ -61,6 +61,7 @@ class User(Base):
     privacy = Column(String, default="Private", nullable=False)
     is_manager = Column(Boolean, default=False)
     language_id = Column(Integer, ForeignKey("languages.id"))
+    availability = Column(Boolean, default=True, nullable=False)
     target_weight = Column(Float, nullable=True)
 
     owned_events = relationship(
@@ -129,6 +130,7 @@ class Event(Base):
     color = Column(String, nullable=True)
     all_day = Column(Boolean, default=False)
     invitees = Column(String)
+    is_public = Column(Boolean, default=False)
     privacy = Column(String, default=PrivacyKinds.Public.name, nullable=False)
     emotion = Column(String, nullable=True)
     image = Column(String, nullable=True)

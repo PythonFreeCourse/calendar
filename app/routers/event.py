@@ -41,7 +41,7 @@ from app.internal.event import (
 )
 from app.internal.privacy import PrivacyKinds
 from app.internal.security.dependencies import current_user
-from app.internal.utils import create_model, get_current_user
+from app.internal.utils import create_model, get_current_user, save
 from app.routers.categories import get_user_categories
 
 IMAGE_HEIGHT = 200
@@ -488,6 +488,7 @@ def create_event(
     longitude: Optional[str] = None,
     color: Optional[str] = None,
     invitees: List[str] = None,
+    is_public: bool = False,
     category_id: Optional[int] = None,
     availability: bool = True,
     is_google_event: bool = False,
@@ -515,6 +516,7 @@ def create_event(
         color=color,
         emotion=get_emotion(title, content),
         invitees=invitees_concatenated,
+        is_public=is_public,
         all_day=all_day,
         category_id=category_id,
         shared_list=shared_list,
@@ -615,6 +617,24 @@ def add_new_event(values: dict, db: Session) -> Optional[Event]:
     except (AssertionError, AttributeError, TypeError) as e:
         logger.exception(e)
         return None
+
+
+def add_user_to_event(session: Session, user_id: int, event_id: int):
+    user_already_connected = (
+        session.query(UserEvent)
+        .filter_by(event_id=event_id, user_id=user_id)
+        .all()
+    )
+
+    # if the user has a connection to the event,
+    # the function will recognize the duplicate and return false.
+
+    if user_already_connected:
+        return False
+    # if user is not registered to the event, the system will add him
+    association = UserEvent(user_id=user_id, event_id=event_id)
+    save(session, association)
+    return True
 
 
 def extract_shared_list_from_data(
