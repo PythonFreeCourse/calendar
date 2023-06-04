@@ -5,46 +5,64 @@ from typing import Any, Callable, Dict, List
 from loguru import logger
 from sqlalchemy.orm import Session
 
-from app.database.models import Base, InternationalDays, Joke, Quote, Zodiac
-from app.internal import daily_quotes, international_days, jokes, zodiac
+
+from app.database.models import (
+    Base, InternationalDays, Joke, Quote, Parasha, Zodiac,
+)
+from app.config import RESOURCES_DIR
+from app.internal import (
+    daily_quotes, international_days, jokes, weekly_parasha, zodiac,
+)
 
 
 def load_to_database(session: Session) -> None:
     """Loads data from JSON data files into the database.
 
-    On startup, data from the JSON files should be added to the database and
-    not be accessed from a network call for each request as it is costly.
-
+    On startup, data from the JSON files should be added to the
+    database and not be accessed from a network call for each
+    request as it is costly.
     The quotes JSON file content is copied from the free API:
     'https://type.fit/api/quotes'.
+    The parashot and hebrew_view JSON files content is copied
+    from the free API:
+    'https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&
+    mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname
+    &geonameid=293397&m=50&s=on&d=on&D=on'.
 
     Args:
         session: The database connection.
     """
     _insert_into_database(
         session,
-        'app/resources/zodiac.json',
+        RESOURCES_DIR / "zodiac.json",
         Zodiac,
         zodiac.get_zodiac,
     )
 
     _insert_into_database(
         session,
-        'app/resources/quotes.json',
+        RESOURCES_DIR / "quotes.json",
         Quote,
         daily_quotes.get_quote,
     )
 
     _insert_into_database(
         session,
-        'app/resources/international_days.json',
+        RESOURCES_DIR / "parashot.json",
+        Parasha,
+        weekly_parasha.create_parasha_object,
+    )
+
+    _insert_into_database(
+        session,
+        RESOURCES_DIR / "international_days.json",
         InternationalDays,
         international_days.get_international_day,
     )
 
     _insert_into_database(
         session,
-        'app/resources/jokes.json',
+        RESOURCES_DIR / "jokes.json",
         Joke,
         jokes.get_joke,
     )
@@ -57,13 +75,11 @@ def _insert_into_database(
         model_creator: Callable
 ) -> bool:
     """Inserts the extracted JSON data into the database.
-
     Args:
         session: The database connection.
         path: The file path.
         table: A model entity table.
         model_creator: A model creation function.
-
     Returns:
         True if the save was successful, otherwise returns False.
     """
@@ -104,7 +120,7 @@ def _get_data_from_json(path: str) -> List[Dict[str, Any]]:
         A list of dictionary objects.
     """
     try:
-        with open(path, 'r') as json_file:
+        with open(path, 'r', encoding='utf-8') as json_file:
             json_content = json.load(json_file)
     except (IOError, ValueError):
         file_name = os.path.basename(path)

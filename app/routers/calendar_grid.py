@@ -6,6 +6,7 @@ from typing import Dict, Iterator, List, Tuple
 
 import pytz
 
+
 MONTH_BLOCK: int = 6
 
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
